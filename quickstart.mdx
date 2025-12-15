@@ -1,80 +1,75 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: "快速开始"
+description: "用统一入口完成首次模型调用，涵盖 OpenAI / Claude / Gemini 示例与额度与日志要点"
 ---
 
-## Get started in three steps
+## 你将获得什么
+- 复用现有 OpenAI / Claude / Gemini 客户端，只需改 Base 与令牌即可调用。
+- 平台会校验额度、预扣并在不足时直接拒绝，避免透支。
+- 调用日志会记录模型、令牌名、渠道、请求耗时、tokens 等字段，便于排查与对账。
 
-Get your documentation site running locally and make your first customization.
+## 适用场景
+- 需要快速验证令牌可用性与额度设置。
+- 想切换到统一入口但不改动既有客户端代码。
+- 需要查看请求耗时、tokens 与消耗，支持后续对账或排障。
 
-### Step 1: Set up your local environment
+## 一次走通：最短路径
+1) 准备：复制你的令牌，记下平台 API Base（示例 `https://api.onehub.cn`）。  
+2) 选模型：不确定可先获取模型列表：`GET /v1/models`（OpenAI 兼容入口）。  
+3) 发送最小调用：沿用官方格式，只需替换 Base 与令牌：
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+```bash
+# OpenAI 兼容（chat/completions）
+curl --request POST \
+  --url https://api.onehub.cn/v1/chat/completions \
+  --header 'Authorization: Bearer sk-你的令牌' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "hi~"}]
+  }'
 
-### Step 2: Deploy your changes
+# Claude 兼容（messages）
+curl --request POST \
+  --url https://api.onehub.cn/claude/v1/messages \
+  --header 'x-api-key: sk-你的令牌' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "claude-3-haiku-20240307",
+    "max_tokens": 1024,
+    "messages": [{"role": "user", "content": "hi~"}]
+  }'
 
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+# Gemini 兼容（generateContent）
+curl --request POST \
+  --url https://api.onehub.cn/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
+  --header 'x-goog-api-key: sk-你的令牌' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "contents": [{
+      "role": "user",
+      "parts": [{"text": "hi~"}]
+    }]
+  }'
+```
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+> 路径约定：OpenAI 入口在 `/v1`，Claude 在 `/claude/v1`，Gemini 在 `/gemini/:version`。调用示例均为平台实际可用路径。
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+## 使用要点
+- 额度规则：每次调用都会校验额度并预扣，额度不足时请求会被拒绝；成功返回后会确认扣减，失败会回滚预扣。
+- 模型选择：支持 OpenAI / Claude / Gemini 兼容格式，可通过 `GET /v1/models` 或对应模型列表接口查看当前可用模型。
+- 渠道与代理：渠道可按需配置代理或倍率，最终路由会根据模型、渠道配置与可选的指定渠道头分发。
+- 特殊功能：支持 o1/o3 ReasoningEffort 选择、Claude thinking、Gemini 搜索与代码执行等能力，按官方参数透传。
 
-### Step 3: Go live
+## 调用成功后你能看到什么
+- 日志记录：模型名、令牌名、渠道、请求耗时 (`request_time`)、提示与补全 tokens 等字段会被记录，便于追踪与排查。
+- 聚合统计：会按日期汇总请求次数、消耗额度、tokens 与请求耗时，便于仪表盘展示与配额核对。
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+## 常见排查
+- 额度不足：确认令牌或账户额度是否充足，额度不足会直接拒绝请求。
+- 无可用通路：确认目标模型已在当前通路启用，或调整模型选择。
+- 指定通路：需要固定通路时可通过令牌后缀或特定 Header 进行指定；未指定时按默认自动路由。
 
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>
+## 你可能还会关心
+- 想看更多示例或特殊参数用法：查看「功能扩展」相关文档。
+- 想核对计费：结合日志字段与聚合统计进行对账，必要时用测试令牌先验证倍率与模型通配。
