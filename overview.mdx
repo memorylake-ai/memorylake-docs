@@ -1,0 +1,48 @@
+---
+title: "平台概览"
+description: "平台能力、场景与角色概述"
+---
+
+## 你能收获什么
+- 兼容 OpenAI / Claude / Gemini 请求格式，沿用现有客户端即可调用。
+- 令牌/分组支持额度、过期与状态校验（见 token 校验与配额逻辑），调用被严格控管。
+- 日志记录模型、令牌、渠道、请求耗时等字段（`request_time`），便于排查问题与做统计。
+- 渠道可按需配置 HTTP/SOCKS5 代理，支持消息通知与 Telegram Bot，满足网络与提醒需求。
+
+## 适用场景
+- 你想用原有的 OpenAI/Claude/Gemini 客户端，直接切换到统一的调用入口。
+- 你需要在渠道侧设置倍率或通配模型，兼顾成本与不同客户端的兼容性。
+- 你希望看到请求耗时与消耗统计，快速定位异常或供应商问题。
+- 你在受限网络或多团队协作下，需要独立代理、通知与常见问题指引。
+
+## 功能模块
+<CardGroup cols={2}>
+<Card title="统一调用入口" icon="share-2" href="/use/index">
+  兼容 OpenAI / Claude / Gemini 请求格式，按渠道维护供应商密钥与路由。
+</Card>
+<Card title="倍率与计费" icon="activity" href="/use/special">
+  模型通配符与倍率设置，满足不同业务与成本策略。
+</Card>
+<Card title="日志与统计" icon="chart-simple" href="/use/index">
+  仪表盘与管理员界面展示调用统计，日志记录请求耗时，便于定位异常。
+</Card>
+<Card title="网络与代理" icon="network-wired" href="/use/index">
+  渠道可单独配置 HTTP/SOCKS5 代理，适配复杂网络环境。
+</Card>
+<Card title="通知与辅助" icon="bell" href="/use/FAQ">
+  支持消息通知与 Telegram Bot，常见问题与排障路径集中在 FAQ。
+</Card>
+<Card title="功能扩展" icon="sparkles" href="/use/special">
+  支持 o1/o3 ReasoningEffort 切换、Claude thinking、Gemini 搜索/代码执行等特殊用法。
+</Card>
+</CardGroup>
+
+## 资源指引
+- 10 分钟完成初次调用：查看[快速开始](/quickstart)。
+- API 细节与示例：参阅[接口参考](/api-reference/endpoint/get)。
+- 页面导航与常用配置：浏览[导航与配置](/essentials/navigation)与[设置指南](/essentials/settings)。
+- 代码示例与复用片段：查阅[代码示例](/essentials/code)与[可复用片段](/snippets/snippet-intro)。
+
+<Tip>
+先用测试令牌验证倍率、模型通配符与渠道可用性，再切换生产，避免误用与额外成本。
+</Tip>
