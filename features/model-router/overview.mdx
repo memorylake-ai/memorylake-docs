@@ -1,0 +1,47 @@
+---
+title: "Overview"
+description: "Unified model routing and multimodal task entry point, compatible with mainstream protocols and channels"
+---
+
+## Quick Introduction
+
+Model Router provides a unified model routing and multimodal task entry point, compatible with mainstream protocols and channels.
+
+- One entry point covers mainstream models and tasks, compatible with OpenAI-style calls without changing SDKs
+- Preserves native paths for Claude, Gemini, and others to reduce migration and switching costs
+- Built-in stability, quota settlement, notifications, and security policies to help you confidently integrate in production
+
+## Quick Start
+
+1) Get a token: Generate a token in the console, ensuring the associated group has enabled the required models and quotas.  
+2) View available models: Call `/v1/models` or the corresponding native path to confirm models and channels available to the current token.  
+3) Choose an entry point: Use OpenAI-style SDKs by directly changing the base URL, or use Claude or Gemini native paths.  
+4) Send requests: Pass parameters according to the model or task interface requirements, replace `Authorization` and the target model to get started.
+
+## Documentation
+
+<CardGroup cols={2}>
+<Card title="Protocols and Entry Points" icon="globe" href="/features/model-router/protocols-and-entrypoints">
+Learn about supported protocol types and API entry point configuration.
+</Card>
+
+<Card title="Model Directory" icon="list" href="/features/model-router/model-directory">
+View available model lists and model information.
+</Card>
+
+<Card title="Reliability and Failover" icon="shield-check" href="/features/model-router/reliability-and-failover">
+Learn about retry mechanisms, channel switching, and stability guarantees.
+</Card>
+
+<Card title="Quotas and Billing" icon="credit-card" href="/features/model-router/quota-and-billing">
+Learn about quota management, pre-deduction settlement, and billing rules.
+</Card>
+
+<Card title="Limits and Prerequisites" icon="shield" href="/features/model-router/limits-and-prerequisites">
+View usage limits and prerequisite requirements.
+</Card>
+
+<Card title="AI Application Integration" icon="sparkles" href="/features/model-router/ai-applications/overview">
+View supported AI applications and integration guides.
+</Card>
+</CardGroup>

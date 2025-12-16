@@ -1,0 +1,63 @@
+---
+title: "Reliability and Failover"
+description: "Automatic retry, channel switching, and streaming fallback to reduce impact of exceptions and rate limiting"
+---
+
+## Core Capabilities (Summary)
+- When encountering 429 or upstream exceptions, the platform automatically retries and switches to enabled and healthy channels.
+- Streaming calls provide heartbeat and exception fallback, automatically closing connections on exceptions to avoid hanging.
+- Dynamic rate limiting guardrails peak-shave during high concurrency to protect main routes and task interfaces.
+
+## How to Use
+- Before use: In the model directory, confirm that the token can see multiple channels (if not configured, contact an administrator).  
+- During calls: Normally use `/v1`, `/claude/v1/messages`, `/gemini/:version/models/:model`, or task interfaces; no additional parameters needed to enjoy automatic retry and switching.  
+- Before scaling: Validate with small traffic first; batch or long streaming scenarios can submit in batches to reduce instantaneous concurrency.  
+
+## Request Example (Streaming Chat)
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: "Please give me an opening script for a product launch event" }],
+    stream: true
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://app.memorylake.ai/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": "Please give me an opening script for a product launch event"}],
+        "stream": True,
+    },
+)
+```
+```bash cURL
+curl https://app.memorylake.ai/v1/chat/completions \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "Please give me an opening script for a product launch event"}],
+    "stream": true
+  }'
+```
+</CodeGroup>
+
+## Usage Reminders
+- Automatic retry and channel switching depend on enabled and healthy backup channels; switching is unavailable if not enabled.
+- When rate limiting guardrails take effect, speed may be reduced; recommend batching or staggering calls.
+- On streaming exceptions, the platform will close connections; you can supplement retry logic on the client side as needed.

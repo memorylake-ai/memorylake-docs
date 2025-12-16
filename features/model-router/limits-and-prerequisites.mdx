@@ -1,0 +1,61 @@
+---
+title: "Limits and Prerequisites"
+description: "Clarify model availability, quotas, and call prerequisites before integration to avoid hidden limitations"
+---
+
+## What You Need in Advance
+- Account created and logged in.  
+- At least one token created in the console and associated with the correct token group or team context.  
+- The corresponding group has configured available models, channels, and basic quotas (see "Team Collaboration / Quotas and Usage" for details).  
+
+## Model and Channel Limitations
+- **Isolated by Token**:  
+  Each token can only see and call models and channels configured under its own group; model lists for different tokens on the same platform may be completely different.  
+- **Model Directory is Authoritative**:  
+  Lists returned by `/v1/models`, `/claude/v1/models`, `/gemini/*/models` represent models and sources truly available to the current token; models not in the list are considered unavailable.  
+- **Multimodal and Task Channels**:  
+  Task-based capabilities like Midjourney, Suno, RecraftAI, and Kling depend on corresponding channels being enabled. When not enabled, related task interfaces will be unavailable.  
+
+## Quota and Billing Limitations
+- **Insufficient Quota Rejects Immediately**:  
+  During quota pre-deduction, if quota is insufficient on any side (personal, team, or owner), the request will be directly rejected and will not enter the model execution phase.  
+- **Pre-deduction and Settlement Two-Phase**:  
+  Quota is pre-deducted when a request is made, and actual billing occurs after request completion based on real usage; failed requests do not consume additional quota.  
+- **Independent Quota Spaces**:  
+  Quotas for different tokens/teams/contexts are independent and do not interfere with each other; when switching contexts, confirm which quota space is currently being used.  
+
+## Protocol and Entry Point Limitations
+- OpenAI-Compatible Entry Point:  
+  `/v1/*` series interfaces only accept OpenAI-style request bodies and fields; if using Claude or Gemini official SDKs, prefer their respective native paths.  
+- Native Paths:  
+  Paths like `/claude/v1/messages`, `/gemini/:version/models/:model` maintain their respective protocol rules; fields and model IDs are compatible with official versions, but successful calls still depend on token-visible model limitations.  
+- Task Interfaces:  
+  Interfaces for Midjourney, Suno, RecraftAI, Kling, etc. use an asynchronous "task ID + query" pattern and do not guarantee returning final images, audio, or video in a single request.  
+
+## Rate and Stability Limitations
+- **Rate Limiting and 429**:  
+  To protect stability, the platform applies rate limiting to main routes and task interfaces based on configuration; when exceeded, 429 or related errors may be returned, requiring client-side retry or backoff.  
+- **Channel Health**:  
+  Automatic retry and channel switching depend on at least one healthy backup channel; when all related channels are unavailable, requests may still fail.  
+- **Long Streaming Calls**:  
+  Streaming responses will be closed on network exceptions or timeouts; reserve timeout and reconnection strategies on the client side.  
+
+## Permission and Context Limitations
+- **Context Types**:  
+  Calls execute under personal (user) or team (team) contexts, with different contexts corresponding to different quotas and model visibility ranges.  
+- **Roles and Permissions**:  
+  Whether you can manage team quotas, view team usage, or adjust member quotas depends on team roles and permission configuration (see "Team Collaboration / Roles and Permissions" for details).  
+- **Log Visibility Scope**:  
+  Logs and usage statistics control visibility by context and permissions; regular members cannot view call records outside their permission scope.  
+
+## Relationship with Other Capabilities
+- **Quotas and Usage**:  
+  All calls (including multimodal and tasks) are reflected in usage and quota views; quota interception logic is consistent with quota rules in team collaboration.  
+- **Security and Notifications**:  
+  Content moderation and alert notifications depend on corresponding configuration in the console; if not configured, they are only reflected through returned errors and console logs.  
+
+## Pre-Use Checklist
+1) In the console, confirm the current token's group, context (personal/team), and basic quota.  
+2) Through the model directory interface, confirm whether the target model is in the current token's visible list.  
+3) If using task interfaces like Midjourney, Suno, RecraftAI, Kling, first confirm that corresponding channels have been enabled by administrators.  
+4) Before integration, estimate call volume and reserve sufficient quota in team quotas to avoid frequently triggering insufficient quota or rate limiting.

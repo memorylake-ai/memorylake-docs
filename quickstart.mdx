@@ -14,24 +14,25 @@ description: "用统一入口完成首次模型调用，涵盖 OpenAI / Claude /
 - 需要查看请求耗时、tokens 与消耗，支持后续对账或排障。
 
 ## 一次走通：最短路径
-1) 准备：复制你的令牌，记下平台 API Base（示例 `https://api.onehub.cn`）。  
+1) 准备：复制你的令牌，记下平台 API Base（示例 `https://app.memorylake.ai`）。  
 2) 选模型：不确定可先获取模型列表：`GET /v1/models`（OpenAI 兼容入口）。  
 3) 发送最小调用：沿用官方格式，只需替换 Base 与令牌：
 
-```bash
-# OpenAI 兼容（chat/completions）
+<CodeGroup>
+```bash OpenAI 兼容（chat/completions）
 curl --request POST \
-  --url https://api.onehub.cn/v1/chat/completions \
+  --url https://app.memorylake.ai/v1/chat/completions \
   --header 'Authorization: Bearer sk-你的令牌' \
   --header 'Content-Type: application/json' \
   --data '{
     "model": "gpt-4o-mini",
     "messages": [{"role": "user", "content": "hi~"}]
   }'
+```
 
-# Claude 兼容（messages）
+```bash Claude 兼容（messages）
 curl --request POST \
-  --url https://api.onehub.cn/claude/v1/messages \
+  --url https://app.memorylake.ai/claude/v1/messages \
   --header 'x-api-key: sk-你的令牌' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -39,10 +40,11 @@ curl --request POST \
     "max_tokens": 1024,
     "messages": [{"role": "user", "content": "hi~"}]
   }'
+```
 
-# Gemini 兼容（generateContent）
+```bash Gemini 兼容（generateContent）
 curl --request POST \
-  --url https://api.onehub.cn/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
+  --url https://app.memorylake.ai/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
   --header 'x-goog-api-key: sk-你的令牌' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -52,8 +54,11 @@ curl --request POST \
     }]
   }'
 ```
+</CodeGroup>
 
-> 路径约定：OpenAI 入口在 `/v1`，Claude 在 `/claude/v1`，Gemini 在 `/gemini/:version`。调用示例均为平台实际可用路径。
+<Note>
+路径约定：OpenAI 入口在 `/v1`，Claude 在 `/claude/v1`，Gemini 在 `/gemini/:version`。调用示例均为平台实际可用路径。
+</Note>
 
 ## 使用要点
 - 额度规则：每次调用都会校验额度并预扣，额度不足时请求会被拒绝；成功返回后会确认扣减，失败会回滚预扣。
@@ -71,5 +76,5 @@ curl --request POST \
 - 指定通路：需要固定通路时可通过令牌后缀或特定 Header 进行指定；未指定时按默认自动路由。
 
 ## 你可能还会关心
-- 想看更多示例或特殊参数用法：查看「功能扩展」相关文档。
+- 想看更多示例或特殊参数用法：查看[协议与入口](/features/model-router/protocols-and-entrypoints)文档。
 - 想核对计费：结合日志字段与聚合统计进行对账，必要时用测试令牌先验证倍率与模型通配。

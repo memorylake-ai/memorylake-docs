@@ -1,60 +1,60 @@
 ---
-title: "配额与用量"
-description: "给团队和成员配额度、看消耗、及时拦截异常"
+title: "Quotas and Usage"
+description: "Allocate quotas to teams and members, monitor consumption, and intercept anomalies in time"
 ---
 
-## 适用场景
-- 多人共用同一入口，需要控制团队总额度并分配到成员。
-- 想快速查看团队与个人的用量、排名，发现异常及时处理。
-- 需要在额度不足时即时拦截调用，避免超支。
+## Use Cases
+- Multiple users share the same endpoint and need to control team-wide quotas and allocate them to members.
+- Quickly view team and personal usage and rankings to identify and handle anomalies promptly.
+- Intercept calls immediately when quotas are insufficient to avoid overruns.
 
-## 你可以做什么
-- **团队额度**：为团队设置或调整总额度，作为整体消费上限。
-- **成员额度**：给成员单独分配/调整额度，支持后续再调；额度不足会直接拦截调用。
-- **用量可见**：查看团队用量、成员排名，以及个人用量视图。
-- **上下文生效**：在团队上下文发起调用时按团队/成员额度校验；在个人上下文则按个人额度校验。
+## What You Can Do
+- **Team Quotas**: Set or adjust total quotas for the team as an overall consumption limit.
+- **Member Quotas**: Allocate or adjust quotas for individual members, with support for subsequent adjustments. Insufficient quotas will directly intercept calls.
+- **Usage Visibility**: View team usage, member rankings, and personal usage views.
+- **Context Enforcement**: When making calls in the team context, quotas are validated against team/member quotas. In the personal context, quotas are validated against personal quotas.
 
-## 额度计算与扣减逻辑
-- **无限团队**：团队标记为“无限”时，并非真正无限；实时可用额度取团队所有者的当前余额，累积用量仍记录在团队侧。  
-- **有限团队**：实时可用额度取“团队剩余额度”与“所有者当前余额”两者的最小值，避免团队超出上限或超出所有者余额。  
-- **个人空间**：个人上下文下，直接使用个人额度与已用量。  
-- **预扣与回滚**：请求时先校验并预扣，成功返回后扣减；失败会回滚预扣，保证额度准确。  
-- **耗尽后的行为**：任一环节额度不足（个人、团队或所有者余额）都会直接拒绝请求，防止超支。  
+## Quota Calculation and Deduction Logic
+- **Unlimited Teams**: When a team is marked as "unlimited", it is not truly unlimited. Real-time available quota takes the team owner's current balance, while cumulative usage is still recorded on the team side.  
+- **Limited Teams**: Real-time available quota takes the minimum of "team remaining quota" and "owner's current balance" to prevent the team from exceeding the limit or the owner's balance.  
+- **Personal Space**: In the personal context, personal quota and usage are used directly.  
+- **Pre-deduction and Rollback**: Requests are validated and pre-deducted first. After successful return, the deduction is applied. Failures will roll back the pre-deduction to ensure quota accuracy.  
+- **Behavior After Exhaustion**: Insufficient quota at any level (personal, team, or owner balance) will directly reject the request to prevent overruns.  
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/team/quota-overview.png"
-    alt="团队额度与成员配额分配示意占位"
+    alt="Team quotas and member quota allocation"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-## 如何分配与调整
-1) 在团队详情的“成员”页，找到目标成员。  
-2) 设置或调整该成员的额度，保存后立即生效。  
-3) 若需整体控制，先设团队总额度，再在成员级细分。  
-4) 调整后可回到统计视图，确认用量与排名是否正常。  
+## How to Allocate and Adjust
+1) In the "Members" page of team details, find the target member.  
+2) Set or adjust the member's quota, which takes effect immediately after saving.  
+3) If overall control is needed, first set the team total quota, then subdivide at the member level.  
+4) After adjustment, return to the statistics view to confirm if usage and rankings are normal.  
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/team/quota-edit.png"
-    alt="成员额度编辑与保存的示意占位"
+    alt="Member quota editing and saving"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-## 查看用量与排名
-- 团队总览：在“用量/统计”查看团队期间用量、趋势与分布。  
-- 成员排名：同一位置可查看成员用量排名，便于发现异常消耗。  
-- 个人视图：成员可查看自己的用量，确认是否接近额度上限。  
+## View Usage and Rankings
+- Team Overview: View team period usage, trends, and distribution in "Usage/Statistics".  
+- Member Rankings: View member usage rankings in the same section to easily identify abnormal consumption.  
+- Personal View: Members can view their own usage to confirm if they're approaching quota limits.  
 
-## 使用提示
-- 额度与状态校验实时生效，额度不足会直接拒绝调用；必要时预留安全余量。  
-- 若看到成员用量异常，先收紧额度或调整角色，再排查调用来源。  
-- 切换上下文再调用，确保额度校验在正确的身份下进行。  
+## Tips
+- Quota and status validation take effect in real time. Insufficient quotas will directly reject calls. Reserve a safety margin when necessary.  
+- If member usage is abnormal, first tighten quotas or adjust roles, then investigate the source of calls.  
+- Switch context before making calls to ensure quota validation is performed under the correct identity.  
 
-## 下一步
-- 若需结合邀请、角色与生命周期管理，请继续查看相关章节。  
-- 在迁移生产前，用测试令牌验证团队与成员额度的生效逻辑，再切换正式流量。  
+## Next Steps
+- If you need to combine invitations, roles, and lifecycle management, continue reading the relevant sections.  
+- Before migrating to production, use test tokens to verify the team and member quota enforcement logic, then switch to production traffic.
