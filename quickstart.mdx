@@ -14,14 +14,14 @@ description: "用统一入口完成首次模型调用，涵盖 OpenAI / Claude /
 - 需要查看请求耗时、tokens 与消耗，支持后续对账或排障。
 
 ## 一次走通：最短路径
-1) 准备：复制你的令牌，记下平台 API Base（示例 `https://api.onehub.cn`）。  
+1) 准备：复制你的令牌，记下平台 API Base（示例 `https://app.memorylake.ai`）。  
 2) 选模型：不确定可先获取模型列表：`GET /v1/models`（OpenAI 兼容入口）。  
 3) 发送最小调用：沿用官方格式，只需替换 Base 与令牌：
 
 ```bash
 # OpenAI 兼容（chat/completions）
 curl --request POST \
-  --url https://api.onehub.cn/v1/chat/completions \
+  --url https://app.memorylake.ai/v1/chat/completions \
   --header 'Authorization: Bearer sk-你的令牌' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -31,7 +31,7 @@ curl --request POST \
 
 # Claude 兼容（messages）
 curl --request POST \
-  --url https://api.onehub.cn/claude/v1/messages \
+  --url https://app.memorylake.ai/claude/v1/messages \
   --header 'x-api-key: sk-你的令牌' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -42,7 +42,7 @@ curl --request POST \
 
 # Gemini 兼容（generateContent）
 curl --request POST \
-  --url https://api.onehub.cn/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
+  --url https://app.memorylake.ai/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
   --header 'x-goog-api-key: sk-你的令牌' \
   --header 'Content-Type: application/json' \
   --data '{

@@ -16,7 +16,7 @@ description: "自动重试、通道切换与流式兜底，降低异常与限流
 ## 请求示例（流式聊天）
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/v1/chat/completions", {
+await fetch("https://app.memorylake.ai/v1/chat/completions", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-demo123",
@@ -33,7 +33,7 @@ await fetch("https://api.platform.com/v1/chat/completions", {
 import requests
 
 resp = requests.post(
-    "https://api.platform.com/v1/chat/completions",
+    "https://app.memorylake.ai/v1/chat/completions",
     headers={
         "Authorization": "Bearer sk-demo123",
         "Content-Type": "application/json",
@@ -46,7 +46,7 @@ resp = requests.post(
 )
 ```
 ```bash cURL
-curl https://api.platform.com/v1/chat/completions \
+curl https://app.memorylake.ai/v1/chat/completions \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{

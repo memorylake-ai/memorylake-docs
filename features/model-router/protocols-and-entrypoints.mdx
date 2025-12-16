@@ -21,7 +21,7 @@ description: "在同一平台下选择合适的调用入口与协议，快速完
 
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/v1/chat/completions", {
+await fetch("https://app.memorylake.ai/v1/chat/completions", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-demo123",
@@ -38,7 +38,7 @@ await fetch("https://api.platform.com/v1/chat/completions", {
 import requests
 
 resp = requests.post(
-    "https://api.platform.com/v1/chat/completions",
+    "https://app.memorylake.ai/v1/chat/completions",
     headers={
         "Authorization": "Bearer sk-demo123",
         "Content-Type": "application/json",
@@ -51,7 +51,7 @@ resp = requests.post(
 )
 ```
 ```bash cURL
-curl https://api.platform.com/v1/chat/completions \
+curl https://app.memorylake.ai/v1/chat/completions \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{
@@ -72,7 +72,7 @@ curl https://api.platform.com/v1/chat/completions \
 
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/claude/v1/messages", {
+await fetch("https://app.memorylake.ai/claude/v1/messages", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-demo123",
@@ -89,7 +89,7 @@ await fetch("https://api.platform.com/claude/v1/messages", {
 import requests
 
 resp = requests.post(
-    "https://api.platform.com/claude/v1/messages",
+    "https://app.memorylake.ai/claude/v1/messages",
     headers={
         "Authorization": "Bearer sk-demo123",
         "Content-Type": "application/json",
@@ -102,7 +102,7 @@ resp = requests.post(
 )
 ```
 ```bash cURL
-curl https://api.platform.com/claude/v1/messages \
+curl https://app.memorylake.ai/claude/v1/messages \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{
@@ -117,7 +117,7 @@ curl https://api.platform.com/claude/v1/messages \
 
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:generateContent", {
+await fetch("https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-demo123",
@@ -132,7 +132,7 @@ await fetch("https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:genera
 import requests
 
 resp = requests.post(
-    "https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:generateContent",
+    "https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent",
     headers={
         "Authorization": "Bearer sk-demo123",
         "Content-Type": "application/json",
@@ -143,7 +143,7 @@ resp = requests.post(
 )
 ```
 ```bash cURL
-curl https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:generateContent \
+curl https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{
@@ -161,7 +161,7 @@ curl https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:generateConten
 
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/midjourney/imagine", {
+await fetch("https://app.memorylake.ai/midjourney/imagine", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-demo123",
@@ -177,7 +177,7 @@ await fetch("https://api.platform.com/midjourney/imagine", {
 import requests
 
 resp = requests.post(
-    "https://api.platform.com/midjourney/imagine",
+    "https://app.memorylake.ai/midjourney/imagine",
     headers={
         "Authorization": "Bearer sk-demo123",
         "Content-Type": "application/json",
@@ -189,7 +189,7 @@ resp = requests.post(
 )
 ```
 ```bash cURL
-curl https://api.platform.com/midjourney/imagine \
+curl https://app.memorylake.ai/midjourney/imagine \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{
@@ -203,7 +203,7 @@ curl https://api.platform.com/midjourney/imagine \
 
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/suno/jobs", {
+await fetch("https://app.memorylake.ai/suno/jobs", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-demo123",
@@ -219,7 +219,7 @@ await fetch("https://api.platform.com/suno/jobs", {
 import requests
 
 resp = requests.post(
-    "https://api.platform.com/suno/jobs",
+    "https://app.memorylake.ai/suno/jobs",
     headers={
         "Authorization": "Bearer sk-demo123",
         "Content-Type": "application/json",
@@ -231,7 +231,7 @@ resp = requests.post(
 )
 ```
 ```bash cURL
-curl https://api.platform.com/suno/jobs \
+curl https://app.memorylake.ai/suno/jobs \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{
@@ -265,7 +265,7 @@ curl https://api.platform.com/suno/jobs \
 
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/tasks/tsk_12345", {
+await fetch("https://app.memorylake.ai/tasks/tsk_12345", {
   headers: { "Authorization": "Bearer sk-demo123" }
 });
 ```
@@ -273,12 +273,12 @@ await fetch("https://api.platform.com/tasks/tsk_12345", {
 import requests
 
 resp = requests.get(
-    "https://api.platform.com/tasks/tsk_12345",
+    "https://app.memorylake.ai/tasks/tsk_12345",
     headers={"Authorization": "Bearer sk-demo123"}
 )
 ```
 ```bash cURL
-curl https://api.platform.com/tasks/tsk_12345 \
+curl https://app.memorylake.ai/tasks/tsk_12345 \
   -H "Authorization: Bearer sk-demo123"
 ```
 </CodeGroup>

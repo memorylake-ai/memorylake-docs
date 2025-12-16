@@ -1,48 +1,67 @@
 ---
 title: "Overview"
-description: "平台能力、场景与角色概述"
+description: "统一的 AI 模型路由平台，兼容主流协议，支持团队协作"
 ---
 
-## 你能收获什么
-- 兼容 OpenAI / Claude / Gemini 请求格式，沿用现有客户端即可调用。
-- 令牌/分组支持额度、过期与状态校验（见 token 校验与配额逻辑），调用被严格控管。
-- 日志记录模型、令牌、渠道、请求耗时等字段（`request_time`），便于排查问题与做统计。
-- 渠道可按需配置 HTTP/SOCKS5 代理，支持消息通知与 Telegram Bot，满足网络与提醒需求。
+## 平台概览
 
-## 适用场景
-- 你想用原有的 OpenAI/Claude/Gemini 客户端，直接切换到统一的调用入口。
-- 你需要在渠道侧设置倍率或通配模型，兼顾成本与不同客户端的兼容性。
-- 你希望看到请求耗时与消耗统计，快速定位异常或供应商问题。
-- 你在受限网络或多团队协作下，需要独立代理、通知与常见问题指引。
+MemoryLake AI 提供统一的模型路由与多模态任务入口，兼容主流协议与通道，帮助你在生产环境中高效、安全地接入 AI 能力。
 
-## 功能模块
-<CardGroup cols={2}>
-<Card title="统一调用入口" icon="boxes" href="/use/index">
-  兼容 OpenAI / Claude / Gemini 请求格式，按渠道维护供应商密钥与路由。
-</Card>
-<Card title="倍率与计费" icon="calculator" href="/use/special">
-  模型通配符与倍率设置，满足不同业务与成本策略。
-</Card>
-<Card title="日志与统计" icon="chart-simple" href="/use/index">
-  仪表盘与管理员界面展示调用统计，日志记录请求耗时，便于定位异常。
-</Card>
-<Card title="网络与代理" icon="network-wired" href="/use/index">
-  渠道可单独配置 HTTP/SOCKS5 代理，适配复杂网络环境。
-</Card>
-<Card title="通知与辅助" icon="bell" href="/use/FAQ">
-  支持消息通知与 Telegram Bot，常见问题与排障路径集中在 FAQ。
-</Card>
-<Card title="功能扩展" icon="sparkles" href="/use/special">
-  支持 o1/o3 ReasoningEffort 切换、Claude thinking、Gemini 搜索/代码执行等特殊用法。
-</Card>
-</CardGroup>
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/overview/platform-dashboard.png"
+    alt="平台仪表盘概览，展示主要功能模块、统计数据和使用情况"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
 
-## 资源指引
-- 10 分钟完成初次调用：查看[快速开始](/quickstart)。
-- API 细节与示例：参阅[接口参考](/api-reference/endpoint/get)。
-- 页面导航与常用配置：浏览[导航与配置](/essentials/navigation)与[设置指南](/essentials/settings)。
-- 代码示例与复用片段：查阅[代码示例](/essentials/code)与[可复用片段](/snippets/snippet-intro)。
+## 核心能力
 
-<Tip>
-先用测试令牌验证倍率、模型通配符与渠道可用性，再切换生产，避免误用与额外成本。
-</Tip>
+- **统一入口**：兼容 OpenAI、Claude、Gemini 等主流协议，无需修改现有客户端代码
+- **智能路由**：自动选择最优通道，支持重试与容错，保障服务稳定性
+- **精细控制**：令牌额度管理、配额分配、使用统计，满足企业级需求
+- **团队协作**：支持多人协作、角色权限、邀请管理，适合团队使用
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/overview/core-features.png"
+    alt="核心功能展示，包括统一入口、智能路由、精细控制和团队协作的示意图"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 快速开始
+
+### Model Router
+
+统一的模型路由与多模态任务入口，兼容主流协议与通道。
+
+<Card title="Model Router" icon="globe" href="/docs/features/model-router/overview">
+一个入口覆盖主流模型与任务，兼容 OpenAI 风格调用，无需改 SDK。
+</Card>
+
+### Team Collaboration
+
+用团队、角色、邀请和额度管好多人协作的入口。
+
+<Card title="Team Collaboration" icon="users" href="/docs/features/team-collaboration/overview">
+与同事共用调用入口、额度与日志，同时保持清晰分权。
+</Card>
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/overview/quick-start.png"
+    alt="快速开始流程图，展示从注册到首次调用的完整步骤"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 开始使用
+
+1) **获取令牌**：在控制台生成 API Key，设置额度与到期时间。  
+2) **查看文档**：选择 Model Router 或 Team Collaboration 开始探索。  
+3) **首次调用**：参考 [Model Router 文档](/docs/features/model-router/overview) 完成首次 API 调用。  
+4) **深入了解**：查看各功能模块的详细文档，了解更多高级功能。

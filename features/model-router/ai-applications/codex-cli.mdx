@@ -10,7 +10,7 @@ description: "命令行界面 AI 代码助手工具配置指南"
 配置 Codex CLI 连接到 Model Router 需要以下信息：
 
 - **OPENAI_API_KEY**：从 Model Router 控制台获取的 API Key（以 `sk-` 开头）
-- **base_url**：Model Router 服务地址（如 `https://api.onehub.cn/v1`）
+- **base_url**：Model Router 服务地址（如 `https://app.memorylake.ai/v1`）
 - **model**：使用的模型名称（如 `gpt-5-codex`）
 
 ### 可视化指南
@@ -61,7 +61,7 @@ preferred_auth_method = "apikey"
 
 [model_providers.anyrouter]
 name = "Model Router"
-base_url = "https://api.onehub.cn/v1"
+base_url = "https://app.memorylake.ai/v1"
 wire_api = "responses"
 ```
 
@@ -120,7 +120,7 @@ export CODEX_HOME=/path/to/your/config
 
 1) **获取 API Key**：确保在 Model Router 控制台已生成有效的 API Key（以 `sk-` 开头）。  
 2) **配置文件路径**：默认使用 `~/.codex` 目录，可通过 `CODEX_HOME` 环境变量自定义。  
-3) **API 地址**：确保 `base_url` 包含 `/v1` 路径，例如 `https://api.onehub.cn/v1`。  
+3) **API 地址**：确保 `base_url` 包含 `/v1` 路径，例如 `https://app.memorylake.ai/v1`。  
 4) **模型名称**：根据你的 Model Router 配置选择合适的模型名称。
 
 ## 常见问题

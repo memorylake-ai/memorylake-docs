@@ -10,7 +10,7 @@ description: "基于 Anthropic Claude 的代码编辑器集成工具配置指南
 配置 Claude Code 连接到 Model Router 需要以下信息：
 
 - **ANTHROPIC_AUTH_TOKEN**：从 Model Router 控制台获取的 API Key（以 `sk-` 开头）
-- **ANTHROPIC_BASE_URL**：Model Router 服务地址（如 `https://api.onehub.cn`）
+- **ANTHROPIC_BASE_URL**：Model Router 服务地址（如 `https://app.memorylake.ai`）
 
 ### 可视化指南
 
@@ -52,7 +52,7 @@ claude --version
 ```bash
 cd your-project-folder
 export ANTHROPIC_AUTH_TOKEN=sk-...
-export ANTHROPIC_BASE_URL=https://api.onehub.cn
+export ANTHROPIC_BASE_URL=https://app.memorylake.ai
 claude
 ```
 
@@ -86,16 +86,16 @@ claude
 
 ```bash
 echo -e '\n export ANTHROPIC_AUTH_TOKEN=sk-...' >> ~/.bash_profile
-echo -e '\n export ANTHROPIC_BASE_URL=https://api.onehub.cn' >> ~/.bash_profile
+echo -e '\n export ANTHROPIC_BASE_URL=https://app.memorylake.ai' >> ~/.bash_profile
 echo -e '\n export ANTHROPIC_AUTH_TOKEN=sk-...' >> ~/.bashrc
-echo -e '\n export ANTHROPIC_BASE_URL=https://api.onehub.cn' >> ~/.bashrc
+echo -e '\n export ANTHROPIC_BASE_URL=https://app.memorylake.ai' >> ~/.bashrc
 ```
 
 ### Zsh 配置
 
 ```bash
 echo -e '\n export ANTHROPIC_AUTH_TOKEN=sk-...' >> ~/.zshrc
-echo -e '\n export ANTHROPIC_BASE_URL=https://api.onehub.cn' >> ~/.zshrc
+echo -e '\n export ANTHROPIC_BASE_URL=https://app.memorylake.ai' >> ~/.zshrc
 ```
 
 配置完成后，重启终端即可直接使用：
@@ -108,7 +108,7 @@ claude
 ## 使用要点
 
 1) **获取 API Key**：确保在 Model Router 控制台已生成有效的 API Key（以 `sk-` 开头）。  
-2) **配置 API 地址**：使用正确的 Model Router 服务地址，例如 `https://api.onehub.cn`。  
+2) **配置 API 地址**：使用正确的 Model Router 服务地址，例如 `https://app.memorylake.ai`。  
 3) **环境变量**：建议将环境变量写入 shell 配置文件，避免每次手动设置。  
 4) **项目目录**：在项目目录下运行 `claude` 命令，确保工作目录正确。
 

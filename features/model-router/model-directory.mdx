@@ -32,7 +32,7 @@ description: "查看令牌可用的模型与通道，含来源与价格元数据
 ### OpenAI 兼容模型列表
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/v1/models", {
+await fetch("https://app.memorylake.ai/v1/models", {
   headers: { "Authorization": "Bearer sk-demo123" }
 });
 ```
@@ -40,12 +40,12 @@ await fetch("https://api.platform.com/v1/models", {
 import requests
 
 resp = requests.get(
-    "https://api.platform.com/v1/models",
+    "https://app.memorylake.ai/v1/models",
     headers={"Authorization": "Bearer sk-demo123"}
 )
 ```
 ```bash cURL
-curl https://api.platform.com/v1/models \
+curl https://app.memorylake.ai/v1/models \
   -H "Authorization: Bearer sk-demo123"
 ```
 </CodeGroup>
@@ -53,7 +53,7 @@ curl https://api.platform.com/v1/models \
 ### Claude 模型列表
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/claude/v1/models", {
+await fetch("https://app.memorylake.ai/claude/v1/models", {
   headers: { "Authorization": "Bearer sk-demo123" }
 });
 ```
@@ -61,12 +61,12 @@ await fetch("https://api.platform.com/claude/v1/models", {
 import requests
 
 resp = requests.get(
-    "https://api.platform.com/claude/v1/models",
+    "https://app.memorylake.ai/claude/v1/models",
     headers={"Authorization": "Bearer sk-demo123"}
 )
 ```
 ```bash cURL
-curl https://api.platform.com/claude/v1/models \
+curl https://app.memorylake.ai/claude/v1/models \
   -H "Authorization: Bearer sk-demo123"
 ```
 </CodeGroup>
@@ -74,7 +74,7 @@ curl https://api.platform.com/claude/v1/models \
 ### Gemini 模型列表
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://api.platform.com/gemini/v1beta/models", {
+await fetch("https://app.memorylake.ai/gemini/v1beta/models", {
   headers: { "Authorization": "Bearer sk-demo123" }
 });
 ```
@@ -82,12 +82,12 @@ await fetch("https://api.platform.com/gemini/v1beta/models", {
 import requests
 
 resp = requests.get(
-    "https://api.platform.com/gemini/v1beta/models",
+    "https://app.memorylake.ai/gemini/v1beta/models",
     headers={"Authorization": "Bearer sk-demo123"}
 )
 ```
 ```bash cURL
-curl https://api.platform.com/gemini/v1beta/models \
+curl https://app.memorylake.ai/gemini/v1beta/models \
   -H "Authorization: Bearer sk-demo123"
 ```
 </CodeGroup>
