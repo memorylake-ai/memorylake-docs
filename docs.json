@@ -23,18 +23,33 @@
             ]
           },
           {
-            "group": "Features",
+            "group": "Model Router",
             "pages": [
+              "features/model-router/overview",
+              "features/model-router/protocols-and-entrypoints",
+              "features/model-router/model-directory",
+              "features/model-router/reliability-and-failover",
+              "features/model-router/quota-and-billing",
+              "features/model-router/limits-and-prerequisites",
               {
-                "group": "Team collaboration",
+                "group": "AI Applications",
                 "pages": [
-                  "features/team-collaboration/overview",
-                  "features/team-collaboration/roles-permissions",
-                  "features/team-collaboration/invitation-and-access",
-                  "features/team-collaboration/quota-and-usage",
-                  "features/team-collaboration/analytics-and-lifecycle"
+                  "features/model-router/ai-applications/overview",
+                  "features/model-router/ai-applications/cherry-studio",
+                  "features/model-router/ai-applications/claude-code",
+                  "features/model-router/ai-applications/codex-cli"
                 ]
               }
+            ]
+          },
+          {
+            "group": "Team collaboration",
+            "pages": [
+              "features/team-collaboration/overview",
+              "features/team-collaboration/roles-permissions",
+              "features/team-collaboration/invitation-and-access",
+              "features/team-collaboration/quota-and-usage",
+              "features/team-collaboration/analytics-and-lifecycle"
             ]
           }
         ]
