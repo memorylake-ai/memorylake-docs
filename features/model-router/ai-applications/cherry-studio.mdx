@@ -1,0 +1,124 @@
+---
+title: "Cherry Studio"
+description: "桌面 AI 客户端配置指南，支持多模型对话与绘图功能"
+---
+
+<Info>
+🍒 Cherry Studio 是一款专为专业用户设计的强大桌面 AI 客户端，集成了 30+ 行业特定的智能助手，满足各种工作场景需求，显著提升工作效率。
+</Info>
+
+- **官方网站**：https://cherry-ai.com/
+- **下载地址**：https://cherry-ai.com/download
+- **官方文档**：https://docs.cherry-ai.com
+
+## Model Router 集成方法
+
+### 参数配置
+
+配置 Cherry Studio 连接到 Model Router 需要以下信息：
+
+- **Provider Type**：选择 Model Router 支持的类型
+- **API Key**：从 Model Router 控制台获取的 API Key
+- **API Address**：Model Router 服务地址
+
+### 可视化指南
+
+#### 1. 复制 API Key
+
+在 Model Router 控制台的令牌管理页面，复制你的 API Key。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/ai-applications/cherry-studio/copy-api-key.png"
+    alt="在 Model Router 控制台复制 API Key"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+#### 2. 添加 Provider
+
+在 Cherry Studio 中添加新的 Provider，选择对应的 Provider Type。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/ai-applications/cherry-studio/add-provider.png"
+    alt="在 Cherry Studio 中添加 Provider"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+#### 3. 添加模型
+
+配置完成后，添加可用的模型到 Cherry Studio。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/ai-applications/cherry-studio/add-models.png"
+    alt="在 Cherry Studio 中添加模型"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+#### 4. 返回聊天页面
+
+返回聊天页面，选择已配置的 Model Router 模型开始对话。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/ai-applications/cherry-studio/chat-page.png"
+    alt="在 Cherry Studio 聊天页面使用模型"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+#### 5. 切换 Model Router 模型
+
+在聊天界面可以随时切换不同的 Model Router 模型。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/ai-applications/cherry-studio/switch-model.png"
+    alt="在 Cherry Studio 中切换模型"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 在 Cherry Studio 中绘图
+
+#### 1. 首先，添加支持绘图的模型
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/ai-applications/cherry-studio/drawing-models.png"
+    alt="在 Cherry Studio 中添加绘图模型"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+#### 2. 绘图
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/ai-applications/cherry-studio/draw.png"
+    alt="在 Cherry Studio 中使用绘图功能"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 快捷配置
+
+<Info>
+在 Model Router 控制台的系统设置中的聊天设置，可以添加以下快捷选项，在令牌管理页面一键填充 Cherry Studio 配置。
+</Info>
+
+```json
+{ "Cherry Studio": "cherrystudio://providers/api-keys?v=1&data={cherryConfig}" }
+```
+

@@ -1,0 +1,169 @@
+---
+title: "多模态与任务接口"
+description: "用统一入口完成绘图、音乐、视频等任务提交与结果查询"
+---
+
+## 核心能力
+- Midjourney：支持 imagine、describe、blend、change、shorten、notify 等能力，包含任务查询与图片拉取，支持图片上传与人脸替换。  
+- Suno：提交音乐或配音生成任务，并轮询查询任务进度与结果。  
+- RecraftAI：支持矢量化、去背景、清晰放大、风格管理等图片任务。  
+- Kling：支持文生视频、图生视频任务，包含任务提交与状态查询。  
+
+## 适用场景
+- 希望在一个平台下统一接入绘图、音乐、视频等多模态能力。  
+- 需要以“任务”的方式提交请求，稍后通过任务 ID 查询进度和结果，而不是一次性返回。  
+- 需要在调用日志和配额视图中统一看到多模态任务的用量与扣费明细。  
+
+## 任务调用的基本流程
+1) 提交任务：通过对应的任务接口提交请求（例如 Midjourney imagine、Suno jobs），返回任务 ID。  
+2) 轮询查询：根据任务 ID 调用查询接口，查看当前状态（排队、运行中、已完成、失败等）。  
+3) 获取结果：任务完成后，从查询结果中获取图片、音频、视频或相关链接，并在日志中查看本次任务的扣费情况。  
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/tasks-flow.png"
+    alt="多模态任务的提交与查询流程示意占位"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## Midjourney：绘图任务
+
+### 提交 imagine 任务
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/midjourney/imagine", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "a cyberpunk city at night, neon lights, 4k",
+    notify: true
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://api.platform.com/midjourney/imagine",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "prompt": "a cyberpunk city at night, neon lights, 4k",
+        "notify": True,
+    },
+)
+```
+```bash cURL
+curl https://api.platform.com/midjourney/imagine \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "a cyberpunk city at night, neon lights, 4k",
+    "notify": true
+  }'
+```
+</CodeGroup>
+
+### 查询任务与获取图片
+接口会返回任务 ID，你可以按任务 ID 轮询查询并获取图片链接或文件地址。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/mj-task.png"
+    alt="Midjourney 任务列表与单次任务详情示意占位"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## Suno：音乐与配音任务
+
+### 提交音乐生成任务
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/suno/jobs", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "soft lo-fi background music for coding",
+    mode: "music"
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://api.platform.com/suno/jobs",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "prompt": "soft lo-fi background music for coding",
+        "mode": "music",
+    },
+)
+```
+```bash cURL
+curl https://api.platform.com/suno/jobs \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "soft lo-fi background music for coding",
+    "mode": "music"
+  }'
+```
+</CodeGroup>
+
+提交成功后，你可以按任务 ID 查询进度与音频结果（如播放链接、下载链接等）。
+
+## RecraftAI：图片处理任务
+- 矢量化：将位图转换为矢量图。  
+- 去背景：移除图片背景，仅保留前景主体。  
+- 清晰放大：在不明显损失质量的前提下放大图片。  
+- 风格管理：对图片应用特定风格或在已有风格间切换。  
+
+你可以按“提交任务 → 轮询查询 → 获取处理后图片链接”的方式使用这些能力，调用方式与上面的任务型接口一致。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/recraft-task.png"
+    alt="RecraftAI 矢量化与去背景任务示意占位"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## Kling：视频生成任务
+- 文生视频：提供文本提示生成视频。  
+- 图生视频：上传图片并结合文本提示生成视频。  
+
+调用方式同样是提交任务并通过任务 ID 查询。完成后，你可以在结果中获取视频链接，并在日志详情中查看本次任务的用量与扣费。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/kling-task.png"
+    alt="Kling 文生视频与图生视频任务示意占位"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 与配额和日志的关系
+- 所有多模态与任务接口都会占用对应令牌/上下文的配额，计费逻辑与其他模型调用一致（详见「配额与结算」）。  
+- 每次任务的输入内容、生成结果与扣费明细，都会体现在调用日志中，你可以在详情弹窗中看到本次任务的计算过程和配额来源。  
+
+## 使用提醒
+- 任务型接口通常是异步完成，请预留轮询与结果拉取的逻辑，而不要假设立即返回成品。  
+- 多模态任务的数据量相对更大，请结合团队额度和告警机制，避免在短时间内提交过多大任务。  

@@ -1,0 +1,110 @@
+---
+title: "模型目录"
+description: "查看令牌可用的模型与通道，含来源与价格元数据"
+---
+
+## 你能做什么
+- 一键列出当前令牌可用的模型与通道，明确能用什么。
+- 查看模型的来源、owned_by、价格等元数据，便于前台展示与成本预估。
+- 针对不同协议选择对应的列表接口：`/v1/models`、`/claude/v1/models`、`/gemini/*/models`。
+
+## 适用场景
+- 在接入前确认可用模型，避免调用不存在或未开通的目标。
+- 为前台或配置中心拉取模型清单，用于下拉选择或价格提示。
+- 在多团队/多令牌场景下分开查看各自可用模型，避免串用。
+
+## 快速开始
+1) 准备好控制台生成的令牌，确保分组已开通目标模型与额度。  
+2) 按所用协议调用对应的模型列表接口。  
+3) 在返回结果中读取 `id`、`owned_by`、价格等元数据，决定要调用的模型。  
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/models.png"
+    alt="模型列表接口响应示意占位，展示模型 ID、来源、owned_by、价格等元数据"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 请求示例
+
+### OpenAI 兼容模型列表
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/v1/models", {
+  headers: { "Authorization": "Bearer sk-demo123" }
+});
+```
+```py Python
+import requests
+
+resp = requests.get(
+    "https://api.platform.com/v1/models",
+    headers={"Authorization": "Bearer sk-demo123"}
+)
+```
+```bash cURL
+curl https://api.platform.com/v1/models \
+  -H "Authorization: Bearer sk-demo123"
+```
+</CodeGroup>
+
+### Claude 模型列表
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/claude/v1/models", {
+  headers: { "Authorization": "Bearer sk-demo123" }
+});
+```
+```py Python
+import requests
+
+resp = requests.get(
+    "https://api.platform.com/claude/v1/models",
+    headers={"Authorization": "Bearer sk-demo123"}
+)
+```
+```bash cURL
+curl https://api.platform.com/claude/v1/models \
+  -H "Authorization: Bearer sk-demo123"
+```
+</CodeGroup>
+
+### Gemini 模型列表
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/gemini/v1beta/models", {
+  headers: { "Authorization": "Bearer sk-demo123" }
+});
+```
+```py Python
+import requests
+
+resp = requests.get(
+    "https://api.platform.com/gemini/v1beta/models",
+    headers={"Authorization": "Bearer sk-demo123"}
+)
+```
+```bash cURL
+curl https://api.platform.com/gemini/v1beta/models \
+  -H "Authorization: Bearer sk-demo123"
+```
+</CodeGroup>
+
+## 返回要点
+- `id`：模型标识，用于后续请求的 `model` 字段。
+- `owned_by`：模型归属或来源，便于在界面提示来源渠道。
+- 价格元数据：用于展示和成本预估，实际计费以结算结果为准。
+- 可用性：仅返回当前令牌可用的模型，若未开通则不会出现在列表中。
+
+## 使用建议
+- 调用前先拉取模型列表，再绑定到前台选择器，避免硬编码模型名。
+- 如果需要透传 OpenAI 生态能力（Files/Fine-tuning/Assistants/Threads/Batches/Vector Stores），先确认对应通道已开通并在列表中可见。
+- 多团队/多应用请使用各自的令牌分别拉取列表，避免将不可用模型暴露给错误的调用方。
+
+## 边界与前置
+- 可用模型、来源和价格以控制台与令牌分组配置为准；未开通的模型不会出现在列表中。
+- 价格与 owned_by 来自模型目录返回，计费以实际结算结果为准。
+- 列表仅反映当前令牌可用性，模型上下线或权限变更需重新拉取。
+

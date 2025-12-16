@@ -1,0 +1,296 @@
+---
+title: "协议与入口"
+description: "在同一平台下选择合适的调用入口与协议，快速完成模型与任务访问"
+---
+
+## 功能概览
+你可以在同一个平台下，通过统一或原生的路径访问对话、补全、多模态任务和模型目录，无需更换已有 SDK 或调用习惯。
+
+## 适用场景与前置
+- 需要用 OpenAI 风格的 `/v1` 接口完成聊天、补全、流式对话、图片、语音、Embedding、内容审核等。
+- 已使用 Claude 或 Gemini 官方 SDK，希望保持原生路径仅替换基础地址。
+- 需要提交并查询 Midjourney、Suno、RecraftAI、Kling 等任务型能力。
+- 前置：已在控制台获取可用令牌，且对应分组已开通目标模型或任务额度。
+
+## 入口与协议
+
+### OpenAI 兼容入口（/v1 系列）
+- 直接将 SDK 或 HTTP 客户端的基础地址指向 `/v1`，即可完成聊天、补全、响应式对话、流式对话、重排序、图片生成/编辑/变体、Embedding、语音转文字/翻译/语音合成、内容审核等。
+- 在指定通道模式下，支持透传 Files、Fine-tuning、Assistants、Threads、Batches、Vector Stores，保持原有 OpenAI 生态工具链可用。
+- 请求示例（聊天）：
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: "写一个新品上线欢迎语" }],
+    stream: false
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://api.platform.com/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": "写一个新品上线欢迎语"}],
+        "stream": False,
+    },
+)
+```
+```bash cURL
+curl https://api.platform.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "写一个新品上线欢迎语"}],
+    "stream": false
+  }'
+```
+</CodeGroup>
+
+- 流式开关：将 `stream` 置为 `true` 即可按事件流返回。
+
+### 原生路径入口（Claude / Gemini）
+- Claude：沿用原生消息接口路径 `/claude/v1/messages`，仅需替换基础地址。
+- Gemini：保持官方路径格式 `/gemini/:version/models/:model`，按需选择版本和模型。
+- 继续使用原 SDK/HTTP 结构，不必调整请求体字段。
+- 请求示例（Claude）：
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/claude/v1/messages", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "claude-3-opus-20240229",
+    max_tokens: 200,
+    messages: [{ role: "user", content: "用一句话总结本周亮点" }]
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://api.platform.com/claude/v1/messages",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "claude-3-opus-20240229",
+        "max_tokens": 200,
+        "messages": [{"role": "user", "content": "用一句话总结本周亮点"}],
+    },
+)
+```
+```bash cURL
+curl https://api.platform.com/claude/v1/messages \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-3-opus-20240229",
+    "max_tokens": 200,
+    "messages": [{"role": "user", "content": "用一句话总结本周亮点"}]
+  }'
+```
+</CodeGroup>
+
+- 请求示例（Gemini）：
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:generateContent", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    contents: [{ role: "user", parts: [{ text: "生成一个标题" }] }]
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:generateContent",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "contents": [{"role": "user", "parts": [{"text": "生成一个标题"}]}],
+    },
+)
+```
+```bash cURL
+curl https://api.platform.com/gemini/v1beta/models/gemini-1.5-pro:generateContent \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [{"role": "user", "parts": [{"text": "生成一个标题"}]}]
+  }'
+```
+</CodeGroup>
+
+### 任务型入口（Midjourney / Suno / RecraftAI / Kling）
+- Midjourney：支持 imagine、describe、blend、change、shorten、notify 等任务提交，并可查询任务进度与结果、拉取图片，支持 face swap 与图片上传。
+- Suno：提交音乐或配音任务，并查询生成结果。
+- RecraftAI：提供矢量化、去背景、生成式与清晰放大、风格管理等任务型接口。
+- Kling：支持文生视频与图生视频的任务提交与结果查询。
+- 请求示例（Midjourney imagine）：
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/midjourney/imagine", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "sunrise over a lake, cinematic",
+    notify: true
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://api.platform.com/midjourney/imagine",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "prompt": "sunrise over a lake, cinematic",
+        "notify": True,
+    },
+)
+```
+```bash cURL
+curl https://api.platform.com/midjourney/imagine \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "sunrise over a lake, cinematic",
+    "notify": true
+  }'
+```
+</CodeGroup>
+
+- 请求示例（Suno 任务）：
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/suno/jobs", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "soft piano background music",
+    mode: "music"
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://api.platform.com/suno/jobs",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "prompt": "soft piano background music",
+        "mode": "music",
+    },
+)
+```
+```bash cURL
+curl https://api.platform.com/suno/jobs \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "soft piano background music",
+    "mode": "music"
+  }'
+```
+</CodeGroup>
+
+## 认证与可用模型
+
+### 获取与使用令牌
+- 在控制台生成令牌，将其作为调用时的凭证；不同令牌或令牌分组的可用模型和额度互不影响。
+
+### 查看可用模型目录
+- 通过 `/v1/models`、`/claude/v1/models`、`/gemini/*/models` 获取当前令牌可用的模型与来源信息，确认可调用范围后再发起请求。
+- 示例占位：请在此替换为实际的模型列表响应截图。
+
+## 请求要点与返回
+
+### 常见请求形态
+- OpenAI 兼容入口遵循对应接口的字段与响应格式，可直接套用现有示例或 SDK。
+- 原生路径入口保持各自协议字段，避免因字段差异导致的适配成本。
+
+### 流式与非流式
+- 支持流式与非流式响应：按目标接口的流式开关或事件流格式使用，流式场景提供心跳与异常兜底，减少中断风险。
+
+### 任务提交与查询
+- 任务型接口需先提交任务，再用查询接口获取状态与结果；提交与查询需使用同一令牌环境，确保任务可见。
+- 查询示例（任务状态）：
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://api.platform.com/tasks/tsk_12345", {
+  headers: { "Authorization": "Bearer sk-demo123" }
+});
+```
+```py Python
+import requests
+
+resp = requests.get(
+    "https://api.platform.com/tasks/tsk_12345",
+    headers={"Authorization": "Bearer sk-demo123"}
+)
+```
+```bash cURL
+curl https://api.platform.com/tasks/tsk_12345 \
+  -H "Authorization: Bearer sk-demo123"
+```
+</CodeGroup>
+
+## 使用建议
+- 请求前先调用模型目录接口确认可用模型与通道，避免目标不可用。
+- 如果已有 OpenAI 风格 SDK，优先使用 `/v1` 入口；使用 Claude 或 Gemini 官方 SDK 时保持原路径，仅替换基础地址。
+- 对于长时间流式或批量任务，关注通知预警并适当错峰，减少限流影响。
+
+## 已知限制与边界
+- 可用模型、任务能力与额度以控制台和令牌分组实际配置为准；未开通的模型或任务不可用。
+- 价格与 owned_by 等元数据以模型目录返回为准，实际计费以结算结果为准。
+- 通知与内容审查需在控制台或配置中开启并正确填写渠道信息；未开启则不生效。
+- 任务提交与查询依赖对应通道已开通，且需使用同一令牌环境完成全链路。
+
