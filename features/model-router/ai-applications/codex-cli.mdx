@@ -44,7 +44,7 @@ codex --version
 <Frame>
   <img
     className="rounded-xl"
-    src="/images/ai-applications/codex-cli/get-api-key.png"
+    src="/images/ai-applications/get-api-key.png"
     alt="在 Model Router 控制台获取 API Key"
     style={{ width: "100%", height: "auto" }}
   />
@@ -55,12 +55,12 @@ codex --version
 创建 `~/.codex/config.toml` 文件，并添加如下配置：
 
 ```toml config.toml
-model = "gpt-5-codex"
-model_provider = "anyrouter"
+model = "gpt-5"
+model_provider = "memorylake"
 preferred_auth_method = "apikey"
 
-[model_providers.anyrouter]
-name = "Model Router"
+[model_providers.memorylake]
+name = "MemoryLake"
 base_url = "https://app.memorylake.ai/v1"
 wire_api = "responses"
 ```
