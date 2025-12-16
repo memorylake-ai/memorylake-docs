@@ -1,41 +1,41 @@
 ---
-title: "配额与结算"
-description: "预扣-结算双阶段、独立额度与价格元数据，保障可控用量与透明计费"
+title: "Quotas and Billing"
+description: "Pre-deduction and settlement two-phase, independent quotas and pricing metadata, ensuring controllable usage and transparent billing"
 ---
 
-## 核心能力
-- 预扣-结算双阶段：请求前预占额度，完成后按真实用量结算，减少超支或漏计。
-- 独立额度：不同令牌或令牌分组的额度独立管理，互不影响。
-- 价格元数据：模型目录返回价格与 owned_by 信息，便于前台展示与成本预估。
+## Core Capabilities
+- Pre-deduction and Settlement Two-Phase: Pre-allocate quota before requests, settle based on real usage after completion, reducing overruns or missed billing.
+- Independent Quotas: Quotas for different tokens or token groups are managed independently without interference.
+- Pricing Metadata: Model directory returns pricing and owned_by information for frontend display and cost estimation.
 
-## 适用场景
-- 在调用前希望确认额度是否足够，避免中途失败。
-- 多团队、多应用或多令牌分组需要彼此独立的额度与模型可见范围。
-- 前台或配置中心需要拉取价格元数据，展示来源与成本信息。
+## Use Cases
+- Want to confirm whether quota is sufficient before calling to avoid mid-request failures.
+- Multi-team, multi-application, or multi-token groups need independent quotas and model visibility ranges.
+- Frontend or configuration centers need to pull pricing metadata to display source and cost information.
 
-## 扣除流程
-1) 请求前：平台按令牌/上下文检查可用额度，不足会直接拒绝请求。  
-2) 请求完成：按真实用量结算，不会多扣；失败请求不会额外消耗额度。  
-3) 查看价格：在[可用模型列表页面](https://app.memorylake.ai/panel/available_model)，查看模型价格信息。
+## Deduction Process
+1) Before request: Platform checks available quota by token/context; insufficient quota directly rejects the request.  
+2) After request completion: Settle based on real usage without overcharging; failed requests do not consume additional quota.  
+3) View pricing: View model pricing information on the [Available Models List page](https://app.memorylake.ai/panel/available_model).
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/model-router/quota-flow.png"
-    alt="配额检查与结算行为示意占位"
+    alt="Quota check and settlement behavior"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-## 如何查看配额与扣费明细
-- 总额度与已用量：在控制台侧边栏的额度卡和团队配额页面，查看当前上下文的可用额度与已消耗额度（详见「团队协作 / 配额与用量」）。  
-- 单次调用扣费：在[「日志」](https://app.memorylake.ai/panel/log)页面点击任意一条调用，打开详情弹窗，可看到本次调用的输入/输出价格、换算过程、实际扣费额度以及配额来源（个人 / 团队 / 混合）。  
+## How to View Quotas and Billing Details
+- Total quota and usage: In the quota card in the console sidebar and team quota page, view available quota and consumed quota for the current context (see "Team Collaboration / Quotas and Usage" for details).  
+- Single call billing: On the [Logs](https://app.memorylake.ai/panel/log) page, click any call to open the details popup, where you can see input/output pricing, conversion process, actual deducted quota, and quota source (personal/team/mixed) for this call.  
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/model-router/billing-list.png"
-    alt="调用日志详情中的价格与扣费明细示意占位"
+    alt="Pricing and billing details in call log details"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
@@ -44,16 +44,16 @@ description: "预扣-结算双阶段、独立额度与价格元数据，保障�
   <img
     className="rounded-xl"
     src="/images/model-router/billing-detail.png"
-    alt="调用日志详情中的价格与扣费明细示意占位"
+    alt="Pricing and billing details in call log details"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-## 返回要点（模型目录）
-- `id`：模型标识，用于后续请求的 `model` 字段。
-- `owned_by`：模型来源或归属。
-- 价格元数据：用于前台展示与成本预估，实际计费以结算结果为准。
+## Key Return Fields (Model Directory)
+- `id`: Model identifier, used for the `model` field in subsequent requests.
+- `owned_by`: Model source or ownership.
+- Pricing metadata: Used for frontend display and cost estimation; actual billing is based on settlement results.
 
-## 使用提醒
-- 可用额度与模型范围以令牌或令牌分组的实际配置为准；未开通的模型不可见也不可用。
-- 价格与 owned_by 来自模型目录返回，计费仍以结算阶段结果为准。
+## Usage Reminders
+- Available quota and model ranges are based on actual token or token group configuration; unenabled models are not visible or available.
+- Pricing and owned_by come from model directory returns; billing is still based on settlement phase results.

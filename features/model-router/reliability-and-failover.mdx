@@ -1,19 +1,19 @@
 ---
-title: "稳定性与故障切换"
-description: "自动重试、通道切换与流式兜底，降低异常与限流影响"
+title: "Reliability and Failover"
+description: "Automatic retry, channel switching, and streaming fallback to reduce impact of exceptions and rate limiting"
 ---
 
-## 核心能力（简述）
-- 遇到 429 或上游异常时，平台自动重试并切换已开通且健康的通道。
-- 流式调用提供心跳与异常兜底，异常时自动关闭连接，避免悬挂。
-- 动态限流护栏在高并发时削峰，保护主路由与任务型接口。
+## Core Capabilities (Summary)
+- When encountering 429 or upstream exceptions, the platform automatically retries and switches to enabled and healthy channels.
+- Streaming calls provide heartbeat and exception fallback, automatically closing connections on exceptions to avoid hanging.
+- Dynamic rate limiting guardrails peak-shave during high concurrency to protect main routes and task interfaces.
 
-## 如何使用
-- 使用前：在模型目录确认该令牌可见多个通道（如未配置，请联系管理员）。  
-- 调用时：正常使用 `/v1`、`/claude/v1/messages`、`/gemini/:version/models/:model` 或任务型接口，无需额外参数即可享受自动重试与切换。  
-- 放量前：先小流量验证；批量或长流式场景可分批提交，降低瞬时并发。  
+## How to Use
+- Before use: In the model directory, confirm that the token can see multiple channels (if not configured, contact an administrator).  
+- During calls: Normally use `/v1`, `/claude/v1/messages`, `/gemini/:version/models/:model`, or task interfaces; no additional parameters needed to enjoy automatic retry and switching.  
+- Before scaling: Validate with small traffic first; batch or long streaming scenarios can submit in batches to reduce instantaneous concurrency.  
 
-## 请求示例（流式聊天）
+## Request Example (Streaming Chat)
 <CodeGroup>
 ```ts TypeScript
 await fetch("https://app.memorylake.ai/v1/chat/completions", {
@@ -24,7 +24,7 @@ await fetch("https://app.memorylake.ai/v1/chat/completions", {
   },
   body: JSON.stringify({
     model: "gpt-4o-mini",
-    messages: [{ role: "user", content: "请给我一段新品发布会开场文案" }],
+    messages: [{ role: "user", content: "Please give me an opening script for a product launch event" }],
     stream: true
   })
 });
@@ -40,7 +40,7 @@ resp = requests.post(
     },
     json={
         "model": "gpt-4o-mini",
-        "messages": [{"role": "user", "content": "请给我一段新品发布会开场文案"}],
+        "messages": [{"role": "user", "content": "Please give me an opening script for a product launch event"}],
         "stream": True,
     },
 )
@@ -51,13 +51,13 @@ curl https://app.memorylake.ai/v1/chat/completions \
   -H "Content-Type: application/json" \
   -d '{
     "model": "gpt-4o-mini",
-    "messages": [{"role": "user", "content": "请给我一段新品发布会开场文案"}],
+    "messages": [{"role": "user", "content": "Please give me an opening script for a product launch event"}],
     "stream": true
   }'
 ```
 </CodeGroup>
 
-## 使用提醒
-- 自动重试与通道切换依赖已开通且健康的备用通道；未开通则无法切换。
-- 限流护栏生效时可能降低速率，建议分批或错峰调用。
-- 流式异常时平台会关闭连接，你可按需在客户端补充重试逻辑。
+## Usage Reminders
+- Automatic retry and channel switching depend on enabled and healthy backup channels; switching is unavailable if not enabled.
+- When rate limiting guardrails take effect, speed may be reduced; recommend batching or staggering calls.
+- On streaming exceptions, the platform will close connections; you can supplement retry logic on the client side as needed.

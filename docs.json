@@ -35,7 +35,6 @@
                 "group": "AI Applications",
                 "pages": [
                   "features/model-router/ai-applications/overview",
-                  "features/model-router/ai-applications/cherry-studio",
                   "features/model-router/ai-applications/claude-code",
                   "features/model-router/ai-applications/codex-cli"
                 ]

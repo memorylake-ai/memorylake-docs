@@ -1,48 +1,47 @@
 ---
 title: "Overview"
-description: "统一的模型路由与多模态任务入口，兼容主流协议与通道"
+description: "Unified model routing and multimodal task entry point, compatible with mainstream protocols and channels"
 ---
 
-## 快速认识
+## Quick Introduction
 
-Model Router 提供统一的模型路由与多模态任务入口，兼容主流协议与通道。
+Model Router provides a unified model routing and multimodal task entry point, compatible with mainstream protocols and channels.
 
-- 一个入口覆盖主流模型与任务，兼容 OpenAI 风格调用，无需改 SDK
-- 同时保留 Claude、Gemini 等原生路径，减少迁移和切换成本
-- 内置稳定性、配额结算、通知与安全策略，帮助你在生产环境放心接入
+- One entry point covers mainstream models and tasks, compatible with OpenAI-style calls without changing SDKs
+- Preserves native paths for Claude, Gemini, and others to reduce migration and switching costs
+- Built-in stability, quota settlement, notifications, and security policies to help you confidently integrate in production
 
-## 快速开始
+## Quick Start
 
-1) 获取令牌：在控制台生成令牌，确保关联的分组已开通所需模型与额度。  
-2) 查看可用模型：调用 `/v1/models` 或对应原生路径，确认当前令牌可用的模型与通道。  
-3) 选择入口：沿用 OpenAI 风格 SDK 直接改 base URL，或使用 Claude、Gemini 原生路径。  
-4) 发送请求：按模型或任务接口的要求传参，替换 `Authorization` 与目标模型即可调通。
+1) Get a token: Generate a token in the console, ensuring the associated group has enabled the required models and quotas.  
+2) View available models: Call `/v1/models` or the corresponding native path to confirm models and channels available to the current token.  
+3) Choose an entry point: Use OpenAI-style SDKs by directly changing the base URL, or use Claude or Gemini native paths.  
+4) Send requests: Pass parameters according to the model or task interface requirements, replace `Authorization` and the target model to get started.
 
-## 文档导航
+## Documentation
 
 <CardGroup cols={2}>
-<Card title="协议与入口" icon="globe" href="/features/model-router/protocols-and-entrypoints">
-了解支持的协议类型和 API 入口配置。
+<Card title="Protocols and Entry Points" icon="globe" href="/features/model-router/protocols-and-entrypoints">
+Learn about supported protocol types and API entry point configuration.
 </Card>
 
-<Card title="模型目录" icon="list" href="/features/model-router/model-directory">
-查看可用模型列表和模型信息。
+<Card title="Model Directory" icon="list" href="/features/model-router/model-directory">
+View available model lists and model information.
 </Card>
 
-<Card title="稳定性与容错" icon="shield-check" href="/features/model-router/reliability-and-failover">
-了解重试机制、通道切换和稳定性保障。
+<Card title="Reliability and Failover" icon="shield-check" href="/features/model-router/reliability-and-failover">
+Learn about retry mechanisms, channel switching, and stability guarantees.
 </Card>
 
-<Card title="配额与计费" icon="credit-card" href="/features/model-router/quota-and-billing">
-了解配额管理、预扣结算和计费规则。
+<Card title="Quotas and Billing" icon="credit-card" href="/features/model-router/quota-and-billing">
+Learn about quota management, pre-deduction settlement, and billing rules.
 </Card>
 
-<Card title="限制与前置条件" icon="shield" href="/features/model-router/limits-and-prerequisites">
-查看使用限制和前置条件要求。
+<Card title="Limits and Prerequisites" icon="shield" href="/features/model-router/limits-and-prerequisites">
+View usage limits and prerequisite requirements.
 </Card>
 
-<Card title="AI 应用集成" icon="sparkles" href="/features/model-router/ai-applications/overview">
-查看支持的 AI 应用和集成指南。
+<Card title="AI Application Integration" icon="sparkles" href="/features/model-router/ai-applications/overview">
+View supported AI applications and integration guides.
 </Card>
 </CardGroup>
-

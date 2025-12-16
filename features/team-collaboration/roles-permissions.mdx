@@ -1,56 +1,56 @@
 ---
-title: "角色与权限"
-description: "在团队里给对的人开对的权限，并快速落地"
+title: "Roles and Permissions"
+description: "Grant the right permissions to the right people in your team, and get started quickly"
 ---
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/team/roles-overview.png"
-    alt="团队详情页与成员列表的示意占位"
+    alt="Team details page and member list"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-## 角色怎么分
-- **所有者**：创建人或被转移的责任人，能删团队、转移所有权、分配额度、调角色、移除成员。  
-- **管理员**：日常运营助手，能邀请/移除成员、调额度与角色，但不能删团队或夺取所有权。  
-- **成员**：正常使用团队额度与调用，可查看与自己相关的信息，可主动退出团队。  
+## Role Types
+- **Owner**: The creator or transferred responsible person who can delete teams, transfer ownership, allocate quotas, adjust roles, and remove members.  
+- **Administrator**: Daily operations assistant who can invite/remove members and adjust quotas and roles, but cannot delete teams or take ownership.  
+- **Member**: Normal users who can use team quotas and make calls, view information related to themselves, and voluntarily exit the team.  
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/team/role-switch.png"
-    alt="成员角色调整与权限变更的示意占位"
+    alt="Member role adjustment and permission changes"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-## 直接可用的操作
-- 团队治理：创建、更新信息、关闭或删除；仅所有者可转移所有权。  
-- 成员与邀请：邮件邀请或链接邀请；可重发、撤销；受邀人登录后接受；成员可主动退出。  
-- 配额分配：给团队或单个成员分配/调整额度；额度不足会直接拦截调用。  
-- 角色调整：提升或收紧成员权限，确保敏感操作只在受控人手里。  
-- 统计查看：团队统计、成员排名；成员可查看自己的用量。  
-- 身份切换：调用前切到正确的个人/团队上下文，权限与额度随当前上下文生效。  
+## Available Operations
+- Team Management: Create, update information, close, or delete. Only owners can transfer ownership.  
+- Members and Invitations: Email or link invitations; can resend or revoke; invitees accept after logging in; members can voluntarily exit.  
+- Quota Allocation: Allocate or adjust quotas for teams or individual members; insufficient quotas will directly intercept calls.  
+- Role Adjustment: Elevate or restrict member permissions to ensure sensitive operations are only in the hands of authorized personnel.  
+- Statistics Viewing: Team statistics and member rankings; members can view their own usage.  
+- Identity Switching: Switch to the correct personal/team context before making calls. Permissions and quotas take effect according to the current context.  
 
-## 新团队落地（从零开始）
-1) 在 [`团队 > 我的团队`](/team) 创建团队并完善信息。  
-2) 给核心同事设为管理员，其他设为成员。  
-3) 进入“邀请”发送邮件或生成链接，误发可撤销，未收到可重发。  
-4) 在“成员”页给成员分配额度，再把调用切到团队上下文。  
+## Setting Up a New Team (From Scratch)
+1) Create a team and complete information in [`Teams > My Teams`](/team).  
+2) Set core colleagues as administrators and others as members.  
+3) Go to "Invitations" to send emails or generate links. Mistakenly sent invitations can be revoked, and unaccepted ones can be resent.  
+4) Allocate quotas to members in the "Members" page, then switch calls to the team context.  
 
-## 安全交接（更换责任人）
-1) 在“成员”页确认接手人已在团队且角色满足要求。  
-2) 所有者执行“转移所有权”，完成后原所有者自动降级。  
-3) 如需收紧权限，调整管理员/成员角色或配额。  
+## Secure Handover (Changing Responsibility)
+1) In the "Members" page, confirm that the successor is already in the team and has an appropriate role.  
+2) The owner executes "Transfer Ownership". After completion, the original owner is automatically downgraded.  
+3) If you need to tighten permissions, adjust administrator/member roles or quotas.  
 
-## 使用提示
-- 每次调用前先看当前上下文，避免把个人额度耗在团队或反之。  
-- 删除团队、转移所有权、调整他人额度、移除成员等高风险操作仅限有权限角色。  
-- 额度/状态校验实时生效：额度不足、禁用或到期的令牌会被拒绝调用。  
-- 统计基于实际调用沉淀，初期为空属正常，持续使用后会反映真实消耗。  
+## Tips
+- Check the current context before each call to avoid consuming personal quotas in the team context or vice versa.  
+- High-risk operations such as deleting teams, transferring ownership, adjusting others' quotas, and removing members are limited to authorized roles.  
+- Quota/status validation takes effect in real time: tokens with insufficient quotas, disabled status, or expired status will be rejected.  
+- Statistics are based on actual call accumulation. Empty statistics initially are normal; they will reflect real consumption after sustained usage.  
 
-## 下一步
-- 需要更细的邀请与访问策略、配额与用量、统计与生命周期，请跳转对应章节。  
-- 迁移生产前，用测试令牌验证角色、额度与上下文切换是否符合预期。  
+## Next Steps
+- For more detailed invitation and access strategies, quotas and usage, analytics and lifecycle, refer to the corresponding sections.  
+- Before migrating to production, use test tokens to verify that roles, quotas, and context switching meet expectations.

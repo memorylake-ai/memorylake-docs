@@ -1,35 +1,35 @@
 ---
-title: "模型目录"
-description: "查看令牌可用的模型与通道，含来源与价格元数据"
+title: "Model Directory"
+description: "View models and channels available to tokens, including source and pricing metadata"
 ---
 
-## 你能做什么
-- 一键列出当前令牌可用的模型与通道，明确能用什么。
-- 查看模型的来源、owned_by、价格等元数据，便于前台展示与成本预估。
-- 针对不同协议选择对应的列表接口：`/v1/models`、`/claude/v1/models`、`/gemini/*/models`。
+## What You Can Do
+- List models and channels available to the current token with one click, clarifying what can be used.
+- View model metadata such as source, owned_by, pricing, etc., for frontend display and cost estimation.
+- Choose the corresponding list interface for different protocols: `/v1/models`, `/claude/v1/models`, `/gemini/*/models`.
 
-## 适用场景
-- 在接入前确认可用模型，避免调用不存在或未开通的目标。
-- 为前台或配置中心拉取模型清单，用于下拉选择或价格提示。
-- 在多团队/多令牌场景下分开查看各自可用模型，避免串用。
+## Use Cases
+- Confirm available models before integration to avoid calling non-existent or unenabled targets.
+- Pull model lists for frontend or configuration centers for dropdown selection or pricing hints.
+- View available models separately in multi-team/multi-token scenarios to avoid cross-usage.
 
-## 快速开始
-1) 准备好控制台生成的令牌，确保分组已开通目标模型与额度。  
-2) 按所用协议调用对应的模型列表接口。  
-3) 在返回结果中读取 `id`、`owned_by`、价格等元数据，决定要调用的模型。  
+## Quick Start
+1) Prepare a token generated from the console, ensuring the group has enabled target models and quotas.  
+2) Call the corresponding model list interface according to the protocol used.  
+3) Read metadata such as `id`, `owned_by`, pricing, etc., from the returned results to decide which model to call.  
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/model-router/models.png"
-    alt="模型列表接口响应示意占位，展示模型 ID、来源、owned_by、价格等元数据"
+    alt="Model list interface response showing model ID, source, owned_by, pricing, and other metadata"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-## 请求示例
+## Request Examples
 
-### OpenAI 兼容模型列表
+### OpenAI-Compatible Model List
 <CodeGroup>
 ```ts TypeScript
 await fetch("https://app.memorylake.ai/v1/models", {
@@ -50,7 +50,7 @@ curl https://app.memorylake.ai/v1/models \
 ```
 </CodeGroup>
 
-### Claude 模型列表
+### Claude Model List
 <CodeGroup>
 ```ts TypeScript
 await fetch("https://app.memorylake.ai/claude/v1/models", {
@@ -71,7 +71,7 @@ curl https://app.memorylake.ai/claude/v1/models \
 ```
 </CodeGroup>
 
-### Gemini 模型列表
+### Gemini Model List
 <CodeGroup>
 ```ts TypeScript
 await fetch("https://app.memorylake.ai/gemini/v1beta/models", {
@@ -92,19 +92,18 @@ curl https://app.memorylake.ai/gemini/v1beta/models \
 ```
 </CodeGroup>
 
-## 返回要点
-- `id`：模型标识，用于后续请求的 `model` 字段。
-- `owned_by`：模型归属或来源，便于在界面提示来源渠道。
-- 价格元数据：用于展示和成本预估，实际计费以结算结果为准。
-- 可用性：仅返回当前令牌可用的模型，若未开通则不会出现在列表中。
+## Key Return Fields
+- `id`: Model identifier, used for the `model` field in subsequent requests.
+- `owned_by`: Model ownership or source, convenient for displaying source channels in the interface.
+- Pricing metadata: Used for display and cost estimation; actual billing is based on settlement results.
+- Availability: Only returns models available to the current token; unenabled models will not appear in the list.
 
-## 使用建议
-- 调用前先拉取模型列表，再绑定到前台选择器，避免硬编码模型名。
-- 如果需要透传 OpenAI 生态能力（Files/Fine-tuning/Assistants/Threads/Batches/Vector Stores），先确认对应通道已开通并在列表中可见。
-- 多团队/多应用请使用各自的令牌分别拉取列表，避免将不可用模型暴露给错误的调用方。
+## Usage Recommendations
+- Pull the model list before calling, then bind it to frontend selectors to avoid hardcoding model names.
+- If you need to pass through OpenAI ecosystem capabilities (Files/Fine-tuning/Assistants/Threads/Batches/Vector Stores), first confirm that corresponding channels are enabled and visible in the list.
+- For multi-team/multi-application scenarios, use respective tokens to pull lists separately to avoid exposing unavailable models to incorrect callers.
 
-## 边界与前置
-- 可用模型、来源和价格以控制台与令牌分组配置为准；未开通的模型不会出现在列表中。
-- 价格与 owned_by 来自模型目录返回，计费以实际结算结果为准。
-- 列表仅反映当前令牌可用性，模型上下线或权限变更需重新拉取。
-
+## Boundaries and Prerequisites
+- Available models, sources, and pricing are based on console and token group configuration; unenabled models will not appear in the list.
+- Pricing and owned_by come from the model directory response; billing is based on actual settlement results.
+- The list only reflects current token availability; model online/offline or permission changes require re-fetching.
