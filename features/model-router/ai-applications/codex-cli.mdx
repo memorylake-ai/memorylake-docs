@@ -9,7 +9,7 @@ description: "Command-line interface AI code assistant tool configuration guide"
 
 The following information is required to configure Codex CLI to connect to Model Router:
 
-- **OPENAI_API_KEY**: API Key obtained from the Model Router console (starts with `sk-`)
+- **OPENAI_API_KEY**: API Key obtained from the Model Router [console](https://app.memorylake.ai/panel/token) (starts with `sk-`)
 - **base_url**: Model Router service address (e.g., `https://app.memorylake.ai/v1`)
 - **model**: Model name to use (e.g., `gpt-5-codex`)
 
@@ -35,7 +35,7 @@ codex --version
 
 #### 3. Get API Key
 
-Click "Add Token" on the token management page in the Model Router console to get an API Key.
+Click "Add Token" on the [token management page](https://app.memorylake.ai/panel/token) in the Model Router console to get an API Key.
 
 <Info>
 The name can be set arbitrarily. It's recommended to set the quota to unlimited. Keep other settings as default.
@@ -106,7 +106,7 @@ codex
 
 ### auth.json Configuration Items
 
-- **OPENAI_API_KEY**: API Key obtained from the Model Router console
+- **OPENAI_API_KEY**: API Key obtained from the Model Router [console](https://app.memorylake.ai/panel/token)
 
 ### Custom Configuration Path
 
@@ -118,7 +118,7 @@ export CODEX_HOME=/path/to/your/config
 
 ## Key Points
 
-1) **Get API Key**: Ensure you have generated a valid API Key in the Model Router console (starts with `sk-`).  
+1) **Get API Key**: Ensure you have generated a valid API Key in the Model Router [console](https://app.memorylake.ai/panel/token) (starts with `sk-`).  
 2) **Configuration File Path**: Default uses `~/.codex` directory, can be customized via `CODEX_HOME` environment variable.  
 3) **API Address**: Ensure `base_url` includes `/v1` path, e.g., `https://app.memorylake.ai/v1`.  
 4) **Model Name**: Choose an appropriate model name based on your Model Router configuration.
@@ -133,6 +133,6 @@ export CODEX_HOME=/path/to/your/config
 ## Limitations and Notes
 
 - Codex CLI requires Node.js environment support.
-- API Key must start with `sk-`; ensure it's correctly obtained from the Model Router console.
+- API Key must start with `sk-`; ensure it's correctly obtained from the Model Router [console](https://app.memorylake.ai/panel/token).
 - Model availability depends on your Model Router token group configuration.
 - Configuration file path can be customized via `CODEX_HOME` environment variable.

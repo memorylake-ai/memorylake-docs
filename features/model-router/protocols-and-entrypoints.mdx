@@ -10,7 +10,7 @@ You can access conversations, completions, multimodal tasks, and model directori
 - Need to use OpenAI-style `/v1` interfaces for chat, completion, responsive conversations, streaming conversations, images, voice, Embedding, content moderation, etc.
 - Already using Claude or Gemini official SDKs and want to maintain native paths while only replacing the base address.
 - Need to submit and query task-based capabilities like Midjourney, Suno, RecraftAI, Kling, etc.
-- Prerequisites: Have obtained an available token in the console, and the corresponding group has enabled target models or task quotas.
+- Prerequisites: Have obtained an available token in the [console](https://app.memorylake.ai/panel/token), and the corresponding group has enabled target models or task quotas.
 
 ## Entry Points and Protocols
 
@@ -244,7 +244,7 @@ curl https://app.memorylake.ai/suno/jobs \
 ## Authentication and Available Models
 
 ### Obtaining and Using Tokens
-- Generate tokens in the console and use them as credentials for calls; available models and quotas for different tokens or token groups do not interfere with each other.
+- Generate tokens in the [console](https://app.memorylake.ai/panel/token) and use them as credentials for calls; available models and quotas for different tokens or token groups do not interfere with each other.
 
 ### Viewing Available Model Directory
 - Get models and source information available to the current token through `/v1/models`, `/claude/v1/models`, `/gemini/*/models`, then confirm the callable range before making requests.
@@ -291,5 +291,5 @@ curl https://app.memorylake.ai/tasks/tsk_12345 \
 ## Known Limitations and Boundaries
 - Available models, task capabilities, and quotas are based on actual console and token group configuration; unenabled models or tasks are unavailable.
 - Pricing and owned_by metadata are based on model directory returns; actual billing is based on settlement results.
-- Notifications and content moderation need to be enabled in the console or configuration with correct channel information; they do not take effect if not enabled.
+- Notifications and content moderation need to be enabled in the [console](https://app.memorylake.ai/panel) or configuration with correct channel information; they do not take effect if not enabled.
 - Task submission and query depend on corresponding channels being enabled and require using the same token environment to complete the full chain.

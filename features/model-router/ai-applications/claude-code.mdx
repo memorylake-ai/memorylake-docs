@@ -9,7 +9,7 @@ description: "Code editor integration tool configuration guide based on Anthropi
 
 The following information is required to configure Claude Code to connect to Model Router:
 
-- **ANTHROPIC_AUTH_TOKEN**: API Key obtained from the Model Router console (starts with `sk-`)
+- **ANTHROPIC_AUTH_TOKEN**: API Key obtained from the Model Router [console](https://app.memorylake.ai/panel/token) (starts with `sk-`)
 - **ANTHROPIC_BASE_URL**: Model Router service address (e.g., `https://app.memorylake.ai/claude`)
 
 ### Visual Guide
@@ -30,7 +30,7 @@ claude --version
 
 #### 2. Get API Key
 
-Click "Add Token" on the token management page in the Model Router console to get an API Key.
+Click "Add Token" on the [token management page](https://app.memorylake.ai/panel/token) in the Model Router console to get an API Key.
 
 <Info>
 The name can be set arbitrarily. It's recommended to set the quota to unlimited. Keep other settings as default.
@@ -107,7 +107,7 @@ claude
 
 ## Key Points
 
-1) **Get API Key**: Ensure you have generated a valid API Key in the Model Router console (starts with `sk-`).  
+1) **Get API Key**: Ensure you have generated a valid API Key in the Model Router [console](https://app.memorylake.ai/panel/token) (starts with `sk-`).  
 2) **Configure API Address**: Use the correct Model Router service address, e.g., `https://app.memorylake.ai/claude`.  
 3) **Environment Variables**: It's recommended to write environment variables to shell configuration files to avoid manual setup each time.  
 4) **Project Directory**: Run the `claude` command in the project directory to ensure the working directory is correct.
@@ -121,5 +121,5 @@ claude
 ## Limitations and Notes
 
 - Claude Code requires Node.js environment support.
-- API Key must start with `sk-`; ensure it's correctly obtained from the Model Router console.
+- API Key must start with `sk-`; ensure it's correctly obtained from the Model Router [console](https://app.memorylake.ai/panel/token).
 - Model availability depends on your Model Router token group configuration.
