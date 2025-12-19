@@ -96,10 +96,7 @@ async function apiRequestWithBackoff(url, options) {
 
 ## Burst Limits
 
-Short bursts above the per-minute limit are allowed:
-- Up to 120 requests in a single minute
-- Must stay within hourly limit
-- Sustained bursts will be throttled
+Brief bursts above the per-minute limit are allowed, as long as you stay within the hourly limit.
 
 ## Rate Limit Exceeded Response
 

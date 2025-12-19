@@ -1,6 +1,6 @@
 ---
 title: "Document Management"
-description: "Store, organize, and manage files and folders with hierarchical navigation, advanced upload, and metadata support"
+description: "Store, organize, and manage files and folders with hierarchical navigation and comments"
 ---
 
 ## Overview
@@ -14,16 +14,8 @@ MemoryLake's Document Management system provides a powerful, intuitive interface
 Create folders, upload files, rename, move, delete, and organize your document hierarchy with drag-and-drop support.
 </Card>
 
-<Card title="Advanced Upload" icon="cloud-arrow-up" href="/features/memorylake/document-management/upload-advanced">
-Multi-part uploads for large files, concurrent file handling, progress tracking, and folder structure preservation.
-</Card>
-
-<Card title="Metadata & Comments" icon="comment" href="/features/memorylake/document-management/metadata-comments">
-Add rich Markdown-formatted comments and extended attributes to any file or folder for enhanced context.
-</Card>
-
-<Card title="Tree Navigation" icon="sitemap" href="/features/memorylake/document-management/tree-navigation">
-Navigate your documents with lazy loading, expandable nodes, resizable columns, and intuitive keyboard controls.
+<Card title="Comments" icon="comment" href="/features/memorylake/document-management/metadata-comments">
+Add rich Markdown-formatted comments to any file or folder for enhanced context.
 </Card>
 </CardGroup>
 
@@ -44,11 +36,11 @@ Navigate your documents with lazy loading, expandable nodes, resizable columns, 
   - Entire folder upload with structure preservation
   - Drag-and-drop from your desktop
 
-- **Smart Upload Handling**:
-  - Automatic multi-part upload for large files
-  - Up to 3 concurrent uploads
+- **Reliable Upload**:
+  - Handles files of any size
+  - Multiple files can be uploaded together
   - Real-time progress tracking
-  - Pause and resume capability
+  - Resume capability if interrupted
 
 - **Supported File Types**:
   - Documents: `.md`, `.txt`, `.pdf`
@@ -56,7 +48,7 @@ Navigate your documents with lazy loading, expandable nodes, resizable columns, 
   - Data: `.csv`
 
 <Tip>
-Files larger than 100MB automatically use multi-part uploads for improved reliability and resume capability.
+MemoryLake automatically handles large file uploads reliably.
 </Tip>
 
 ### File Operations
@@ -66,20 +58,16 @@ All standard file operations are supported:
 - **Update**: Rename files and folders, move items
 - **Delete**: Remove files and folders with confirmation
 
-### Metadata & Context
-- **Extended Attributes**: Store custom metadata on any file or folder
+### Comments
 - **Markdown Comments**: Add rich-text comments with formatting, lists, and links
 - **Live Preview**: See your Markdown rendered in real-time
-- **Comment History**: Auto-save protects against data loss
+- **Auto-Save**: Draft protection prevents data loss
 
-{/* SCREENSHOT: Metadata panel with Markdown editor and preview */}
+{/* SCREENSHOT: Comment panel with Markdown editor and preview */}
 
 ### Tree View Features
-- **Resizable Interface**: Adjust the tree view width (15%-50%) to suit your workflow
-- **Lazy Loading**: Folders load contents on-demand for better performance
-- **Visual Indicators**: Loading states, expand/collapse icons, file type icons
-- **Context Menu**: Right-click access to all operations
-- **Keyboard Navigation**: Arrow keys, Enter, and shortcuts for efficient navigation
+- **Resizable Interface**: Adjust the tree panel width to suit your workflow
+- **Context Menu**: Right-click access to operations
 
 ## Common Workflows
 
@@ -117,33 +105,22 @@ All standard file operations are supported:
 
 ## Supported File Formats
 
-| File Type | Extensions | Max Size | Notes |
-|-----------|-----------|----------|-------|
-| Markdown | `.md` | 100 MB | Rendered in preview |
-| Text | `.txt` | 100 MB | Plain text files |
-| PDF | `.pdf` | 500 MB | Multi-part upload for large files |
-| Excel | `.xlsx`, `.xls` | 100 MB | Spreadsheet files |
-| CSV | `.csv` | 50 MB | Data files |
+MemoryLake supports the following file types:
 
-<Note>
-File size limits may vary based on your account type. Files exceeding the single-upload threshold automatically use multi-part uploads.
-</Note>
+- **Markdown** (`.md`) - Text files with formatting
+- **Text** (`.txt`) - Plain text files
+- **PDF** (`.pdf`) - Document files
+- **Excel** (`.xlsx`, `.xls`) - Spreadsheet files
+- **CSV** (`.csv`) - Data files
 
 ## Security & Permissions
 
-- **Secure Storage**: All files are encrypted at rest and in transit
 - **User Isolation**: Your drive is private to your account
 - **Project Sharing**: Share access via project association and MCP servers
-- **Audit Trail**: Track file operations and access patterns
 
-## Performance Optimization
+## Performance
 
-MemoryLake is optimized for handling large document collections:
-
-- **Lazy Loading**: Folder contents load only when needed
-- **Virtual Scrolling**: Efficient rendering of large file lists
-- **Concurrent Operations**: Multiple files can be uploaded simultaneously
-- **Chunked Downloads**: Large file downloads use efficient streaming
+MemoryLake is optimized for handling large document collections efficiently, ensuring smooth operation even with thousands of files.
 
 ## Integration with Other Features
 
@@ -163,16 +140,8 @@ Ready to start organizing your documents? Choose a guide below:
 Learn the basics of creating folders, uploading files, and organizing your content.
 </Card>
 
-<Card title="Advanced Upload Features" icon="upload" href="/features/memorylake/document-management/upload-advanced">
-Master multi-part uploads, concurrent transfers, and progress tracking.
-</Card>
-
-<Card title="Metadata & Comments" icon="pen-to-square" href="/features/memorylake/document-management/metadata-comments">
-Enhance your documents with rich metadata and Markdown comments.
-</Card>
-
-<Card title="Tree Navigation" icon="compass" href="/features/memorylake/document-management/tree-navigation">
-Navigate efficiently with keyboard shortcuts and visual organization.
+<Card title="Comments" icon="pen-to-square" href="/features/memorylake/document-management/metadata-comments">
+Enhance your documents with rich Markdown comments.
 </Card>
 </CardGroup>
 
@@ -211,7 +180,3 @@ Navigate efficiently with keyboard shortcuts and visual organization.
 <Tip>
 Start with a simple folder structure and expand as needed. It's easier to add complexity than to simplify an overly complex structure later.
 </Tip>
-
-## Troubleshooting
-
-Having issues with document management? Check our [troubleshooting guide](/features/memorylake/document-management/troubleshooting) for solutions to common problems.

@@ -37,50 +37,197 @@ Store project documentation, procedures, and references.
 </Card>
 </CardGroup>
 
-## Memory Features
-
-- **Name & Content**: Each memory has a descriptive name and text content
-- **Timestamps**: Track when memories were created and updated
-- **Full CRUD**: Create, read, update, and delete operations
-- **Project Association**: Memories belong to specific projects
-- **MCP Access**: AI models can read memories via MCP servers
-
-## Getting Started
+## Creating Memories
 
 <Steps>
-<Step title="Open Project">
-Navigate to a project dashboard.
+<Step title="Navigate to Project">
+Open the project where you want to add a memory.
 </Step>
 
 <Step title="Go to Memories Tab">
-Click the "Memories" tab.
+Click the "Memories" tab in the project dashboard.
 </Step>
 
-<Step title="Create Memory">
-Click "Add Memory" and fill in name and content.
+<Step title="Click Add Memory">
+Click the "Add Memory" button.
+
+{/* SCREENSHOT: Add memory button */}
 </Step>
 
-<Step title="Save">
-Save your memory. It's now available to AI models accessing the project.
+<Step title="Fill in Details">
+A dialog appears with two fields:
+
+**Name** (required):
+- Short, descriptive title
+- Example: "Project Guidelines", "Research Questions", "Key Findings"
+
+**Content** (required):
+- Full text of the memory
+- Can be multiple paragraphs
+- Plain text (not Markdown)
+
+{/* SCREENSHOT: Create memory dialog with sample content */}
+</Step>
+
+<Step title="Save Memory">
+Click "Save" or "Create" to save the memory.
+
+<Check>
+Memory appears in the Memories tab list.
+</Check>
 </Step>
 </Steps>
+
+## Memory Content Guidelines
+
+### What to Include
+
+**Good Memory Content**:
+- Context about the project
+- Guidelines for AI interactions
+- Key decisions and rationale
+- Important facts and figures
+- Lessons learned
+- References to related information
+
+**Example**:
+```
+This project analyzes customer feedback from Q1 2024.
+
+Key objectives:
+- Identify trending pain points
+- Measure sentiment changes over time
+- Recommend product improvements
+
+When analyzing, prioritize recent feedback and cross-reference with NPS scores.
+
+Related projects: Q4 2023 Analysis, Customer Satisfaction Study
+```
+
+### Length Considerations
+
+- **Concise**: Aim for 100-500 words per memory
+- **Focused**: One topic or theme per memory
+- **Scannable**: Use line breaks for readability
+- **Multiple Memories**: Better to create several focused memories than one long one
+
+<Tip>
+Think of memories as index cards - each should contain a single coherent piece of information.
+</Tip>
+
+### Structure
+
+Use clear structure in your memory content:
+
+```
+**Purpose**: What this project is about
+
+**Context**: Background information
+
+**Guidelines**: How to approach the content
+
+**Important Notes**: Key things to remember
+```
+
+### Clarity
+
+- Use simple, clear language
+- Avoid jargon unless necessary
+- Define terms that might be ambiguous
+- Be specific rather than vague
+
+## Editing Memories
+
+<Steps>
+<Step title="Locate Memory">
+Find the memory in the Memories tab list.
+</Step>
+
+<Step title="Open Edit Dialog">
+Click the edit icon or "Edit" in the actions menu.
+
+{/* SCREENSHOT: Edit memory dialog */}
+</Step>
+
+<Step title="Modify Content">
+Update the name and/or content as needed.
+</Step>
+
+<Step title="Save Changes">
+Click "Save" to persist your changes.
+
+<Check>
+Updated memory shows new content immediately.
+</Check>
+</Step>
+</Steps>
+
+## Managing Memories
+
+### Delete Memory
+
+<Warning>
+Deleting a memory is permanent. The memory is removed from the project and AI models will no longer have access to it.
+</Warning>
+
+<Steps>
+<Step title="Select Memory">
+Click delete icon for the memory to remove.
+
+{/* SCREENSHOT: Delete confirmation dialog */}
+</Step>
+
+<Step title="Confirm Deletion">
+Review memory name and click "Delete" to confirm.
+</Step>
+
+<Step title="Verify Removal">
+Memory disappears from list immediately.
+</Step>
+</Steps>
+
+
+## Memory Organization
+
+### Naming Strategy
+
+Use consistent naming patterns:
+
+**By Topic**:
+- "Architecture - Overview"
+- "Architecture - Database Design"
+- "Architecture - API Structure"
+
+**By Type**:
+- "[Guidelines] Code Style"
+- "[Context] Project History"
+- "[Reference] Related Projects"
+
+**By Priority**:
+- "IMPORTANT: Budget Constraints"
+- "Key Finding: Customer Preference"
+- "Note: Technical Limitation"
+
+### Content Organization
+
+Within memory content:
+- Start with most important information
+- Use consistent formatting
+- Include headers or sections
+- Add line breaks for readability
 
 ## Next Steps
 
 <CardGroup cols={2}>
-<Card title="Creating Memories" icon="plus" href="/features/memorylake/memories/creating-memories">
-Learn to create and edit memories
-</Card>
-
-<Card title="Managing Memories" icon="list-check" href="/features/memorylake/memories/managing-memories">
-View, organize, and delete memories
-</Card>
-
 <Card title="Best Practices" icon="star" href="/features/memorylake/memories/best-practices">
 Write effective memories
 </Card>
 
-<Card title="Troubleshooting" icon="wrench" href="/features/memorylake/memories/troubleshooting">
-Solve common issues
+<Card title="MCP Servers" icon="server" href="/features/memorylake/mcp-servers/overview">
+Provide AI access to your memories
+</Card>
+
+<Card title="Memories API" icon="code" href="/features/memorylake/api-reference/memories">
+Manage memories programmatically
 </Card>
 </CardGroup>

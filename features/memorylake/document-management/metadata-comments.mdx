@@ -1,55 +1,11 @@
 ---
-title: "Metadata & Comments"
-description: "Add rich metadata and Markdown comments to your documents with live preview"
+title: "Comments"
+description: "Add rich Markdown comments to your documents with live preview"
 ---
 
 ## Overview
 
-Enhance your documents with rich contextual information using MemoryLake's metadata system. Add Markdown-formatted comments, store custom attributes, and provide context that helps both humans and AI understand your content.
-
-## Extended Attributes (Metadata)
-
-### What Are Extended Attributes?
-
-Extended attributes (xattrs) are custom key-value pairs that you can attach to any file or folder. They store information about the item without modifying the file itself.
-
-**Common Use Cases**:
-- Document classification (e.g., `category: research`)
-- Status tracking (e.g., `status: reviewed`)
-- Custom tags (e.g., `tags: important,q1-2024`)
-- Project metadata (e.g., `project-phase: planning`)
-
-{/* SCREENSHOT: Metadata panel showing extended attributes */}
-
-### Adding Extended Attributes
-
-<Steps>
-<Step title="Select Item">
-Click on a file or folder in the tree to select it.
-</Step>
-
-<Step title="Open Metadata Panel">
-Click the metadata icon or right-click and select "Edit Metadata".
-
-The metadata panel opens on the right side of the screen.
-</Step>
-
-<Step title="Add Attributes">
-Enter key-value pairs:
-- **Key**: Attribute name (e.g., "category", "status")
-- **Value**: Attribute value (e.g., "research", "draft")
-
-Click "Add" to save the attribute.
-</Step>
-
-<Step title="Save Changes">
-Click "Save" to persist all changes to the server.
-
-<Check>
-Your metadata is now stored with the file and will appear whenever you view the item.
-</Check>
-</Step>
-</Steps>
+Add contextual information to your documents using Markdown-formatted comments. Provide context that helps both humans and AI understand your content.
 
 ## Markdown Comments
 
@@ -61,7 +17,6 @@ MemoryLake's comment system uses Markdown, allowing you to create rich, formatte
 - **Markdown Formatting**: Headers, lists, bold, italic, code blocks, links
 - **Live Preview**: See rendered output as you type
 - **Auto-Save**: Draft protection prevents data loss
-- **Version History**: Track comment changes over time (if enabled)
 
 {/* SCREENSHOT: Markdown comment editor with split preview */}
 
@@ -259,21 +214,6 @@ To modify an existing comment:
 3. Edit the Markdown text
 4. Save changes
 
-<Note>
-Some organizations enable comment versioning, allowing you to view previous versions. Check your organization settings.
-</Note>
-
-### Auto-Save and Drafts
-
-MemoryLake automatically saves comment drafts:
-- **Auto-Save Interval**: Every 30 seconds while editing
-- **Draft Recovery**: If the browser closes, your draft is preserved
-- **Reset Draft**: Use the "Reset" button to discard changes and revert to last saved version
-
-<Tip>
-Take advantage of auto-save to write long comments without worry. Your work is protected even if the connection is lost temporarily.
-</Tip>
-
 ### Deleting Comments
 
 To remove a comment entirely:
@@ -281,10 +221,8 @@ To remove a comment entirely:
 2. Delete all text
 3. Click "Save"
 
-The comment is removed from the file, though version history may retain previous versions.
-
 <Warning>
-Deleting comments is permanent (unless version history is enabled). Consider adding a "DEPRECATED" header instead if you might need the information later.
+Deleting comments is permanent and cannot be undone. Consider adding a "DEPRECATED" header instead if you might need the information later.
 </Warning>
 
 ## Best Practices
@@ -305,18 +243,6 @@ Deleting comments is permanent (unless version history is enabled). Consider add
 - Leave outdated comments
 </Accordion>
 
-<Accordion title="Organizing with Metadata">
-**Folder Metadata**:
-- Use `project` attribute to link folders to projects
-- Add `status` to track folder lifecycle (active/archived)
-- Include `owner` for accountability
-
-**File Metadata**:
-- `category` for classification (report/research/data)
-- `version` for version tracking
-- `reviewed-by` for approval workflows
-- `last-updated` for freshness tracking
-</Accordion>
 
 <Accordion title="Markdown Formatting Tips">
 - Use `#` headers to create structure
@@ -338,59 +264,12 @@ Deleting comments is permanent (unless version history is enabled). Consider add
 
 ## Integration with Projects
 
-Comments and metadata enhance project workflows:
+Comments enhance project workflows:
 
 - **Project Context**: Comments provide context when documents are associated with projects
 - **AI Understanding**: AI models accessing via MCP servers can read comments to understand document purpose
 - **Team Collaboration**: Comments help team members understand document relationships and history
-- **Search**: Metadata and comments are searchable, making documents easier to find
-
-## Advanced Use Cases
-
-### Documentation as Code
-
-Store markdown documentation directly as comments:
-```markdown
-# API Endpoint Documentation
-
-## GET /api/users/{id}
-
-**Description**: Retrieves user details by ID
-
-**Parameters**:
-- `id` (required): User ID (UUID format)
-
-**Response**: 200 OK
-```json
-{
-  "id": "uuid",
-  "name": "string",
-  "email": "string"
-}
-```
-
-**Error Codes**:
-- 404: User not found
-- 401: Unauthorized
-```
-
-### Knowledge Management
-
-Create a knowledge base within comments:
-- **Lessons Learned**: Document what worked and what didn't
-- **Decision Records**: Explain why choices were made
-- **Process Documentation**: Describe workflows and procedures
-- **Troubleshooting**: Include solutions to common problems
-
-### Cross-Referencing
-
-Link documents together in comments:
-```markdown
-## Related Documents
-- [Design Specs](/projects/redesign/specs.md) - Latest design specifications
-- [Requirements](/projects/redesign/requirements.pdf) - Original requirements document
-- [Budget](/finance/q1-budget.xlsx) - Budget allocation
-```
+- **Search**: Comments are searchable, making documents easier to find
 
 ## Next Steps
 
@@ -399,15 +278,11 @@ Link documents together in comments:
 Learn basic file and folder operations
 </Card>
 
-<Card title="Advanced Upload" icon="cloud-arrow-up" href="/features/memorylake/document-management/upload-advanced">
-Master multi-part and concurrent uploads
-</Card>
-
 <Card title="Project Association" icon="diagram-project" href="/features/memorylake/project-management/document-association">
 Link documents to projects
 </Card>
 
 <Card title="Items API" icon="code" href="/features/memorylake/api-reference/items">
-Update metadata programmatically via API
+Manage files programmatically via API
 </Card>
 </CardGroup>

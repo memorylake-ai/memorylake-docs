@@ -1,11 +1,11 @@
 ---
 title: "Upload API"
-description: "Upload files using single or multi-part upload mechanisms"
+description: "Upload files to MemoryLake using the REST API"
 ---
 
-## Single File Upload
+## File Upload
 
-For files under 100MB, use direct upload to parent folder.
+Upload files to a parent folder using multipart form data.
 
 ```
 POST /drives/items/{parentId}/children
@@ -14,7 +14,7 @@ POST /drives/items/{parentId}/children
 ### Parameters
 
 <ParamField path="parentId" type="string" required>
-Parent folder ID
+Parent folder ID where the file will be uploaded
 </ParamField>
 
 ### Body (multipart/form-data)
@@ -38,55 +38,20 @@ curl -X POST 'https://api.example.com/api/memorylake/api/v1/drives/items/parent_
 ```
 </RequestExample>
 
-## Multi-Part Upload
+### Response
 
-For large files (> 100MB), use multi-part upload.
+Returns the created file item with metadata.
 
-### Create Multi-Part Upload
-
-```
-POST /upload/create-multipart
-```
-
-<ParamField body="parent_id" type="string" required>
-Parent folder ID
-</ParamField>
-
-<ParamField body="name" type="string" required>
-File name
-</ParamField>
-
-<ParamField body="size" type="integer" required>
-Total file size in bytes
-</ParamField>
-
-Returns `upload_id` and `chunk_size`.
-
-### Upload Parts
-
-Upload file chunks using pre-signed URLs or direct upload endpoints.
-
-### Complete Multi-Part Upload
-
-```
-POST /upload/complete-multipart
-```
-
-<ParamField body="upload_id" type="string" required>
-Upload ID from create-multipart
-</ParamField>
-
-<ParamField body="parts" type="array" required>
-Array of completed part objects with part number and ETag
-</ParamField>
+<Tip>
+The API automatically handles large files. Simply upload your file and the backend will process it appropriately.
+</Tip>
 
 ## Best Practices
 
-- Files < 100MB: Use single upload
-- Files > 100MB: Use multi-part upload
-- Chunk size: 5-10MB per part
-- Concurrent parts: Up to 3
-- Implement retry logic for failed parts
+- Use appropriate error handling for network issues
+- Implement retry logic for failed uploads
+- Check file size limits based on your plan
+- Validate file types before uploading
 
 ## Next Steps
 
@@ -95,7 +60,7 @@ Array of completed part objects with part number and ETag
 Manage uploaded files
 </Card>
 
-<Card title="Advanced Upload" icon="cloud-arrow-up" href="/features/memorylake/document-management/upload-advanced">
-UI upload features
+<Card title="File Operations" icon="folder-open" href="/features/memorylake/document-management/file-folder-operations">
+Learn about file management in the UI
 </Card>
 </CardGroup>

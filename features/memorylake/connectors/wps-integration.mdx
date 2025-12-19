@@ -11,7 +11,6 @@ WPS (Kingsoft Office) integration allows you to access your WPS document librari
 
 - Active WPS account
 - Document libraries in your WPS workspace
-- Administrative access to connect services (if required by your organization)
 
 ## Step-by-Step Setup
 
@@ -24,7 +23,7 @@ Navigate to the Connectors section in MemoryLake and click on the WPS connector 
 </Step>
 
 <Step title="Initiate OAuth Flow">
-Click "Connect" or "Login with WPS". A new window opens to WPS's authorization page.
+Click "Login with WPS". A new window opens to WPS's authorization page.
 
 {/* SCREENSHOT: OAuth window with WPS login screen */}
 
@@ -118,12 +117,12 @@ To unmount specific libraries:
 
 The library disappears from WPS Space but your WPS account remains connected.
 
-### Revoke Authorization
+### Disconnect
 
 To completely disconnect WPS:
 1. Open WPS connector settings
-2. Click "Revoke Authorization"
-3. Confirm revocation
+2. Click "Disconnect"
+3. Confirm disconnection
 
 All WPS libraries are unmounted and MemoryLake loses access to your WPS account.
 
@@ -172,7 +171,6 @@ WPS-mounted content is **read-only**:
 - ✅ Browse folder structure
 - ✅ Download files
 - ✅ Associate with projects
-- ✅ Search content
 - ❌ Upload new files
 - ❌ Edit existing files
 - ❌ Delete files
@@ -182,12 +180,6 @@ WPS-mounted content is **read-only**:
 To modify WPS documents, use the WPS application directly. Changes appear in MemoryLake after refreshing.
 </Tip>
 
-## Refreshing WPS Content
-
-WPS content doesn't auto-refresh. To see latest changes:
-1. Collapse the WPS Space folder
-2. Re-expand to trigger reload
-3. Or refresh the entire page
 
 ## Troubleshooting
 
@@ -209,24 +201,6 @@ WPS content doesn't auto-refresh. To see latest changes:
 - Contact WPS support if libraries are missing
 </Accordion>
 
-<Accordion title="Connection fails after authorization">
-**Solutions**:
-- Check internet connection
-- Wait a few minutes and retry
-- Revoke and re-authorize
-- Check MemoryLake service status
-- Contact support with error message
-</Accordion>
-
-<Accordion title="WPS files won't download">
-**Solutions**:
-- Verify file size isn't too large
-- Check WPS permissions for the file
-- Try downloading from WPS directly first
-- Check browser download settings
-- Ensure sufficient local disk space
-</Accordion>
-
 </AccordionGroup>
 
 ## Security & Privacy
@@ -234,7 +208,7 @@ WPS content doesn't auto-refresh. To see latest changes:
 - **OAuth 2.0**: Industry-standard secure authentication
 - **Read-Only**: MemoryLake cannot modify your WPS content
 - **Token Storage**: Encrypted access tokens stored securely
-- **Revocable**: Disconnect anytime via revoke authorization
+- **Revocable**: Disconnect anytime
 - **No Password Storage**: Your WPS password never leaves WPS
 
 ## Next Steps
@@ -246,9 +220,5 @@ Learn about other available connectors
 
 <Card title="Project Association" icon="diagram-project" href="/features/memorylake/project-management/document-association">
 Associate WPS documents with projects
-</Card>
-
-<Card title="Connector Troubleshooting" icon="wrench" href="/features/memorylake/connectors/troubleshooting">
-Solve common WPS integration issues
 </Card>
 </CardGroup>

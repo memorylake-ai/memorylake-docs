@@ -49,50 +49,36 @@
                     "pages": [
                       "features/memorylake/document-management/overview",
                       "features/memorylake/document-management/file-folder-operations",
-                      "features/memorylake/document-management/upload-advanced",
-                      "features/memorylake/document-management/metadata-comments",
-                      "features/memorylake/document-management/tree-navigation",
-                      "features/memorylake/document-management/troubleshooting"
+                      "features/memorylake/document-management/metadata-comments"
                     ]
                   },
                   {
                     "group": "Connectors",
                     "pages": [
                       "features/memorylake/connectors/overview",
-                      "features/memorylake/connectors/connector-framework",
-                      "features/memorylake/connectors/wps-integration",
-                      "features/memorylake/connectors/adding-connectors",
-                      "features/memorylake/connectors/troubleshooting"
+                      "features/memorylake/connectors/wps-integration"
                     ]
                   },
                   {
                     "group": "Project Management",
                     "pages": [
                       "features/memorylake/project-management/overview",
-                      "features/memorylake/project-management/projects-crud",
                       "features/memorylake/project-management/project-dashboard",
-                      "features/memorylake/project-management/document-association",
-                      "features/memorylake/project-management/troubleshooting"
+                      "features/memorylake/project-management/document-association"
                     ]
                   },
                   {
                     "group": "Memories",
                     "pages": [
                       "features/memorylake/memories/overview",
-                      "features/memorylake/memories/creating-memories",
-                      "features/memorylake/memories/managing-memories",
-                      "features/memorylake/memories/best-practices",
-                      "features/memorylake/memories/troubleshooting"
+                      "features/memorylake/memories/best-practices"
                     ]
                   },
                   {
                     "group": "MCP Servers",
                     "pages": [
                       "features/memorylake/mcp-servers/overview",
-                      "features/memorylake/mcp-servers/creating-api-keys",
-                      "features/memorylake/mcp-servers/configuration",
-                      "features/memorylake/mcp-servers/security",
-                      "features/memorylake/mcp-servers/troubleshooting"
+                      "features/memorylake/mcp-servers/creating-api-keys"
                     ]
                   }
                 ]
