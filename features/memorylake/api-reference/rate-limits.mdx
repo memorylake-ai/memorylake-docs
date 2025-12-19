@@ -1,0 +1,141 @@
+---
+title: "Rate Limiting & Quotas"
+description: "API rate limits and usage quotas"
+---
+
+## Rate Limit Overview
+
+API requests are rate limited to ensure fair usage and system stability.
+
+## Current Limits
+
+### Per API Key
+
+| Limit Type | Value |
+|------------|-------|
+| Requests per minute | 60 |
+| Requests per hour | 1000 |
+| Requests per day | 10000 |
+| Concurrent requests | 10 |
+
+<Note>
+Limits may vary based on your plan. Contact support for higher limits.
+</Note>
+
+## Rate Limit Headers
+
+Every API response includes rate limit information:
+
+```
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 45
+X-RateLimit-Reset: 1642262400
+```
+
+| Header | Description |
+|--------|-------------|
+| X-RateLimit-Limit | Maximum requests in current window |
+| X-RateLimit-Remaining | Requests remaining in current window |
+| X-RateLimit-Reset | Unix timestamp when limit resets |
+
+## Handling Rate Limits
+
+### Check Headers
+
+```javascript
+const response = await fetch(url, options);
+
+const limit = response.headers.get('X-RateLimit-Limit');
+const remaining = response.headers.get('X-RateLimit-Remaining');
+const reset = response.headers.get('X-RateLimit-Reset');
+
+console.log(`${remaining}/${limit} requests remaining`);
+console.log(`Resets at ${new Date(reset * 1000)}`);
+```
+
+### Implement Backoff
+
+```javascript
+async function apiRequestWithBackoff(url, options) {
+  const response = await fetch(url, options);
+  
+  if (response.status === 429) {
+    const reset = response.headers.get('X-RateLimit-Reset');
+    const waitTime = (reset * 1000) - Date.now();
+    
+    console.log(`Rate limited. Waiting ${waitTime}ms`);
+    await sleep(waitTime);
+    
+    return apiRequestWithBackoff(url, options);
+  }
+  
+  return response;
+}
+```
+
+### Optimize Requests
+
+**Best Practices**:
+- Cache responses when possible
+- Batch requests where supported
+- Use webhooks instead of polling
+- Implement request queuing
+- Monitor usage regularly
+
+## Storage Quotas
+
+### Per User
+
+| Resource | Limit |
+|----------|-------|
+| Total storage | 100 GB (varies by plan) |
+| Max file size | 500 MB |
+| Projects | Unlimited |
+| Memories per project | Unlimited |
+| API keys per project | 10 |
+
+## Burst Limits
+
+Short bursts above the per-minute limit are allowed:
+- Up to 120 requests in a single minute
+- Must stay within hourly limit
+- Sustained bursts will be throttled
+
+## Rate Limit Exceeded Response
+
+```json
+{
+  "success": false,
+  "message": "Rate limit exceeded. Retry after 30 seconds.",
+  "code": "RATE_LIMIT_EXCEEDED",
+  "retry_after": 30
+}
+```
+
+## Requesting Higher Limits
+
+Need higher limits? Contact support with:
+- Current usage patterns
+- Expected future usage
+- Use case description
+- Business justification
+
+## Monitoring Usage
+
+Track your API usage:
+- Monitor rate limit headers
+- Log request counts
+- Set up alerts for approaching limits
+- Review usage trends regularly
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="API Overview" icon="book" href="/features/memorylake/api-reference/overview">
+Return to API overview
+</Card>
+
+<Card title="Error Handling" icon="triangle-exclamation" href="/features/memorylake/api-reference/errors">
+Handle rate limit errors
+</Card>
+</CardGroup>

@@ -1,0 +1,144 @@
+---
+title: "External Connectors"
+description: "Integrate external document services like WPS, Dropbox, and Feishu into your MemoryLake workspace"
+---
+
+## Overview
+
+MemoryLake Connectors enable you to integrate external document services directly into your workspace. Access files from WPS, Dropbox, Feishu, and other services without leaving MemoryLake.
+
+## What Are Connectors?
+
+Connectors are integrations that:
+- **Mount external document libraries** into your drive
+- **Use OAuth authentication** for secure access
+- **Provide read-only access** to external content
+- **Preserve folder structure** from external services
+- **Support multiple services** through extensible framework
+
+{/* SCREENSHOT: Connector section showing available connectors */}
+
+## Available Connectors
+
+<CardGroup cols={2}>
+<Card title="WPS (Kingsoft Office)" icon="file-word" href="/features/memorylake/connectors/wps-integration">
+  **Status**: Available
+  Connect your WPS account and access document libraries. Full OAuth integration with multi-library support.
+</Card>
+
+<Card title="Dropbox" icon="dropbox">
+  **Status**: Coming Soon
+  Access your Dropbox files directly in MemoryLake.
+</Card>
+
+<Card title="Feishu" icon="comments">
+  **Status**: Coming Soon
+  Integrate Feishu document collaboration platform.
+</Card>
+
+<Card title="Custom Connectors" icon="puzzle-piece" href="/features/memorylake/connectors/adding-connectors">
+  **Status**: Developer Feature
+  Build your own connectors using our extensible framework.
+</Card>
+</CardGroup>
+
+## How Connectors Work
+
+### Authentication Flow
+
+1. **Initiate Connection**: Click on a connector card
+2. **OAuth Authentication**: Redirected to service's login page
+3. **Grant Permissions**: Approve MemoryLake access
+4. **Select Resources**: Choose which libraries/folders to mount
+5. **Create Mount Points**: External content appears in your drive
+
+### Mount Points
+
+Connected services appear as special folders in your drive:
+- Located in dedicated connector folder (e.g., "WPS Space")
+- Marked with connector icon
+- Read-only access (download only)
+- Respect external service permissions
+
+{/* SCREENSHOT: WPS Space folder showing mounted document libraries */}
+
+## Connector Capabilities
+
+### What You Can Do
+
+- **Browse** external document structures
+- **Download** files from external services
+- **Associate** with projects (for AI context)
+- **Search** within mounted content
+- **View** metadata from external service
+
+### Limitations
+
+- **Read-Only**: Cannot upload, edit, or delete through MemoryLake
+- **Sync Direction**: One-way (external → MemoryLake)
+- **Real-Time**: Changes in external service require refresh
+- **File Types**: Limited to MemoryLake-supported formats
+
+<Note>
+To modify files in external services, use the native application. MemoryLake provides convenient read access and integration with your projects.
+</Note>
+
+## Common Use Cases
+
+<AccordionGroup>
+<Accordion title="Unified Document Access">
+Access all your documents from multiple services in one place. Browse WPS libraries alongside your MemoryLake files without switching applications.
+</Accordion>
+
+<Accordion title="Project Integration">
+Include external documents in your MemoryLake projects. Provide AI models with context from both local and external sources.
+</Accordion>
+
+<Accordion title="Team Collaboration">
+Team members with WPS/Dropbox accounts can access shared content through MemoryLake, centralizing document discovery.
+</Accordion>
+
+<Accordion title="Migration Planning">
+Preview and download external content before migrating to MemoryLake. Test workflows before full migration.
+</Accordion>
+</AccordionGroup>
+
+## Getting Started
+
+<Steps>
+<Step title="Choose a Connector">
+Navigate to the Connectors section and select a service you use.
+</Step>
+
+<Step title="Authenticate">
+Log in to the external service and grant MemoryLake access.
+</Step>
+
+<Step title="Select Resources">
+Choose which document libraries or folders to mount.
+</Step>
+
+<Step title="Access Content">
+Browse the mounted content in your drive under the connector folder.
+</Step>
+</Steps>
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="WPS Integration" icon="file" href="/features/memorylake/connectors/wps-integration">
+Step-by-step guide to connecting your WPS account
+</Card>
+
+<Card title="Connector Framework" icon="diagram-project" href="/features/memorylake/connectors/connector-framework">
+Understand the architecture and extensibility
+</Card>
+
+<Card title="Adding Connectors" icon="code" href="/features/memorylake/connectors/adding-connectors">
+Developer guide for building custom connectors
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/features/memorylake/connectors/troubleshooting">
+Solve common connector issues
+</Card>
+</CardGroup>

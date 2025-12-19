@@ -1,0 +1,96 @@
+---
+title: "MCP Servers API (API Keys)"
+description: "Generate and manage API keys for MCP server access"
+---
+
+## List API Keys
+
+```
+GET /projects/{projectId}/apikeys
+```
+
+Returns all API keys for the project.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.example.com/api/memorylake/api/v1/projects/proj_123/apikeys' \
+  -H 'Authorization: Bearer YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+  "success": true,
+  "data": [
+    {
+      "id": "key_123",
+      "description": "Production API",
+      "secret_suffix": "...xyz",
+      "created_at": "2024-01-15T10:00:00Z"
+    }
+  ]
+}
+```
+</ResponseExample>
+
+## Create API Key
+
+```
+POST /projects/{projectId}/apikeys
+```
+
+<ParamField body="description" type="string">
+Optional description
+</ParamField>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="API key object">
+  <ResponseField name="id" type="string">
+  API key ID
+  </ResponseField>
+  
+  <ResponseField name="secret" type="string">
+  **Full API secret - shown only once!**
+  </ResponseField>
+  
+  <ResponseField name="endpoint_url" type="string">
+  MCP server endpoint URL
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<Warning>
+The `secret` field is returned only upon creation. Store it securely - it cannot be retrieved again.
+</Warning>
+
+## Delete API Key
+
+```
+DELETE /projects/{projectId}/apikeys/{apikeyId}
+```
+
+Immediately revokes access for this API key.
+
+## Using MCP Server Endpoints
+
+Once created, use the API key to access project data:
+
+```bash
+curl -X GET '{endpoint_url}' \
+  -H 'Authorization: Bearer API_SECRET'
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="MCP Servers Guide" icon="server" href="/features/memorylake/mcp-servers/overview">
+Learn about MCP servers
+</Card>
+
+<Card title="Security" icon="shield" href="/features/memorylake/mcp-servers/security">
+API key security
+</Card>
+</CardGroup>

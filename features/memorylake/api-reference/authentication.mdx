@@ -1,0 +1,182 @@
+---
+title: "API Authentication"
+description: "Authenticate your API requests to MemoryLake services"
+---
+
+## Authentication Methods
+
+MemoryLake API supports two authentication methods:
+
+### 1. Session Authentication
+
+For web applications where users log in:
+- Session cookies automatically included
+- No additional headers needed
+- Inherits user permissions
+
+### 2. API Key Authentication (MCP Servers)
+
+For external applications and AI models:
+- Use API keys generated in projects
+- Include in Authorization header
+- Project-scoped access
+
+## API Key Authentication
+
+### Obtaining an API Key
+
+1. Navigate to a project
+2. Go to MCP Servers tab
+3. Click "Add MCP Server"
+4. Copy the generated secret
+
+See [Creating API Keys](/features/memorylake/mcp-servers/creating-api-keys) for details.
+
+### Using API Keys
+
+Include API key in Authorization header:
+
+```bash
+Authorization: Bearer YOUR_API_KEY
+```
+
+### Example Request
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.example.com/api/memorylake/api/v1/projects/proj_123' \
+  -H 'Authorization: Bearer mlk_secret_abc123xyz...' \
+  -H 'Content-Type: application/json'
+```
+
+```javascript Node.js
+const response = await fetch(
+  'https://api.example.com/api/memorylake/api/v1/projects/proj_123',
+  {
+    headers: {
+      'Authorization': `Bearer ${apiKey}`,
+      'Content-Type': 'application/json'
+    }
+  }
+);
+
+const data = await response.json();
+```
+
+```python Python
+import requests
+
+headers = {
+    'Authorization': f'Bearer {api_key}',
+    'Content-Type': 'application/json'
+}
+
+response = requests.get(
+    'https://api.example.com/api/memorylake/api/v1/projects/proj_123',
+    headers=headers
+)
+
+data = response.json()
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "proj_123",
+    "name": "Research Project",
+    "description": "Q1 2024 research"
+  }
+}
+```
+
+```json Error (401)
+{
+  "success": false,
+  "message": "Invalid or missing API key",
+  "code": "UNAUTHORIZED"
+}
+```
+</ResponseExample>
+
+## Error Responses
+
+### 401 Unauthorized
+
+API key missing or invalid:
+```json
+{
+  "success": false,
+  "message": "Unauthorized access",
+  "code": "UNAUTHORIZED"
+}
+```
+
+**Solutions**:
+- Verify API key is included in Authorization header
+- Check key format: `Bearer YOUR_KEY`
+- Ensure key hasn't been deleted
+- Generate new key if lost
+
+### 403 Forbidden
+
+Valid authentication but insufficient permissions:
+```json
+{
+  "success": false,
+  "message": "Access denied to this resource",
+  "code": "FORBIDDEN"
+}
+```
+
+**Solutions**:
+- Verify project ID is correct
+- Check API key is for the correct project
+- Ensure resource exists
+
+## Security Best Practices
+
+<AccordionGroup>
+
+<Accordion title="Secure Storage">
+- Store API keys in environment variables
+- Never commit keys to version control
+- Use secrets management services
+- Rotate keys periodically
+</Accordion>
+
+<Accordion title="Key Management">
+- Create separate keys per environment
+- Use descriptive names for keys
+- Delete unused keys promptly
+- Monitor key usage
+</Accordion>
+
+<Accordion title="Request Security">
+- Always use HTTPS
+- Don't log API keys
+- Implement request timeouts
+- Handle errors gracefully
+</Accordion>
+
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="MCP Servers" icon="key" href="/features/memorylake/mcp-servers/overview">
+Learn about API key generation
+</Card>
+
+<Card title="Drives API" icon="hard-drive" href="/features/memorylake/api-reference/drives">
+Start making API requests
+</Card>
+
+<Card title="Error Handling" icon="triangle-exclamation" href="/features/memorylake/api-reference/errors">
+Handle API errors
+</Card>
+</CardGroup>

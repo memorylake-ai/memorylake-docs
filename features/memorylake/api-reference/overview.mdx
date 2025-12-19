@@ -1,0 +1,151 @@
+---
+title: "MemoryLake API Reference"
+description: "Complete API documentation for MemoryLake services including drives, projects, memories, and MCP servers"
+---
+
+## API Overview
+
+The MemoryLake API provides programmatic access to all platform features. Build custom integrations, automate workflows, and extend functionality.
+
+## Base URL
+
+```
+https://api.example.com/api/memorylake/api/v1
+```
+
+<Note>
+Replace `api.example.com` with your actual MemoryLake instance domain.
+</Note>
+
+## Authentication
+
+All API requests require authentication. See [Authentication](/features/memorylake/api-reference/authentication) for details.
+
+## API Sections
+
+<CardGroup cols={2}>
+<Card title="Authentication" icon="key" href="/features/memorylake/api-reference/authentication">
+Learn how to authenticate API requests
+</Card>
+
+<Card title="Drives" icon="hard-drive" href="/features/memorylake/api-reference/drives">
+Manage user drives and storage
+</Card>
+
+<Card title="Items (Files & Folders)" icon="folder-tree" href="/features/memorylake/api-reference/items">
+CRUD operations for files and folders
+</Card>
+
+<Card title="Upload" icon="upload" href="/features/memorylake/api-reference/upload">
+Single and multi-part file uploads
+</Card>
+
+<Card title="Projects" icon="diagram-project" href="/features/memorylake/api-reference/projects">
+Project management and document association
+</Card>
+
+<Card title="Memories" icon="brain" href="/features/memorylake/api-reference/memories">
+Create and manage project memories
+</Card>
+
+<Card title="MCP Servers" icon="server" href="/features/memorylake/api-reference/mcp-servers">
+API key and endpoint management
+</Card>
+
+<Card title="Connectors" icon="plug" href="/features/memorylake/api-reference/connectors">
+External service integrations
+</Card>
+
+<Card title="Errors" icon="triangle-exclamation" href="/features/memorylake/api-reference/errors">
+Error codes and handling
+</Card>
+
+<Card title="Rate Limits" icon="gauge" href="/features/memorylake/api-reference/rate-limits">
+API rate limiting and quotas
+</Card>
+</CardGroup>
+
+## Common Patterns
+
+### Response Format
+
+All responses follow this structure:
+
+```json
+{
+  "success": true,
+  "data": {
+    // Response payload
+  }
+}
+```
+
+Error responses:
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "code": "ERROR_CODE"
+}
+```
+
+### Pagination
+
+List endpoints support pagination:
+
+**Query Parameters**:
+- `page`: Page number (default: 1)
+- `page_size`: Items per page (default: 10, max: 100)
+
+**Response**:
+```json
+{
+  "success": true,
+  "data": {
+    "items": [...],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 45,
+      "total_pages": 5
+    }
+  }
+}
+```
+
+### Timestamps
+
+All timestamps use ISO 8601 format:
+```
+2024-01-15T10:30:00Z
+```
+
+## SDKs and Libraries
+
+Official SDKs available for:
+- JavaScript/Node.js
+- Python  
+- Go
+- Ruby
+
+See SDK documentation for installation and usage.
+
+## Rate Limiting
+
+API requests are rate limited. See [Rate Limits](/features/memorylake/api-reference/rate-limits) for details.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Authentication" icon="shield" href="/features/memorylake/api-reference/authentication">
+Start with authentication
+</Card>
+
+<Card title="Quick Start" icon="rocket" href="/features/memorylake/quickstart">
+Follow the quick start guide
+</Card>
+
+<Card title="Drives API" icon="hard-drive" href="/features/memorylake/api-reference/drives">
+Explore the Drives API
+</Card>
+</CardGroup>

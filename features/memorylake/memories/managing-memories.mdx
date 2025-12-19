@@ -1,0 +1,157 @@
+---
+title: "Managing Memories"
+description: "View, edit, delete, and organize memories within your projects"
+---
+
+## Viewing Memories
+
+### Memory List
+
+The Memories tab shows all memories for a project:
+- Memory name
+- Content preview (first 3 lines)
+- Created timestamp
+- Last updated timestamp
+- Actions (view, edit, delete)
+
+{/* SCREENSHOT: Memories list with multiple items */}
+
+### View Full Memory
+
+To see complete memory content:
+1. Click on memory name or view icon
+2. Dialog shows full content
+3. Close when done
+
+{/* SCREENSHOT: View memory dialog */}
+
+## Memory Operations
+
+### Edit Memory
+
+1. Click edit icon for the memory
+2. Modify name and/or content
+3. Save changes
+
+See [Creating & Editing Memories](/features/memorylake/memories/creating-memories) for details.
+
+### Delete Memory
+
+<Warning>
+Deleting a memory is permanent. The memory is removed from the project and AI models will no longer have access to it.
+</Warning>
+
+<Steps>
+<Step title="Select Memory">
+Click delete icon for the memory to remove.
+
+{/* SCREENSHOT: Delete confirmation dialog */}
+</Step>
+
+<Step title="Confirm Deletion">
+Review memory name and click "Delete" to confirm.
+</Step>
+
+<Step title="Verify Removal">
+Memory disappears from list immediately.
+</Step>
+</Steps>
+
+### Search/Filter
+
+If your project has many memories:
+- Use browser search (Ctrl/Cmd + F) to find specific text
+- Scan memory names for quick identification
+- Review content previews
+
+<Tip>
+Give memories descriptive names so you can find them easily later.
+</Tip>
+
+## Memory Organization
+
+### Naming Strategy
+
+Use consistent naming patterns:
+
+**By Topic**:
+- "Architecture - Overview"
+- "Architecture - Database Design"
+- "Architecture - API Structure"
+
+**By Type**:
+- "[Guidelines] Code Style"
+- "[Context] Project History"
+- "[Reference] Related Projects"
+
+**By Priority**:
+- "IMPORTANT: Budget Constraints"
+- "Key Finding: Customer Preference"
+- "Note: Technical Limitation"
+
+### Content Organization
+
+Within memory content:
+- Start with most important information
+- Use consistent formatting
+- Include headers or sections
+- Add line breaks for readability
+
+## Bulk Operations
+
+Currently no bulk operations supported. To manage multiple memories:
+- Edit/delete one at a time
+- Consider using API for bulk operations
+- Plan memory structure before creating many
+
+## Memory Metadata
+
+Each memory tracks:
+- **Created At**: When memory was first created
+- **Updated At**: Last modification timestamp
+- **Name**: Memory title
+- **Content**: Full text
+- **Project ID**: Parent project
+
+## Integration with Other Features
+
+### Projects
+
+Memories are project-scoped:
+- Each memory belongs to one project
+- Deleting project deletes its memories
+- Memories provide context for project documents
+
+### MCP Servers
+
+AI models accessing via MCP servers can read memories:
+- Memories provide guidelines for AI behavior
+- Context helps AI understand documents
+- Memories remain private to authorized API keys
+
+### Documents
+
+Memories complement documents:
+- Documents provide content
+- Memories provide interpretation and context
+- Together they give complete picture to AI
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Creating Memories" icon="plus" href="/features/memorylake/memories/creating-memories">
+Learn to create effective memories
+</Card>
+
+<Card title="Best Practices" icon="star" href="/features/memorylake/memories/best-practices">
+Tips for writing great memories
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/features/memorylake/memories/troubleshooting">
+Solve common issues
+</Card>
+
+<Card title="Memories API" icon="code" href="/features/memorylake/api-reference/memories">
+Manage memories programmatically
+</Card>
+</CardGroup>

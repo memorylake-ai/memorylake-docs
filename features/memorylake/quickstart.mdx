@@ -1,0 +1,253 @@
+---
+title: "MemoryLake Quick Start"
+description: "Get started with MemoryLake in under 10 minutes - create your first project, upload documents, and set up MCP servers"
+---
+
+## Welcome to MemoryLake
+
+This guide will walk you through the essential features of MemoryLake. By the end, you'll have created a project, uploaded documents, added a memory, and generated an MCP server API key for external access.
+
+## Prerequisites
+
+Before you begin, ensure you have:
+- Access to a MemoryLake account
+- At least one document or folder ready to upload
+- Basic familiarity with file management concepts
+
+<Tip>
+Have some sample documents ready? PDFs, Markdown files, spreadsheets, and text files all work great with MemoryLake.
+</Tip>
+
+## Getting Started
+
+<Steps>
+
+<Step title="Access Your Document Drive">
+Navigate to the Document Management section in MemoryLake. You'll see your personal drive with a `My Space` folder ready to store your files.
+
+{/* SCREENSHOT: Initial drive interface showing empty root folder */}
+
+<Check>
+You should see a tree view on the left side showing your drive structure and an empty main area ready for content.
+</Check>
+</Step>
+
+<Step title="Upload Your First Documents">
+Click the "Upload" button to add files to your drive.
+
+You can:
+- Select individual files
+- Select multiple files at once
+- Upload entire folders with their structure preserved
+
+{/* SCREENSHOT: Upload dialog with file selection options */}
+
+<Note>
+MemoryLake supports .md, .txt, .csv, .pdf, .xlsx, and .xls file formats. Large files are automatically handled with multi-part uploads.
+</Note>
+
+Watch the upload progress panel to see your files being processed. Once complete, they'll appear in your file tree.
+
+{/* SCREENSHOT: Upload progress showing multiple files */}
+
+<Check>
+Your uploaded files should now be visible in the tree view. Try expanding folders to see their contents.
+</Check>
+</Step>
+
+<Step title="Organize with Folders">
+Create folders to organize your documents:
+
+1. Click the "New Folder" button or right-click in the tree
+2. Enter a descriptive folder name
+3. Use drag-and-drop to move files into folders
+
+{/* SCREENSHOT: Folder creation dialog and drag-drop operation */}
+
+<Tip>
+Use meaningful folder names that reflect your organization structure. You can create nested folders for complex hierarchies.
+</Tip>
+</Step>
+
+<Step title="Create Your First Project">
+Navigate to the Project Management section and create a new project:
+
+1. Click "Create Project"
+2. Enter a project name (e.g., "Q1 Research")
+3. Add a description explaining the project's purpose
+4. Click "Save"
+
+{/* SCREENSHOT: Create project dialog with sample data */}
+
+Projects help you organize related documents and provide context for AI interactions.
+
+<Check>
+You should see your new project in the projects list with zero documents and memories initially.
+</Check>
+</Step>
+
+<Step title="Associate Documents with Your Project">
+Link documents from your drive to the project:
+
+1. Open your project by clicking on it
+2. Go to the "Documents" tab
+3. Click "Add Documents"
+4. Navigate the tree and select files or folders using checkboxes
+5. Click "Confirm" to associate them
+
+{/* SCREENSHOT: Document selector tree with checkboxes and selections */}
+
+You can select individual files or entire folders - the hierarchy will be preserved in the project.
+
+<Check>
+The Documents tab should now show your associated documents with their processing status (pending → running → okay).
+</Check>
+</Step>
+
+<Step title="Create a Memory">
+Add contextual knowledge to your project:
+
+1. Switch to the "Memories" tab in your project
+2. Click "Add Memory"
+3. Enter a name (e.g., "Project Guidelines")
+4. Add content with key information, notes, or instructions
+5. Click "Save"
+
+{/* SCREENSHOT: Create memory dialog with sample content */}
+
+Memories provide context that AI models can use when accessing your project through MCP servers.
+
+Example memory content:
+```
+This project contains research materials for Q1 2024 analysis.
+
+Key focus areas:
+- Market trends and analysis
+- Competitor research
+- Budget planning documents
+
+When analyzing these documents, prioritize recent data and cross-reference with budget constraints.
+```
+
+<Check>
+Your memory should appear in the Memories tab with its content visible.
+</Check>
+</Step>
+
+<Step title="Generate an MCP Server API Key">
+Create an API key to provide external applications with access to your project:
+
+1. Go to the "MCP Servers" tab in your project
+2. Click "Add MCP Server"
+3. Enter a description (e.g., "Claude AI Integration")
+4. Click "Generate"
+5. **Important**: Copy the secret immediately - it's shown only once!
+
+{/* SCREENSHOT: MCP server creation with secret display and copy button */}
+
+<Warning>
+The API secret is displayed only once upon creation. Copy it to a secure location immediately. You'll use this to authenticate requests to your project.
+</Warning>
+
+You'll receive:
+- An API key ID
+- A secret (copy this now!)
+- An endpoint URL
+
+<Check>
+The MCP Servers tab should show your new API key with a masked secret (only the suffix visible) and the full endpoint URL ready to copy.
+</Check>
+</Step>
+
+<Step title="Verify Your Setup">
+Confirm everything is working:
+
+1. **Documents**: Check that files appear in both your drive and project
+2. **Memories**: Verify your memory is saved and readable
+3. **MCP Server**: Ensure your API key is listed with its endpoint URL
+
+{/* SCREENSHOT: Complete project dashboard showing all three tabs with data */}
+
+<Check>
+Your project dashboard should show:
+- Document count > 0
+- Memory count > 0
+- MCP Server count > 0
+</Check>
+</Step>
+
+</Steps>
+
+## What You've Accomplished
+
+In just a few minutes, you've:
+
+- Uploaded and organized documents in your drive
+- Created a project to group related content
+- Associated documents with your project
+- Added a memory to provide context
+- Generated an MCP server API key for external access
+
+## Next Steps
+
+Now that you have the basics down, explore these advanced features:
+
+<CardGroup cols={2}>
+<Card title="Advanced Upload" icon="cloud-arrow-up" href="/features/memorylake/document-management/upload-advanced">
+Learn about multi-part uploads, concurrent file handling, and progress tracking
+</Card>
+
+<Card title="Metadata & Comments" icon="comment" href="/features/memorylake/document-management/metadata-comments">
+Add rich Markdown comments to your files for enhanced context
+</Card>
+
+<Card title="External Connectors" icon="plug" href="/features/memorylake/connectors/overview">
+Connect WPS, Dropbox, and other external document services
+</Card>
+
+<Card title="MCP Server Configuration" icon="gear" href="/features/memorylake/mcp-servers/configuration">
+Configure and use your MCP server endpoints with external applications
+</Card>
+
+<Card title="API Documentation" icon="code" href="/features/memorylake/api-reference/overview">
+Explore the REST API for programmatic access to all features
+</Card>
+
+<Card title="Best Practices" icon="lightbulb" href="/features/memorylake/memories/best-practices">
+Learn how to write effective memories and organize projects
+</Card>
+</CardGroup>
+
+## Common Questions
+
+<AccordionGroup>
+<Accordion title="How many documents can I add to a project?">
+There's no hard limit on documents per project. However, for best performance with AI interactions, consider organizing very large document sets across multiple focused projects.
+</Accordion>
+
+<Accordion title="Can I use the same document in multiple projects?">
+Yes! You can associate the same document from your drive with multiple projects. The document exists once in your drive but can provide context to multiple projects.
+</Accordion>
+
+<Accordion title="What happens if I delete a document from my drive?">
+If you delete a document from your drive, it will also be removed from any projects that reference it. Always check project associations before deleting important files.
+</Accordion>
+
+<Accordion title="How do I use the MCP server API key?">
+Include the API key in the Authorization header of your HTTP requests as a Bearer token. See the [API Authentication guide](/features/memorylake/api-reference/authentication) for complete details and examples.
+</Accordion>
+
+<Accordion title="Can I revoke or regenerate API keys?">
+Yes, you can delete API keys at any time from the MCP Servers tab. To rotate keys, create a new one and then delete the old one once you've updated all integrations.
+</Accordion>
+</AccordionGroup>
+
+## Need Help?
+
+- **Detailed Guides**: Explore the documentation sections for in-depth coverage of each feature
+- **Troubleshooting**: Check the troubleshooting pages in each section for common issues
+- **API Reference**: See the [API documentation](/features/memorylake/api-reference/overview) for programmatic access
+
+<Tip>
+Start small and expand gradually. You can always add more documents, create additional projects, and generate more API keys as your needs grow.
+</Tip>

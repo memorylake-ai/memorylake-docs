@@ -1,0 +1,68 @@
+---
+title: "Connector Framework"
+description: "Extensible architecture for integrating multiple external document services"
+---
+
+## Framework Overview
+
+MemoryLake's connector framework provides an extensible architecture for integrating external document services. Designed for scalability and ease of implementation.
+
+## Architecture
+
+### Core Components
+
+1. **Connector Interface**: Standard API all connectors must implement
+2. **OAuth Provider**: Handles authentication flows
+3. **Mount Point System**: Manages external content integration
+4. **Status Management**: Tracks connection health
+5. **Refresh Logic**: Updates content from external sources
+
+###Connector Lifecycle
+
+```
+Registration → Authentication → Resource Discovery → Mount Point Creation → Active Connection
+```
+
+## Supported Service Types
+
+<CardGroup cols={2}>
+<Card title="OAuth Services" icon="shield-check">
+Services using OAuth 2.0 (WPS, Dropbox, Google Drive)
+</Card>
+
+<Card title="API Key Services" icon="key">
+Services using API key authentication
+</Card>
+
+<Card title="WebDAV Services" icon="server">
+Services implementing WebDAV protocol
+</Card>
+
+<Card title="Custom Protocols" icon="puzzle-piece">
+Custom integration methods
+</Card>
+</CardGroup>
+
+## Developer Guide
+
+See [Adding Connectors](/features/memorylake/connectors/adding-connectors) for implementation details.
+
+## Security Model
+
+- OAuth tokens encrypted at rest
+- Per-user authorization
+- Revocable access
+- Minimal permissions requested
+- Secure token refresh
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Adding Connectors" icon="code" href="/features/memorylake/connectors/adding-connectors">
+Build your own connector
+</Card>
+
+<Card title="WPS Integration" icon="file" href="/features/memorylake/connectors/wps-integration">
+Example connector implementation
+</Card>
+</CardGroup>

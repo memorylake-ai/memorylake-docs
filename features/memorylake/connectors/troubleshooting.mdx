@@ -1,0 +1,77 @@
+---
+title: "Connector Troubleshooting"
+description: "Common issues and solutions for external service connectors"
+---
+
+## Common Issues
+
+<AccordionGroup>
+
+<Accordion title="OAuth window doesn't open">
+**Causes**: Pop-up blocker, browser extensions
+
+**Solutions**:
+- Enable pop-ups for MemoryLake domain
+- Disable popup blocking extensions temporarily
+- Try incognito/private browsing mode
+- Use different browser
+</Accordion>
+
+<Accordion title="Authorization fails after login">
+**Causes**: Network timeout, state mismatch, service error
+
+**Solutions**:
+- Clear browser cookies and retry
+- Check service status page
+- Wait a few minutes and retry
+- Revoke previous authorization and start fresh
+- Contact support with error code
+</Accordion>
+
+<Accordion title="No resources appear after connecting">
+**Causes**: Empty account, permission issues, API error
+
+**Solutions**:
+- Verify you have libraries/folders in external service
+- Check account permissions in external service
+- Log out and back into external service
+- Revoke and re-authorize connection
+- Contact external service support
+</Accordion>
+
+<Accordion title="Mount point appears but files don't load">
+**Causes**: Network issue, permission change, token expired
+
+**Solutions**:
+- Refresh the folder (collapse/expand)
+- Check internet connection
+- Verify permissions in external service haven't changed
+- Revoke and re-authorize if token expired
+- Check connector status indicator
+</Accordion>
+
+<Accordion title="Cannot download files from connector">
+**Causes**: File size limit, permissions, network
+
+**Solutions**:
+- Check file size limits
+- Verify download permissions in external service
+- Try downloading smaller file first
+- Check browser download settings
+- Download directly from external service to verify access
+</Accordion>
+
+</AccordionGroup>
+
+## Getting Help
+
+If issues persist:
+1. Note exact error messages
+2. Check browser console (F12)
+3. Verify external service is accessible directly
+4. Try different network/browser
+5. Contact support with:
+   - Connector name
+   - Error messages
+   - Steps to reproduce
+   - Browser and version

@@ -1,0 +1,363 @@
+---
+title: "File & Folder Operations"
+description: "Create folders, upload files, rename, move, delete, and organize your document hierarchy"
+---
+
+## Overview
+
+This guide covers all the essential operations for managing files and folders in MemoryLake. You'll learn how to create, upload, organize, and maintain your document collection.
+
+## Creating Folders
+
+### Basic Folder Creation
+
+<Steps>
+<Step title="Access the New Folder Option">
+You can create a new folder in several ways:
+- Click the "New Folder" button in the toolbar
+- Right-click on a folder in the tree and select "New Folder"
+- Right-click in the empty space to create at root level
+
+{/* SCREENSHOT: New folder button and context menu option */}
+</Step>
+
+<Step title="Enter Folder Name">
+Type a descriptive name for your folder and press Enter or click Save.
+
+<Tip>
+Use clear, descriptive names that indicate the folder's contents. Good examples: "Q1-Reports", "Research-Papers", "Meeting-Notes".
+</Tip>
+</Step>
+
+<Step title="Verify Creation">
+The new folder appears in the tree immediately. You can now add files or create subfolders within it.
+
+{/* SCREENSHOT: Newly created folder in tree view */}
+</Step>
+</Steps>
+
+### Folder Naming Guidelines
+
+**Allowed Characters**:
+- Letters (A-Z, a-z)
+- Numbers (0-9)
+- Hyphens and underscores (-, _)
+- Spaces (converted to hyphens internally)
+
+**Restrictions**:
+- Cannot start with a dot (.)
+- Cannot contain special characters: `/`, `\`, `:`, `*`, `?`, `"`, `<`, `>`, `|`
+- Maximum length: 255 characters
+
+<Warning>
+Avoid using operating system reserved names like "CON", "PRN", "AUX", "NUL" on any platform.
+</Warning>
+
+## Uploading Files
+
+### Single File Upload
+
+<Steps>
+<Step title="Click Upload Button">
+Click the "Upload" button in the toolbar to open the file picker.
+
+{/* SCREENSHOT: Upload button in toolbar */}
+</Step>
+
+<Step title="Select File">
+Choose a single file from your computer. Supported formats: .md, .txt, .csv, .pdf, .xlsx, .xls
+</Step>
+
+<Step title="Monitor Progress">
+Watch the upload progress in the task panel. The file appears in your tree once the upload completes.
+</Step>
+</Steps>
+
+### Multiple File Upload
+
+<Steps>
+<Step title="Select Multiple Files">
+In the file picker, hold Ctrl (Windows/Linux) or Cmd (Mac) and click multiple files.
+Or use Shift-click to select a range of files.
+</Step>
+
+<Step title="Confirm Upload">
+Click "Open" to start uploading all selected files concurrently.
+</Step>
+
+<Step title="Track Progress">
+The upload panel shows progress for each file individually. Files are uploaded up to 3 at a time.
+
+{/* SCREENSHOT: Upload progress panel with multiple files */}
+</Step>
+</Steps>
+
+### Folder Upload
+
+<Steps>
+<Step title="Choose Folder Upload Option">
+In the upload dialog, look for "Upload Folder" or similar option (varies by browser).
+</Step>
+
+<Step title="Select Entire Folder">
+Choose a folder from your computer. All files and subdirectories within it will be queued.
+</Step>
+
+<Step title="Preserve Structure">
+MemoryLake automatically recreates the folder structure in your drive, maintaining the hierarchy.
+
+{/* SCREENSHOT: Folder structure after upload showing preserved hierarchy */}
+
+<Check>
+Verify that the folder structure matches your local directory. All subfolders and files should be in the correct locations.
+</Check>
+</Step>
+</Steps>
+
+### Drag-and-Drop Upload
+
+The quickest way to upload files:
+
+1. **Open File Explorer/Finder** on your computer
+2. **Navigate to Your Files** - find the files or folders you want to upload
+3. **Drag to MemoryLake** - drag and drop directly onto the tree view
+4. **Drop on Target Folder** - drop onto a specific folder to upload there, or on empty space for root
+
+{/* SCREENSHOT: Drag-and-drop operation in progress */}
+
+<Tip>
+Drag-and-drop supports both individual files and entire folders. This is often the fastest way to upload content.
+</Tip>
+
+## Renaming Items
+
+### Rename Files or Folders
+
+<Steps>
+<Step title="Initiate Rename">
+Right-click on the file or folder and select "Rename" from the context menu.
+
+{/* SCREENSHOT: Context menu with rename option */}
+</Step>
+
+<Step title="Edit Name">
+The name becomes editable. Type the new name.
+
+<Note>
+For files, you can change the name but the extension is preserved automatically.
+</Note>
+</Step>
+
+<Step title="Save Changes">
+Press Enter to save or Escape to cancel. The item updates immediately in the tree.
+</Step>
+</Steps>
+
+### Bulk Renaming
+
+Currently, MemoryLake supports renaming items one at a time. For bulk operations, consider using the API.
+
+## Moving Items
+
+### Drag-and-Drop Move
+
+The most intuitive way to move files and folders:
+
+1. **Click and Hold** on the item you want to move
+2. **Drag to Destination** folder
+3. **Drop** when the target folder is highlighted
+4. **Verify** the item now appears in the new location
+
+{/* SCREENSHOT: Drag-and-drop move operation */}
+
+<Tip>
+You can move multiple items by selecting them first (if multi-select is supported), then dragging together.
+</Tip>
+
+### Move via Dialog
+
+For more precise control:
+
+<Steps>
+<Step title="Open Move Dialog">
+Right-click the item and select "Move" from the context menu.
+</Step>
+
+<Step title="Navigate to Destination">
+In the move dialog, browse the tree to find the destination folder.
+
+{/* SCREENSHOT: Move dialog with folder tree selector */}
+</Step>
+
+<Step title="Select and Confirm">
+Click on the destination folder and click "Move" to complete the operation.
+
+<Check>
+The item immediately appears in its new location and is removed from the old location.
+</Check>
+</Step>
+</Steps>
+
+### Move Behavior
+
+- **Folders**: Moving a folder moves all its contents
+- **Permissions**: Moving doesn't affect project associations
+- **Metadata**: Comments and extended attributes move with the item
+- **Instant**: Moves happen immediately without copying
+
+<Warning>
+If you move a file that's associated with projects, the association is maintained but the path changes. Update any external references if needed.
+</Warning>
+
+## Downloading Files
+
+### Download Single File
+
+<Steps>
+<Step title="Select File">
+Click on a file in the tree to select it.
+</Step>
+
+<Step title="Download">
+Right-click and select "Download" or click the download button in the toolbar.
+</Step>
+
+<Step title="Save Locally">
+Your browser will download the file to your default downloads folder.
+</Step>
+</Steps>
+
+### Download Folders
+
+To download an entire folder:
+- Right-click the folder and select "Download"
+- The folder and its contents are packaged as a .zip file
+- Extract the zip to access the files locally
+
+<Note>
+Large folders may take some time to package. You'll see a progress indicator while the download is prepared.
+</Note>
+
+## Deleting Items
+
+### Delete Files or Folders
+
+<Steps>
+<Step title="Select Item to Delete">
+Click on the file or folder you want to remove.
+</Step>
+
+<Step title="Initiate Delete">
+Right-click and select "Delete" or press the Delete key.
+
+{/* SCREENSHOT: Delete confirmation dialog */}
+</Step>
+
+<Step title="Confirm Deletion">
+A confirmation dialog appears. Review the item name and click "Delete" to confirm.
+
+<Warning>
+Deletion is permanent and cannot be undone. Deleted items are not moved to a recycle bin.
+</Warning>
+</Step>
+
+<Step title="Verify Removal">
+The item disappears from the tree immediately.
+</Step>
+</Steps>
+
+### Deleting Folders with Contents
+
+When you delete a folder:
+- **All Contents Deleted**: All files and subfolders are permanently removed
+- **Confirmation Required**: Extra confirmation for non-empty folders
+- **Project Impact**: Files are removed from any associated projects
+
+<Warning>
+Before deleting folders, check if any files are associated with important projects. Consider downloading a backup first.
+</Warning>
+
+## Context Menu Reference
+
+Right-click on items to access these operations:
+
+| Action | Files | Folders | Description |
+|--------|-------|---------|-------------|
+| Rename | ✓ | ✓ | Change the name of the item |
+| Move | ✓ | ✓ | Relocate to a different folder |
+| Download | ✓ | ✓ | Download item (folders as .zip) |
+| Delete | ✓ | ✓ | Permanently remove the item |
+| Add to Project | ✓ | ✓ | Associate with a project |
+| Edit Metadata | ✓ | ✓ | Add or edit comments and attributes |
+| New Folder | - | ✓ | Create a subfolder |
+
+{/* SCREENSHOT: Full context menu showing all options */}
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| `F2` | Rename selected item |
+| `Delete` | Delete selected item |
+| `Ctrl/Cmd + C` | Copy item |
+| `Ctrl/Cmd + X` | Cut item |
+| `Ctrl/Cmd + V` | Paste item |
+| `Enter` | Open/expand folder |
+| `Backspace` | Go to parent folder |
+| `Arrow Keys` | Navigate tree |
+
+<Tip>
+Learn the keyboard shortcuts to speed up your workflow significantly.
+</Tip>
+
+## Best Practices
+
+<AccordionGroup>
+<Accordion title="Organizing Your Documents">
+- Create a logical folder hierarchy before uploading
+- Group related documents together
+- Use consistent naming conventions
+- Keep folder structures reasonably flat (3-5 levels)
+</Accordion>
+
+<Accordion title="Uploading Efficiently">
+- Use folder upload to preserve directory structure
+- Upload related files together
+- Use drag-and-drop for quick uploads
+- Monitor upload progress for large files
+</Accordion>
+
+<Accordion title="Maintaining Your Drive">
+- Regularly review and remove unused files
+- Keep folder names descriptive and current
+- Use metadata for files that need extra context
+- Download important files as backups
+</Accordion>
+
+<Accordion title="Before Deleting">
+- Check project associations
+- Download backups of important files
+- Confirm the correct item is selected
+- Consider moving to an "Archive" folder instead
+</Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Advanced Upload" icon="cloud-arrow-up" href="/features/memorylake/document-management/upload-advanced">
+Learn about multi-part uploads, concurrent transfers, and progress tracking
+</Card>
+
+<Card title="Metadata & Comments" icon="comment" href="/features/memorylake/document-management/metadata-comments">
+Add rich context to your files with Markdown comments
+</Card>
+
+<Card title="Tree Navigation" icon="sitemap" href="/features/memorylake/document-management/tree-navigation">
+Master efficient navigation with keyboard shortcuts
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/features/memorylake/document-management/troubleshooting">
+Solve common issues with file operations
+</Card>
+</CardGroup>

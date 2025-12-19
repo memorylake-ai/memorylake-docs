@@ -1,0 +1,166 @@
+---
+title: "Error Codes & Handling"
+description: "Understand and handle API errors"
+---
+
+## Error Response Format
+
+All errors follow this structure:
+
+```json
+{
+  "success": false,
+  "message": "Human-readable error message",
+  "code": "ERROR_CODE"
+}
+```
+
+## HTTP Status Codes
+
+| Status | Meaning | Common Causes |
+|--------|---------|---------------|
+| 200 | Success | Request completed successfully |
+| 400 | Bad Request | Invalid parameters or malformed request |
+| 401 | Unauthorized | Missing or invalid API key |
+| 403 | Forbidden | Valid auth but insufficient permissions |
+| 404 | Not Found | Resource doesn't exist |
+| 429 | Too Many Requests | Rate limit exceeded |
+| 500 | Internal Server Error | Server-side error |
+
+## Common Error Codes
+
+### UNAUTHORIZED
+```json
+{
+  "success": false,
+  "message": "Invalid or missing API key",
+  "code": "UNAUTHORIZED"
+}
+```
+
+**Solutions**:
+- Include Authorization header
+- Verify API key is correct
+- Check key hasn't been deleted
+
+### FORBIDDEN
+```json
+{
+  "success": false,
+  "message": "Access denied",
+  "code": "FORBIDDEN"
+}
+```
+
+**Solutions**:
+- Verify project ID
+- Check API key scope
+- Ensure resource exists
+
+### NOT_FOUND
+```json
+{
+  "success": false,
+  "message": "Resource not found",
+  "code": "NOT_FOUND"
+}
+```
+
+**Solutions**:
+- Verify resource ID
+- Check resource wasn't deleted
+- Confirm correct endpoint
+
+### RATE_LIMIT_EXCEEDED
+```json
+{
+  "success": false,
+  "message": "Rate limit exceeded",
+  "code": "RATE_LIMIT_EXCEEDED"
+}
+```
+
+**Solutions**:
+- Implement exponential backoff
+- Reduce request frequency
+- Check rate limit headers
+- Contact support for higher limits
+
+### VALIDATION_ERROR
+```json
+{
+  "success": false,
+  "message": "Validation failed",
+  "code": "VALIDATION_ERROR",
+  "errors": {
+    "name": "Name is required",
+    "size": "File too large"
+  }
+}
+```
+
+**Solutions**:
+- Check request parameters
+- Validate input before sending
+- Review error details
+
+## Error Handling Best Practices
+
+### Retry Logic
+
+```javascript
+async function apiRequest(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await fetch(url, options);
+      
+      if (response.ok) {
+        return await response.json();
+      }
+      
+      // Don't retry 4xx errors (except 429)
+      if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+        throw new Error(`Client error: ${response.status}`);
+      }
+      
+      // Exponential backoff for 5xx and 429
+      if (i < maxRetries - 1) {
+        await sleep(Math.pow(2, i) * 1000);
+        continue;
+      }
+    } catch (error) {
+      if (i === maxRetries - 1) throw error;
+      await sleep(Math.pow(2, i) * 1000);
+    }
+  }
+}
+```
+
+### Error Logging
+
+```javascript
+try {
+  const data = await apiRequest(url, options);
+  return data;
+} catch (error) {
+  console.error('API Error:', {
+    url,
+    status: error.status,
+    message: error.message,
+    timestamp: new Date().toISOString()
+  });
+  throw error;
+}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Authentication" icon="key" href="/features/memorylake/api-reference/authentication">
+Learn about authentication
+</Card>
+
+<Card title="Rate Limits" icon="gauge" href="/features/memorylake/api-reference/rate-limits">
+Understand rate limiting
+</Card>
+</CardGroup>

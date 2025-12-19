@@ -1,0 +1,132 @@
+---
+title: "MemoryLake Overview"
+description: "Comprehensive knowledge management and project organization system with document storage, external connectors, memories, and MCP server integration"
+---
+
+## What is MemoryLake?
+
+MemoryLake is a powerful knowledge management platform that helps you organize documents, build knowledge bases, and provide contextual access to your information through both UI and API interfaces. Whether you're managing research materials, building a team knowledge base, or integrating AI with your documents, MemoryLake provides the tools you need.
+
+## Key Features
+
+<CardGroup cols={2}>
+<Card title="Document Management" icon="folder-tree" href="/features/memorylake/document-management/overview">
+Store and organize files in hierarchical folders with advanced upload capabilities, metadata support, and intuitive tree navigation.
+</Card>
+
+<Card title="External Connectors" icon="plug" href="/features/memorylake/connectors/overview">
+Integrate external document services like WPS, Dropbox, and Feishu directly into your workspace with OAuth authentication.
+</Card>
+
+<Card title="Project Organization" icon="diagram-project" href="/features/memorylake/project-management/overview">
+Group related documents into projects for better organization and to provide structured context for AI interactions.
+</Card>
+
+<Card title="Memories" icon="brain" href="/features/memorylake/memories/overview">
+Store knowledge snippets, notes, and contextual information within projects to enhance AI understanding and team collaboration.
+</Card>
+
+<Card title="MCP Servers" icon="key" href="/features/memorylake/mcp-servers/overview">
+Generate API keys and endpoints to provide external applications and AI models with secure access to your project data.
+</Card>
+
+<Card title="API Access" icon="code" href="/features/memorylake/api-reference/overview">
+Full REST API for programmatic access to all MemoryLake features including documents, projects, memories, and connectors.
+</Card>
+</CardGroup>
+
+## Core Capabilities
+
+### Document Storage & Organization
+
+- **Hierarchical File System**: Organize documents in folders and subfolders with unlimited nesting
+- **Advanced Upload**: Multi-part uploads for large files, concurrent uploads, and folder structure preservation
+- **Rich Metadata**: Add Markdown-formatted comments and extended attributes to any file or folder
+- **Tree Navigation**: Intuitive file browser with lazy loading, drag-and-drop, and resizable columns
+- **File Operations**: Create, rename, move, delete, and download files with full CRUD support
+
+### External Service Integration
+
+- **Connector Framework**: Extensible architecture for integrating multiple document services
+- **OAuth Authentication**: Secure connection to external services with standard OAuth 2.0 flow
+- **Mount Points**: Access external document libraries as if they were part of your drive
+- **Currently Supported**: WPS (Kingsoft Office) with framework for Dropbox, Feishu, and more
+
+### Project-Based Organization
+
+- **Project Management**: Create projects to group related documents and memories
+- **Document Association**: Link documents from your drive to projects using a tree-based selector
+- **Statistics Dashboard**: View document counts, memory counts, and MCP server status at a glance
+- **Inline Editing**: Update project names and descriptions directly from the dashboard
+
+### Knowledge Context with Memories
+
+- **Text-Based Storage**: Store notes, guidelines, and contextual information as memories
+- **Project-Scoped**: Each memory belongs to a project and provides context for that project
+- **CRUD Operations**: Create, read, update, and delete memories with a simple interface
+- **AI Integration**: Memories provide context to AI models accessing your projects via MCP servers
+
+### Programmatic Access
+
+- **MCP Server Endpoints**: Generate authenticated URLs for AI models and external applications
+- **API Key Management**: Create multiple API keys per project with secure secret handling
+- **RESTful API**: Complete API coverage for drives, items, projects, memories, and connectors
+- **Authentication**: Support for both session-based and API key authentication
+
+## Common Use Cases
+
+<AccordionGroup>
+<Accordion title="Research Organization">
+  Organize research papers, notes, and references in a hierarchical structure. Associate related documents with projects, add memories containing insights or summaries, and provide AI models with contextual access through MCP servers.
+</Accordion>
+
+<Accordion title="Team Knowledge Base">
+  Build a centralized knowledge repository for your team. Connect external document services like WPS, organize documents by project, and add memories that capture institutional knowledge and best practices.
+</Accordion>
+
+<Accordion title="AI Context Management">
+  Provide AI models with relevant context by organizing documents into projects and creating memories that guide AI behavior. Use MCP servers to give AI assistants secure, read-only access to your knowledge base.
+</Accordion>
+
+<Accordion title="Document Workflow Integration">
+  Integrate MemoryLake with your existing workflows using the REST API. Automate document uploads, project creation, and memory management through programmatic access.
+</Accordion>
+</AccordionGroup>
+
+## Architecture Overview
+
+MemoryLake is built on a modern architecture that combines:
+
+- **Document Storage**: Secure cloud storage for your files and folders
+- **Metadata Layer**: Rich metadata and comment system for enhanced context
+- **Connector Layer**: Extensible framework for external service integration
+- **Project Layer**: Organizational structure for grouping related content
+- **API Layer**: RESTful API and MCP server endpoints for external access
+- **Authentication**: Secure authentication with session management and API keys
+
+## Getting Started
+
+Ready to start using MemoryLake? Follow our quickstart guide to get up and running in minutes.
+
+<Card title="Quick Start Guide" icon="rocket" href="/features/memorylake/quickstart">
+Create your first project, upload documents, and set up MCP servers in under 10 minutes.
+</Card>
+
+## Documentation Structure
+
+Our documentation is organized into several sections:
+
+- **Document Management**: Learn how to upload, organize, and manage your files
+- **Connectors**: Integrate external document services into your workspace
+- **Project Management**: Create and manage projects to organize your content
+- **Memories**: Add contextual knowledge to your projects
+- **MCP Servers**: Generate API keys and configure external access
+- **API Reference**: Complete REST API documentation for developers
+
+## Support
+
+Need help or have questions? Our documentation covers common scenarios and troubleshooting. Each section includes detailed guides, examples, and troubleshooting information to help you succeed with MemoryLake.
+
+<Note>
+MemoryLake is designed to scale with your needs, from individual research projects to team-wide knowledge management. Start with the features you need and expand as your requirements grow.
+</Note>

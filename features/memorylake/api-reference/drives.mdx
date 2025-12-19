@@ -1,0 +1,88 @@
+---
+title: "Drives API"
+description: "Manage user drives and root storage containers"
+---
+
+## Get User Drive
+
+Retrieve the authenticated user's drive information.
+
+```
+GET /drives
+```
+
+### Headers
+
+<ParamField header="Authorization" type="string" required>
+Bearer token for authentication
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean" required>
+Indicates if the request succeeded
+</ResponseField>
+
+<ResponseField name="data" type="object">
+Drive object
+
+<Expandable title="Drive properties">
+  <ResponseField name="id" type="string">
+  Unique drive identifier
+  </ResponseField>
+  
+  <ResponseField name="root_item_id" type="string">
+  ID of the root folder
+  </ResponseField>
+  
+  <ResponseField name="created_at" type="timestamp">
+  Drive creation timestamp
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+### Example
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.example.com/api/memorylake/api/v1/drives' \
+  -H 'Authorization: Bearer YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "drive_123",
+    "root_item_id": "item_root_456",
+    "created_at": "2024-01-15T10:00:00Z"
+  }
+}
+```
+</ResponseExample>
+
+## Create Drive
+
+Initialize a new drive for the user.
+
+```
+POST /drives
+```
+
+### Response
+
+Same as GET /drives
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Items API" icon="folder" href="/features/memorylake/api-reference/items">
+Manage files and folders
+</Card>
+
+<Card title="Upload API" icon="upload" href="/features/memorylake/api-reference/upload">
+Upload files to your drive
+</Card>
+</CardGroup>

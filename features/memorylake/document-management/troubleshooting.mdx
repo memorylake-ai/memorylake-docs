@@ -1,0 +1,488 @@
+---
+title: "Document Management Troubleshooting"
+description: "Common issues and solutions for document management in MemoryLake"
+---
+
+## Overview
+
+This guide covers common problems you might encounter while managing documents in MemoryLake and provides practical solutions.
+
+## Upload Issues
+
+<AccordionGroup>
+
+<Accordion title="Upload fails with 'File too large' error">
+**Symptom**: Error message stating file exceeds size limit
+
+**Causes**:
+- File exceeds your plan's maximum file size
+- Single-upload threshold exceeded but multi-part upload unavailable
+
+**Solutions**:
+1. Check your file size limit in account settings
+2. Compress the file if possible (e.g., compress PDFs)
+3. Split large files into smaller parts
+4. Upgrade your plan for higher limits
+5. Contact support for enterprise-level increases
+
+<Tip>
+Most plans support files up to 500MB with automatic multi-part upload for files over 100MB.
+</Tip>
+</Accordion>
+
+<Accordion title="Upload stalls at 99% or specific percentage">
+**Symptom**: Progress bar stops before completion
+
+**Causes**:
+- Network interruption
+- Server processing time for large files
+- Browser memory issues
+- Antivirus scanning file
+
+**Solutions**:
+1. Wait 2-3 minutes - server may be processing
+2. Check browser console for errors (F12)
+3. Try a different browser
+4. Disable antivirus temporarily
+5. Use a wired connection instead of WiFi
+6. Retry the upload if it fails completely
+
+<Note>
+Large files may appear stuck while the server assembles multi-part chunks. This is normal and can take 1-2 minutes.
+</Note>
+</Accordion>
+
+<Accordion title="'Invalid file type' error">
+**Symptom**: Upload rejected due to file format
+
+**Causes**:
+- File extension not in supported list
+- File has no extension
+- Extension hidden or incorrect
+
+**Solutions**:
+1. Verify file is one of: .md, .txt, .csv, .pdf, .xlsx, .xls
+2. Check the file extension is correct
+3. Rename file to include proper extension
+4. Convert file to a supported format
+5. Check for hidden characters in filename
+
+```bash
+# Example: Check actual file type
+file myfile.xyz
+# If mismatch, rename: myfile.xyz → myfile.pdf
+```
+</Accordion>
+
+<Accordion title="Folder upload only uploads some files">
+**Symptom**: Not all files from folder appear after upload
+
+**Causes**:
+- Hidden files filtered out (`.DS_Store`, `.gitignore`)
+- Unsupported file types skipped
+- File size exceeded for some files
+- Upload interrupted before completion
+
+**Solutions**:
+1. Check upload progress panel for failed files
+2. Verify all files are supported types
+3. Look for hidden files (shown in Finder/Explorer with "Show hidden files")
+4. Upload unsupported files individually after conversion
+5. Check that total folder size is within limits
+6. Retry failed files individually from progress panel
+</Accordion>
+
+<Accordion title="Cannot upload files to specific folder">
+**Symptom**: Upload button disabled or uploads go to wrong location
+
+**Causes**:
+- Folder not properly selected
+- Permissions issue
+- Folder is a mount point (read-only)
+- Browser focus issue
+
+**Solutions**:
+1. Click directly on the target folder to select it
+2. Verify folder is highlighted/selected
+3. Check if folder is from external connector (read-only)
+4. Try right-click → "Upload Files Here"
+5. Refresh the page and try again
+6. Upload to root and then move files to target folder
+</Accordion>
+
+</AccordionGroup>
+
+## Tree View Issues
+
+<AccordionGroup>
+
+<Accordion title="Folder won't expand or shows loading forever">
+**Symptom**: Click expand icon but contents never load
+
+**Causes**:
+- Network timeout
+- Server error
+- Corrupted folder state
+- Too many files in folder
+
+**Solutions**:
+1. Wait 30 seconds then try again
+2. Refresh the page (Ctrl/Cmd + R)
+3. Check browser console for errors
+4. Try accessing folder via different path
+5. Contact support if folder consistently fails
+
+```javascript
+// Check browser console for errors like:
+// "Failed to fetch" or "500 Internal Server Error"
+```
+</Accordion>
+
+<Accordion title="Files not appearing after upload">
+**Symptom**: Upload completes but files not visible in tree
+
+**Causes**:
+- Tree not refreshed
+- Uploaded to wrong location
+- Folder not expanded
+- Cache issue
+
+**Solutions**:
+1. Expand/collapse the parent folder
+2. Refresh the page
+3. Check upload progress panel for actual location
+4. Clear browser cache and reload
+5. Verify files exist via API or support
+
+<Tip>
+Use Ctrl/Cmd + R to refresh the page, which reloads the entire tree structure.
+</Tip>
+</Accordion>
+
+<Accordion title="Cannot see recently created folders">
+**Symptom**: Created folder doesn't appear in tree
+
+**Causes**:
+- Parent folder not refreshed
+- Folder creation failed silently
+- Network lag
+- Caching issue
+
+**Solutions**:
+1. Collapse and re-expand parent folder
+2. Refresh the entire tree
+3. Check if folder appears after page reload
+4. Try creating folder again with different name
+5. Check browser network tab for failed requests
+</Accordion>
+
+<Accordion title="Tree panel too narrow or too wide">
+**Symptom**: Cannot see full file names or tree takes too much space
+
+**Causes**:
+- Resizer dragged to extreme position
+- Browser window size changed
+- Saved preference issue
+
+**Solutions**:
+1. Hover over divider between tree and content area
+2. Drag to desired width (15%-50% of screen)
+3. Refresh page if resizer doesn't appear
+4. Clear browser local storage if stuck
+5. Reset to default in settings
+
+```javascript
+// Clear saved tree width (browser console):
+localStorage.removeItem('treeWidth');
+location.reload();
+```
+</Accordion>
+
+</AccordionGroup>
+
+## File Operation Issues
+
+<AccordionGroup>
+
+<Accordion title="Rename operation fails or reverts">
+**Symptom**: File name changes back to original
+
+**Causes**:
+- Invalid characters in new name
+- Name conflict (already exists)
+- Server timeout
+- Permissions issue
+
+**Solutions**:
+1. Avoid special characters: `/` `\` `:` `*` `?` `"` `<` `>` `|`
+2. Check no other file has same name in folder
+3. Try shorter name (under 255 characters)
+4. Wait a few seconds and try again
+5. Refresh page to see if rename actually succeeded
+</Accordion>
+
+<Accordion title="Cannot move files via drag-and-drop">
+**Symptom**: Drag operation doesn't work or file doesn't move
+
+**Causes**:
+- Target folder not properly highlighted
+- Trying to move to read-only location
+- Browser drag-and-drop disabled
+- Moving to same location
+
+**Solutions**:
+1. Ensure target folder highlights when hovering
+2. Check target isn't a mount point (external connector)
+3. Use right-click "Move" instead of drag-and-drop
+4. Try different browser
+5. Verify JavaScript is enabled
+6. Check you're not dropping on the file itself
+</Accordion>
+
+<Accordion title="Delete confirmation doesn't appear">
+**Symptom**: Click delete but nothing happens
+
+**Causes**:
+- Popup blocker active
+- JavaScript error
+- Browser focus issue
+- Already in deletion process
+
+**Solutions**:
+1. Check popup blocker settings
+2. Allow popups for MemoryLake domain
+3. Check browser console for errors
+4. Refresh page and try again
+5. Use keyboard (Delete key) instead of context menu
+</Accordion>
+
+<Accordion title="Download starts but file is corrupted">
+**Symptom**: Downloaded file won't open or shows errors
+
+**Causes**:
+- Network interruption during download
+- Disk space issue on local machine
+- File corrupted in storage
+- Browser download manager issue
+
+**Solutions**:
+1. Retry the download
+2. Check available disk space
+3. Try different browser
+4. Download to different location
+5. Verify file integrity by checking file size
+6. Contact support if file consistently corrupts
+</Accordion>
+
+</AccordionGroup>
+
+## Metadata and Comments Issues
+
+<AccordionGroup>
+
+<Accordion title="Comments not saving">
+**Symptom**: Write comment but it disappears on reload
+
+**Causes**:
+- Network timeout before save completed
+- Click outside panel before save
+- Browser crashed during edit
+- Server error
+
+**Solutions**:
+1. Wait for "Saved" confirmation before closing
+2. Check for save button (don't close immediately)
+3. Use auto-save feature (wait 30 seconds)
+4. Check browser console for save errors
+5. Copy comment text before closing panel (backup)
+
+<Warning>
+Always wait for the save confirmation message before closing the comment editor.
+</Warning>
+</Accordion>
+
+<Accordion title="Markdown not rendering correctly">
+**Symptom**: Markdown shows as plain text or renders wrong
+
+**Causes**:
+- Syntax errors in Markdown
+- Unsupported Markdown features
+- Preview cache issue
+
+**Solutions**:
+1. Check Markdown syntax is correct
+2. Verify headers use `#` not `##` for H1, etc.
+3. Ensure code blocks use triple backticks
+4. Refresh preview pane
+5. Test Markdown in external editor first
+6. Check for mismatched brackets or quotes
+
+```markdown
+# Common syntax errors to avoid
+**Bold without closing** ← Missing closing **
+[Link without URL] ← Missing (url) part
+`` `Code without closing ← Missing closing backtick
+```
+</Accordion>
+
+<Accordion title="Extended attributes not appearing">
+**Symptom**: Set metadata but it doesn't show
+
+**Causes**:
+- Metadata panel not refreshed
+- Server didn't save changes
+- Viewing wrong file
+
+**Solutions**:
+1. Close and reopen metadata panel
+2. Refresh page to reload from server
+3. Verify you're editing the correct file
+4. Check browser console for save errors
+5. Try setting single attribute first
+</Accordion>
+
+</AccordionGroup>
+
+## Performance Issues
+
+<AccordionGroup>
+
+<Accordion title="Tree loads slowly or hangs">
+**Symptom**: Long wait times when expanding folders
+
+**Causes**:
+- Very large number of files
+- Slow network connection
+- Server under load
+- Browser memory issues
+
+**Solutions**:
+1. Avoid expanding multiple large folders at once
+2. Close other browser tabs to free memory
+3. Clear browser cache
+4. Try during off-peak hours
+5. Contact support if consistently slow
+6. Consider organizing into more folders (flatten hierarchy)
+
+<Tip>
+If a folder has 1000+ files, consider creating subfolders to improve performance.
+</Tip>
+</Accordion>
+
+<Accordion title="UI becomes unresponsive">
+**Symptom**: Clicks don't register, interface frozen
+
+**Causes**:
+- Browser memory exhausted
+- Too many files in tree
+- JavaScript error
+- Browser extension conflict
+
+**Solutions**:
+1. Refresh the page (Ctrl/Cmd + R)
+2. Close other tabs and applications
+3. Disable browser extensions temporarily
+4. Try incognito/private browsing mode
+5. Use different browser
+6. Restart browser completely
+</Accordion>
+
+<Accordion title="Upload/download speeds very slow">
+**Symptom**: File transfers taking longer than expected
+
+**Causes**:
+- Network bandwidth limitations
+- ISP throttling
+- Server distance
+- Peak usage times
+- VPN overhead
+
+**Solutions**:
+1. Test internet speed (fast.com or speedtest.net)
+2. Disable VPN temporarily (if allowed)
+3. Use wired connection instead of WiFi
+4. Close bandwidth-heavy applications
+5. Try during off-peak hours
+6. Upload smaller batches of files
+7. Contact ISP if consistently slow
+
+**Expected Speeds**:
+- 10 Mbps upload: ~1 MB/s
+- 50 Mbps upload: ~6 MB/s
+- 100 Mbps upload: ~12 MB/s
+</Accordion>
+
+</AccordionGroup>
+
+## Browser-Specific Issues
+
+<AccordionGroup>
+
+<Accordion title="Safari: Uploads fail randomly">
+**Solution**: Update to latest Safari version or use Chrome/Firefox. Safari has known issues with large file uploads.
+</Accordion>
+
+<Accordion title="Firefox: Drag-and-drop doesn't work">
+**Solution**: Check Firefox permissions. Go to Settings → Privacy & Security → Permissions and ensure MemoryLake has access.
+</Accordion>
+
+<Accordion title="Chrome: Memory warnings">
+**Solution**: Chrome is memory-intensive. Close unused tabs, disable heavy extensions, or use Edge (less memory usage).
+</Accordion>
+
+<Accordion title="Mobile browsers: Limited functionality">
+**Solution**: Mobile browsers have limited file upload capabilities. Use desktop browser for full functionality.
+</Accordion>
+
+</AccordionGroup>
+
+## Getting Help
+
+If you can't resolve an issue:
+
+1. **Check Browser Console** (F12) - Look for error messages
+2. **Try Different Browser** - Rules out browser-specific issues
+3. **Clear Cache** - Resolve caching problems
+4. **Gather Details**:
+   - What were you trying to do?
+   - What happened instead?
+   - Any error messages?
+   - Browser and version?
+   - File size and type?
+
+5. **Contact Support** with the above information
+
+<Tip>
+When reporting issues, include screenshots and any error messages from the browser console. This helps support resolve problems faster.
+</Tip>
+
+## Preventive Measures
+
+Avoid common issues by following these practices:
+
+- **Regular Backups**: Download important files periodically
+- **Organize Proactively**: Keep folders reasonably sized
+- **Update Browser**: Use latest browser version
+- **Stable Connection**: Use wired network for large uploads
+- **Monitor Storage**: Keep track of quota usage
+- **Test First**: Try operations on test files first
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Document Management Overview" icon="folder-tree" href="/features/memorylake/document-management/overview">
+Return to document management overview
+</Card>
+
+<Card title="API Documentation" icon="code" href="/features/memorylake/api-reference/overview">
+Try programmatic access if UI issues persist
+</Card>
+
+<Card title="Contact Support" icon="life-ring" href="mailto:support@example.com">
+Get help from the support team
+</Card>
+
+<Card title="Community Forum" icon="comments" href="https://community.example.com">
+Ask the community for help
+</Card>
+</CardGroup>

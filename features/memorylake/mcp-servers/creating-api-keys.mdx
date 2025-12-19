@@ -1,0 +1,230 @@
+---
+title: "Creating MCP Server API Keys"
+description: "Generate secure API keys for MCP server access to your project data"
+---
+
+## Creating an API Key
+
+<Steps>
+<Step title="Open Project">
+Navigate to the project dashboard.
+</Step>
+
+<Step title="Go to MCP Servers Tab">
+Click the "MCP Servers" tab.
+
+{/* SCREENSHOT: MCP Servers tab */}
+</Step>
+
+<Step title="Click Add MCP Server">
+Click the "Add MCP Server" button.
+
+{/* SCREENSHOT: Create MCP server dialog */}
+</Step>
+
+<Step title="Enter Description">
+Provide a description for this API key (optional but recommended):
+- "Claude AI Integration"
+- "Production API Access"
+- "Team Member - John"
+- "Analytics Dashboard"
+
+This helps you identify keys later.
+</Step>
+
+<Step title="Generate Key">
+Click "Generate" or "Create" to create the API key.
+</Step>
+
+<Step title="Copy Secret Immediately">
+**CRITICAL**: The API secret appears in a dialog. This is the ONLY time you'll see it!
+
+{/* SCREENSHOT: Secret display with copy button and warning */}
+
+- Click "Copy" to copy the secret to clipboard
+- Save it in a secure location (password manager, environment variables)
+- Never commit it to version control
+
+<Warning>
+Once you close this dialog, the full secret cannot be retrieved again. If lost, you must delete and recreate the API key.
+</Warning>
+
+<Check>
+You should have copied and securely stored the API secret.
+</Check>
+</Step>
+
+<Step title="Note the Endpoint URL">
+The dialog also shows the endpoint URL:
+
+```
+https://api.example.com/api/memorylake/mcp/v1/projects/{project_id}
+```
+
+Copy this URL for use in your applications.
+
+{/* SCREENSHOT: Endpoint URL display */}
+</Step>
+</Steps>
+
+## API Key Components
+
+When you create an API key, you receive:
+
+### 1. API Key ID
+- Unique identifier for the key
+- Visible in the MCP Servers list
+- Used for management (deleting the key)
+
+### 2. API Secret (Shown Once)
+- Full secret string (e.g., `mlk_secret_abc123xyz...`)
+- Used for authentication in API requests
+- **Never shown again after initial creation**
+- Only last 4 characters visible in list (e.g., `...xyz`)
+
+### 3. Endpoint URL
+- Full URL for making API requests
+- Includes the project ID
+- Use with Authorization header
+
+### 4. Description (Optional)
+- Your custom description
+- Helps identify purpose of the key
+- Can be edited later (check docs)
+
+## Using Your API Key
+
+### Authentication Header
+
+Include your API key in requests:
+
+```bash
+curl -X GET '{endpoint_url}' \
+  -H 'Authorization: Bearer mlk_secret_abc123xyz...' \
+  -H 'Content-Type: application/json'
+```
+
+### Example Request
+
+```bash
+# Get project details
+curl -X GET 'https://api.example.com/api/memorylake/mcp/v1/projects/proj_123' \
+  -H 'Authorization: Bearer YOUR_API_SECRET_HERE'
+```
+
+### Example Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "proj_123",
+    "name": "Research Project",
+    "description": "Q1 2024 research materials",
+    "documentCount": 15,
+    "memoryCount": 5
+  }
+}
+```
+
+## Best Practices
+
+### Descriptive Names
+
+Use clear descriptions:
+- ✅ "Production - Claude Integration"
+- ✅ "Development - Testing"
+- ✅ "Analytics Dashboard - Read Only"
+- ❌ "Key 1"
+- ❌ "Test"
+
+### Secure Storage
+
+Store API secrets securely:
+- **Password Manager**: 1Password, LastPass, Bitwarden
+- **Environment Variables**: `.env` files (add to `.gitignore`)
+- **Secrets Manager**: AWS Secrets Manager, Azure Key Vault
+- **DO NOT**: Commit to Git, store in code, share in chat/email
+
+### Multiple Keys
+
+Create separate keys for different purposes:
+- One per environment (dev, staging, production)
+- One per team member (for accountability)
+- One per integration (Claude, custom app, analytics)
+
+This allows you to revoke specific access without affecting others.
+
+### Key Rotation
+
+Rotate keys periodically:
+1. Create new API key
+2. Update applications to use new key
+3. Verify new key works
+4. Delete old API key
+
+## Managing API Keys
+
+### View API Keys
+
+The MCP Servers tab lists all API keys:
+- Description
+- Created date
+- Status
+- Masked secret (last 4 characters)
+- Actions (delete)
+
+{/* SCREENSHOT: MCP servers list with multiple keys */}
+
+### Delete API Key
+
+To revoke access:
+1. Click delete icon for the key
+2. Confirm deletion
+
+{/* SCREENSHOT: Delete confirmation */}
+
+Access is revoked immediately.
+
+<Warning>
+Deleting an API key immediately revokes access. Applications using that key will receive 401 Unauthorized errors.
+</Warning>
+
+## Troubleshooting
+
+<AccordionGroup>
+
+<Accordion title="Forgot to copy secret">
+**Solution**: You must delete the API key and create a new one. Secrets cannot be retrieved after creation.
+</Accordion>
+
+<Accordion title="API key not working">
+**Solutions**:
+- Verify you're using the full secret (not just the masked version)
+- Check Authorization header format: `Bearer YOUR_SECRET`
+- Ensure project ID in URL is correct
+- Verify key hasn't been deleted
+- Check for typos in secret
+</Accordion>
+
+<Accordion title="Want to see full secret again">
+**Not Possible**: Secrets shown only once for security. Delete and recreate if lost.
+</Accordion>
+
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Configuration" icon="gear" href="/features/memorylake/mcp-servers/configuration">
+Learn to configure and use your API keys
+</Card>
+
+<Card title="Security" icon="shield" href="/features/memorylake/mcp-servers/security">
+Security best practices
+</Card>
+
+<Card title="API Reference" icon="code" href="/features/memorylake/api-reference/mcp-servers">
+Complete API documentation
+</Card>
+</CardGroup>

@@ -1,0 +1,106 @@
+---
+title: "Memories API"
+description: "Create and manage memories within projects"
+---
+
+## List Memories
+
+```
+GET /projects/{projectId}/memories
+```
+
+### Parameters
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+Page number
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="10">
+Items per page
+</ParamField>
+
+### Response
+
+Array of memory objects with pagination.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.example.com/api/memorylake/api/v1/projects/proj_123/memories' \
+  -H 'Authorization: Bearer YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "mem_123",
+        "name": "Project Guidelines",
+        "content": "Key information...",
+        "created_at": "2024-01-15T10:00:00Z"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "page_size": 10,
+      "total": 1
+    }
+  }
+}
+```
+</ResponseExample>
+
+## Get Memory
+
+```
+GET /projects/{projectId}/memories/{memoryId}
+```
+
+Returns full memory details.
+
+## Create Memory
+
+```
+POST /projects/{projectId}/memories
+```
+
+<ParamField body="name" type="string" required>
+Memory name
+</ParamField>
+
+<ParamField body="content" type="string" required>
+Memory content (plain text)
+</ParamField>
+
+## Update Memory
+
+```
+PUT /projects/{projectId}/memories/{memoryId}
+```
+
+## Delete Memory
+
+```
+DELETE /projects/{projectId}/memories/{memoryId}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Projects API" icon="diagram-project" href="/features/memorylake/api-reference/projects">
+Manage projects
+</Card>
+
+<Card title="Memory Best Practices" icon="star" href="/features/memorylake/memories/best-practices">
+Writing effective memories
+</Card>
+</CardGroup>

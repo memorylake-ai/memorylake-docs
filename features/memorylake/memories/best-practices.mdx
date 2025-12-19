@@ -1,0 +1,295 @@
+---
+title: "Memory Best Practices"
+description: "Guidelines for effective use of memories in MemoryLake projects"
+---
+
+## Writing Effective Memories
+
+### Be Specific and Concrete
+
+**Bad**:
+```
+This project is about customer data.
+```
+
+**Good**:
+```
+This project analyzes Q1 2024 customer survey responses from 1,500 participants.
+
+Focus areas:
+- Net Promoter Score trends
+- Product satisfaction ratings  
+- Feature request themes
+
+Survey methodology: Online survey, random sampling, 95% confidence interval
+```
+
+### Provide Context
+
+Help readers (human and AI) understand:
+- Why this project exists
+- What problem it solves
+- Who the audience is
+- How it relates to other projects
+
+### Use Clear Structure
+
+Organize content with sections:
+
+```
+PURPOSE
+Brief description of project goals
+
+CONTEXT
+Background information
+
+KEY INFORMATION
+Important facts, figures, decisions
+
+GUIDELINES
+How to approach the content
+
+RELATED
+Links to related projects or external resources
+```
+
+## Naming Conventions
+
+### Descriptive Names
+
+Make names self-explanatory:
+- ✅ "Budget Constraints Q1 2024"
+- ✅ "Customer Interview - Key Insights"
+- ❌ "Notes 1"
+- ❌ "Misc"
+
+### Consistent Patterns
+
+Choose a pattern and stick to it:
+
+**Topic-Based**:
+- "Research Methodology"
+- "Research Questions"
+- "Research Timeline"
+
+**Category Prefixes**:
+- "[Context] Project History"
+- "[Guidelines] Analysis Approach"
+- "[Reference] Related Studies"
+
+## Content Guidelines
+
+### Length
+
+**Ideal**: 100-500 words per memory
+
+**Too Short** (< 50 words):
+```
+Project about sales data.
+```
+Not enough context for AI or collaborators.
+
+**Too Long** (> 1000 words):
+Hard to scan, better split into multiple focused memories.
+
+**Just Right**:
+```
+This project analyzes sales data from our Q4 2023 campaign across three regions: North America, Europe, and Asia Pacific.
+
+Objectives:
+1. Compare regional performance against targets
+2. Identify top-performing products  
+3. Understand seasonal trends
+4. Recommend Q1 2024 strategies
+
+Data sources: CRM exports, Google Analytics, manual sales reports
+
+When analyzing, focus on year-over-year growth rather than absolute numbers, as we expanded team size significantly in 2023.
+
+Related projects: "Q3 2023 Sales Analysis", "2024 Sales Planning"
+```
+
+### Update Regularly
+
+Memories should stay current:
+- Update when information changes
+- Add new insights as project progresses
+- Remove outdated information
+- Archive historical context separately
+
+## Use Cases by Memory Type
+
+### Project Guidelines
+
+Provide instructions for working with the project:
+
+```
+ANALYSIS GUIDELINES
+
+When reviewing these documents:
+1. Prioritize data from the last 6 months
+2. Cross-reference customer feedback with NPS scores
+3. Focus on actionable insights over descriptive statistics
+4. Consider budget constraints ($50K for Q1)
+
+Red flags to watch for:
+- Sample sizes under 100
+- Survey response rates under 30%
+- Conflicting data between sources
+```
+
+### Background Context
+
+Explain project history:
+
+```
+PROJECT HISTORY
+
+This project began in September 2023 after customer complaints about checkout process increased 40%.
+
+Initial hypothesis: Payment gateway issues causing abandonment
+
+Investigation revealed:
+- Gateway was fine
+- UI confusion was main culprit
+- Mobile experience particularly poor
+
+This analysis supports the redesign project (see "Checkout Redesign 2024")
+```
+
+### Key Decisions
+
+Document important choices:
+
+```
+TECHNICAL DECISIONS
+
+Why we chose PostgreSQL over MySQL:
+- Better JSON support for flexible schemas
+- Superior full-text search
+- Team expertise
+- Cost-effective at our scale
+
+Trade-offs accepted:
+- Slightly more complex setup
+- Fewer hosting options
+
+Decision date: January 15, 2024
+Decision makers: Engineering team, CTO approval
+```
+
+### Constraints and Limitations
+
+Note boundaries:
+
+```
+PROJECT CONSTRAINTS
+
+Budget: $75,000 (hard limit)
+Timeline: Must complete by March 31, 2024
+Team: 3 developers, 1 designer (part-time)
+Scope: MVP only - advanced features for Phase 2
+
+Known Limitations:
+- Data only available from 2022 forward
+- API rate limited to 1000 requests/hour
+- No access to competitor pricing data
+```
+
+## Integration with MCP Servers
+
+When memories will be read by AI models:
+
+### Be Explicit
+
+AI doesn't have implicit context:
+
+**Vague**:
+```
+Focus on the important stuff.
+```
+
+**Explicit**:
+```
+When analyzing documents:
+1. Prioritize files in /reports/final/ over /drafts/
+2. Pay special attention to customer quotes (marked with >>)
+3. Ignore internal process notes (in /admin/ folders)
+```
+
+### Provide Examples
+
+Help AI understand expectations:
+
+```
+RESPONSE STYLE
+
+When answering questions about this project, use this style:
+
+Example good response:
+"According to the Q1 report (page 12), customer satisfaction increased 15% after implementing the new checkout flow. This aligns with the NPS improvement documented in the March survey."
+
+Example poor response:
+"Things got better."
+
+Always cite specific documents and page numbers when available.
+```
+
+## Maintenance
+
+### Regular Review
+
+Schedule memory review:
+- Monthly for active projects
+- Quarterly for stable projects
+- Before sharing project with new team members
+- After major project milestones
+
+### Keep It Current
+
+Update memories when:
+- Project goals change
+- New constraints emerge
+- Key decisions are made
+- Important lessons are learned
+- Related projects launch
+
+### Archive Old Content
+
+Rather than deleting historical information:
+- Create "Archive - [Date]" memories
+- Move outdated content there
+- Keep active memories current
+
+## Common Mistakes to Avoid
+
+❌ **Too vague**: "This is an important project"  
+✅ **Specific**: "This project determines Q2 budget allocation based on Q1 results"
+
+❌ **Kitchen sink**: One memory with everything  
+✅ **Focused**: Multiple memories, each with clear purpose
+
+❌ **Stale**: Last updated 2 years ago  
+✅ **Current**: Updated as project evolves
+
+❌ **Internal jargon**: "Use the TPS reports for the Q-analysis"  
+✅ **Clear**: "Use the Transaction Processing System reports for quarterly analysis"
+
+❌ **No structure**: Wall of text  
+✅ **Organized**: Clear sections with line breaks
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Creating Memories" icon="plus" href="/features/memorylake/memories/creating-memories">
+Start creating memories for your projects
+</Card>
+
+<Card title="Managing Memories" icon="list" href="/features/memorylake/memories/managing-memories">
+Learn to organize and maintain memories
+</Card>
+
+<Card title="MCP Servers" icon="server" href="/features/memorylake/mcp-servers/overview">
+Provide AI access to your memories
+</Card>
+</CardGroup>

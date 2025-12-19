@@ -1,0 +1,115 @@
+---
+title: "Projects API"
+description: "Create and manage projects with associated documents and memories"
+---
+
+## List Projects
+
+```
+GET /projects
+```
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+Page number
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="10">
+Items per page (max 100)
+</ParamField>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Response structure">
+  <ResponseField name="items" type="array">
+  Array of project objects
+  </ResponseField>
+  
+  <ResponseField name="pagination" type="object">
+  Pagination metadata
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.example.com/api/memorylake/api/v1/projects?page=1&page_size=10' \
+  -H 'Authorization: Bearer YOUR_API_KEY'
+```
+</RequestExample>
+
+## Get Project
+
+```
+GET /projects/{projectId}
+```
+
+Returns project details including document and memory counts.
+
+## Create Project
+
+```
+POST /projects
+```
+
+<ParamField body="name" type="string" required>
+Project name
+</ParamField>
+
+<ParamField body="description" type="string">
+Project description
+</ParamField>
+
+## Update Project
+
+```
+PUT /projects/{projectId}
+```
+
+## Delete Project
+
+```
+DELETE /projects/{projectId}
+```
+
+<Warning>
+Deletes project and all associations. Documents and memories remain in drive.
+</Warning>
+
+## List Project Documents
+
+```
+GET /projects/{projectId}/documents
+```
+
+Returns all documents associated with the project.
+
+## Add Document to Project
+
+```
+POST /projects/{projectId}/documents
+```
+
+<ParamField body="item_id" type="string" required>
+Document/folder ID from drive
+</ParamField>
+
+## Remove Document
+
+```
+DELETE /projects/{projectId}/documents/{documentId}
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Memories API" icon="brain" href="/features/memorylake/api-reference/memories">
+Manage project memories
+</Card>
+
+<Card title="MCP Servers API" icon="key" href="/features/memorylake/api-reference/mcp-servers">
+Generate API keys
+</Card>
+</CardGroup>

@@ -1,0 +1,126 @@
+---
+title: "MCP Servers"
+description: "Generate API keys and configure MCP (Model Context Protocol) servers for your projects"
+---
+
+## Overview
+
+MCP (Model Context Protocol) Servers provide API endpoints for external applications and AI models to access your project data securely.
+
+## What Are MCP Servers?
+
+MCP Servers in MemoryLake are:
+- **API Key Endpoints**: Authenticated URLs for external access
+- **Project-Scoped**: Each API key provides access to one project
+- **Read-Only**: External access cannot modify your data
+- **Secure**: API secrets shown only once upon creation
+
+{/* SCREENSHOT: MCP servers list view */}
+
+## Key Features
+
+<CardGroup cols={2}>
+<Card title="API Key Generation" icon="key" href="/features/memorylake/mcp-servers/creating-api-keys">
+Create secure API keys for project access with one-time secret display.
+</Card>
+
+<Card title="Configuration" icon="gear" href="/features/memorylake/mcp-servers/configuration">
+Configure and manage MCP server settings and usage.
+</Card>
+
+<Card title="Security" icon="shield" href="/features/memorylake/mcp-servers/security">
+Learn security best practices for API key management.
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/features/memorylake/mcp-servers/troubleshooting">
+Solve common MCP server issues.
+</Card>
+</CardGroup>
+
+## Use Cases
+
+<AccordionGroup>
+<Accordion title="AI Model Integration">
+Provide AI assistants (Claude, ChatGPT, etc.) with read access to your project's documents and memories.
+</Accordion>
+
+<Accordion title="External Applications">
+Build custom applications that query your knowledge base programmatically.
+</Accordion>
+
+<Accordion title="Team Access">
+Generate API keys for team members to access project data from their tools.
+</Accordion>
+
+<Accordion title="Automation">
+Create automated workflows that read project data for reporting or analysis.
+</Accordion>
+</AccordionGroup>
+
+## How It Works
+
+<Steps>
+<Step title="Generate API Key">
+Create an API key for your project with optional description.
+</Step>
+
+<Step title="Copy Secret">
+**Important**: Copy the API secret immediately - it's shown only once!
+</Step>
+
+<Step title="Use Endpoint">
+Use the provided endpoint URL with your API key to access project data.
+</Step>
+
+<Step title="Secure Storage">
+Store your API secret securely (never commit to version control).
+</Step>
+</Steps>
+
+## What MCP Servers Provide Access To
+
+When you use an API key, external applications can read:
+- **Project metadata**: Name, description, statistics
+- **Associated documents**: File list and contents
+- **Memories**: All memories in the project
+- **Document metadata**: Comments and extended attributes
+
+<Warning>
+MCP servers provide read-only access. External applications cannot modify, delete, or upload content.
+</Warning>
+
+## Security Model
+
+- **Project-Scoped**: Each key accesses only one project
+- **Bearer Token**: API keys used as Bearer tokens in Authorization header
+- **One-Time Secret**: Full secret shown only at creation
+- **Revocable**: Delete API keys anytime to revoke access
+- **Encrypted**: Secrets encrypted in storage
+
+## Getting Started
+
+Ready to create your first MCP server endpoint?
+
+<Card title="Create API Keys" icon="plus" href="/features/memorylake/mcp-servers/creating-api-keys">
+Step-by-step guide to generating API keys
+</Card>
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Creating API Keys" icon="key" href="/features/memorylake/mcp-servers/creating-api-keys">
+Generate your first API key
+</Card>
+
+<Card title="Configuration" icon="sliders" href="/features/memorylake/mcp-servers/configuration">
+Configure and use MCP servers
+</Card>
+
+<Card title="Security" icon="lock" href="/features/memorylake/mcp-servers/security">
+Learn security best practices
+</Card>
+
+<Card title="API Reference" icon="code" href="/features/memorylake/api-reference/mcp-servers">
+See API documentation
+</Card>
+</CardGroup>

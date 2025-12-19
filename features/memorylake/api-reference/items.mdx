@@ -1,0 +1,125 @@
+---
+title: "Items API (Files & Folders)"
+description: "Manage files and folders within your drive"
+---
+
+## Get Item
+
+Retrieve metadata for a file or folder.
+
+```
+GET /drives/items/{itemId}
+```
+
+### Parameters
+
+<ParamField path="itemId" type="string" required>
+Unique item identifier
+</ParamField>
+
+### Response
+
+<ResponseField name="success" type="boolean">
+Request success indicator
+</ResponseField>
+
+<ResponseField name="data" type="object">
+Item object with name, type, size, modified date, parent ID
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://api.example.com/api/memorylake/api/v1/drives/items/item_123' \
+  -H 'Authorization: Bearer YOUR_API_KEY'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success
+{
+  "success": true,
+  "data": {
+    "id": "item_123",
+    "name": "document.pdf",
+    "type": "file",
+    "size": 1024000,
+    "modified_at": "2024-01-15T10:00:00Z",
+    "parent_id": "item_parent_456"
+  }
+}
+```
+</ResponseExample>
+
+## List Children
+
+List contents of a folder.
+
+```
+GET /drives/items/{itemId}/children
+```
+
+Returns array of child items with pagination support.
+
+## Create Folder
+
+Create a new folder.
+
+```
+POST /drives/items/{parentId}/children
+```
+
+### Body
+
+<ParamField body="name" type="string" required>
+Folder name
+</ParamField>
+
+<ParamField body="type" type="string" required>
+Must be "folder"
+</ParamField>
+
+## Rename Item
+
+```
+PATCH /drives/items/{itemId}/name
+```
+
+## Move Item
+
+```
+PATCH /drives/items/{itemId}/parent
+```
+
+## Delete Item
+
+```
+DELETE /drives/items/{itemId}
+```
+
+## Download File
+
+```
+GET /drives/items/{itemId}/binary
+```
+
+Returns file content as binary stream.
+
+## Update Metadata
+
+```
+PUT /drives/items/{itemId}/xattrs
+```
+
+Update extended attributes and comments.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Upload API" icon="upload" href="/features/memorylake/api-reference/upload">
+Learn about file uploads
+</Card>
+
+<Card title="Projects API" icon="diagram-project" href="/features/memorylake/api-reference/projects">
+Associate items with projects
+</Card>
+</CardGroup>

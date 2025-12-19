@@ -1,0 +1,101 @@
+---
+title: "Upload API"
+description: "Upload files using single or multi-part upload mechanisms"
+---
+
+## Single File Upload
+
+For files under 100MB, use direct upload to parent folder.
+
+```
+POST /drives/items/{parentId}/children
+```
+
+### Parameters
+
+<ParamField path="parentId" type="string" required>
+Parent folder ID
+</ParamField>
+
+### Body (multipart/form-data)
+
+<ParamField body="file" type="file" required>
+File to upload
+</ParamField>
+
+<ParamField body="name" type="string" required>
+File name
+</ParamField>
+
+### Example
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://api.example.com/api/memorylake/api/v1/drives/items/parent_123/children' \
+  -H 'Authorization: Bearer YOUR_API_KEY' \
+  -F 'file=@/path/to/file.pdf' \
+  -F 'name=file.pdf'
+```
+</RequestExample>
+
+## Multi-Part Upload
+
+For large files (> 100MB), use multi-part upload.
+
+### Create Multi-Part Upload
+
+```
+POST /upload/create-multipart
+```
+
+<ParamField body="parent_id" type="string" required>
+Parent folder ID
+</ParamField>
+
+<ParamField body="name" type="string" required>
+File name
+</ParamField>
+
+<ParamField body="size" type="integer" required>
+Total file size in bytes
+</ParamField>
+
+Returns `upload_id` and `chunk_size`.
+
+### Upload Parts
+
+Upload file chunks using pre-signed URLs or direct upload endpoints.
+
+### Complete Multi-Part Upload
+
+```
+POST /upload/complete-multipart
+```
+
+<ParamField body="upload_id" type="string" required>
+Upload ID from create-multipart
+</ParamField>
+
+<ParamField body="parts" type="array" required>
+Array of completed part objects with part number and ETag
+</ParamField>
+
+## Best Practices
+
+- Files < 100MB: Use single upload
+- Files > 100MB: Use multi-part upload
+- Chunk size: 5-10MB per part
+- Concurrent parts: Up to 3
+- Implement retry logic for failed parts
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Items API" icon="folder" href="/features/memorylake/api-reference/items">
+Manage uploaded files
+</Card>
+
+<Card title="Advanced Upload" icon="cloud-arrow-up" href="/features/memorylake/document-management/upload-advanced">
+UI upload features
+</Card>
+</CardGroup>

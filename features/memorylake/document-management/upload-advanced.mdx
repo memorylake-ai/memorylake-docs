@@ -1,0 +1,374 @@
+---
+title: "Advanced Upload Features"
+description: "Multi-part upload, concurrent file handling, progress tracking, and folder structure preservation"
+---
+
+## Overview
+
+MemoryLake's advanced upload system handles files of any size with reliability and performance. Learn how to leverage multi-part uploads, concurrent transfers, and intelligent progress tracking for efficient file management.
+
+## Upload Capabilities
+
+### Multi-Part Upload
+
+For large files, MemoryLake automatically uses multi-part upload technology:
+
+**How It Works**:
+1. Files larger than 100MB are automatically detected
+2. The file is split into manageable chunks (typically 5-10MB each)
+3. Chunks are uploaded in parallel
+4. If a chunk fails, only that chunk is retried
+5. Once all chunks complete, the file is assembled
+
+**Benefits**:
+- **Reliability**: Failed chunks can be retried without re-uploading the entire file
+- **Speed**: Parallel chunk uploads utilize bandwidth more efficiently
+- **Resumable**: Interrupted uploads can resume from the last successful chunk
+- **Large File Support**: Upload files up to 500MB (or more depending on your plan)
+
+<Tip>
+Multi-part upload happens automatically. You don't need to configure anything - just upload your files normally.
+</Tip>
+
+{/* SCREENSHOT: Upload progress showing multi-part chunks */}
+
+### Chunk Size and Performance
+
+| File Size | Chunk Size | Typical Chunks | Upload Time (10 Mbps) |
+|-----------|------------|----------------|----------------------|
+| 0-100 MB | N/A (single) | 1 | Varies |
+| 100-250 MB | 5 MB | 20-50 | 2-5 min |
+| 250-500 MB | 10 MB | 25-50 | 4-8 min |
+| 500 MB+ | 10 MB | 50+ | 8+ min |
+
+<Note>
+Actual upload times vary based on your internet connection speed and server load.
+</Note>
+
+## Concurrent Uploads
+
+### How Concurrent Upload Works
+
+MemoryLake uploads up to **3 files simultaneously** to balance speed and resource usage:
+
+1. **Queue Management**: All selected files are added to an upload queue
+2. **Parallel Processing**: Up to 3 files upload at the same time
+3. **Sequential Fallback**: Remaining files wait in queue and start as others complete
+4. **Status Tracking**: Each file shows its individual status
+
+**Upload States**:
+- **Pending**: Waiting in queue
+- **Uploading**: Currently transferring
+- **Completed**: Successfully uploaded
+- **Failed**: Error occurred (with retry option)
+
+{/* SCREENSHOT: Upload queue showing multiple files in different states */}
+
+### Optimizing Concurrent Uploads
+
+**Best Practices**:
+- Upload related files together for better organization
+- Mix small and large files to keep all slots busy
+- Monitor progress panel to identify any stuck uploads
+- Retry failed uploads individually
+
+**Why Only 3 Concurrent?**:
+- Prevents browser resource exhaustion
+- Avoids server overload
+- Maintains stable upload speeds
+- Allows effective progress monitoring
+
+## Progress Tracking
+
+### Upload Progress Panel
+
+The progress panel shows real-time status for all uploads:
+
+**Information Displayed**:
+- File name and size
+- Current status (pending, uploading, completed, failed)
+- Progress percentage
+- Upload speed (MB/s or KB/s)
+- Time remaining estimate
+- Success/error messages
+
+{/* SCREENSHOT: Detailed progress panel with multiple uploads */}
+
+### Progress States
+
+<AccordionGroup>
+<Accordion title="Pending">
+**Appearance**: Queued, waiting to start
+
+The file is in the queue but hasn't started uploading yet. It will begin once a concurrent slot becomes available.
+</Accordion>
+
+<Accordion title="Uploading">
+**Appearance**: Progress bar filling, percentage increasing
+
+The file is actively transferring. You'll see:
+- Real-time progress percentage
+- Current upload speed
+- Estimated time remaining
+</Accordion>
+
+<Accordion title="Completed">
+**Appearance**: Green checkmark, 100% complete
+
+Upload successful! The file is now available in your drive. The entry remains in the progress panel until you clear it.
+</Accordion>
+
+<Accordion title="Failed">
+**Appearance**: Red error icon, error message
+
+An error occurred during upload. Click the retry button to attempt the upload again. Common causes:
+- Network interruption
+- File size exceeded
+- Invalid file type
+- Server timeout
+</Accordion>
+</AccordionGroup>
+
+### Managing Upload Progress
+
+**Actions Available**:
+- **Pause**: Not currently supported (uploads run to completion)
+- **Cancel**: Stop and remove an uploading file
+- **Retry**: Restart a failed upload
+- **Clear Completed**: Remove successful uploads from the panel
+- **Clear All**: Remove all entries from the progress panel
+
+<Warning>
+Canceling an upload deletes any partial data. If you need to upload the file later, you'll start from the beginning.
+</Warning>
+
+## Folder Structure Preservation
+
+### How It Works
+
+When you upload a folder, MemoryLake maintains the complete directory structure:
+
+**Example Local Structure**:
+```
+Research/
+├── Papers/
+│   ├── 2023/
+│   │   ├── paper1.pdf
+│   │   └── paper2.pdf
+│   └── 2024/
+│       └── paper3.pdf
+├── Notes/
+│   └── summary.md
+└── Data/
+    └── results.csv
+```
+
+**Resulting MemoryLake Structure**:
+The exact same hierarchy is recreated in your drive, preserving all folders and file relationships.
+
+{/* SCREENSHOT: Tree view showing preserved folder structure after upload */}
+
+### Folder Upload Process
+
+<Steps>
+<Step title="Select Folder">
+Use the "Upload Folder" option or drag an entire folder from your file explorer.
+</Step>
+
+<Step title="Analyze Structure">
+MemoryLake scans the folder and builds an upload plan, identifying all files and subdirectories.
+</Step>
+
+<Step title="Create Folders">
+All necessary folders are created in your drive first, maintaining the hierarchy.
+</Step>
+
+<Step title="Upload Files">
+Files are uploaded concurrently, placed into their corresponding folders automatically.
+</Step>
+
+<Step title="Verify Completion">
+Check the progress panel to ensure all files completed successfully, then verify the structure in your tree.
+
+<Check>
+Navigate through the folders in your drive to confirm the structure matches your local copy.
+</Check>
+</Step>
+</Steps>
+
+### Hidden File Filtering
+
+MemoryLake automatically filters out hidden and system files:
+
+**Skipped Files**:
+- Files starting with `.` (dot files like `.DS_Store`, `.gitignore`)
+- System files (Thumbs.db, desktop.ini)
+- Temporary files
+
+This keeps your drive clean and avoids uploading unnecessary files.
+
+<Tip>
+If you need to upload a dot file, rename it temporarily to not start with a dot, upload it, then rename it back in MemoryLake.
+</Tip>
+
+## Upload Optimization
+
+### Best Practices for Large Uploads
+
+<AccordionGroup>
+<Accordion title="Preparing Your Files">
+- Organize files locally before uploading
+- Compress very large individual files if possible
+- Remove unnecessary files from folders before upload
+- Ensure stable internet connection
+</Accordion>
+
+<Accordion title="During Upload">
+- Keep the browser tab open and active
+- Avoid closing the browser or switching networks
+- Monitor the progress panel for errors
+- Upload during off-peak hours for better speed
+</Accordion>
+
+<Accordion title="After Upload">
+- Verify all files completed successfully
+- Check the tree structure matches your expectations
+- Retry any failed uploads
+- Clear the progress panel once done
+</Accordion>
+
+<Accordion title="Network Considerations">
+- Wired connections are more stable than WiFi
+- Avoid uploading while streaming video or gaming
+- Close unnecessary browser tabs
+- Disable VPN if uploads are slow (if allowed by your policy)
+</Accordion>
+</AccordionGroup>
+
+### Upload Speed Factors
+
+Factors affecting upload speed:
+- **Internet Connection**: Your upload bandwidth is the primary limit
+- **File Size**: Larger files benefit more from multi-part uploads
+- **Server Load**: Peak times may have slower speeds
+- **Geographic Distance**: Closer to data centers = faster uploads
+- **Concurrent Uploads**: 3 files share your total bandwidth
+
+**Typical Speeds**:
+- **10 Mbps connection**: ~1 MB/s upload speed
+- **50 Mbps connection**: ~6 MB/s upload speed
+- **100 Mbps connection**: ~12 MB/s upload speed
+
+<Note>
+Your upload speed is typically much slower than your download speed. Check with your ISP for your actual upload bandwidth.
+</Note>
+
+## Error Handling
+
+### Common Upload Errors
+
+<AccordionGroup>
+<Accordion title="File Too Large">
+**Error**: "File exceeds maximum size limit"
+
+**Solution**:
+- Check your plan's file size limit
+- Compress the file if possible
+- Split large files into smaller parts
+- Contact support for enterprise-level limits
+</Accordion>
+
+<Accordion title="Invalid File Type">
+**Error**: "File type not supported"
+
+**Solution**:
+- MemoryLake supports: .md, .txt, .csv, .pdf, .xlsx, .xls
+- Convert file to a supported format
+- Rename file to include correct extension
+- Check for typos in file extension
+</Accordion>
+
+<Accordion title="Network Timeout">
+**Error**: "Upload timed out" or "Connection lost"
+
+**Solution**:
+- Check your internet connection
+- Retry the upload
+- Use a more stable network connection
+- Try uploading during off-peak hours
+</Accordion>
+
+<Accordion title="Insufficient Storage">
+**Error**: "Storage quota exceeded"
+
+**Solution**:
+- Delete unused files to free up space
+- Check your storage usage in account settings
+- Upgrade your plan for more storage
+- Move some files to external connectors
+</Accordion>
+
+<Accordion title="Server Error">
+**Error**: "Server error (500)" or "Service unavailable"
+
+**Solution**:
+- Wait a few minutes and retry
+- Check MemoryLake status page for outages
+- Try uploading a smaller batch of files
+- Contact support if problem persists
+</Accordion>
+</AccordionGroup>
+
+### Retry Strategy
+
+If an upload fails:
+1. **Check Error Message**: Understand what went wrong
+2. **Fix the Issue**: Address network, file size, or format problems
+3. **Retry Upload**: Use the retry button in the progress panel
+4. **Monitor Closely**: Watch for the same error
+5. **Alternative Approach**: Try uploading via API if UI continues to fail
+
+## Advanced Techniques
+
+### Uploading Via API
+
+For programmatic or automated uploads, use the MemoryLake API:
+
+```bash
+# Single file upload
+curl -X POST 'https://api.example.com/api/memorylake/api/v1/drives/items/{parentId}/children' \
+  -H 'Authorization: Bearer YOUR_TOKEN' \
+  -F 'file=@/path/to/file.pdf' \
+  -F 'name=file.pdf'
+```
+
+See the [Upload API documentation](/features/memorylake/api-reference/upload) for complete details.
+
+### Bulk Upload Strategies
+
+For uploading hundreds or thousands of files:
+1. **Batch Uploads**: Upload in groups of 50-100 files at a time
+2. **Overnight Uploads**: Start large uploads during off-hours
+3. **Monitor Carefully**: Check progress regularly for errors
+4. **Use Scripts**: Automate with API for reliability
+5. **Verify Completion**: Check all files arrived correctly
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="File Operations" icon="folder" href="/features/memorylake/document-management/file-folder-operations">
+Learn basic file and folder management operations
+</Card>
+
+<Card title="Metadata & Comments" icon="comment" href="/features/memorylake/document-management/metadata-comments">
+Add context to your files with rich metadata
+</Card>
+
+<Card title="Upload API" icon="code" href="/features/memorylake/api-reference/upload">
+Upload files programmatically via the REST API
+</Card>
+
+<Card title="Troubleshooting" icon="wrench" href="/features/memorylake/document-management/troubleshooting">
+Solve common upload problems
+</Card>
+</CardGroup>

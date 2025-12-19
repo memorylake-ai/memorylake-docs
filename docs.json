@@ -38,6 +38,64 @@
                   "features/model-router/ai-applications/claude-code",
                   "features/model-router/ai-applications/codex-cli"
                 ]
+              },
+              {
+                "group": "MemoryLake",
+                "pages": [
+                  "features/memorylake/overview",
+                  "features/memorylake/quickstart",
+                  {
+                    "group": "Document Management",
+                    "pages": [
+                      "features/memorylake/document-management/overview",
+                      "features/memorylake/document-management/file-folder-operations",
+                      "features/memorylake/document-management/upload-advanced",
+                      "features/memorylake/document-management/metadata-comments",
+                      "features/memorylake/document-management/tree-navigation",
+                      "features/memorylake/document-management/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Connectors",
+                    "pages": [
+                      "features/memorylake/connectors/overview",
+                      "features/memorylake/connectors/connector-framework",
+                      "features/memorylake/connectors/wps-integration",
+                      "features/memorylake/connectors/adding-connectors",
+                      "features/memorylake/connectors/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Project Management",
+                    "pages": [
+                      "features/memorylake/project-management/overview",
+                      "features/memorylake/project-management/projects-crud",
+                      "features/memorylake/project-management/project-dashboard",
+                      "features/memorylake/project-management/document-association",
+                      "features/memorylake/project-management/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "Memories",
+                    "pages": [
+                      "features/memorylake/memories/overview",
+                      "features/memorylake/memories/creating-memories",
+                      "features/memorylake/memories/managing-memories",
+                      "features/memorylake/memories/best-practices",
+                      "features/memorylake/memories/troubleshooting"
+                    ]
+                  },
+                  {
+                    "group": "MCP Servers",
+                    "pages": [
+                      "features/memorylake/mcp-servers/overview",
+                      "features/memorylake/mcp-servers/creating-api-keys",
+                      "features/memorylake/mcp-servers/configuration",
+                      "features/memorylake/mcp-servers/security",
+                      "features/memorylake/mcp-servers/troubleshooting"
+                    ]
+                  }
+                ]
               }
             ]
           },
@@ -59,6 +117,22 @@
           {
             "group": "API documentation",
             "pages": []
+          },
+          {
+            "group": "MemoryLake API",
+            "pages": [
+              "features/memorylake/api-reference/overview",
+              "features/memorylake/api-reference/authentication",
+              "features/memorylake/api-reference/drives",
+              "features/memorylake/api-reference/items",
+              "features/memorylake/api-reference/upload",
+              "features/memorylake/api-reference/projects",
+              "features/memorylake/api-reference/memories",
+              "features/memorylake/api-reference/mcp-servers",
+              "features/memorylake/api-reference/connectors",
+              "features/memorylake/api-reference/errors",
+              "features/memorylake/api-reference/rate-limits"
+            ]
           }
         ]
       }

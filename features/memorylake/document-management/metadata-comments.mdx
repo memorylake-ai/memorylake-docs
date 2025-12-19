@@ -1,0 +1,413 @@
+---
+title: "Metadata & Comments"
+description: "Add rich metadata and Markdown comments to your documents with live preview"
+---
+
+## Overview
+
+Enhance your documents with rich contextual information using MemoryLake's metadata system. Add Markdown-formatted comments, store custom attributes, and provide context that helps both humans and AI understand your content.
+
+## Extended Attributes (Metadata)
+
+### What Are Extended Attributes?
+
+Extended attributes (xattrs) are custom key-value pairs that you can attach to any file or folder. They store information about the item without modifying the file itself.
+
+**Common Use Cases**:
+- Document classification (e.g., `category: research`)
+- Status tracking (e.g., `status: reviewed`)
+- Custom tags (e.g., `tags: important,q1-2024`)
+- Project metadata (e.g., `project-phase: planning`)
+
+{/* SCREENSHOT: Metadata panel showing extended attributes */}
+
+### Adding Extended Attributes
+
+<Steps>
+<Step title="Select Item">
+Click on a file or folder in the tree to select it.
+</Step>
+
+<Step title="Open Metadata Panel">
+Click the metadata icon or right-click and select "Edit Metadata".
+
+The metadata panel opens on the right side of the screen.
+</Step>
+
+<Step title="Add Attributes">
+Enter key-value pairs:
+- **Key**: Attribute name (e.g., "category", "status")
+- **Value**: Attribute value (e.g., "research", "draft")
+
+Click "Add" to save the attribute.
+</Step>
+
+<Step title="Save Changes">
+Click "Save" to persist all changes to the server.
+
+<Check>
+Your metadata is now stored with the file and will appear whenever you view the item.
+</Check>
+</Step>
+</Steps>
+
+## Markdown Comments
+
+### Comment System Overview
+
+MemoryLake's comment system uses Markdown, allowing you to create rich, formatted notes for any file or folder.
+
+**Features**:
+- **Markdown Formatting**: Headers, lists, bold, italic, code blocks, links
+- **Live Preview**: See rendered output as you type
+- **Auto-Save**: Draft protection prevents data loss
+- **Version History**: Track comment changes over time (if enabled)
+
+{/* SCREENSHOT: Markdown comment editor with split preview */}
+
+### Creating Comments
+
+<Steps>
+<Step title="Open Comment Editor">
+Select a file or folder and open the comment panel (usually on the right side).
+</Step>
+
+<Step title="Write Your Comment">
+Use the Markdown editor to compose your comment. You can use:
+- `# Headers` for structure
+- `**bold**` and `*italic*` for emphasis
+- `- Lists` for organization
+- `` `code` `` for technical terms
+- `[links](url)` for references
+</Step>
+
+<Step title="Preview Your Content">
+The live preview pane shows how your Markdown will render.
+
+{/* SCREENSHOT: Side-by-side editor and preview */}
+
+<Tip>
+Use the preview to verify formatting before saving, especially for complex Markdown with tables or code blocks.
+</Tip>
+</Step>
+
+<Step title="Save Comment">
+Click "Save" to store your comment with the file.
+</Step>
+</Steps>
+
+### Markdown Syntax Reference
+
+Here's a quick reference for common Markdown formatting:
+
+#### Headers
+
+```markdown
+# H1 Header
+## H2 Header
+### H3 Header
+```
+
+#### Text Formatting
+
+```markdown
+**Bold text**
+*Italic text*
+~~Strikethrough~~
+`Inline code`
+```
+
+#### Lists
+
+```markdown
+Unordered list:
+- Item 1
+- Item 2
+  - Nested item
+
+Ordered list:
+1. First item
+2. Second item
+3. Third item
+```
+
+#### Links and Images
+
+```markdown
+[Link text](https://example.com)
+![Image alt text](https://example.com/image.png)
+```
+
+#### Code Blocks
+
+````markdown
+```javascript
+function example() {
+  return "Code with syntax highlighting";
+}
+```
+````
+
+#### Blockquotes
+
+```markdown
+> This is a quoted text
+> It can span multiple lines
+```
+
+#### Tables
+
+```markdown
+| Column 1 | Column 2 | Column 3 |
+|----------|----------|----------|
+| Data 1   | Data 2   | Data 3   |
+| Data 4   | Data 5   | Data 6   |
+```
+
+### Comment Examples
+
+<AccordionGroup>
+<Accordion title="Research Document Comment">
+```markdown
+# Research Paper: Q1 2024 Analysis
+
+## Summary
+This paper analyzes market trends for Q1 2024 with focus on:
+- Consumer behavior shifts
+- Competitive landscape changes
+- Budget allocation recommendations
+
+## Key Findings
+1. **Consumer Spending**: Up 15% YoY
+2. **Market Share**: Gained 3 percentage points
+3. **ROI**: Exceeded targets by 12%
+
+## Related Documents
+- [Budget Planning](/path/to/budget.xlsx)
+- [Previous Quarter Analysis](/path/to/q4-analysis.pdf)
+
+## Next Steps
+- Review with leadership team
+- Incorporate feedback
+- Finalize recommendations
+```
+</Accordion>
+
+<Accordion title="Project Folder Comment">
+```markdown
+# Project: Website Redesign
+
+## Project Overview
+Complete redesign of the company website with modern UX and improved conversion rates.
+
+**Timeline**: Q1-Q2 2024
+**Budget**: $150,000
+**Team**: 8 members
+
+## Folder Contents
+- `/design` - Mockups and design files
+- `/requirements` - Requirements documents
+- `/research` - User research and competitive analysis
+
+## Important Notes
+⚠️ All designs must be approved by marketing before development
+💡 Prioritize mobile-first approach
+✅ Accessibility compliance required (WCAG 2.1 AA)
+```
+</Accordion>
+
+<Accordion title="Data File Comment">
+```markdown
+# Dataset: Customer Survey Results 2024
+
+## Data Description
+Survey responses from 1,500 customers collected in January 2024.
+
+**Format**: CSV
+**Columns**: 45
+**Rows**: 1,500
+
+## Key Columns
+- `customer_id` - Unique identifier
+- `satisfaction_score` - 1-10 scale
+- `nps_score` - Net Promoter Score
+- `comments` - Free-text feedback
+
+## Data Quality
+- ✅ All required fields populated
+- ✅ Validated against schema
+- ⚠️ 23 rows have missing optional fields
+
+## Usage Notes
+Use this data for:
+1. Satisfaction trend analysis
+2. NPS calculation and tracking
+3. Identifying improvement areas
+
+**Do not** share externally without anonymization.
+```
+</Accordion>
+</AccordionGroup>
+
+## Comment Management
+
+### Editing Comments
+
+To modify an existing comment:
+1. Select the file or folder
+2. Open the comment panel
+3. Edit the Markdown text
+4. Save changes
+
+<Note>
+Some organizations enable comment versioning, allowing you to view previous versions. Check your organization settings.
+</Note>
+
+### Auto-Save and Drafts
+
+MemoryLake automatically saves comment drafts:
+- **Auto-Save Interval**: Every 30 seconds while editing
+- **Draft Recovery**: If the browser closes, your draft is preserved
+- **Reset Draft**: Use the "Reset" button to discard changes and revert to last saved version
+
+<Tip>
+Take advantage of auto-save to write long comments without worry. Your work is protected even if the connection is lost temporarily.
+</Tip>
+
+### Deleting Comments
+
+To remove a comment entirely:
+1. Open the comment editor
+2. Delete all text
+3. Click "Save"
+
+The comment is removed from the file, though version history may retain previous versions.
+
+<Warning>
+Deleting comments is permanent (unless version history is enabled). Consider adding a "DEPRECATED" header instead if you might need the information later.
+</Warning>
+
+## Best Practices
+
+<AccordionGroup>
+<Accordion title="Writing Effective Comments">
+**Do**:
+- Be concise but complete
+- Use headers to organize long comments
+- Include context others might not have
+- Link to related documents
+- Update comments when content changes
+
+**Don't**:
+- Write novel-length comments (keep it scannable)
+- Include sensitive information in comments on shared files
+- Duplicate information that's in the file itself
+- Leave outdated comments
+</Accordion>
+
+<Accordion title="Organizing with Metadata">
+**Folder Metadata**:
+- Use `project` attribute to link folders to projects
+- Add `status` to track folder lifecycle (active/archived)
+- Include `owner` for accountability
+
+**File Metadata**:
+- `category` for classification (report/research/data)
+- `version` for version tracking
+- `reviewed-by` for approval workflows
+- `last-updated` for freshness tracking
+</Accordion>
+
+<Accordion title="Markdown Formatting Tips">
+- Use `#` headers to create structure
+- Lists make content scannable
+- **Bold** key terms for quick identification
+- Code blocks for technical content
+- Tables for structured data
+- Links to connect related documents
+</Accordion>
+
+<Accordion title="Accessibility">
+- Use headers in hierarchical order (H1, then H2, not H1 then H3)
+- Provide descriptive link text (not "click here")
+- Add alt text for any images
+- Keep language clear and simple
+- Use lists for better screen reader support
+</Accordion>
+</AccordionGroup>
+
+## Integration with Projects
+
+Comments and metadata enhance project workflows:
+
+- **Project Context**: Comments provide context when documents are associated with projects
+- **AI Understanding**: AI models accessing via MCP servers can read comments to understand document purpose
+- **Team Collaboration**: Comments help team members understand document relationships and history
+- **Search**: Metadata and comments are searchable, making documents easier to find
+
+## Advanced Use Cases
+
+### Documentation as Code
+
+Store markdown documentation directly as comments:
+```markdown
+# API Endpoint Documentation
+
+## GET /api/users/{id}
+
+**Description**: Retrieves user details by ID
+
+**Parameters**:
+- `id` (required): User ID (UUID format)
+
+**Response**: 200 OK
+```json
+{
+  "id": "uuid",
+  "name": "string",
+  "email": "string"
+}
+```
+
+**Error Codes**:
+- 404: User not found
+- 401: Unauthorized
+```
+
+### Knowledge Management
+
+Create a knowledge base within comments:
+- **Lessons Learned**: Document what worked and what didn't
+- **Decision Records**: Explain why choices were made
+- **Process Documentation**: Describe workflows and procedures
+- **Troubleshooting**: Include solutions to common problems
+
+### Cross-Referencing
+
+Link documents together in comments:
+```markdown
+## Related Documents
+- [Design Specs](/projects/redesign/specs.md) - Latest design specifications
+- [Requirements](/projects/redesign/requirements.pdf) - Original requirements document
+- [Budget](/finance/q1-budget.xlsx) - Budget allocation
+```
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="File Operations" icon="folder" href="/features/memorylake/document-management/file-folder-operations">
+Learn basic file and folder operations
+</Card>
+
+<Card title="Advanced Upload" icon="cloud-arrow-up" href="/features/memorylake/document-management/upload-advanced">
+Master multi-part and concurrent uploads
+</Card>
+
+<Card title="Project Association" icon="diagram-project" href="/features/memorylake/project-management/document-association">
+Link documents to projects
+</Card>
+
+<Card title="Items API" icon="code" href="/features/memorylake/api-reference/items">
+Update metadata programmatically via API
+</Card>
+</CardGroup>

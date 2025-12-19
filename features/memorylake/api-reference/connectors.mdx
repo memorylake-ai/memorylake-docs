@@ -1,0 +1,60 @@
+---
+title: "Connectors API"
+description: "Integrate external document services"
+---
+
+## Check Connector Status
+
+```
+GET /connector/status/{provider}
+```
+
+<ParamField path="provider" type="string" required>
+Connector provider (e.g., "wps", "dropbox")
+</ParamField>
+
+Returns connection status and available libraries.
+
+## Login to Connector
+
+```
+GET /connector/login/{provider}
+```
+
+Initiates OAuth flow. Returns authorization URL.
+
+## List WPS Document Libraries
+
+```
+GET /connector/wps/doclibs
+```
+
+Returns available WPS document libraries for connection.
+
+## Revoke Connector Authorization
+
+```
+DELETE /connector/revoke/{provider}
+```
+
+Revokes authorization and removes all mount points.
+
+## Remove Connection
+
+```
+DELETE /connector/{provider}/doclibs/{driveId}/connections
+```
+
+Removes specific document library connection.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Connectors Guide" icon="plug" href="/features/memorylake/connectors/overview">
+Learn about connectors
+</Card>
+
+<Card title="WPS Integration" icon="file" href="/features/memorylake/connectors/wps-integration">
+WPS setup guide
+</Card>
+</CardGroup>
