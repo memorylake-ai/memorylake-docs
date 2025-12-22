@@ -1,31 +1,31 @@
 ---
-title: "平台原则"
-description: "MemoryLake 的核心原则与价值取向"
+title: "Platform Principles"
+description: "Core principles and value orientation of MemoryLake"
 ---
 
-## 背景与价值
-你可以用统一入口调用多种模型格式（OpenAI / Claude / Gemini），在不改动现有客户端的前提下获得一致的体验。平台会主动校验额度、记录关键日志、支持代理与倍率，以可控、可观测的方式帮你安全运行。
+## Background and Value
+You can use a unified entry point to call multiple model formats (OpenAI / Claude / Gemini), achieving a consistent experience without modifying existing clients. The platform actively validates quotas, records critical logs, and supports proxies and multipliers, helping you operate securely in a controllable and observable manner.
 
-## 适用场景
-- 想快速切换到统一入口，沿用现有 OpenAI / Claude / Gemini 客户端。
-- 需要在不同渠道间设置倍率或模型通配，以平衡成本与兼容性。
-- 关心调用的可视性：希望看到模型、令牌、渠道、耗时、tokens 等记录。
-- 需要在受限网络下配置代理，或使用通知能力及时获知结果。
+## Use Cases
+- Want to quickly switch to a unified entry point while continuing to use existing OpenAI / Claude / Gemini clients.
+- Need to set multipliers or model wildcards across different channels to balance cost and compatibility.
+- Care about call visibility: want to see records of models, tokens, channels, latency, tokens, etc.
+- Need to configure proxies in restricted networks or use notification capabilities to receive results promptly.
 
-## 核心原则
-- 兼容优先：遵循 OpenAI `/v1`、Claude `/claude/v1`、Gemini `/gemini/:version` 的请求格式，你只需替换 Base 与令牌即可调用。
-- 可控额度：每次调用都会校验并预扣额度，不足会直接拒绝；成功后确认扣减，失败会回滚，确保消耗可预期。
-- 路由灵活：模型可以通配，渠道可设置倍率或代理，必要时可通过令牌后缀或特定 Header 指定通路，既能自动分发也能精确控制。
-- 透明可追踪：日志会记录模型名、令牌名、渠道、请求耗时（`request_time`）、提示与补全 tokens 等字段；统计会按日期聚合调用次数、额度与耗时，方便对账与排障。
-- 特殊能力直通：支持 o1/o3 ReasoningEffort 选择、Claude thinking、Gemini 搜索与代码执行等官方参数透传，用法与各自客户端保持一致。
+## Core Principles
+- **Compatibility First**: Follows request formats of OpenAI `/v1`, Claude `/claude/v1`, and Gemini `/gemini/:version`. You only need to replace the Base URL and token to make calls.
+- **Controllable Quotas**: Each call validates and pre-deducts quota; insufficient quota results in immediate rejection. Successful calls confirm deduction, failed calls roll back pre-deduction, ensuring predictable consumption.
+- **Flexible Routing**: Models support wildcards, channels can set multipliers or proxies. When needed, you can specify routes via token suffixes or specific headers, enabling both automatic distribution and precise control.
+- **Transparent and Traceable**: Logs record model names, token names, channels, request latency (`request_time`), prompt and completion tokens, etc. Statistics aggregate call counts, quotas, and latency by date, facilitating reconciliation and troubleshooting.
+- **Special Capabilities Pass-through**: Supports official parameter pass-through for o1/o3 ReasoningEffort selection, Claude thinking, Gemini search and code execution, maintaining consistency with respective clients.
 
-## 使用要点
-- 首次调用前，获取模型列表确认可用模型，再用测试令牌验证倍率与通配配置。
-- 发送请求时保留官方字段，仅替换 Base 与令牌；根据需要决定是否指定通路，否则按默认自动路由。
-- 关注额度状态：不足时会被立即拒绝；需要持续调用时请提前补足。
-- 调用后查看日志与聚合统计，核对模型、tokens、耗时与消耗，定位异常或对账。
+## Key Usage Points
+- Before the first call, retrieve the model list to confirm available models, then use a test token to verify multiplier and wildcard configurations.
+- When sending requests, keep official fields intact and only replace the Base URL and token. Decide whether to specify a route based on needs; otherwise, use default automatic routing.
+- Monitor quota status: insufficient quota results in immediate rejection. Replenish in advance when continuous calls are needed.
+- After calls, review logs and aggregated statistics to verify models, tokens, latency, and consumption, identifying anomalies or reconciling accounts.
 
-## 限制与说明
-- 只有已启用的模型与通路才会被路由；未启用或额度不足会被拒绝。
-- 代理与倍率在渠道维度配置，生效取决于当前通路的设置。
-- 特殊能力需按各自官方参数传入；未提供对应参数时按默认行为处理。
+## Limitations and Notes
+- Only enabled models and routes will be routed; disabled models or insufficient quota will be rejected.
+- Proxies and multipliers are configured at the channel level; effectiveness depends on current route settings.
+- Special capabilities require passing official parameters; when corresponding parameters are not provided, default behavior applies.

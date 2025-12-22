@@ -1,40 +1,40 @@
 ---
-title: "认证与令牌"
-description: "以 API Key 为唯一凭据的调用规则、额度校验与常见问题"
+title: "Authentication and Tokens"
+description: "Call rules using API Key as the sole credential, quota validation, and common issues"
 ---
 
-## 背景与价值
-- 平台以 API Key 作为唯一调用凭据，所有请求都会先校验额度、到期与状态，避免透支或滥用。
-- 兼容 OpenAI / Claude / Gemini 调用格式，你可复用现有客户端，只需替换 Base 与令牌。
+## Background and Value
+- The platform uses API Key as the sole call credential. All requests first validate quota, expiration, and status to prevent overdrafts or abuse.
+- Compatible with OpenAI / Claude / Gemini call formats, allowing you to reuse existing clients by only replacing the Base URL and token.
 
-## 适用场景
-- 首次接入，想确认如何携带令牌与调用路径。
-- 团队或多客户端共用统一入口，需确保额度受控。
-- 希望在额度不足或通路不可用时获得明确反馈，便于自查。
+## Use Cases
+- First-time integration, wanting to confirm how to carry tokens and call paths.
+- Teams or multiple clients sharing a unified entry point, requiring controlled quotas.
+- Want clear feedback when quota is insufficient or routes are unavailable, facilitating self-diagnosis.
 
-## 核心能力
-- **令牌管理**：在[控制台](https://app.memorylake.ai/panel/token)生成 API Key，可设置额度、到期时间与启用状态。请求时会先校验这些条件，不满足则直接拒绝。
-- **额度与预扣**：每次请求先预扣额度，成功返回后扣减，失败会回滚预扣，确保额度准确。
-- **多模型兼容**：支持 OpenAI `/v1`、Claude `/claude/v1`、Gemini `/gemini/:version` 的路径与参数格式。
-- **通用 Header 规则**：按兼容入口携带令牌：
-  - OpenAI 兼容：`Authorization: Bearer sk-xxx`
-  - Claude 兼容：`x-api-key: sk-xxx`
-  - Gemini 兼容：`x-goog-api-key: sk-xxx`
-- **日志可见字段**：调用会记录模型、令牌名、渠道、请求耗时 (`request_time`)、提示/补全 tokens 等，便于排查与对账。
+## Core Capabilities
+- **Token Management**: Generate API Keys in the [console](https://app.memorylake.ai/panel/token), where you can set quota, expiration time, and enabled status. Requests first validate these conditions; unmet conditions result in direct rejection.
+- **Quota and Pre-deduction**: Each request pre-deducts quota; successful returns confirm deduction, failures roll back pre-deduction, ensuring quota accuracy.
+- **Multi-model Compatibility**: Supports path and parameter formats for OpenAI `/v1`, Claude `/claude/v1`, and Gemini `/gemini/:version`.
+- **Common Header Rules**: Carry tokens according to compatible endpoints:
+  - OpenAI compatible: `Authorization: Bearer sk-xxx`
+  - Claude compatible: `x-api-key: sk-xxx`
+  - Gemini compatible: `x-goog-api-key: sk-xxx`
+- **Log Visible Fields**: Calls record models, token names, channels, request latency (`request_time`), prompt/completion tokens, etc., facilitating troubleshooting and reconciliation.
 
-## 使用要点
-1) 获取令牌：在[控制台](https://app.memorylake.ai/panel/token)创建 API Key，设置额度与到期；确保状态为启用。  
-2) 选择入口与 Base：将客户端的 API Base 替换为平台地址，例如 `https://app.memorylake.ai`，路径遵循对应兼容入口。  
-3) 携带 Header：按上文通用规则填写令牌 Header，其余参数沿用官方格式。  
-4) 发送请求：可先调用 `GET /v1/models` 或对应模型列表接口确认当前可用模型。  
-5) 查看结果：请求成功后可在[日志](https://app.memorylake.ai/panel/log)中查看模型、渠道、耗时与 tokens；聚合统计会按日期汇总用量与额度消耗。
+## Key Usage Points
+1) **Obtain Token**: Create an API Key in the [console](https://app.memorylake.ai/panel/token), set quota and expiration; ensure status is enabled.  
+2) **Choose Endpoint and Base**: Replace the client's API Base with the platform address, e.g., `https://app.memorylake.ai`, following the corresponding compatible endpoint paths.  
+3) **Include Header**: Fill in the token header according to the common rules above; keep other parameters in official format.  
+4) **Send Request**: You can first call `GET /v1/models` or corresponding model list endpoints to confirm currently available models.  
+5) **View Results**: After successful requests, view models, channels, latency, and tokens in the [logs](https://app.memorylake.ai/panel/log); aggregated statistics summarize usage and quota consumption by date.
 
-## 常见鉴权与配额提示
-- **额度不足**：令牌额度不足会被直接拒绝；检查额度或调整倍率后重试。
-- **令牌失效**：到期或被禁用会拒绝请求；更新令牌状态或重新生成。
-- **无可用通路**：目标模型在当前通路不可用时会提示；可切换模型或调整通路配置。
-- **指定通路**：如需固定通路，可按令牌后缀或特定 Header 约定（若已配置）指定；未指定则按默认路由。
+## Common Authentication and Quota Notes
+- **Insufficient Quota**: Token quota insufficiency results in direct rejection; check quota or adjust multiplier and retry.
+- **Token Invalid**: Expired or disabled tokens reject requests; update token status or regenerate.
+- **No Available Route**: When target models are unavailable in the current route, a prompt is shown; switch models or adjust route configuration.
+- **Specify Route**: If a fixed route is needed, specify via token suffix or specific header convention (if configured); if not specified, default routing applies.
 
-## 限制与说明
-- 仅支持 API Key 作为调用凭据；不涉及账户登录方式。
-- 额度校验覆盖额度、到期与状态；预扣在失败时会回滚。
+## Limitations and Notes
+- Only API Key is supported as call credential; does not involve account login methods.
+- Quota validation covers quota, expiration, and status; pre-deduction rolls back on failure.
