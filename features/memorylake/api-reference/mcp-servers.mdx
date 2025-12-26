@@ -13,7 +13,7 @@ Returns all API keys for the project.
 
 <RequestExample>
 ```bash cURL
-curl -X GET 'https://api.example.com/api/memorylake/api/v1/projects/proj_123/apikeys' \
+curl -X GET 'https://app.memorylake.ai/api/memorylake/api/v1/projects/proj_123/apikeys' \
   -H 'Authorization: Bearer YOUR_API_KEY'
 ```
 </RequestExample>
@@ -51,11 +51,11 @@ Optional description
   <ResponseField name="id" type="string">
   API key ID
   </ResponseField>
-  
+
   <ResponseField name="secret" type="string">
   **Full API secret - shown only once!**
   </ResponseField>
-  
+
   <ResponseField name="endpoint_url" type="string">
   MCP server endpoint URL
   </ResponseField>
