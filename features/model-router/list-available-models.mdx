@@ -1,0 +1,162 @@
+---
+title: "List Available Models"
+description: "Learn how to check which models are available to your API key"
+---
+
+## What is the Model List?
+
+The model list shows all the AI models you can use with your API key. Each API key has access to different models depending on its group configuration. Before making API calls, you should always check which models are available.
+
+<Info>
+Only models that are enabled for your API key group will appear in the list. If you don't see a model you expect, check with your administrator or see [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites).
+</Info>
+
+## How to Get the Model List
+
+You can get the list of available models by making a simple GET request. The endpoint you use depends on which protocol you want to use.
+
+### OpenAI-Compatible Models
+
+Use this endpoint if you're using OpenAI-style requests:
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/v1/models", {
+  headers: { "Authorization": "Bearer sk-demo123" }
+});
+```
+```py Python
+import requests
+
+resp = requests.get(
+    "https://app.memorylake.ai/v1/models",
+    headers={"Authorization": "Bearer sk-demo123"}
+)
+print(resp.json())
+```
+```bash cURL
+curl https://app.memorylake.ai/v1/models \
+  -H "Authorization: Bearer sk-demo123"
+```
+</CodeGroup>
+
+### Claude Models
+
+Use this endpoint for Claude models:
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/claude/v1/models", {
+  headers: { "Authorization": "Bearer sk-demo123" }
+});
+```
+```py Python
+import requests
+
+resp = requests.get(
+    "https://app.memorylake.ai/claude/v1/models",
+    headers={"Authorization": "Bearer sk-demo123"}
+)
+print(resp.json())
+```
+```bash cURL
+curl https://app.memorylake.ai/claude/v1/models \
+  -H "Authorization: Bearer sk-demo123"
+```
+</CodeGroup>
+
+### Gemini Models
+
+Use this endpoint for Gemini models:
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/gemini/v1beta/models", {
+  headers: { "Authorization": "Bearer sk-demo123" }
+});
+```
+```py Python
+import requests
+
+resp = requests.get(
+    "https://app.memorylake.ai/gemini/v1beta/models",
+    headers={"Authorization": "Bearer sk-demo123"}
+)
+print(resp.json())
+```
+```bash cURL
+curl https://app.memorylake.ai/gemini/v1beta/models \
+  -H "Authorization: Bearer sk-demo123"
+```
+</CodeGroup>
+
+## Understanding the Response
+
+The response will contain a list of models. Each model has important information:
+
+- **`id`**: The model identifier - use this exact value in your API requests
+- **`owned_by`**: The source or provider of the model
+- **Pricing information**: Cost per token or request (for display purposes)
+- **Other metadata**: Additional information about the model
+
+<Info>
+The pricing information in the model list is for reference only. Actual billing is calculated based on your usage. See [View Usage and Billing](/features/model-router/view-usage-and-billing) for details.
+</Info>
+
+## Example Response
+
+```json
+{
+  "data": [
+    {
+      "id": "gpt-4o-mini",
+      "owned_by": "openai",
+      "pricing": {
+        "input": 0.00015,
+        "output": 0.0006
+      }
+    },
+    {
+      "id": "claude-3-opus-20240229",
+      "owned_by": "anthropic",
+      "pricing": {
+        "input": 0.015,
+        "output": 0.075
+      }
+    }
+  ]
+}
+```
+
+## When to Check the Model List
+
+1. **Before making your first API call**: Make sure the model you want to use is available
+2. **When you get an error**: If a model isn't found, check if it's in your available list
+3. **When building a UI**: Use the model list to populate dropdown menus or model selectors
+4. **After configuration changes**: If your administrator changes your group settings, check the list again
+
+## Important Notes
+
+1. **Model Availability**: Only models enabled for your API key group will appear. Different API keys may see different models.
+
+2. **Model Names**: Always use the exact `id` from the model list in your API requests. Model names are case-sensitive.
+
+3. **Real-time Updates**: The list reflects the current state. If models are enabled or disabled, you may need to refresh the list.
+
+4. **Pricing**: Pricing shown in the model list is for reference. Actual billing is calculated based on your actual usage.
+
+## Next Steps
+
+After checking which models are available:
+
+1. Make your first API call using one of the available models
+2. Monitor your usage in the [console](https://app.memorylake.ai/panel)
+3. See [View Usage and Billing](/features/model-router/view-usage-and-billing) to understand how you're being charged
+
+## Related Documentation
+
+- [Create API Key](/features/model-router/getting-started/create-api-key)
+- [Direct API Requests](/features/model-router/getting-started/use-api-key/direct-api-requests)
+- [View Usage and Billing](/features/model-router/view-usage-and-billing)
+- [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites)
+

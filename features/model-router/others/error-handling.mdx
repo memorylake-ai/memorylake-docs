@@ -1,0 +1,208 @@
+---
+title: "Error Handling"
+description: "Learn about common errors and how to troubleshoot them"
+---
+
+## What is Error Handling?
+
+This guide helps you understand common errors you might encounter when using Model Router and how to resolve them.
+
+## Common Errors and Solutions
+
+### Authentication Errors
+
+#### Error: "Invalid API Key" or 401 Unauthorized
+
+**What it means**: Your API key is incorrect, missing, or invalid.
+
+**How to fix**:
+1. Check that your API key starts with `sk-`
+2. Verify you copied the entire API key correctly
+3. Make sure you're including it in the `Authorization` header: `Bearer sk-your-key`
+4. If you lost your key, create a new one in the [console](https://app.memorylake.ai/panel/token)
+
+#### Error: "API key not found"
+
+**What it means**: The API key doesn't exist or has been deleted.
+
+**How to fix**:
+1. Verify the API key exists in the [console](https://app.memorylake.ai/panel/token)
+2. Create a new API key if needed
+3. Make sure you're using the correct API key
+
+### Model Errors
+
+#### Error: "Model not found" or "Model does not exist"
+
+**What it means**: The model you're trying to use isn't available to your API key.
+
+**How to fix**:
+1. Check [List Available Models](/features/model-router/list-available-models) to see which models you can use
+2. Verify the model name is spelled correctly (model names are case-sensitive)
+3. Use the exact model `id` from the model list
+4. Contact your administrator if you need access to a specific model
+
+#### Error: "Model is not available"
+
+**What it means**: The model exists but isn't enabled for your API key group.
+
+**How to fix**:
+1. Check which models are available to your API key
+2. Contact your administrator to enable the model for your group
+3. See [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites) for more information
+
+### Quota Errors
+
+#### Error: "Insufficient quota" or "Quota exceeded"
+
+**What it means**: You don't have enough quota to make the request.
+
+**How to fix**:
+1. Check your quota in the [console](https://app.memorylake.ai/panel) sidebar
+2. [View your usage](/features/model-router/view-usage-and-billing) to see how much you've used
+3. Contact your administrator to add more quota
+4. Wait for quota to be replenished if it's on a schedule
+
+<Info>
+Quota is checked before each request. If you don't have enough quota, the request will be rejected immediately. See [View Usage and Billing](/features/model-router/view-usage-and-billing) for details.
+</Info>
+
+### Rate Limiting Errors
+
+#### Error: 429 "Too Many Requests" or "Rate limit exceeded"
+
+**What it means**: You're making requests too quickly.
+
+**How to fix**:
+1. Wait a moment and try again
+2. Reduce the frequency of your requests
+3. Implement exponential backoff in your code
+4. Batch requests if possible
+5. See [Reliability and Failover](/features/model-router/others/reliability-and-failover) for retry strategies
+
+### Request Format Errors
+
+#### Error: "Invalid request format" or 400 Bad Request
+
+**What it means**: The request body or parameters are incorrect.
+
+**How to fix**:
+1. Check that your request body is valid JSON
+2. Verify all required fields are present
+3. Make sure field names and types match the API specification
+4. Review the [Direct API Requests](/features/model-router/getting-started/use-api-key/direct-api-requests) guide for correct format
+
+#### Error: "Missing required field"
+
+**What it means**: A required parameter is missing from your request.
+
+**How to fix**:
+1. Check the API documentation for required fields
+2. Verify all required parameters are included
+3. Check that field names are spelled correctly
+
+### Network Errors
+
+#### Error: "Connection timeout" or "Network error"
+
+**What it means**: The request couldn't reach the server or took too long.
+
+**How to fix**:
+1. Check your internet connection
+2. Verify the API endpoint URL is correct: `https://app.memorylake.ai`
+3. Try again after a moment
+4. Check if there are any network issues
+5. See [Reliability and Failover](/features/model-router/others/reliability-and-failover) for automatic retry mechanisms
+
+### Streaming Errors
+
+#### Error: "Stream connection closed unexpectedly"
+
+**What it means**: The streaming connection was interrupted.
+
+**How to fix**:
+1. This is normal for long streams - implement reconnection logic
+2. Check your network stability
+3. Handle stream interruptions gracefully in your code
+4. See [Reliability and Failover](/features/model-router/others/reliability-and-failover) for streaming best practices
+
+## Error Response Format
+
+When an error occurs, the API returns a JSON response with error details:
+
+```json
+{
+  "error": {
+    "message": "Model not found",
+    "type": "invalid_request_error",
+    "code": "model_not_found"
+  }
+}
+```
+
+## Best Practices for Error Handling
+
+1. **Always check the response status**: Handle both success and error cases
+2. **Read error messages**: The error message usually tells you what went wrong
+3. **Implement retry logic**: For transient errors like rate limits or network issues
+4. **Log errors**: Keep track of errors for debugging
+5. **Handle gracefully**: Don't crash your application on API errors
+
+## Example: Error Handling in Code
+
+### Python Example
+
+```python
+import requests
+
+def make_request(api_key, model, messages):
+    try:
+        response = requests.post(
+            "https://app.memorylake.ai/v1/chat/completions",
+            headers={
+                "Authorization": f"Bearer {api_key}",
+                "Content-Type": "application/json"
+            },
+            json={
+                "model": model,
+                "messages": messages
+            }
+        )
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.HTTPError as e:
+        if response.status_code == 401:
+            print("Error: Invalid API key")
+        elif response.status_code == 404:
+            print("Error: Model not found")
+        elif response.status_code == 429:
+            print("Error: Rate limit exceeded. Please wait and try again.")
+        else:
+            print(f"Error: {response.status_code} - {response.text}")
+        raise
+    except requests.exceptions.RequestException as e:
+        print(f"Network error: {e}")
+        raise
+```
+
+## Getting Help
+
+If you're still having issues:
+
+1. Check the [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites) guide
+2. Review the [Reliability and Failover](/features/model-router/others/reliability-and-failover) documentation
+3. Check your API key and model availability
+4. Contact support with:
+   - The exact error message
+   - Your API key (masked)
+   - The request you were making
+   - Any relevant logs
+
+## Related Documentation
+
+- [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites)
+- [Reliability and Failover](/features/model-router/others/reliability-and-failover)
+- [List Available Models](/features/model-router/list-available-models)
+- [View Usage and Billing](/features/model-router/view-usage-and-billing)
+- [Direct API Requests](/features/model-router/getting-started/use-api-key/direct-api-requests)
+

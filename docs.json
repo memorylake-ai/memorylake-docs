@@ -26,61 +26,74 @@
             "group": "Model Router",
             "pages": [
               "features/model-router/overview",
-              "features/model-router/protocols-and-entrypoints",
-              "features/model-router/model-directory",
-              "features/model-router/reliability-and-failover",
-              "features/model-router/quota-and-billing",
-              "features/model-router/limits-and-prerequisites",
               {
-                "group": "AI Applications",
+                "group": "Getting Started",
                 "pages": [
-                  "features/model-router/ai-applications/overview",
-                  "features/model-router/ai-applications/claude-code",
-                  "features/model-router/ai-applications/codex-cli"
+                  "features/model-router/getting-started/create-api-key",
+                  {
+                    "group": "Use API Key",
+                    "pages": [
+                      "features/model-router/getting-started/use-api-key/overview",
+                      "features/model-router/getting-started/use-api-key/direct-api-requests",
+                      "features/model-router/getting-started/use-api-key/minimal-mvp-examples",
+                      "features/model-router/getting-started/use-api-key/ai-app-integrations"
+                    ]
+                  }
+                ]
+              },
+              "features/model-router/list-available-models",
+              "features/model-router/view-usage-and-billing",
+              {
+                "group": "Others",
+                "pages": [
+                  "features/model-router/others/limits-and-prerequisites",
+                  "features/model-router/others/error-handling",
+                  "features/model-router/others/reliability-and-failover",
+                  "features/model-router/others/multimodal-and-tasks"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "MemoryLake",
+            "pages": [
+              "features/memorylake/overview",
+              "features/memorylake/quickstart",
+              {
+                "group": "Document Management",
+                "pages": [
+                  "features/memorylake/document-management/overview",
+                  "features/memorylake/document-management/file-folder-operations",
+                  "features/memorylake/document-management/metadata-comments"
                 ]
               },
               {
-                "group": "MemoryLake",
+                "group": "Connectors",
                 "pages": [
-                  "features/memorylake/overview",
-                  "features/memorylake/quickstart",
-                  {
-                    "group": "Document Management",
-                    "pages": [
-                      "features/memorylake/document-management/overview",
-                      "features/memorylake/document-management/file-folder-operations",
-                      "features/memorylake/document-management/metadata-comments"
-                    ]
-                  },
-                  {
-                    "group": "Connectors",
-                    "pages": [
-                      "features/memorylake/connectors/overview",
-                      "features/memorylake/connectors/wps-integration"
-                    ]
-                  },
-                  {
-                    "group": "Project Management",
-                    "pages": [
-                      "features/memorylake/project-management/overview",
-                      "features/memorylake/project-management/project-dashboard",
-                      "features/memorylake/project-management/document-association"
-                    ]
-                  },
-                  {
-                    "group": "Memories",
-                    "pages": [
-                      "features/memorylake/memories/overview",
-                      "features/memorylake/memories/best-practices"
-                    ]
-                  },
-                  {
-                    "group": "MCP Servers",
-                    "pages": [
-                      "features/memorylake/mcp-servers/overview",
-                      "features/memorylake/mcp-servers/creating-api-keys"
-                    ]
-                  }
+                  "features/memorylake/connectors/overview",
+                  "features/memorylake/connectors/wps-integration"
+                ]
+              },
+              {
+                "group": "Project Management",
+                "pages": [
+                  "features/memorylake/project-management/overview",
+                  "features/memorylake/project-management/project-dashboard",
+                  "features/memorylake/project-management/document-association"
+                ]
+              },
+              {
+                "group": "Memories",
+                "pages": [
+                  "features/memorylake/memories/overview",
+                  "features/memorylake/memories/best-practices"
+                ]
+              },
+              {
+                "group": "MCP Servers",
+                "pages": [
+                  "features/memorylake/mcp-servers/overview",
+                  "features/memorylake/mcp-servers/creating-api-keys"
                 ]
               }
             ]

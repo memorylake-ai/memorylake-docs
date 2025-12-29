@@ -1,0 +1,207 @@
+---
+title: "Direct API Requests"
+description: "Learn how to make direct HTTP requests to Model Router using cURL or any HTTP client"
+---
+
+## What are Direct API Requests?
+
+Direct API requests mean making HTTP calls directly to Model Router's endpoints using tools like cURL, Postman, or any HTTP client library. This is the most straightforward way to interact with the API.
+
+## Before You Start
+
+<Info>
+Before making requests, check which models are available to your API key by calling the [model list endpoint](/features/model-router/list-available-models).
+</Info>
+
+## API Base URL
+
+All requests should be sent to:
+```
+https://app.memorylake.ai
+```
+
+## Authentication
+
+Include your API key in the `Authorization` header:
+```
+Authorization: Bearer sk-your-api-key-here
+```
+
+## Request Examples
+
+### OpenAI-Compatible Endpoint
+
+The `/v1` endpoint works with OpenAI-style requests. This is the most common way to use Model Router.
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [{ role: "user", content: "Hello, how are you?" }],
+    stream: false
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://app.memorylake.ai/v1/chat/completions",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": "Hello, how are you?"}],
+        "stream": False,
+    },
+)
+```
+```bash cURL
+curl https://app.memorylake.ai/v1/chat/completions \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "Hello, how are you?"}],
+    "stream": false
+  }'
+```
+</CodeGroup>
+
+<Info>
+Replace `sk-demo123` with your actual API key. Replace `gpt-4o-mini` with a model that's available to your API key. Check the [model list](/features/model-router/list-available-models) to see available models.
+</Info>
+
+### Streaming Responses
+
+To get streaming responses, set `stream` to `true`:
+
+```bash
+curl https://app.memorylake.ai/v1/chat/completions \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "Tell me a story"}],
+    "stream": true
+  }'
+```
+
+### Claude Native Endpoint
+
+If you're using Claude models, you can use the native Claude endpoint:
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/claude/v1/messages", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    model: "claude-3-opus-20240229",
+    max_tokens: 200,
+    messages: [{ role: "user", content: "Summarize this in one sentence" }]
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://app.memorylake.ai/claude/v1/messages",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "model": "claude-3-opus-20240229",
+        "max_tokens": 200,
+        "messages": [{"role": "user", "content": "Summarize this in one sentence"}],
+    },
+)
+```
+```bash cURL
+curl https://app.memorylake.ai/claude/v1/messages \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-3-opus-20240229",
+    "max_tokens": 200,
+    "messages": [{"role": "user", "content": "Summarize this in one sentence"}]
+  }'
+```
+</CodeGroup>
+
+### Gemini Native Endpoint
+
+For Gemini models, use the native Gemini endpoint:
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    contents: [{ role: "user", parts: [{ text: "Generate a title" }] }]
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "contents": [{"role": "user", "parts": [{"text": "Generate a title"}]}],
+    },
+)
+```
+```bash cURL
+curl https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "contents": [{"role": "user", "parts": [{"text": "Generate a title"}]}]
+  }'
+```
+</CodeGroup>
+
+## Important Notes
+
+1. **Check Available Models**: Always check which models are available to your API key before making requests. See [List Available Models](/features/model-router/list-available-models).
+
+2. **Model Names**: Use the exact model ID from the model list. Different API keys may have access to different models.
+
+3. **Error Handling**: If you get an error, check:
+   - Is your API key correct?
+   - Is the model available to your API key?
+   - Do you have sufficient quota?
+   - See [Error Handling](/features/model-router/others/error-handling) for more help.
+
+4. **View Usage**: After making requests, you can [view your usage and billing](/features/model-router/view-usage-and-billing) in the console.
+
+## Related Documentation
+
+- [List Available Models](/features/model-router/list-available-models)
+- [View Usage and Billing](/features/model-router/view-usage-and-billing)
+- [Minimal MVP Examples](/features/model-router/getting-started/use-api-key/minimal-mvp-examples)
+- [Error Handling](/features/model-router/others/error-handling)
+- [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites)
+

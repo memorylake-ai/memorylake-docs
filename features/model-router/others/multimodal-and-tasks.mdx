@@ -1,0 +1,192 @@
+---
+title: "Multimodal and Task Interfaces"
+description: "Advanced guide for multimodal tasks like image generation, music creation, and video generation"
+---
+
+## What are Multimodal and Task Interfaces?
+
+Multimodal and task interfaces allow you to generate images, create music, produce videos, and perform other complex tasks through Model Router. These tasks work differently from regular chat completions - they're asynchronous, meaning you submit a task and then check back later for results.
+
+<Info>
+This is an advanced feature. Make sure you understand basic API usage first. See [Direct API Requests](/features/model-router/getting-started/use-api-key/direct-api-requests) for the basics.
+</Info>
+
+## How Task Interfaces Work
+
+Task interfaces follow a three-step pattern:
+
+1. **Submit task**: Send a request to create a task (e.g., generate an image)
+2. **Poll query**: Check the task status using the task ID
+3. **Get results**: Retrieve the final output (image, audio, video, etc.)
+
+<Info>
+Tasks are asynchronous - they don't return results immediately. You need to poll for status and retrieve results when the task is complete.
+</Info>
+
+## Supported Task Types
+
+### Midjourney: Image Generation
+
+Generate high-quality images from text prompts.
+
+**Capabilities**:
+- Imagine: Generate images from text
+- Describe: Describe existing images
+- Blend: Combine multiple images
+- Change: Modify existing images
+- Shorten: Optimize prompts
+- Notify: Get notifications when tasks complete
+
+**Example: Submit Imagine Task**
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/midjourney/imagine", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "a cyberpunk city at night, neon lights, 4k",
+    notify: true
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://app.memorylake.ai/midjourney/imagine",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "prompt": "a cyberpunk city at night, neon lights, 4k",
+        "notify": True,
+    },
+)
+```
+```bash cURL
+curl https://app.memorylake.ai/midjourney/imagine \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "a cyberpunk city at night, neon lights, 4k",
+    "notify": true
+  }'
+```
+</CodeGroup>
+
+**Query Task Status**
+
+After submitting, you'll get a task ID. Use it to check status:
+
+```bash
+curl https://app.memorylake.ai/tasks/tsk_12345 \
+  -H "Authorization: Bearer sk-demo123"
+```
+
+### Suno: Music and Voice Generation
+
+Generate music or voice-overs from text prompts.
+
+**Example: Submit Music Task**
+
+<CodeGroup>
+```ts TypeScript
+await fetch("https://app.memorylake.ai/suno/jobs", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-demo123",
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    prompt: "soft lo-fi background music for coding",
+    mode: "music"
+  })
+});
+```
+```py Python
+import requests
+
+resp = requests.post(
+    "https://app.memorylake.ai/suno/jobs",
+    headers={
+        "Authorization": "Bearer sk-demo123",
+        "Content-Type": "application/json",
+    },
+    json={
+        "prompt": "soft lo-fi background music for coding",
+        "mode": "music",
+    },
+)
+```
+```bash cURL
+curl https://app.memorylake.ai/suno/jobs \
+  -H "Authorization: Bearer sk-demo123" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "soft lo-fi background music for coding",
+    "mode": "music"
+  }'
+```
+</CodeGroup>
+
+After successful submission, query progress and audio results (playback links, download links, etc.) by task ID.
+
+### RecraftAI: Image Processing
+
+Process and enhance images with various tools.
+
+**Capabilities**:
+- Vectorization: Convert bitmaps to vector graphics
+- Background Removal: Remove image backgrounds
+- Clarity Enhancement: Enlarge images without quality loss
+- Style Management: Apply styles to images
+
+Use the same pattern: submit task → poll query → get processed image link.
+
+### Kling: Video Generation
+
+Generate videos from text or images.
+
+**Capabilities**:
+- Text-to-Video: Generate videos from text prompts
+- Image-to-Video: Generate videos from images with text prompts
+
+Submit a task and query by task ID. After completion, retrieve video links from results.
+
+## Important Notes
+
+1. **Channel Requirements**: Task interfaces require corresponding channels to be enabled. If you get errors, check with your administrator.
+
+2. **Asynchronous Nature**: Tasks don't return results immediately. Always implement polling logic to check status.
+
+3. **Quota Consumption**: All task interfaces consume quota just like regular API calls. See [View Usage and Billing](/features/model-router/view-usage-and-billing) for details.
+
+4. **Large Data Volumes**: Multimodal tasks can have large data volumes. Make sure you have sufficient quota and consider rate limiting.
+
+5. **Task Visibility**: Task submission and query must use the same API key to ensure task visibility.
+
+## Best Practices
+
+1. **Implement Polling**: Don't assume tasks complete immediately. Poll regularly until status is "completed" or "failed"
+
+2. **Handle Errors**: Tasks can fail. Always check the status and handle error cases gracefully
+
+3. **Monitor Quota**: Large tasks consume more quota. Monitor your usage regularly
+
+4. **Rate Limiting**: Don't submit too many tasks at once. Stagger submissions to avoid rate limits
+
+5. **Check Logs**: View task details and billing in the [console logs](https://app.memorylake.ai/panel/log)
+
+## Related Documentation
+
+- [Direct API Requests](/features/model-router/getting-started/use-api-key/direct-api-requests)
+- [View Usage and Billing](/features/model-router/view-usage-and-billing)
+- [Error Handling](/features/model-router/others/error-handling)
+- [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites)
+- [Reliability and Failover](/features/model-router/others/reliability-and-failover)
+

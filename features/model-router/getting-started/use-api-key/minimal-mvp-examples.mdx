@@ -1,0 +1,486 @@
+---
+title: "Minimal MVP Examples"
+description: "Ready-to-run code examples in Python, Node.js, and TypeScript to get started quickly"
+---
+
+## What are MVP Examples?
+
+These are minimal, complete, and runnable code examples that you can copy and use immediately. Each example is self-contained and shows the essential code needed to make API calls to Model Router.
+
+<Info>
+Before running these examples, make sure you have:
+1. Created an API key (see [Create API Key](/features/model-router/getting-started/create-api-key))
+2. Checked which models are available (see [List Available Models](/features/model-router/list-available-models))
+3. Replaced `sk-demo123` with your actual API key
+4. Replaced the model name with one available to your API key
+</Info>
+
+## Python Examples
+
+### Using OpenAI Official SDK (Recommended)
+
+<Info>
+**Recommended**: The OpenAI official SDK is the easiest way to use Model Router. You only need to change the `base_url` parameter - everything else works exactly the same as with OpenAI's API.
+</Info>
+
+#### Installation
+
+```bash
+pip install openai
+```
+
+#### Complete Example
+
+```python
+from openai import OpenAI
+
+# Initialize client with Model Router base URL
+client = OpenAI(
+    base_url="https://app.memorylake.ai/v1",  # Only change needed!
+    api_key="sk-your-api-key-here"  # Your Model Router API key
+)
+
+# Replace with a model available to your API key
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": "Hello! How are you?"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+#### Running the Example
+
+1. Save the code to a file (e.g., `chat.py`)
+2. Install dependencies: `pip install openai`
+3. Replace `api_key` and `model` with your values
+4. Run: `python chat.py`
+
+<Info>
+**Key Point**: The only difference from using OpenAI's API directly is setting `base_url="https://app.memorylake.ai/v1"`. All other code remains exactly the same!
+</Info>
+
+#### Using Environment Variables
+
+You can also use environment variables for better security:
+
+```bash
+export OPENAI_API_KEY="sk-your-api-key-here"
+```
+
+```python
+from openai import OpenAI
+
+# Client automatically reads OPENAI_API_KEY from environment
+client = OpenAI(
+    base_url="https://app.memorylake.ai/v1"  # Only change needed!
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": "Hello! How are you?"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+### Using requests Library (Alternative)
+
+If you prefer using the `requests` library directly:
+
+#### Installation
+
+```bash
+pip install requests
+```
+
+#### Complete Example
+
+```python
+import requests
+
+# Replace with your API key
+API_KEY = "sk-your-api-key-here"
+BASE_URL = "https://app.memorylake.ai/v1"
+
+# Replace with a model available to your API key
+MODEL = "gpt-4o-mini"
+
+def chat_completion(messages):
+    """Send a chat completion request"""
+    url = f"{BASE_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": MODEL,
+        "messages": messages,
+        "stream": False
+    }
+    
+    response = requests.post(url, headers=headers, json=data)
+    response.raise_for_status()
+    return response.json()
+
+# Example usage
+if __name__ == "__main__":
+    messages = [
+        {"role": "user", "content": "Hello! How are you?"}
+    ]
+    
+    result = chat_completion(messages)
+    print(result["choices"][0]["message"]["content"])
+```
+
+#### Running the Example
+
+1. Save the code to a file (e.g., `chat.py`)
+2. Install dependencies: `pip install requests`
+3. Replace `API_KEY` and `MODEL` with your values
+4. Run: `python chat.py`
+
+## TypeScript/JavaScript Examples
+
+### Using OpenAI Official SDK (Recommended)
+
+<Info>
+**Recommended**: The OpenAI official SDK works seamlessly with Model Router. You only need to change the `baseURL` parameter - everything else works exactly the same as with OpenAI's API.
+</Info>
+
+#### Installation
+
+```bash
+npm install openai
+```
+
+For TypeScript projects, you may also want to install type definitions:
+
+```bash
+npm install --save-dev typescript @types/node
+```
+
+#### Complete Example (TypeScript)
+
+```typescript
+import OpenAI from "openai";
+
+// Initialize client with Model Router base URL
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1",  // Only change needed!
+  apiKey: "sk-your-api-key-here"  // Your Model Router API key
+});
+
+// Replace with a model available to your API key
+const response = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Hello! How are you?" }
+  ]
+});
+
+console.log(response.choices[0].message.content);
+```
+
+#### Complete Example (JavaScript)
+
+```javascript
+import OpenAI from "openai";
+
+// Initialize client with Model Router base URL
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1",  // Only change needed!
+  apiKey: "sk-your-api-key-here"  // Your Model Router API key
+});
+
+// Replace with a model available to your API key
+const response = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Hello! How are you?" }
+  ]
+});
+
+console.log(response.choices[0].message.content);
+```
+
+#### Running the Example
+
+1. Save the code to a file (e.g., `chat.ts` or `chat.mjs`)
+2. Install dependencies: `npm install openai`
+3. Replace `apiKey` and `model` with your values
+4. Run: 
+   - TypeScript: `npx ts-node chat.ts` (or compile first with `tsc`)
+   - JavaScript: `node chat.mjs` (or `node chat.js` if using CommonJS)
+
+<Info>
+**Key Point**: The only difference from using OpenAI's API directly is setting `baseURL: "https://app.memorylake.ai/v1"`. All other code remains exactly the same!
+</Info>
+
+#### Using Environment Variables
+
+You can also use environment variables for better security:
+
+```bash
+export OPENAI_API_KEY="sk-your-api-key-here"
+```
+
+```typescript
+import OpenAI from "openai";
+
+// Client automatically reads OPENAI_API_KEY from environment
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1"  // Only change needed!
+});
+
+const response = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Hello! How are you?" }
+  ]
+});
+
+console.log(response.choices[0].message.content);
+```
+
+## Streaming Examples
+
+### Python - Using OpenAI Official SDK
+
+For streaming responses with the OpenAI SDK:
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://app.memorylake.ai/v1",
+    api_key="sk-your-api-key-here"
+)
+
+stream = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": "Tell me a short story"}
+    ],
+    stream=True
+)
+
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end='', flush=True)
+print()  # New line at the end
+```
+
+### Python - Using requests Library
+
+For streaming responses with the requests library:
+
+```python
+import requests
+import json
+
+API_KEY = "sk-your-api-key-here"
+BASE_URL = "https://app.memorylake.ai/v1"
+MODEL = "gpt-4o-mini"
+
+def chat_completion_stream(messages):
+    """Send a streaming chat completion request"""
+    url = f"{BASE_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": MODEL,
+        "messages": messages,
+        "stream": True
+    }
+    
+    response = requests.post(url, headers=headers, json=data, stream=True)
+    response.raise_for_status()
+    
+    for line in response.iter_lines():
+        if line:
+            line_text = line.decode('utf-8')
+            if line_text.startswith('data: '):
+                json_str = line_text[6:]  # Remove 'data: ' prefix
+                if json_str == '[DONE]':
+                    break
+                try:
+                    data = json.loads(json_str)
+                    if 'choices' in data and len(data['choices']) > 0:
+                        delta = data['choices'][0].get('delta', {})
+                        if 'content' in delta:
+                            print(delta['content'], end='', flush=True)
+                except json.JSONDecodeError:
+                    pass
+
+# Example usage
+if __name__ == "__main__":
+    messages = [
+        {"role": "user", "content": "Tell me a short story"}
+    ]
+    chat_completion_stream(messages)
+    print()  # New line at the end
+```
+
+### TypeScript/JavaScript - Using OpenAI Official SDK
+
+For streaming responses with the OpenAI SDK:
+
+```typescript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1",
+  apiKey: "sk-your-api-key-here"
+});
+
+const stream = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Tell me a short story" }
+  ],
+  stream: true
+});
+
+for await (const chunk of stream) {
+  if (chunk.choices[0]?.delta?.content) {
+    process.stdout.write(chunk.choices[0].delta.content);
+  }
+}
+console.log(); // New line at the end
+```
+
+## Other Official SDKs
+
+Model Router is compatible with many official SDKs from different AI platforms. Most of them only require configuring the `API_KEY` and `BASE_URL` to work with Model Router.
+
+<Info>
+**Key Point**: For most official SDKs, you only need to:
+1. Set the `baseURL` or `base_url` to `https://app.memorylake.ai/v1` (or the corresponding endpoint)
+2. Use your Model Router API key as the `apiKey` or `api_key`
+3. Everything else works exactly the same as with the original platform's API
+</Info>
+
+### Anthropic Claude SDK
+
+The official [Anthropic Claude SDK](https://platform.claude.com/docs/en/api/client-sdks) supports Python, TypeScript/JavaScript, Java, Go, C#, Ruby, and PHP.
+
+**Example (Python):**
+
+```python
+from anthropic import Anthropic
+
+client = Anthropic(
+    api_key="sk-your-api-key-here",
+    base_url="https://app.memorylake.ai/claude"  # Claude native endpoint
+)
+
+message = client.messages.create(
+    model="claude-3-opus-20240229",
+    max_tokens=200,
+    messages=[
+        {"role": "user", "content": "Hello!"}
+    ]
+)
+```
+
+**Example (TypeScript):**
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic({
+  apiKey: 'sk-your-api-key-here',
+  baseURL: 'https://app.memorylake.ai/claude'  // Claude native endpoint
+});
+
+const message = await client.messages.create({
+  model: 'claude-3-opus-20240229',
+  max_tokens: 200,
+  messages: [
+    { role: 'user', content: 'Hello!' }
+  ]
+});
+```
+
+**Documentation**: [Anthropic Client SDKs](https://platform.claude.com/docs/en/api/client-sdks)
+
+### Vercel AI SDK
+
+The [Vercel AI SDK](https://ai-sdk.dev/providers/ai-sdk-providers) provides a unified interface for multiple AI providers, including OpenAI, Anthropic, Google, and more.
+
+**Example:**
+
+```typescript
+import { openai } from '@ai-sdk/openai';
+
+const client = openai({
+  baseURL: 'https://app.memorylake.ai/v1',
+  apiKey: 'sk-your-api-key-here'
+});
+```
+
+**Documentation**: [Vercel AI SDK Providers](https://ai-sdk.dev/providers/ai-sdk-providers)
+
+### Google Gemini SDK
+
+The official [Google Gemini SDK](https://ai.google.dev/gemini-api/docs/migrate) supports Python, Node.js, and other languages.
+
+**Example (Python):**
+
+```python
+import google.generativeai as genai
+
+genai.configure(
+    api_key="sk-your-api-key-here",
+    transport="rest",
+    client_options={
+        "api_endpoint": "https://app.memorylake.ai/gemini"
+    }
+)
+
+model = genai.GenerativeModel('gemini-1.5-pro')
+response = model.generate_content("Hello!")
+```
+
+**Documentation**: [Google Gemini API Migration Guide](https://ai.google.dev/gemini-api/docs/migrate)
+
+### General Pattern
+
+Most official SDKs follow a similar pattern:
+
+1. **Install the SDK**: Use the official package manager (pip, npm, etc.)
+2. **Configure the client**: Set `baseURL`/`base_url` to Model Router's endpoint
+3. **Set API key**: Use your Model Router API key
+4. **Use normally**: All other code remains the same
+
+**Common Endpoints:**
+- OpenAI-compatible: `https://app.memorylake.ai/v1`
+- Claude native: `https://app.memorylake.ai/claude`
+- Gemini native: `https://app.memorylake.ai/gemini`
+
+<Info>
+Before using any SDK, make sure to check which models are available to your API key by calling the [model list endpoint](/features/model-router/list-available-models).
+</Info>
+
+## Next Steps
+
+1. **Test Your Code**: Run one of the examples above with your API key
+2. **Check Your Usage**: See [View Usage and Billing](/features/model-router/view-usage-and-billing) to monitor your API calls
+3. **Handle Errors**: Learn about [Error Handling](/features/model-router/others/error-handling) if you encounter issues
+4. **Explore More**: Check out [Direct API Requests](/features/model-router/getting-started/use-api-key/direct-api-requests) for more advanced usage
+
+## Related Documentation
+
+- [Create API Key](/features/model-router/getting-started/create-api-key)
+- [List Available Models](/features/model-router/list-available-models)
+- [Direct API Requests](/features/model-router/getting-started/use-api-key/direct-api-requests)
+- [View Usage and Billing](/features/model-router/view-usage-and-billing)
+- [Error Handling](/features/model-router/others/error-handling)
+
