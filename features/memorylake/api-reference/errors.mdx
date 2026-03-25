@@ -11,7 +11,7 @@ All errors follow this structure:
 {
   "success": false,
   "message": "Human-readable error message",
-  "code": "ERROR_CODE"
+  "error_code": "ERROR_CODE"
 }
 ```
 
@@ -34,7 +34,7 @@ All errors follow this structure:
 {
   "success": false,
   "message": "Invalid or missing API key",
-  "code": "UNAUTHORIZED"
+  "error_code": "UNAUTHORIZED"
 }
 ```
 
@@ -48,7 +48,7 @@ All errors follow this structure:
 {
   "success": false,
   "message": "Access denied",
-  "code": "FORBIDDEN"
+  "error_code": "FORBIDDEN"
 }
 ```
 
@@ -62,7 +62,7 @@ All errors follow this structure:
 {
   "success": false,
   "message": "Resource not found",
-  "code": "NOT_FOUND"
+  "error_code": "NOT_FOUND"
 }
 ```
 
@@ -76,7 +76,7 @@ All errors follow this structure:
 {
   "success": false,
   "message": "Rate limit exceeded",
-  "code": "RATE_LIMIT_EXCEEDED"
+  "error_code": "RATE_LIMIT_EXCEEDED"
 }
 ```
 
@@ -91,7 +91,7 @@ All errors follow this structure:
 {
   "success": false,
   "message": "Validation failed",
-  "code": "VALIDATION_ERROR",
+  "error_code": "VALIDATION_ERROR",
   "errors": {
     "name": "Name is required",
     "size": "File too large"
