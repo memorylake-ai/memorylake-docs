@@ -19,6 +19,10 @@ Page number
 Items per page (max 100)
 </ParamField>
 
+<ParamField query="name_fuzzy" type="string">
+Fuzzy filter by project name
+</ParamField>
+
 ### Response
 
 <ResponseField name="data" type="object">
@@ -84,7 +88,16 @@ Deletes project and all associations. Documents and memories remain in drive.
 GET /projects/{projectId}/documents
 ```
 
-Returns all documents associated with the project.
+Returns all documents associated with the project. Each document includes a `status` field indicating its processing state.
+
+### Document Status Values
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Document is queued for processing |
+| `running` | Document is currently being processed |
+| `okay` | Document has been processed successfully |
+| `error` | Document processing failed (see `error` field for details) |
 
 ## Add Document to Project
 
@@ -96,11 +109,15 @@ POST /projects/{projectId}/documents
 Document/folder ID from drive
 </ParamField>
 
-## Remove Document
+## Remove Documents (Batch)
 
 ```
-DELETE /projects/{projectId}/documents/{documentId}
+DELETE /projects/{projectId}/documents
 ```
+
+<ParamField body="ids" type="array" required>
+List of project document IDs to remove
+</ParamField>
 
 ## Next Steps
 
