@@ -33,6 +33,9 @@ Page size (max 100)
 Filter by project name (partial match)
 </ParamField>
 
+<ParamField query="name_fuzzy" type="string">
+Fuzzy filter by project name
+</ParamField>
 <RequestExample>
 ```bash cURL
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects?page=1&size=20' \
@@ -669,7 +672,16 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/proj-
 ```
 </ResponseExample>
 
----
+Returns all documents associated with the project. Each document includes a `status` field indicating its processing state.
+
+### Document Status Values
+
+| Status | Description |
+|--------|-------------|
+| `pending` | Document is queued for processing |
+| `running` | Document is currently being processed |
+| `okay` | Document has been processed successfully |
+| `error` | Document processing failed (see `error` field for details) |
 
 ## Download Document
 
@@ -685,9 +697,7 @@ Downloads the binary content of a project document. The response is either a `30
 Project ID
 </ParamField>
 
-<ParamField path="documentId" type="string" required>
-Project document ID
-</ParamField>
+## Remove Documents (Batch)
 
 <RequestExample>
 ```bash cURL
@@ -695,13 +705,7 @@ curl -L -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/pro
   -H 'Authorization: Bearer sk_xxxxxx' \
   -o downloaded_file.pdf
 ```
-</RequestExample>
-
-### Response
-
-Returns either a `303` redirect to the storage download URL, or `200` with streamed binary content (`application/octet-stream`).
-
-<ResponseExample>
+DELETE /projects/{projectId}/documents
 ```
 HTTP/1.1 303 See Other
 Location: https://storage.example.com/download/document.pdf?signature=...
@@ -709,6 +713,10 @@ Location: https://storage.example.com/download/document.pdf?signature=...
 </ResponseExample>
 
 ---
+
+<ParamField body="ids" type="array" required>
+List of project document IDs to remove
+</ParamField>
 
 ## Next Steps
 
