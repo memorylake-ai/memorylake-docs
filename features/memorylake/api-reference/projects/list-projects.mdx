@@ -1,0 +1,86 @@
+---
+title: "List Projects"
+description: "Returns a paginated list of projects with optional filtering"
+---
+
+```
+GET /openapi/memorylake/api/v1/projects
+```
+
+Returns a paginated list of projects created by the current authenticated user with optional filtering by name.
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+Page number (1-based)
+</ParamField>
+
+<ParamField query="size" type="integer" default="20">
+Page size (max 100)
+</ParamField>
+
+<ParamField query="name_fuzzy" type="string">
+Fuzzy filter by project name (partial match)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects?page=1&size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated project list">
+  <ResponseField name="items" type="array">
+  Array of project objects
+  <Expandable title="Project object">
+    <ResponseField name="id" type="string">Unique project identifier</ResponseField>
+    <ResponseField name="name" type="string">Project name</ResponseField>
+    <ResponseField name="description" type="string">Project description</ResponseField>
+    <ResponseField name="statistics" type="object">Aggregated usage statistics (token counts, retrieve counts)</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+    <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="total" type="integer">Total number of projects</ResponseField>
+  <ResponseField name="page" type="integer">Current page number</ResponseField>
+  <ResponseField name="size" type="integer">Page size</ResponseField>
+  <ResponseField name="total_pages" type="integer">Total number of pages</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
+        "name": "My Project",
+        "description": "Project description",
+        "statistics": {
+          "total_history_document_retrieve_tokens": 12800,
+          "total_history_document_tokens": 50000,
+          "total_history_memory_retrieve_tokens": 4500,
+          "total_history_memory_tokens": 20000,
+          "total_document_tokens": 60000,
+          "total_memory_tokens": 8000,
+          "document_retrieve_count": 42,
+          "memory_retrieve_count": 18
+        },
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-20T14:45:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "size": 20,
+    "total_pages": 1
+  }
+}
+```
+</ResponseExample>

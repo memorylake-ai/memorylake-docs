@@ -22,6 +22,7 @@ All errors follow this structure:
 | 200 | Success | Request completed successfully |
 | 400 | Bad Request | Invalid parameters or malformed request |
 | 401 | Unauthorized | Missing or invalid API key |
+| 402 | Payment Required | Insufficient quota for this operation |
 | 403 | Forbidden | Valid auth but insufficient permissions |
 | 404 | Not Found | Resource doesn't exist |
 | 429 | Too Many Requests | Rate limit exceeded |
@@ -42,6 +43,20 @@ All errors follow this structure:
 - Include Authorization header
 - Verify API key is correct
 - Check key hasn't been deleted
+
+### PAYMENT_REQUIRED
+```json
+{
+  "success": false,
+  "message": "Insufficient quota for this operation. Please upgrade your plan",
+  "error_code": "PAYMENT_REQUIRED"
+}
+```
+
+**Solutions**:
+- Check your current plan quota
+- Upgrade your plan for higher limits
+- Contact support for enterprise options
 
 ### FORBIDDEN
 ```json
@@ -71,31 +86,12 @@ All errors follow this structure:
 - Check resource wasn't deleted
 - Confirm correct endpoint
 
-### RATE_LIMIT_EXCEEDED
+### INVALID_ARGUMENT
 ```json
 {
   "success": false,
-  "message": "Rate limit exceeded",
-  "error_code": "RATE_LIMIT_EXCEEDED"
-}
-```
-
-**Solutions**:
-- Implement exponential backoff
-- Reduce request frequency
-- Check rate limit headers
-- Contact support for higher limits
-
-### VALIDATION_ERROR
-```json
-{
-  "success": false,
-  "message": "Validation failed",
-  "error_code": "VALIDATION_ERROR",
-  "errors": {
-    "name": "Name is required",
-    "size": "File too large"
-  }
+  "message": "name Project name is required and must be between 1-255 characters",
+  "error_code": "INVALID_ARGUMENT"
 }
 ```
 

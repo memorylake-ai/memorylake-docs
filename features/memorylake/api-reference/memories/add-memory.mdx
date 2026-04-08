@@ -1,0 +1,88 @@
+---
+title: "Add Memory"
+description: "Submit a conversation to extract and store memories"
+---
+
+```
+POST /openapi/memorylake/api/v2/projects/{id}/memories
+```
+
+Submits a user–assistant conversation to the project. Structured memories are automatically extracted from the messages and stored asynchronously. The response includes an event ID that can be used to track processing progress.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Project ID (format: `proj-{uuid}`)
+</ParamField>
+
+### Request Body
+
+<ParamField body="messages" type="array" required>
+Array of message objects representing the conversation. Each message contains a `role` (`user` or `assistant`) and `content`.
+</ParamField>
+
+<ParamField body="user_id" type="string">
+Unique identifier of the user associated with this memory
+</ParamField>
+
+<ParamField body="chat_session_id" type="string">
+Unique identifier of the chat session
+</ParamField>
+
+<ParamField body="infer" type="boolean" default="true">
+Whether to infer memories from messages, or store messages directly. Defaults to `true` (infer mode).
+</ParamField>
+
+<ParamField body="metadata" type="object">
+Additional arbitrary metadata key-value pairs
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "messages": [
+      {"role": "user", "content": "What restaurants do you recommend in Hangzhou?"},
+      {"role": "assistant", "content": "I recommend trying Grandma'\''s Kitchen for Hangzhou cuisine and Green Tea Restaurant for a modern take on local dishes."}
+    ],
+    "user_id": "user-abc123",
+    "chat_session_id": "session-abc123",
+    "infer": true
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Add memory result">
+  <ResponseField name="results" type="array">
+  Array of async processing results
+  <Expandable title="Result item">
+    <ResponseField name="message" type="string">Status message</ResponseField>
+    <ResponseField name="status" type="string">Processing status (e.g. `PENDING`)</ResponseField>
+    <ResponseField name="event_id" type="string">Event ID for tracking processing progress</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "results": [
+      {
+        "message": "Memory processing has been queued for background execution",
+        "status": "PENDING",
+        "event_id": "97ba056d-df1b-4236-886a-4db825f29227"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

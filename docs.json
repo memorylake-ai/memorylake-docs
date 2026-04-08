@@ -123,8 +123,38 @@
               "features/memorylake/api-reference/overview",
               "features/memorylake/api-reference/authentication",
               "features/memorylake/api-reference/upload",
-              "features/memorylake/api-reference/projects",
-              "features/memorylake/api-reference/memories",
+              {
+                "group": "Projects",
+                "pages": [
+                  "features/memorylake/api-reference/projects/list-projects",
+                  "features/memorylake/api-reference/projects/create-project",
+                  "features/memorylake/api-reference/projects/get-project",
+                  "features/memorylake/api-reference/projects/update-project",
+                  "features/memorylake/api-reference/projects/delete-project"
+                ]
+              },
+              {
+                "group": "Documents",
+                "pages": [
+                  "features/memorylake/api-reference/memories/list-documents",
+                  "features/memorylake/api-reference/memories/get-document",
+                  "features/memorylake/api-reference/memories/quick-add-document",
+                  "features/memorylake/api-reference/memories/remove-documents",
+                  "features/memorylake/api-reference/memories/search-documents",
+                  "features/memorylake/api-reference/memories/download-document"
+                ]
+              },
+              {
+                "group": "Memories",
+                "pages": [
+                  "features/memorylake/api-reference/memories/add-memory",
+                  "features/memorylake/api-reference/memories/list-memories",
+                  "features/memorylake/api-reference/memories/get-memory",
+                  "features/memorylake/api-reference/memories/get-memory-trace",
+                  "features/memorylake/api-reference/memories/search-memories",
+                  "features/memorylake/api-reference/memories/forget-memory"
+                ]
+              },
               "features/memorylake/api-reference/errors",
               "features/memorylake/api-reference/rate-limits"
             ]

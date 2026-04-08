@@ -1,0 +1,82 @@
+---
+title: "Get Memory Trace"
+description: "Returns the full change history of a memory"
+---
+
+```
+GET /openapi/memorylake/api/v2/projects/{id}/memories/{memoryId}/trace
+```
+
+Returns the full change history of a memory — all versions it has gone through and the original conversation messages that triggered each change.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Project ID
+</ParamField>
+
+<ParamField path="memoryId" type="string" required>
+Memory ID to trace
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/mem-123/trace' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Memory trace">
+  <ResponseField name="memory_id" type="string">Memory ID</ResponseField>
+  <ResponseField name="current_memory" type="string">Current memory content</ResponseField>
+  <ResponseField name="trace" type="array">
+  Array of change history entries
+  <Expandable title="Trace entry">
+    <ResponseField name="history_id" type="string">History entry ID</ResponseField>
+    <ResponseField name="event_type" type="string">Event type (e.g. `ADD`, `UPDATE`, `DELETE`)</ResponseField>
+    <ResponseField name="new_memory" type="string">Memory content after this change</ResponseField>
+    <ResponseField name="expired" type="boolean">Whether the memory was expired at this point</ResponseField>
+    <ResponseField name="changed_at" type="string">Timestamp of the change</ResponseField>
+    <ResponseField name="event_id" type="string">Associated event ID</ResponseField>
+    <ResponseField name="source_messages" type="array">Original conversation messages that triggered this change</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "memory_id": "mem-123",
+    "current_memory": "User prefers Hangzhou cuisine restaurants",
+    "trace": [
+      {
+        "history_id": "19135a2d-2cc6-45db-bfc7-959d8fc117b2",
+        "event_type": "ADD",
+        "new_memory": "User prefers Hangzhou cuisine restaurants",
+        "expired": false,
+        "changed_at": "2024-01-15T10:00:00Z",
+        "event_id": "batch-637d4f2ded6243feb926e5cf15f69b97",
+        "source_messages": [
+          {
+            "role": "user",
+            "content": "What restaurants do you recommend in Hangzhou?",
+            "timestamp": 1705312800
+          },
+          {
+            "role": "assistant",
+            "content": "I recommend trying Grandma's Kitchen for Hangzhou cuisine.",
+            "timestamp": 1705312800
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
