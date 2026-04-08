@@ -16,19 +16,19 @@ description: "Understand and handle API errors"
 | 429 | Too Many Requests | Rate limit exceeded |
 | 500 | Internal Server Error | Server-side error |
 
-## Business Error Response
+## Error Response
 
-When a request fails due to business logic (e.g. invalid parameters, quota limits, resource conflicts), the API returns a structured error body alongside the HTTP status code:
+When a request fails, the API returns a structured error body alongside the HTTP status code. The `error_code` field identifies the specific error for programmatic handling:
 
 ```json
 {
   "success": false,
   "message": "Human-readable error description",
-  "error_code": "BUSINESS_ERROR_CODE"
+  "error_code": "ERROR_CODE"
 }
 ```
 
-## Business Error Codes
+## Error Codes
 
 | Error Code | Description |
 |------------|-------------|
