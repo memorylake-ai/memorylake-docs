@@ -29,12 +29,8 @@ Page number (1-based)
 Page size (max 100)
 </ParamField>
 
-<ParamField query="name" type="string">
-Filter by project name (partial match)
-</ParamField>
-
 <ParamField query="name_fuzzy" type="string">
-Fuzzy filter by project name
+Fuzzy filter by project name (partial match)
 </ParamField>
 <RequestExample>
 ```bash cURL
@@ -366,7 +362,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/proj-a
   <Expandable title="Document object">
     <ResponseField name="id" type="string">Document ID</ResponseField>
     <ResponseField name="name" type="string">File name</ResponseField>
-    <ResponseField name="status" type="string">Processing status (e.g. `okay`, `processing`, `failed`)</ResponseField>
+    <ResponseField name="status" type="string">Processing status: `pending`, `running`, `okay`, or `error`</ResponseField>
     <ResponseField name="drive_item_id" type="string">Drive item identifier</ResponseField>
     <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
   </Expandable>
@@ -434,7 +430,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/proj-a
 <Expandable title="Document object">
   <ResponseField name="id" type="string">Document ID</ResponseField>
   <ResponseField name="name" type="string">File name</ResponseField>
-  <ResponseField name="status" type="string">Processing status (e.g. `okay`, `processing`, `failed`)</ResponseField>
+  <ResponseField name="status" type="string">Processing status: `pending`, `running`, `okay`, or `error`</ResponseField>
   <ResponseField name="drive_item_id" type="string">Drive item identifier</ResponseField>
   <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
 </Expandable>
@@ -542,7 +538,7 @@ Project ID
 
 ### Request Body
 
-<ParamField body="document_ids" type="array" required>
+<ParamField body="ids" type="array" required>
 List of project document IDs to remove
 </ParamField>
 
@@ -552,7 +548,7 @@ curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/pro
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
-    "document_ids": ["doc-1234567890abcdef", "doc-abcdef1234567890"]
+    "ids": ["doc-1234567890abcdef", "doc-abcdef1234567890"]
   }'
 ```
 </RequestExample>
@@ -672,17 +668,6 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/proj-
 ```
 </ResponseExample>
 
-Returns all documents associated with the project. Each document includes a `status` field indicating its processing state.
-
-### Document Status Values
-
-| Status | Description |
-|--------|-------------|
-| `pending` | Document is queued for processing |
-| `running` | Document is currently being processed |
-| `okay` | Document has been processed successfully |
-| `error` | Document processing failed (see `error` field for details) |
-
 ## Download Document
 
 ```
@@ -697,7 +682,9 @@ Downloads the binary content of a project document. The response is either a `30
 Project ID
 </ParamField>
 
-## Remove Documents (Batch)
+<ParamField path="documentId" type="string" required>
+Project document ID
+</ParamField>
 
 <RequestExample>
 ```bash cURL
@@ -705,7 +692,13 @@ curl -L -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/pro
   -H 'Authorization: Bearer sk_xxxxxx' \
   -o downloaded_file.pdf
 ```
-DELETE /projects/{projectId}/documents
+</RequestExample>
+
+### Response
+
+Returns either a `303` redirect to the storage download URL, or `200` with streamed binary content (`application/octet-stream`).
+
+<ResponseExample>
 ```
 HTTP/1.1 303 See Other
 Location: https://storage.example.com/download/document.pdf?signature=...
@@ -713,10 +706,6 @@ Location: https://storage.example.com/download/document.pdf?signature=...
 </ResponseExample>
 
 ---
-
-<ParamField body="ids" type="array" required>
-List of project document IDs to remove
-</ParamField>
 
 ## Next Steps
 
