@@ -3,18 +3,6 @@ title: "Error Codes & Handling"
 description: "Understand and handle API errors"
 ---
 
-## Error Response Format
-
-All errors follow this structure:
-
-```json
-{
-  "success": false,
-  "message": "Human-readable error message",
-  "error_code": "ERROR_CODE"
-}
-```
-
 ## HTTP Status Codes
 
 | Status | Meaning | Common Causes |
@@ -28,77 +16,31 @@ All errors follow this structure:
 | 429 | Too Many Requests | Rate limit exceeded |
 | 500 | Internal Server Error | Server-side error |
 
-## Common Error Codes
+## Business Error Response
 
-### UNAUTHORIZED
+When a request fails due to business logic (e.g. invalid parameters, quota limits, resource conflicts), the API returns a structured error body alongside the HTTP status code:
+
 ```json
 {
   "success": false,
-  "message": "Invalid or missing API key",
-  "error_code": "UNAUTHORIZED"
+  "message": "Human-readable error description",
+  "error_code": "BUSINESS_ERROR_CODE"
 }
 ```
 
-**Solutions**:
-- Include Authorization header
-- Verify API key is correct
-- Check key hasn't been deleted
+## Business Error Codes
 
-### QUOTA_EXCEEDED
-```json
-{
-  "success": false,
-  "message": "Insufficient quota for this operation. Please upgrade your plan",
-  "error_code": "QUOTA_EXCEEDED"
-}
-```
-
-**Solutions**:
-- Check your current plan quota
-- Upgrade your plan for higher limits
-- Contact support for enterprise options
-
-### FORBIDDEN
-```json
-{
-  "success": false,
-  "message": "Access denied",
-  "error_code": "FORBIDDEN"
-}
-```
-
-**Solutions**:
-- Verify project ID
-- Check API key scope
-- Ensure resource exists
-
-### NOT_FOUND
-```json
-{
-  "success": false,
-  "message": "Resource not found",
-  "error_code": "NOT_FOUND"
-}
-```
-
-**Solutions**:
-- Verify resource ID
-- Check resource wasn't deleted
-- Confirm correct endpoint
-
-### INVALID_ARGUMENT
-```json
-{
-  "success": false,
-  "message": "name Project name is required and must be between 1-255 characters",
-  "error_code": "INVALID_ARGUMENT"
-}
-```
-
-**Solutions**:
-- Check request parameters
-- Validate input before sending
-- Review error details
+| Error Code | Description |
+|------------|-------------|
+| `NOT_FOUND` | Resource not found |
+| `DRIVE_ITEM_CONFLICT` | Drive item name conflict, e.g. file or folder with the same name already exists |
+| `INVALID_ARGUMENT` | Invalid input: parameter validation, type mismatch, or malformed body |
+| `CONNECTOR_NOT_LINKED` | Third-party connector (WPS, Lark, etc.) not yet authorized |
+| `STATE_NOT_READY` | Resource exists but its current state does not allow the operation |
+| `ACCESS_DENIED` | Caller lacks permission to access the resource |
+| `QUOTA_EXCEEDED` | Quota or usage limit exceeded |
+| `DOWNLOAD_NOT_SUPPORTED` | The requested resource does not support download |
+| `INTERNAL_ERROR` | Unexpected server-side error |
 
 ## Error Handling Best Practices
 
