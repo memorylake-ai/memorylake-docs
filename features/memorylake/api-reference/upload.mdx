@@ -1,13 +1,7 @@
 ---
-title: "Upload API"
+title: "File Upload"
 description: "Upload files to MemoryLake using multipart upload"
 ---
-
-## Base URL
-
-```
-/openapi/memorylake/api/v1
-```
 
 ## Overview
 
@@ -23,7 +17,7 @@ MemoryLake uses a multipart upload workflow for file uploads:
 ## Create Multipart Upload
 
 ```
-POST /upload/create-multipart
+POST /openapi/memorylake/api/v1/upload/create-multipart
 ```
 
 Initializes a multipart upload session for a file. Returns an `upload_id`, an `object_key`, and a list of pre-signed URLs — one per part. Upload each part by sending a PUT request to its corresponding URL.
@@ -109,7 +103,7 @@ The `ETag` is returned in the response header of each PUT request. You must coll
 ## Complete Multipart Upload
 
 ```
-POST /upload/complete-multipart
+POST /openapi/memorylake/api/v1/upload/complete-multipart
 ```
 
 Finalizes the multipart upload after all parts have been successfully uploaded. Each part's ETag must be included. Once completed, the `object_key` can be used in the [Quick Add Document](/features/memorylake/api-reference/projects#quick-add-document-to-project) API.
