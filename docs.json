@@ -122,13 +122,9 @@
             "pages": [
               "features/memorylake/api-reference/overview",
               "features/memorylake/api-reference/authentication",
-              "features/memorylake/api-reference/drives",
-              "features/memorylake/api-reference/items",
               "features/memorylake/api-reference/upload",
               "features/memorylake/api-reference/projects",
               "features/memorylake/api-reference/memories",
-              "features/memorylake/api-reference/mcp-servers",
-              "features/memorylake/api-reference/connectors",
               "features/memorylake/api-reference/errors",
               "features/memorylake/api-reference/rate-limits"
             ]

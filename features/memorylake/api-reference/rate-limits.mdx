@@ -5,86 +5,63 @@ description: "API rate limits and usage quotas"
 
 ## Rate Limit Overview
 
-API requests are rate limited to ensure fair usage and system stability.
+API requests are rate limited to ensure fair usage and system stability. Limits are enforced at two levels: **per IP address** and **per user account**.
 
 ## Current Limits
 
-### Per API Key
-
-| Limit Type | Value |
-|------------|-------|
-| Requests per minute | 60 |
-| Requests per hour | 1000 |
-| Requests per day | 10000 |
-| Concurrent requests | 10 |
+| Dimension | Limit |
+|-----------|-------|
+| Per IP address | 60 requests / minute |
+| Per user account | 600 requests / minute |
 
 <Note>
-Limits may vary based on your plan. Contact support for higher limits.
+When either limit is exceeded, the API returns HTTP status `429 Too Many Requests`. Limits may vary based on your plan — contact support for higher limits.
 </Note>
 
-## Rate Limit Headers
+## Rate Limit Exceeded Response
 
-Every API response includes rate limit information:
+When a rate limit is exceeded, the API responds with:
 
-```
-X-RateLimit-Limit: 60
-X-RateLimit-Remaining: 45
-X-RateLimit-Reset: 1642262400
-```
-
-| Header | Description |
-|--------|-------------|
-| X-RateLimit-Limit | Maximum requests in current window |
-| X-RateLimit-Remaining | Requests remaining in current window |
-| X-RateLimit-Reset | Unix timestamp when limit resets |
-
-## Handling Rate Limits
-
-### Check Headers
-
-```javascript
-const response = await fetch(url, options);
-
-const limit = response.headers.get('X-RateLimit-Limit');
-const remaining = response.headers.get('X-RateLimit-Remaining');
-const reset = response.headers.get('X-RateLimit-Reset');
-
-console.log(`${remaining}/${limit} requests remaining`);
-console.log(`Resets at ${new Date(reset * 1000)}`);
-```
-
-### Implement Backoff
-
-```javascript
-async function apiRequestWithBackoff(url, options) {
-  const response = await fetch(url, options);
-  
-  if (response.status === 429) {
-    const reset = response.headers.get('X-RateLimit-Reset');
-    const waitTime = (reset * 1000) - Date.now();
-    
-    console.log(`Rate limited. Waiting ${waitTime}ms`);
-    await sleep(waitTime);
-    
-    return apiRequestWithBackoff(url, options);
-  }
-  
-  return response;
+```json
+{
+  "success": false,
+  "message": "Rate limit exceeded. Please retry later.",
+  "error_code": "RATE_LIMIT_EXCEEDED"
 }
 ```
 
-### Optimize Requests
+## Handling Rate Limits
 
-**Best Practices**:
-- Cache responses when possible
-- Batch requests where supported
-- Use webhooks instead of polling
-- Implement request queuing
-- Monitor usage regularly
+### Implement Exponential Backoff
+
+```javascript
+async function apiRequestWithBackoff(url, options, maxRetries = 3) {
+  for (let i = 0; i < maxRetries; i++) {
+    const response = await fetch(url, options);
+
+    if (response.status === 429) {
+      const waitTime = Math.pow(2, i) * 1000;
+      console.log(`Rate limited. Retrying in ${waitTime}ms...`);
+      await sleep(waitTime);
+      continue;
+    }
+
+    return response;
+  }
+
+  throw new Error('Max retries exceeded due to rate limiting');
+}
+```
+
+### Best Practices
+
+- Implement exponential backoff with jitter for retries
+- Cache responses when possible to reduce redundant requests
+- Batch operations where supported (e.g. batch document removal)
+- Implement client-side request queuing to smooth out traffic spikes
+- Monitor request volume and log `429` responses for observability
 
 ## Storage Quotas
-
-### Per User
 
 | Resource | Limit |
 |----------|-------|
@@ -94,36 +71,12 @@ async function apiRequestWithBackoff(url, options) {
 | Memories per project | Unlimited |
 | API keys per project | 10 |
 
-## Burst Limits
-
-Brief bursts above the per-minute limit are allowed, as long as you stay within the hourly limit.
-
-## Rate Limit Exceeded Response
-
-```json
-{
-  "success": false,
-  "message": "Rate limit exceeded. Retry after 30 seconds.",
-  "code": "RATE_LIMIT_EXCEEDED",
-  "retry_after": 30
-}
-```
-
 ## Requesting Higher Limits
 
-Need higher limits? Contact support with:
-- Current usage patterns
+To request higher rate limits, contact support with:
+- Current usage patterns and peak request volume
 - Expected future usage
 - Use case description
-- Business justification
-
-## Monitoring Usage
-
-Track your API usage:
-- Monitor rate limit headers
-- Log request counts
-- Set up alerts for approaching limits
-- Review usage trends regularly
 
 ## Next Steps
 
