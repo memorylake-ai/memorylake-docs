@@ -163,7 +163,10 @@
                   "features/memorylake/api-reference/memories/get-memory",
                   "features/memorylake/api-reference/memories/get-memory-trace",
                   "features/memorylake/api-reference/memories/search-memories",
-                  "features/memorylake/api-reference/memories/forget-memory"
+                  "features/memorylake/api-reference/memories/forget-memory",
+                  "features/memorylake/api-reference/memories/list-memory-conflicts",
+                  "features/memorylake/api-reference/memories/get-memory-conflict",
+                  "features/memorylake/api-reference/memories/resolve-memory-conflict"
                 ]
               },
               "features/memorylake/api-reference/errors",
