@@ -80,7 +80,7 @@ Reference to the completed chunked upload.
     <ParamField body="number" type="integer" required>
     Chunk number (1-based). Must match the `number` from the upload session.
     </ParamField>
-    <ParamField body="eTag" type="string" required>
+    <ParamField body="etag" type="string" required>
     `ETag` header value returned when you PUT that chunk.
     </ParamField>
   </Expandable>
@@ -131,8 +131,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items' 
     "from": {
       "upload_id": "upl-abc123def456",
       "part_etags": [
-        { "number": 1, "eTag": "d41d8cd98f00b204e9800998ecf8427e" },
-        { "number": 2, "eTag": "f6e5d4c3b2a10987f6e5d4c3b2a10987" }
+        { "number": 1, "etag": "d41d8cd98f00b204e9800998ecf8427e" },
+        { "number": 2, "etag": "f6e5d4c3b2a10987f6e5d4c3b2a10987" }
       ]
     }
   }'

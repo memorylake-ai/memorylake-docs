@@ -80,7 +80,7 @@ def upload_file_to_library(path: str, parent_item_id: str = "MY_SPACE") -> str:
         for part in init["part_items"]:
             chunk = f.read(part["size"])
             resp = requests.put(part["upload_url"], data=chunk)
-            part_etags.append({"number": part["number"], "eTag": resp.headers["ETag"]})
+            part_etags.append({"number": part["number"], "etag": resp.headers["ETag"]})
 
     # 3. Create the file item
     created = requests.post(

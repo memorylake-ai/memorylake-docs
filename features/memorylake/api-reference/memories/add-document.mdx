@@ -11,6 +11,11 @@ Imports files from the user's Library into a project. Each imported file becomes
 
 You can pass either **file** or **directory** IDs in `drive_item_ids`. Directories are recursively flattened to every descendant file before import, so importing a folder effectively imports its whole subtree in one call. Unsupported item types inside a directory are silently skipped.
 
+For convenience, `drive_item_ids` also accepts two aliases:
+
+- `MY_SPACE` — import every file under the user's workspace root in one call.
+- `ROOT` — import every file the user has access to across the whole Library.
+
 To add a file that is not yet in the Library, upload it first using the [Library upload flow](/features/memorylake/api-reference/library/overview#uploading-a-file-end-to-end).
 
 ### Path Parameters
@@ -22,7 +27,7 @@ Project ID.
 ### Request Body
 
 <ParamField body="drive_item_ids" type="array" required>
-Library item IDs to import. Accepts file and directory IDs in any combination — directories are recursively flattened to all descendant files, and unsupported item types are silently skipped.
+Library item IDs to import. Accepts file and directory IDs in any combination — directories are recursively flattened to all descendant files, and unsupported item types are silently skipped. The aliases `MY_SPACE` (your workspace root) and `ROOT` (the whole Library) are also accepted.
 </ParamField>
 
 <RequestExample>
