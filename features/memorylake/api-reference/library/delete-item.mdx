@@ -1,0 +1,45 @@
+---
+title: "Delete Item"
+description: "Delete a file or folder from the Library (recursive for folders)"
+---
+
+```
+DELETE /openapi/memorylake/api/v1/drives/items/{item_id}
+```
+
+Permanently deletes a file or folder. Deleting a folder also deletes **everything inside it**, recursively.
+
+<Warning>
+This is destructive and irreversible. If the item is a folder, every file and subfolder under it is removed. Confirm with the user before calling this endpoint.
+</Warning>
+
+<Note>
+Deleting a file that is referenced by one or more project documents does not automatically remove those documents. Call [Remove Documents](/features/memorylake/api-reference/memories/remove-documents) first if you want the documents to disappear from a project.
+</Note>
+
+### Path Parameters
+
+<ParamField path="item_id" type="string" required>
+Concrete item ID to delete. Your workspace root (`MY_SPACE`) cannot be deleted.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>
