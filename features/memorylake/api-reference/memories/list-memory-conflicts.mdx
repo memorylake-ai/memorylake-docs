@@ -1,0 +1,127 @@
+---
+title: "List Memory Conflicts"
+description: "Browse conflicts between memories, or between a memory and a project document"
+---
+
+```
+GET /openapi/memorylake/api/v2/projects/{id}/memories/conflicts
+```
+
+When a new memory is added, MemoryLake checks whether it contradicts another memory or a file in the project. Each contradiction is recorded as a **conflict** that your application can surface to end users — typically as a "review unresolved conflicts" list, or filtered down to a specific memory you're about to display.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Project ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page" type="integer" default="1">
+Page number (1-based)
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="50">
+Page size, 1–100
+</ParamField>
+
+<ParamField query="category" type="string">
+Filter by conflict category:
+
+- `m2m` — between two memories.
+- `m2d` — between a memory and a project document.
+</ParamField>
+
+<ParamField query="conflict_type" type="string">
+Filter by kind of inconsistency: `logical` or `knowledge`.
+</ParamField>
+
+<ParamField query="resolved" type="boolean">
+Filter to only resolved (`true`) or only unresolved (`false`) conflicts. Omit to return both.
+</ParamField>
+
+<ParamField query="stale" type="boolean">
+Filter by whether the underlying content has changed since the conflict was detected. Stale conflicts may no longer be accurate.
+</ParamField>
+
+<ParamField query="memory_ids" type="string">
+Comma-separated list of memory IDs. Returns conflicts that involve any of the listed memories.
+</ParamField>
+
+<RequestExample>
+```bash Unresolved conflicts
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conflicts?resolved=false&page=1&page_size=50' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Conflicts involving specific memories
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conflicts?memory_ids=mem-001,mem-002' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated conflict list">
+  <ResponseField name="items" type="array">
+  Array of conflict objects
+  <Expandable title="Conflict">
+    <ResponseField name="id" type="string">Conflict ID</ResponseField>
+    <ResponseField name="name" type="string">Short title</ResponseField>
+    <ResponseField name="description" type="string">Longer explanation of the contradiction</ResponseField>
+    <ResponseField name="category" type="string">`m2m` or `m2d`</ResponseField>
+    <ResponseField name="conflict_type" type="string">`logical` or `knowledge`</ResponseField>
+    <ResponseField name="resolved" type="boolean">Whether the conflict has been resolved</ResponseField>
+    <ResponseField name="resolve" type="object">Resolution details — present only when `resolved` is `true`. See [Get Memory Conflict](/features/memorylake/api-reference/memories/get-memory-conflict) for the full shape.</ResponseField>
+    <ResponseField name="stale" type="boolean">Whether underlying content has changed since detection</ResponseField>
+    <ResponseField name="memory_ids" type="array">IDs of memories involved in the conflict</ResponseField>
+    <ResponseField name="memory_snapshots" type="array">Memory snapshots captured at detection time</ResponseField>
+    <ResponseField name="file_chunks" type="array">Document excerpts involved. Non-empty when `category` is `m2d`.</ResponseField>
+    <ResponseField name="event_id" type="string">ID of the event that triggered detection</ResponseField>
+    <ResponseField name="created_at" type="string">First detected at</ResponseField>
+    <ResponseField name="updated_at" type="string">Last updated at</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="total" type="integer">Total matching conflicts</ResponseField>
+  <ResponseField name="page" type="integer">Current page (1-based)</ResponseField>
+  <ResponseField name="page_size" type="integer">Page size</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "conf-abc123",
+        "name": "Contradicting restaurant preferences",
+        "description": "An earlier memory says the user prefers spicy food; a later one says they avoid it.",
+        "category": "m2m",
+        "conflict_type": "logical",
+        "resolved": false,
+        "stale": false,
+        "memory_ids": ["mem-001", "mem-002"],
+        "memory_snapshots": [
+          { "memory_id": "mem-001", "memory_text": "User prefers spicy food" },
+          { "memory_id": "mem-002", "memory_text": "User avoids spicy food" }
+        ],
+        "file_chunks": [],
+        "event_id": "evt-xyz",
+        "created_at": "2024-01-15T10:30:00Z",
+        "updated_at": "2024-01-15T10:30:00Z"
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "page_size": 50
+  }
+}
+```
+</ResponseExample>
+
+<Note>
+For the full breakdown of a single conflict — including the nested resolution record when it's been resolved and document excerpts for `m2d` cases — call [Get Memory Conflict](/features/memorylake/api-reference/memories/get-memory-conflict).
+</Note>

@@ -1,0 +1,115 @@
+---
+title: "Get Memory Conflict"
+description: "Retrieve full details of a single memory conflict"
+---
+
+```
+GET /openapi/memorylake/api/v2/projects/{id}/memories/conflicts/{conflictId}
+```
+
+Returns the full record for one conflict, including every memory snapshot captured at detection time and — for `m2d` conflicts — the document excerpts that contradict the memory. Document excerpts whose source document has since been removed from the project are dropped.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Project ID
+</ParamField>
+
+<ParamField path="conflictId" type="string" required>
+Conflict ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conflicts/conf-abc123' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Conflict">
+  <ResponseField name="id" type="string">Conflict ID</ResponseField>
+  <ResponseField name="name" type="string">Short title</ResponseField>
+  <ResponseField name="description" type="string">Longer explanation of the contradiction</ResponseField>
+  <ResponseField name="category" type="string">`m2m` or `m2d`</ResponseField>
+  <ResponseField name="conflict_type" type="string">`logical` or `knowledge`</ResponseField>
+  <ResponseField name="resolved" type="boolean">Whether the conflict has been resolved</ResponseField>
+  <ResponseField name="resolve" type="object">
+  Resolution record — present only when `resolved` is `true`.
+  <Expandable title="Resolution">
+    <ResponseField name="id" type="string">Resolution record ID</ResponseField>
+    <ResponseField name="strategy" type="string">Strategy applied: `keep_memory`, `trust_memory`, `trust_document`, or `dismiss`</ResponseField>
+    <ResponseField name="keep_memory_id" type="string">Memory kept when the strategy required a choice</ResponseField>
+    <ResponseField name="forgotten_memory_ids" type="array">Memories forgotten as part of resolution</ResponseField>
+    <ResponseField name="resolved_by" type="string">Actor that resolved the conflict</ResponseField>
+    <ResponseField name="created_at" type="string">When the conflict was resolved</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="stale" type="boolean">Whether underlying content has changed since detection</ResponseField>
+  <ResponseField name="memory_ids" type="array">Memories involved in the conflict</ResponseField>
+  <ResponseField name="memory_snapshots" type="array">
+  Snapshots of each memory's text at the moment the conflict was detected
+  <Expandable title="Memory snapshot">
+    <ResponseField name="memory_id" type="string">Memory identifier</ResponseField>
+    <ResponseField name="memory_history_id" type="string">History revision ID, if any</ResponseField>
+    <ResponseField name="memory_text" type="string">Memory text at detection time</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="file_chunks" type="array">
+  Document excerpts — non-empty when `category` is `m2d`
+  <Expandable title="File chunk">
+    <ResponseField name="document_id" type="string">ID of the project document</ResponseField>
+    <ResponseField name="document_name" type="string">Display name of the document</ResponseField>
+    <ResponseField name="chunk" type="object">
+    Matched text span from the document
+    <Expandable title="Chunk">
+      <ResponseField name="type" type="string">`text`</ResponseField>
+      <ResponseField name="text" type="string">Plain text content</ResponseField>
+      <ResponseField name="range" type="string">Optional location hint (e.g. page or cell range)</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="event_id" type="string">ID of the event that triggered detection</ResponseField>
+  <ResponseField name="created_at" type="string">First detected at</ResponseField>
+  <ResponseField name="updated_at" type="string">Last updated at</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "conf-abc123",
+    "name": "Contradicting restaurant preferences",
+    "description": "An earlier memory says the user prefers spicy food; a later one says they avoid it.",
+    "category": "m2m",
+    "conflict_type": "logical",
+    "resolved": false,
+    "stale": false,
+    "memory_ids": ["mem-001", "mem-002"],
+    "memory_snapshots": [
+      {
+        "memory_id": "mem-001",
+        "memory_text": "User prefers spicy food"
+      },
+      {
+        "memory_id": "mem-002",
+        "memory_text": "User avoids spicy food"
+      }
+    ],
+    "file_chunks": [],
+    "event_id": "evt-xyz",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-15T10:30:00Z"
+  }
+}
+```
+</ResponseExample>
+
+<Tip>
+Once you have the conflict detail, apply a decision with [Resolve Memory Conflict](/features/memorylake/api-reference/memories/resolve-memory-conflict). The returned `forgotten_memory_ids` tells you which memories were removed so your UI can stay in sync.
+</Tip>
