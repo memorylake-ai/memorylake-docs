@@ -122,7 +122,17 @@
             "pages": [
               "features/memorylake/api-reference/overview",
               "features/memorylake/api-reference/authentication",
-              "features/memorylake/api-reference/upload",
+              {
+                "group": "Library",
+                "pages": [
+                  "features/memorylake/api-reference/library/overview",
+                  "features/memorylake/api-reference/library/get-item",
+                  "features/memorylake/api-reference/library/list-items",
+                  "features/memorylake/api-reference/library/create-upload",
+                  "features/memorylake/api-reference/library/create-item",
+                  "features/memorylake/api-reference/library/delete-item"
+                ]
+              },
               {
                 "group": "Projects",
                 "pages": [
@@ -130,7 +140,8 @@
                   "features/memorylake/api-reference/projects/create-project",
                   "features/memorylake/api-reference/projects/get-project",
                   "features/memorylake/api-reference/projects/update-project",
-                  "features/memorylake/api-reference/projects/delete-project"
+                  "features/memorylake/api-reference/projects/delete-project",
+                  "features/memorylake/api-reference/projects/search-project"
                 ]
               },
               {
@@ -138,7 +149,7 @@
                 "pages": [
                   "features/memorylake/api-reference/memories/list-documents",
                   "features/memorylake/api-reference/memories/get-document",
-                  "features/memorylake/api-reference/memories/quick-add-document",
+                  "features/memorylake/api-reference/memories/add-document",
                   "features/memorylake/api-reference/memories/remove-documents",
                   "features/memorylake/api-reference/memories/search-documents",
                   "features/memorylake/api-reference/memories/download-document"

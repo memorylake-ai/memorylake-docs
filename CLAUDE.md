@@ -21,7 +21,7 @@ There is no build step, test suite, or linter beyond Mintlify's own validation. 
 ## Architecture
 
 - **Framework**: Mintlify — all content is `.mdx` files with YAML frontmatter + Mintlify components
-- **Navigation/config**: `docs.json` — defines site theme, navigation tabs (Guides, API reference), page ordering, and all page groups. **Any new page must be registered here to appear on the site.**
+- **Navigation/config**: `docs.json` — defines site theme, navigation tabs (Guides, API reference), page ordering, and all page groups. **Any new page must be registered here to appear on the site.** Page entries use the path without the `.mdx` extension (e.g., `features/model-router/overview`).
 - **Content structure**:
   - Root `.mdx` files: Getting Started section (overview, principles, quickstart, authentication)
   - `features/model-router/`: Model Router guides (API key creation, usage, integrations, error handling)

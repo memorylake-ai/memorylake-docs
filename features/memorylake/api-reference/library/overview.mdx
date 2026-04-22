@@ -1,0 +1,137 @@
+---
+title: "Library Overview"
+description: "Manage files and folders in the Library — the storage layer behind MemoryLake projects"
+---
+
+## What is the Library?
+
+The **Library** is a unified file system that holds every file MemoryLake can see. Project documents are always created by referencing a file that already lives in the Library.
+
+Your top-level writable folder is **`MY_SPACE`** — treat it as the root of your workspace. Every file or folder you create is placed under `MY_SPACE` (directly or nested inside a subfolder).
+
+A typical integration flow looks like this:
+
+<Steps>
+<Step title="Pick a destination folder">
+Use the alias `MY_SPACE` to target your workspace root directly, or pass the `item_id` of any subfolder you've created under it.
+</Step>
+<Step title="Upload the file into the Library">
+Chunked upload: [create an upload session](/features/memorylake/api-reference/library/create-upload), PUT each chunk, then [create the file item](/features/memorylake/api-reference/library/create-item).
+</Step>
+<Step title="Import the file into a project">
+Call [Add Documents](/features/memorylake/api-reference/memories/add-document) with the `item_id` returned from the previous step.
+</Step>
+</Steps>
+
+## Base URL
+
+```
+https://app.memorylake.ai/openapi/memorylake
+```
+
+## Item ID Aliases
+
+Anywhere an `item_id` is accepted, you can pass the alias `MY_SPACE` instead of a concrete ID.
+
+`MY_SPACE` always resolves to your workspace root. Pass it directly whenever you would otherwise have to look up the root folder — for example as `parent_item_id` when creating a top-level file or folder.
+
+<Tip>
+You don't need to call [Get Item](/features/memorylake/api-reference/library/get-item) to discover your root folder first — just use `MY_SPACE`.
+</Tip>
+
+## Uploading a File (End-to-End)
+
+File uploads are chunked. You receive one pre-signed PUT URL per chunk, upload each chunk, then finalize by creating a `file` item that references the upload.
+
+<Steps>
+<Step title="Create the upload session">
+`POST /api/v1/drives/items/upload` with `file_size` in bytes. Returns an `upload_id` and a list of `part_items` — one pre-signed URL per chunk.
+</Step>
+<Step title="Upload every chunk">
+`PUT` each chunk's bytes to its `upload_url`. Save the `ETag` header from each response — you need them all.
+</Step>
+<Step title="Create the file item">
+`POST /api/v1/drives/items` with `item_type: "file"` and `from: { upload_id, part_etags }`. Returns the new `item_id`.
+</Step>
+</Steps>
+
+### Python example
+
+```python
+import os, requests
+
+BASE = "https://app.memorylake.ai/openapi/memorylake/api/v1"
+HEADERS = {"Authorization": "Bearer sk_xxxxxx"}
+
+def upload_file_to_library(path: str, parent_item_id: str = "MY_SPACE") -> str:
+    """Upload a local file into the Library and return its item_id."""
+    size = os.path.getsize(path)
+
+    # 1. Create upload session — get pre-signed URLs
+    init = requests.post(
+        f"{BASE}/drives/items/upload",
+        headers={**HEADERS, "Content-Type": "application/json"},
+        json={"file_size": size},
+    ).json()["data"]
+
+    # 2. PUT each chunk; collect ETags
+    part_etags = []
+    with open(path, "rb") as f:
+        for part in init["part_items"]:
+            chunk = f.read(part["size"])
+            resp = requests.put(part["upload_url"], data=chunk)
+            part_etags.append({"number": part["number"], "eTag": resp.headers["ETag"]})
+
+    # 3. Create the file item
+    created = requests.post(
+        f"{BASE}/drives/items",
+        headers={**HEADERS, "Content-Type": "application/json"},
+        json={
+            "item_type": "file",
+            "parent_item_id": parent_item_id,
+            "name": os.path.basename(path),
+            "from": {"upload_id": init["upload_id"], "part_etags": part_etags},
+        },
+    ).json()["data"]
+
+    return created["item_id"]
+```
+
+## Name Conflicts
+
+When creating a file or folder, pick a conflict strategy on the request:
+
+| Strategy | Behavior | `item_id` |
+|---|---|---|
+| `rename` *(default)* | Append `_N` suffix (`report_1.pdf`). Always succeeds. | New |
+| `deny` | Return `409 DRIVE_ITEM_CONFLICT` if the name is taken. | — |
+| `overwrite` | File-only. Overwrite the existing file's content in place. | **Preserved** |
+| `replace` | File-only. Delete the existing file and create a new one. | New |
+
+<Warning>
+`overwrite` and `replace` are not aliases. `overwrite` keeps the existing `item_id`; `replace` issues a new one. Neither option re-processes project documents that were already imported from the file — rerun [Add Documents](/features/memorylake/api-reference/memories/add-document) if you need the new content indexed.
+</Warning>
+
+## Endpoints
+
+<CardGroup cols={2}>
+<Card title="Get Item" icon="file-magnifying-glass" href="/features/memorylake/api-reference/library/get-item">
+Look up a file or folder by `item_id`.
+</Card>
+
+<Card title="List Items" icon="folder-tree" href="/features/memorylake/api-reference/library/list-items">
+Page through the contents of a folder.
+</Card>
+
+<Card title="Create Upload" icon="cloud-arrow-up" href="/features/memorylake/api-reference/library/create-upload">
+Start a chunked upload session and get pre-signed URLs.
+</Card>
+
+<Card title="Create Item" icon="plus" href="/features/memorylake/api-reference/library/create-item">
+Create a folder, or finalize an upload as a file item.
+</Card>
+
+<Card title="Delete Item" icon="trash" href="/features/memorylake/api-reference/library/delete-item">
+Delete a file or folder (recursive for folders).
+</Card>
+</CardGroup>

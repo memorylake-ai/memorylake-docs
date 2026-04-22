@@ -1,0 +1,95 @@
+---
+title: "Create Upload"
+description: "Create a chunked upload session and receive pre-signed PUT URLs for each chunk"
+---
+
+```
+POST /openapi/memorylake/api/v1/drives/items/upload
+```
+
+Creates a chunked upload session. The response contains an `upload_id` and one pre-signed `PUT` URL per chunk. You then upload each chunk directly to its URL, save the returned `ETag`, and finally call [Create Item](/features/memorylake/api-reference/library/create-item) with `item_type: "file"` and `from: { upload_id, part_etags }` to materialize the file in the Library.
+
+<Note>
+This endpoint only reserves storage and returns URLs — it does not move any bytes. The file is not visible in the Library until Create Item succeeds.
+</Note>
+
+### Request Body
+
+<ParamField body="file_size" type="integer" required>
+Total file size in bytes. Minimum `1`. The server uses this to decide the chunk layout — number of parts and each part's byte range.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/upload' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "file_size": 10485760
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Upload session">
+  <ResponseField name="upload_id" type="string">Upload token. Pass back inside `from.upload_id` when creating the file item.</ResponseField>
+  <ResponseField name="part_items" type="array">
+  Array of chunks to upload, in order
+  <Expandable title="Part item">
+    <ResponseField name="number" type="integer">Chunk number (1-based)</ResponseField>
+    <ResponseField name="size" type="integer">Number of bytes to PUT for this chunk</ResponseField>
+    <ResponseField name="upload_url" type="string">Pre-signed PUT URL for this chunk</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "upload_id": "upl-abc123def456",
+    "part_items": [
+      {
+        "number": 1,
+        "size": 5242880,
+        "upload_url": "https://storage.example.com/upload?partNumber=1&uploadId=upl-abc123def456"
+      },
+      {
+        "number": 2,
+        "size": 5242880,
+        "upload_url": "https://storage.example.com/upload?partNumber=2&uploadId=upl-abc123def456"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
+
+## Uploading chunks
+
+After this call returns, `PUT` each chunk to its `upload_url`. The response to every PUT contains an `ETag` header — you must collect all of them, in order, to complete the upload.
+
+```bash
+# Read part 1's bytes and PUT them
+curl -X PUT 'https://storage.example.com/upload?partNumber=1&uploadId=upl-abc123def456' \
+  --data-binary @part1.bin -D -
+# → ETag: "d41d8cd98f00b204e9800998ecf8427e"
+```
+
+<Warning>
+Do not send an `Authorization` header when PUTing to `upload_url` — the URL is already pre-signed. Sending bearer auth may cause the PUT to be rejected by the storage backend.
+</Warning>
+
+<Tip>
+Pre-signed URLs expire. Finish uploading all chunks and call Create Item promptly after creating the upload session. If URLs expire before you finalize, simply create a new upload session and restart.
+</Tip>
+
+## Next Step
+
+<Card title="Create Item" icon="plus" href="/features/memorylake/api-reference/library/create-item">
+Finalize the upload by creating a `file` item that references this upload's `upload_id` and the collected `part_etags`.
+</Card>
