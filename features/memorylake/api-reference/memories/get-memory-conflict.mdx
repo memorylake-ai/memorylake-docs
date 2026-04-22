@@ -7,7 +7,7 @@ description: "Retrieve full details of a single memory conflict"
 GET /openapi/memorylake/api/v2/projects/{id}/memories/conflicts/{conflictId}
 ```
 
-Returns the full record for one conflict, including every memory snapshot captured at detection time and — for `m2d` conflicts — the document excerpts that contradict the memory. Document excerpts whose source document has since been removed from the project are dropped.
+Returns the full record for one conflict. You always get the memory snapshots captured at detection time. For memory-vs-document (`m2d`) conflicts, you also get the document excerpts that contradict the memory — excerpts whose source document has since been removed from the project are dropped.
 
 ### Path Parameters
 
@@ -33,8 +33,13 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a
   <ResponseField name="id" type="string">Conflict ID</ResponseField>
   <ResponseField name="name" type="string">Short title</ResponseField>
   <ResponseField name="description" type="string">Longer explanation of the contradiction</ResponseField>
-  <ResponseField name="category" type="string">`m2m` or `m2d`</ResponseField>
-  <ResponseField name="conflict_type" type="string">`logical` or `knowledge`</ResponseField>
+  <ResponseField name="category" type="string">`m2m` (memory vs memory) or `m2d` (memory vs document)</ResponseField>
+  <ResponseField name="conflict_type" type="string">
+  What kind of inconsistency:
+
+  - `logical` — contradiction or tension between statements.
+  - `knowledge` — disagreement about facts or what was cited.
+  </ResponseField>
   <ResponseField name="resolved" type="boolean">Whether the conflict has been resolved</ResponseField>
   <ResponseField name="resolve" type="object">
   Resolution record — present only when `resolved` is `true`.

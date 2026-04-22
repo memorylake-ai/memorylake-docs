@@ -1,13 +1,18 @@
 ---
 title: "List Memory Conflicts"
-description: "Browse conflicts between memories, or between a memory and a project document"
+description: "Browse memory-vs-memory and memory-vs-document conflicts in a project"
 ---
 
 ```
 GET /openapi/memorylake/api/v2/projects/{id}/memories/conflicts
 ```
 
-When a new memory is added, MemoryLake checks whether it contradicts another memory or a file in the project. Each contradiction is recorded as a **conflict** that your application can surface to end users — typically as a "review unresolved conflicts" list, or filtered down to a specific memory you're about to display.
+When a new memory is added, MemoryLake checks it against two things: the project's existing memories, and the project's documents. If the new memory contradicts either one, the contradiction is recorded as a **conflict**. There are two kinds:
+
+- **`m2m` — memory vs memory**: the new memory contradicts an existing memory.
+- **`m2d` — memory vs document**: the new memory contradicts content in a project document.
+
+Use this endpoint to surface conflicts to end users ("review unresolved conflicts"), or to fetch conflicts tied to specific memories you're about to display.
 
 ### Path Parameters
 
@@ -28,12 +33,15 @@ Page size, 1–100
 <ParamField query="category" type="string">
 Filter by conflict category:
 
-- `m2m` — between two memories.
-- `m2d` — between a memory and a project document.
+- `m2m` — memory vs memory.
+- `m2d` — memory vs document.
 </ParamField>
 
 <ParamField query="conflict_type" type="string">
-Filter by kind of inconsistency: `logical` or `knowledge`.
+Filter by kind of inconsistency:
+
+- `logical` — contradiction or tension between statements.
+- `knowledge` — disagreement about facts or what was cited.
 </ParamField>
 
 <ParamField query="resolved" type="boolean">
@@ -70,8 +78,8 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a
     <ResponseField name="id" type="string">Conflict ID</ResponseField>
     <ResponseField name="name" type="string">Short title</ResponseField>
     <ResponseField name="description" type="string">Longer explanation of the contradiction</ResponseField>
-    <ResponseField name="category" type="string">`m2m` or `m2d`</ResponseField>
-    <ResponseField name="conflict_type" type="string">`logical` or `knowledge`</ResponseField>
+    <ResponseField name="category" type="string">`m2m` (memory vs memory) or `m2d` (memory vs document)</ResponseField>
+    <ResponseField name="conflict_type" type="string">`logical` (contradicting statements) or `knowledge` (disagreement about facts or citations)</ResponseField>
     <ResponseField name="resolved" type="boolean">Whether the conflict has been resolved</ResponseField>
     <ResponseField name="resolve" type="object">Resolution details — present only when `resolved` is `true`. See [Get Memory Conflict](/features/memorylake/api-reference/memories/get-memory-conflict) for the full shape.</ResponseField>
     <ResponseField name="stale" type="boolean">Whether underlying content has changed since detection</ResponseField>
