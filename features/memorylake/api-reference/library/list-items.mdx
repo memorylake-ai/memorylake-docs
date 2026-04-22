@@ -17,8 +17,8 @@ Parent folder. Pass `MY_SPACE` for your workspace root, or any folder's `item_id
 
 ### Query Parameters
 
-<ParamField query="page_size" type="integer" default="100">
-Maximum items to return per page. Must be at least 1.
+<ParamField query="page_size" type="integer" default="50">
+Items per page, 1–50. Defaults to 50 when omitted.
 </ParamField>
 
 <ParamField query="continuation_token" type="string">
@@ -103,7 +103,7 @@ HEADERS = {"Authorization": "Bearer sk_xxxxxx"}
 def list_all(parent_id: str):
     token = None
     while True:
-        params = {"page_size": 100}
+        params = {"page_size": 50}
         if token:
             params["continuation_token"] = token
         resp = requests.get(
