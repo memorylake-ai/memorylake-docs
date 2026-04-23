@@ -10,7 +10,7 @@ POST /openapi/memorylake/api/v1/projects/{id}/search
 Searches across everything the project knows — both the ingested document content and the accumulated conversation memories — and returns the matches grouped by source. A single query surfaces the full picture, which is what you typically want in a chat assistant that grounds answers on documents **and** personalizes them with memories.
 
 <Note>
-Items in `documents` and `memories` have the same shapes as [Search Documents](/features/memorylake/api-reference/memories/search-documents) and [Search Memories](/features/memorylake/api-reference/memories/search-memories) respectively — the relevant request knobs (`top_n`, `top_k`, `threshold`) carry the same meaning here.
+Items in `documents` and `memories` have the same shapes as [Search Documents](/features/memorylake/api-reference/memories/search-documents) and [Search Memories](/features/memorylake/api-reference/memories/search-memories) respectively — the relevant request knobs (`top_n`, `threshold`) carry the same meaning here.
 </Note>
 
 ### Path Parameters
@@ -30,11 +30,7 @@ User ID filter for the memory sub-search. Document search ignores this field.
 </ParamField>
 
 <ParamField body="top_n" type="integer" default="10">
-Maximum document results to return (minimum 1).
-</ParamField>
-
-<ParamField body="top_k" type="integer" default="10">
-Maximum memory results to return (1–1000).
+Maximum number of results to return, 1–1000. Applied to both document and memory matches — e.g. `top_n=10` yields up to 10 documents and up to 10 memories.
 </ParamField>
 
 <ParamField body="threshold" type="number" default="0.3">
@@ -54,7 +50,6 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/proj-
     "query": "What were the quarterly sales figures in 2024?",
     "user_id": "user-abc123",
     "top_n": 10,
-    "top_k": 10,
     "threshold": 0.3
   }'
 ```
