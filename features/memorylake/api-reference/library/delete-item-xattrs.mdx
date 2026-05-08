@@ -1,0 +1,55 @@
+---
+title: "Delete Item Xattrs"
+description: "Remove specific extended attribute keys from a Library item"
+---
+
+```
+DELETE /openapi/memorylake/api/v1/drives/items/{item_id}/xattrs?key={comma-separated-keys}
+```
+
+Removes one or more extended attribute keys from a Library file or folder. Only the keys you list are removed; any other xattrs on the item stay where they are.
+
+<Warning>
+This is irreversible. The listed xattr values are gone after the call. The item itself is **not** affected — only the listed metadata keys.
+</Warning>
+
+<Note>
+System-reserved xattr keys cannot be deleted; including them in the `key` list is rejected. The system root folders (`My Space`, `WPS Space`, `Lark Space`) refuse xattr deletion entirely and return `403`.
+</Note>
+
+### Path Parameters
+
+<ParamField path="item_id" type="string" required>
+ID of the file or folder to remove xattrs from.
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="key" type="string" required>
+Comma-separated list of xattr keys to delete, e.g. `key=tenant_id,review_status`. At least one key is required.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5/xattrs?key=tenant_id,review_status' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>
+
+<Tip>
+To verify which xattrs remain on the item afterwards, call [Get Item](/features/memorylake/api-reference/library/get-item) — its response includes the current `x_attrs` map.
+</Tip>
