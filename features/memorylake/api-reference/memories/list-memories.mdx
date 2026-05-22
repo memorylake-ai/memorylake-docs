@@ -9,6 +9,10 @@ GET /openapi/memorylake/api/v2/projects/{id}/memories
 
 Returns a paginated list of all memories stored in the project. Use `user_id` to filter memories belonging to a specific user.
 
+<Note>
+**Permission required:** [`project:mem_list`](/features/team-collaboration/permission-reference#see-the-memories-tab) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

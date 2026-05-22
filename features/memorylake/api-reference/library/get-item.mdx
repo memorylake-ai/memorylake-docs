@@ -9,6 +9,10 @@ GET /openapi/memorylake/api/v1/drives/items/{item_id}
 
 Returns metadata for a single Library item. Use this to inspect a file before importing it into a project, to resolve `MY_SPACE` into a concrete ID, or to check whether an item exists.
 
+<Note>
+**Permission required:** [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="item_id" type="string" required>

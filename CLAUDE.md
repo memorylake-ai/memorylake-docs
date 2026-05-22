@@ -21,13 +21,13 @@ There is no build step, test suite, or linter beyond Mintlify's own validation. 
 ## Architecture
 
 - **Framework**: Mintlify — all content is `.mdx` files with YAML frontmatter + Mintlify components
-- **Navigation/config**: `docs.json` — defines site theme, navigation tabs (Guides, API reference), page ordering, and all page groups. **Any new page must be registered here to appear on the site.** Page entries use the path without the `.mdx` extension (e.g., `features/model-router/overview`).
+- **Navigation/config**: `docs.json` — defines site theme, the two top-level tabs (`Guides` and `API reference`), page ordering, and all page groups. **Any new page must be registered here to appear on the site.** Page entries use the path without the `.mdx` extension (e.g., `features/model-router/overview`). Guide pages go under the `Guides` tab; OpenAPI reference pages go under `API reference`.
 - **Content structure**:
   - Root `.mdx` files: Getting Started section (overview, principles, quickstart, authentication)
-  - `features/model-router/`: Model Router guides (API key creation, usage, integrations, error handling)
-  - `features/memorylake/`: MemoryLake guides (documents, connectors, projects, memories, MCP servers)
-  - `features/memorylake/api-reference/`: OpenAPI reference docs (authentication, drives, items, upload, projects, memories, mcp-servers, connectors, errors, rate-limits)
-  - `features/team-collaboration/`: Team roles, permissions, invitations, quotas
+  - `features/model-router/`: Model Router guides (API key creation, usage, integrations, error handling, reliability, multimodal)
+  - `features/memorylake/`: MemoryLake guides (document management, connectors, project management, memories, MCP servers)
+  - `features/memorylake/api-reference/`: OpenAPI reference docs — `authentication`, `library/` (item CRUD + upload), `projects/`, `memories/` (this folder holds **both** the Documents and Memories endpoint groups, plus memory conflicts), `errors`, `rate-limits`
+  - `features/team-collaboration/`: Team roles, permissions, invitations, quotas, analytics
 - **Static assets**: `images/` for screenshots, `logo/` for brand SVGs, `favicon.svg`
 
 ## Writing Conventions

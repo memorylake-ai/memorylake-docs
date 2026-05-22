@@ -9,6 +9,10 @@ POST /openapi/memorylake/api/v1/projects/{id}/documents/search
 
 Performs semantic search over all documents in the project. Returns matched content ranked by relevance. Results are categorized into three types — `table`, `paragraph`, and `figure` — each identified by the `type` field.
 
+<Note>
+**Permission required:** [`project:doc_search`](/features/team-collaboration/permission-reference#search-documents-inside-a-project-api-only) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>
@@ -43,13 +47,77 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/projects/proj-
 <Expandable title="Search results">
   <ResponseField name="count" type="integer">Actual number of results returned</ResponseField>
   <ResponseField name="results" type="array">
-  Search results ranked by relevance. Each item is discriminated by the `type` field.
+  Search results ranked by relevance. Each item is a discriminated union — `type` decides which variant-only fields are present and which sub-field of `highlight` is populated. Click to expand the full per-item shape.
   <Expandable title="Result item">
-    <ResponseField name="type" type="string">Result type: `table`, `paragraph`, or `figure`</ResponseField>
+    <ResponseField name="type" type="string" required>
+    Discriminator. One of `paragraph`, `table`, or `figure`.
+    </ResponseField>
     <ResponseField name="document_id" type="string">Document ID</ResponseField>
-    <ResponseField name="document_name" type="string">Document file name</ResponseField>
-    <ResponseField name="highlight" type="object">Matched content highlight (contains `chunks`, `inner_tables`, or `figure`)</ResponseField>
-    <ResponseField name="source_document" type="object">Source file info</ResponseField>
+    <ResponseField name="document_name" type="string">Document file name, e.g. `report_2024.xlsx`</ResponseField>
+    <ResponseField name="source_document" type="object">
+    Source file info.
+    <Expandable title="source_document properties">
+      <ResponseField name="file_name" type="string">Original file name</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="highlight" type="object">
+    Matched content. The object always has the same three optional fields below — exactly one is populated, selected by the parent item's `type`.
+    <Expandable title="highlight properties">
+      <ResponseField name="chunks" type="Chunk[]">
+      Populated when `type=paragraph`. Matched text spans, in document order. Absent otherwise.
+      <Expandable title="Chunk properties">
+        <ResponseField name="text" type="string">Plain-text snippet of the match</ResponseField>
+        <ResponseField name="range" type="string">Location hint (e.g. page number `p12`, or a cell range for workbook paragraphs)</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="inner_tables" type="InnerTable[]">
+      Populated when `type=table`. Matched sub-tables within the source table region. Absent otherwise.
+      <Expandable title="InnerTable properties">
+        <ResponseField name="id" type="string">Inner table ID</ResponseField>
+        <ResponseField name="data_range" type="string">Cell range covered, e.g. `A1:D50`</ResponseField>
+        <ResponseField name="num_rows" type="integer">Number of data rows</ResponseField>
+        <ResponseField name="persist_path" type="string">Internal storage path of the materialized table</ResponseField>
+        <ResponseField name="columns" type="TableColumn[]">
+        Column descriptors.
+        <Expandable title="TableColumn properties">
+          <ResponseField name="id" type="string">Column ID</ResponseField>
+          <ResponseField name="name" type="string">Column header name</ResponseField>
+          <ResponseField name="data_type" type="string">Inferred data type (e.g. `string`, `number`, `date`)</ResponseField>
+          <ResponseField name="range" type="string">Column cell range</ResponseField>
+          <ResponseField name="count" type="integer">Non-null value count</ResponseField>
+          <ResponseField name="null_count" type="integer">Null value count</ResponseField>
+          <ResponseField name="approx_ndv" type="integer">Approximate number of distinct values</ResponseField>
+          <ResponseField name="min_value" type="string">Minimum value (string-encoded)</ResponseField>
+          <ResponseField name="max_value" type="string">Maximum value (string-encoded)</ResponseField>
+          <ResponseField name="examples" type="object[]">Sample raw values from the column</ResponseField>
+          <ResponseField name="display_examples" type="object[]">Sample formatted/display values</ResponseField>
+          <ResponseField name="semantic_comment" type="string">Model-inferred semantic comment for the column</ResponseField>
+          <ResponseField name="has_hierarchy" type="boolean">Whether the column participates in a row hierarchy</ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="figure" type="object">
+      Populated when `type=figure`. The matched figure descriptor. Absent otherwise.
+      <Expandable title="figure properties">
+        <ResponseField name="caption" type="string">Original figure caption</ResponseField>
+        <ResponseField name="text" type="string">OCR / extracted text inside the figure</ResponseField>
+        <ResponseField name="summary_text" type="string">Model-generated summary of the figure</ResponseField>
+        <ResponseField name="prequestion_list" type="string[]">Pre-generated questions the figure can answer</ResponseField>
+        <ResponseField name="persist_path" type="string">Internal storage path of the figure asset</ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="paragraph_block_id" type="string">**Only when `type=paragraph`.** Paragraph block ID inside the document.</ResponseField>
+    <ResponseField name="table_id" type="string">**Only when `type=table`.** Table entity ID.</ResponseField>
+    <ResponseField name="title" type="string">**Only when `type=table`.** Table title.</ResponseField>
+    <ResponseField name="footnote" type="string">**Only when `type=table`.** Table footnote.</ResponseField>
+    <ResponseField name="sheet_name" type="string">**Only when `type=table`.** Worksheet name (workbook tables).</ResponseField>
+    <ResponseField name="semantic_sheet_name" type="string">**Only when `type=table`.** Model-inferred semantic name for the worksheet.</ResponseField>
+    <ResponseField name="semantic_comment" type="string">**Only when `type=table`.** Model-inferred semantic comment for the worksheet.</ResponseField>
+    <ResponseField name="table_region_info" type="string">**Only when `type=table`.** Table region location, e.g. `A1:D50`.</ResponseField>
+    <ResponseField name="figure_id" type="integer">**Only when `type=figure`.** Figure numeric ID.</ResponseField>
   </Expandable>
   </ResponseField>
 </Expandable>

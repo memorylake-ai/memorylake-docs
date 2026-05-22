@@ -9,6 +9,10 @@ POST /openapi/memorylake/api/v2/projects/{id}/memories/search
 
 Searches memories in the project using natural language. Results can be filtered by user, limited by score threshold, and optionally reranked for higher relevance.
 
+<Note>
+**Permission required:** [`project:mem_search`](/features/team-collaboration/permission-reference#search-memories) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

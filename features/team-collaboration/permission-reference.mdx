@@ -1,0 +1,550 @@
+---
+title: "Permission Reference"
+description: "What each permission lets you do, and what you'll see when you don't have it"
+---
+
+What you can do in MemoryLake — what pages you can open, what buttons you can click, what API calls succeed — depends on the permissions your team admin has granted you. This page is your guide:
+
+- Each capability is described in plain language with **what it lets you do** and **what you'll see when it's missing**.
+- The exact **permission identifier** is shown in each entry — copy that to your admin if you need a permission added.
+
+### How permissions reach you
+
+Permissions reach an individual member through three layers your admin controls:
+
+1. **Role** — the built-in roles (Owner / Admin / Member) come with a default bundle of capabilities. Owners can also create **custom roles** by cloning a parent role or starting blank. See [Roles and Permissions](/features/team-collaboration/roles-permissions).
+2. **Permission policy** — Allow / Deny rules layered on top of the role. Admins use these to override role defaults (e.g. let Members create projects).
+3. **Resource scope** — per-member whitelist of specific projects or databases a member can act on, plus the subset of operations allowed on each. This is how an `instance`-level capability gets narrowed to one or two projects.
+
+API Keys are programmatic identities (**Service Accounts**) — each one inherits the role and resource scope of the member who created it. Removing a member revokes every key they own.
+
+## How to spot a missing permission
+
+You don't have to memorize anything. MemoryLake makes missing permissions visible in predictable ways:
+
+<CardGroup cols={2}>
+  <Card title="In the console" icon="display">
+    - **A tab disappears** from the project's side menu — that tab needs a permission you don't have.
+    - **A button is greyed out** — hover and the tooltip tells you exactly which permission is missing.
+    - **A list loads empty** even though you know there should be items in it.
+    - **Opening a URL directly** redirects you back, or shows a "no permission" page.
+  </Card>
+  <Card title="When calling the API" icon="code">
+    - Requests are rejected with **HTTP 403** and an `INSUFFICIENT_PERMISSION` error code.
+    - The error response tells you which permission is missing.
+    - See [Errors](/features/memorylake/api-reference/errors) for the full error envelope.
+  </Card>
+</CardGroup>
+
+<Tip>If a console button is greyed out and you don't know why, hover over it. The tooltip always names the exact permission you'd need.</Tip>
+
+## How permissions are grouped
+
+Permissions live on just two resources. Every capability below belongs to one of them:
+
+<CardGroup cols={2}>
+  <Card title="Project" icon="folder">
+    Everything you do inside a project — opening it, editing its settings, working with its documents, memories, and MCP servers. All `project:*` capabilities live here.
+  </Card>
+  <Card title="Library" icon="hard-drive">
+    Your shared file space — the storage that sits underneath every project. All `drive:*` capabilities live here. Every project's "Add document" picker reads from your Library.
+  </Card>
+</CardGroup>
+
+## How permissions are granted
+
+Every capability has a **Level** — `instance` or `service` — that determines whether your admin can narrow it down to specific projects or databases. Each entry below shows the level in its **Level** line.
+
+<CardGroup cols={2}>
+  <Card title="Instance-level" icon="filter">
+    Acts on a specific resource instance (one project, one database connection). The role's policy makes the action **available**; the member's **resource scope** decides **which instances** they can perform it on — admins can hand out access to project A and withhold it on project B from the same dialog.
+
+    Covers opening, editing, deleting, and searching a project, plus everything you do with its documents, memories, and MCP servers. Marked `instance` in the catalog.
+  </Card>
+  <Card title="Service-level" icon="globe">
+    Acts on the resource type as a whole — there is no specific instance to narrow to. Once a role's policy grants it, it applies team-wide; **resource scope has no effect** on these capabilities.
+
+    - **Browse the project list** and **Create a new project** — these don't act on a specific project.
+    - **All Library capabilities** — Library is one shared file space.
+
+    Marked `service` in the catalog.
+  </Card>
+</CardGroup>
+
+<Note>If something isn't working in a specific project, the first question to ask is usually: **do I have permission to open that project at all?** Instance-level capabilities only do anything inside projects you've been granted access to.</Note>
+
+---
+
+## Common role recipes
+
+These are typical capability bundles to use as **starting points** when you're either building a custom role or adding **permission policies** on top of the built-in Member role. They are not pre-built roles — Owners assemble them via **Team > Permission Settings**, then narrow `instance` capabilities to the right projects via the member's **Resource Scope** when assigning the role.
+
+<AccordionGroup>
+  <Accordion title="Read-only project viewer">
+    Can browse and open a project, read its documents and memories, but can't change anything.
+
+    | Identifier | Level | Why |
+    |---|---|---|
+    | `project:list` | `service` | See the project in lists and switcher |
+    | `project:read` | `instance` | Open the project's home and tabs |
+    | `project:doc_list` | `instance` | See the Files tab |
+    | `project:doc_read` | `instance` | Read individual documents |
+    | `project:mem_list` | `instance` | See the Memories tab |
+    | `project:mem_read` | `instance` | Read individual memories |
+    | `project:mcp_read` | `instance` | See the Integrations tab |
+    | `project:mcp_list` | `instance` | See existing MCP servers (read-only) |
+    | `drive:item_read` | `service` | Preview and download files in Library |
+
+    Grant the `instance` permissions on **the specific projects** the viewer should see.
+  </Accordion>
+
+  <Accordion title="Document curator">
+    Read-only viewer **plus** the ability to upload, replace, and remove project documents.
+
+    | Identifier | Level | Why |
+    |---|---|---|
+    | (everything from read-only viewer) | | |
+    | `project:doc_add` | `instance` | Add documents to the project |
+    | `project:doc_delete` | `instance` | Remove documents from the project |
+    | `drive:item_add` | `service` | Upload new files to Library |
+    | `drive:item_modify` | `service` | Rename, move, edit metadata, save comments |
+    | `drive:item_delete` | `service` | Delete files from Library |
+
+    The `drive:item_*` set is what enables the actual upload UI; without it, `project:doc_add` lets users **import existing** Library files into the project but the upload button stays greyed out.
+  </Accordion>
+
+  <Accordion title="Full project admin">
+    Curator **plus** the ability to manage the project itself, its memories, conflicts, and MCP integrations.
+
+    | Identifier | Level | Why |
+    |---|---|---|
+    | (everything from document curator) | | |
+    | `project:create` | `service` | Spin up new projects |
+    | `project:modify` | `instance` | Rename / edit / share the project |
+    | `project:delete` | `instance` | Delete the project |
+    | `project:mem_add` | `instance` | Add memories via API |
+    | `project:mem_modify` | `instance` | Update memories |
+    | `project:mem_delete` | `instance` | Forget memories |
+    | `project:mem_conflict_resolve` | `instance` | Resolve memory conflicts |
+    | `project:mcp_add` | `instance` | Create MCP servers |
+    | `project:mcp_delete` | `instance` | Revoke MCP servers |
+  </Accordion>
+
+  <Accordion title="MCP integrator (API Key for a single project)">
+    The minimum capability set for a credential that backs one MCP server and is used by an external client to read project content.
+
+    | Identifier | Level | Why |
+    |---|---|---|
+    | `project:read` | `instance` | Open the project |
+    | `project:doc_list` | `instance` | Enumerate documents |
+    | `project:doc_read` | `instance` | Fetch document detail |
+    | `project:doc_search` | `instance` | Semantic search over documents |
+    | `project:mem_list` | `instance` | Enumerate memories |
+    | `project:mem_read` | `instance` | Fetch memory detail |
+    | `project:mem_search` | `instance` | Search memories |
+    | `project:search` | `instance` | Combined document + memory search |
+
+    Add `project:mem_add` if the integration should also write back memories from its conversations.
+
+    <Note>An API Key is a **Service Account** — it inherits the role and resource scope of the member who created it. To restrict this key to a single project, set the **creator's** resource scope to that project; you can't scope the key independently. If the creator's role or scope changes, the key follows.</Note>
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Working with projects
+
+### Browse the project list
+
+Lets you see your team's projects — in the list page, in the project switcher dropdown, and as cards on the home screen.
+
+**Without it:** project lists are empty even when you have access to specific projects. The project switcher is empty too.
+
+**Identifier:** `project:list`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+<Note>This permission alone doesn't let you open any project. Opening a project requires the next one.</Note>
+
+---
+
+### Open a project
+
+Lets you click a project card and view its contents — the project's home page and every tab inside it.
+
+**Without it:** project cards appear faded and clicking does nothing. Typing the project URL directly shows a full-page "no permission" message.
+
+**Identifier:** `project:read`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Create a new project
+
+Lets you start a brand-new project from scratch.
+
+**Without it:** "New project" buttons are hidden or greyed out — on the list page, in the first-project onboarding card, in the quick-start wizard, and on the integrations page.
+
+**Identifier:** `project:create`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+---
+
+### Edit project settings
+
+Lets you rename a project, edit its description, change which industry it belongs to, and share it with others. The "Bind industry" button inside the chat composer also depends on this.
+
+**Without it:** all "Rename", "Edit", and "Share" options are greyed out wherever they appear.
+
+**Identifier:** `project:modify`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Delete a project
+
+Lets you permanently remove a project.
+
+<Warning>Deleting a project is destructive — its documents and memories are removed along with it.</Warning>
+
+**Without it:** "Delete" options are greyed out on every project card and dialog.
+
+**Identifier:** `project:delete`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Combined search across documents and memories (API-only)
+
+Lets you call the [Search Memories & Documents in Project](/features/memorylake/api-reference/projects/search-project) API to query both at once.
+
+**Where this matters:** API integrations only. In the console, search inside a project goes through the document-search and memory-search permissions below.
+
+**Identifier:** `project:search`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+## Working with documents inside a project
+
+### See the Files tab
+
+Lets you open the **Files** tab on a project and browse the documents attached to it.
+
+**Without it:** the entire Files tab disappears from the project's side menu. Typing the files-page URL just redirects you to the default tab.
+
+**Identifier:** `project:doc_list`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Read a single document
+
+Lets you fetch full document details and download the file content through the API.
+
+**Where this matters:** mostly API integrations, plus the console's background poll that refreshes document processing status. (Console downloads themselves go through the **Read your files** permission in the next section.)
+
+**Identifier:** `project:doc_read`
+
+**Level:** `instance` — granted on a specific project.
+
+**Covers these APIs:** [Get Document](/features/memorylake/api-reference/memories/get-document), [Download Document](/features/memorylake/api-reference/memories/download-document).
+
+<Note>The [Download Document](/features/memorylake/api-reference/memories/download-document) API endpoint actually checks **two** permissions together: `project:doc_read` (this one) **and** [`drive:item_read`](#read-your-files) — the server resolves the document to its underlying Library file and forwards to the drive download handler. Without `drive:item_read`, the call returns 403 even though `project:doc_read` is granted.</Note>
+
+---
+
+### Add a document to a project
+
+Lets you bring a file into a project — through the "Add document" button, the empty-state upload card, and the upload icon inside the chat composer.
+
+**Without it:** every "Add document" / upload entry point is greyed out.
+
+**Identifier:** `project:doc_add`
+
+**Level:** `instance` — granted on a specific project.
+
+<Note>
+The [Add Documents](/features/memorylake/api-reference/memories/add-document) API endpoint actually checks **two** permissions together: `project:doc_add` (this one) **and** [`drive:item_read`](#read-your-files) — the server has to read each referenced Library file before importing it. Without `drive:item_read`, the call returns 403 even though `project:doc_add` is granted.
+
+If you're also **uploading a brand-new file** before importing it, you'll additionally need [`drive:item_add`](#upload-and-create-files) for the Library upload step.
+</Note>
+
+---
+
+### Remove a document from a project
+
+Lets you take a document out of a project, one at a time or in bulk.
+
+<Note>Removing a document from a project unlinks it from that project but does **not** delete the underlying file in your Library. Deleting the file itself needs the **Delete files** permission in the Library section below.</Note>
+
+**Without it:** the per-row "Remove" action and the batch-remove action on the Files tab are greyed out.
+
+**Identifier:** `project:doc_delete`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Search documents inside a project (API-only)
+
+Lets you call the [Search Documents](/features/memorylake/api-reference/memories/search-documents) API.
+
+**Where this matters:** API integrations only. The console's in-document search is wired to its own controls.
+
+**Identifier:** `project:doc_search`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+## Working with memories inside a project
+
+### See the Memories tab
+
+Lets you open the **Memories** tab and see the list of memories along with the keyword cloud at the top.
+
+**Without it:** the entire Memories tab disappears from the project's side menu. The keyword cloud, conflict list, and the raw change history are all unreachable.
+
+**Identifier:** `project:mem_list`
+
+**Level:** `instance` — granted on a specific project.
+
+<Note>This permission alone shows you that memories exist, but not what they say. You also need the next permission to read each memory's full content.</Note>
+
+---
+
+### Read a memory's content
+
+Lets you click a memory row to open its detail panel — full content, timestamps, and the trace of how it changed over time.
+
+**Without it:** memory rows show as faded; clicking does nothing; drilling into a keyword from the cloud also fails.
+
+**Identifier:** `project:mem_read`
+
+**Level:** `instance` — granted on a specific project.
+
+**Covers these APIs:** [Get Memory](/features/memorylake/api-reference/memories/get-memory), [Get Memory Trace](/features/memorylake/api-reference/memories/get-memory-trace), [Get Memory Conflict](/features/memorylake/api-reference/memories/get-memory-conflict).
+
+---
+
+### Search memories
+
+Lets you find memories by keyword. The search box at the top of the Memories tab depends on this.
+
+**Without it:** the search box itself is hidden — you can scroll the list but you can't filter it.
+
+**Identifier:** `project:mem_search`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Forget (delete) a memory
+
+Lets you make MemoryLake forget a memory, one at a time or in bulk.
+
+**Without it:** the per-row "Forget" action and the batch-forget action are greyed out.
+
+**Identifier:** `project:mem_delete`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Add a memory via API (API-only)
+
+Lets you push a memory in directly through the [Add Memory](/features/memorylake/api-reference/memories/add-memory) API.
+
+**Where this matters:** API integrations only. Inside the console, memories are produced automatically from chat exchanges and document ingestion — there's no manual "add a memory" button.
+
+**Identifier:** `project:mem_add`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Resolve conflicting memories
+
+Lets you see the **Conflicts** tab inside a project, review each conflict, and pick how to resolve it.
+
+**Without it:** the Conflicts tab disappears entirely — you can't see whether conflicts exist or what they're about.
+
+**Identifier:** `project:mem_conflict_resolve`
+
+**Level:** `instance` — granted on a specific project.
+
+<Note>This is currently a single permission — there's no read-only conflict view. If you need to see conflicts without being able to resolve them, ask your admin.</Note>
+
+---
+
+## Managing MCP for a project
+
+An **MCP server** is the connection point that lets a third-party tool (Claude desktop, an MCP-compatible client, or your own app) talk to a specific project on your behalf. Each MCP server is issued its own credential. The four permissions below split the lifecycle into see / list / create / revoke.
+
+### See the Integrations tab
+
+Lets you open the **Integrations** tab on a project — where MCP servers are listed and managed.
+
+**Without it:** the Integrations tab is hidden from the project's side menu.
+
+**Identifier:** `project:mcp_read`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### View existing MCP servers
+
+Lets you see the list of MCP servers issued for a project, including when each one was created and what it's named.
+
+**Without it:** the integrations page shows an empty "no permission" state, even when MCP servers exist.
+
+**Identifier:** `project:mcp_list`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Create a new MCP server
+
+Lets you set up a new MCP server to connect a third-party tool to the project.
+
+**Without it:** the "Add integration" / "Create MCP server" button is greyed out.
+
+**Identifier:** `project:mcp_add`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Revoke an MCP server
+
+Lets you delete an existing MCP server — immediately disconnecting everything that was using it.
+
+**Without it:** the per-row "Delete" / "Revoke" action is greyed out.
+
+**Identifier:** `project:mcp_delete`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+## Working with your Library
+
+Your Library is the shared file space that sits underneath every project. When you "add a document to a project", the file goes into your Library first and the project just links to it. The four permissions below apply across all your projects at once — they are not granted per project.
+
+### Read your files
+
+Lets you browse the file tree, see thumbnails, preview files in the viewer, download files, and read the comments people have left on them.
+
+**Without it:** thumbnails fall back to plain file-type icons, "Download" menu items grey out, file previews are skipped, and comment panels degrade silently.
+
+**Identifier:** `drive:item_read`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+**Covers these APIs:** [Get Item](/features/memorylake/api-reference/library/get-item), [List Items](/features/memorylake/api-reference/library/list-items).
+
+---
+
+### Upload and create files
+
+Lets you upload files, create folders, and attach external storage. This is the permission that runs in the background whenever you click "Add document" or drag a file into the app.
+
+**Without it:** "New folder" and "Upload file" entry points are greyed out everywhere, including inside the "Add document" dialog.
+
+**Identifier:** `drive:item_add`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+**Covers these APIs:** [Create Upload](/features/memorylake/api-reference/library/create-upload), [Create Item](/features/memorylake/api-reference/library/create-item).
+
+---
+
+### Edit your files
+
+Lets you rename files, move them between folders, edit their metadata and tags, and save comments. This also covers managing custom attributes (xattrs) on files via the API.
+
+**Without it:** rename, move, and edit-metadata options grey out. The "Save" button on the comment panel is disabled and explains it needs the file-edit permission.
+
+**Identifier:** `drive:item_modify`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+**Covers these APIs:** [Set Item Xattrs](/features/memorylake/api-reference/library/set-item-xattrs), [Delete Item Xattrs](/features/memorylake/api-reference/library/delete-item-xattrs).
+
+<Note>Deleting a tag from a file (removing an xattr) counts as **editing**, not **deleting** — you're changing the file's metadata, not removing the file itself.</Note>
+
+---
+
+### Delete files
+
+Lets you permanently delete files and folders, one or in bulk.
+
+<Warning>A deleted file goes away from every project that linked to it. If you only want to remove the link from one project, use **Remove a document from a project** above instead.</Warning>
+
+**Without it:** all "Delete" actions on files and folders are greyed out.
+
+**Identifier:** `drive:item_delete`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+**Covers these APIs:** [Delete Item](/features/memorylake/api-reference/library/delete-item).
+
+---
+
+## Quick troubleshooting
+
+<AccordionGroup>
+  <Accordion title="I can see the project list, but I can't open any of them">
+    You have the **Browse the project list** permission but not the **Open a project** one. Ask your admin to grant `project:read`.
+  </Accordion>
+
+  <Accordion title="A project I can open is missing some tabs in the side menu">
+    Each tab depends on its own permission:
+    - **Files** tab → **See the Files tab** (`project:doc_list`)
+    - **Memories** tab → **See the Memories tab** (`project:mem_list`)
+    - **Integrations** tab → **See the Integrations tab** (`project:mcp_read`)
+    - **Conflicts** tab → **Resolve conflicting memories** (`project:mem_conflict_resolve`)
+  </Accordion>
+
+  <Accordion title="A button is greyed out and I don't know why">
+    Hover over the button — the tooltip tells you exactly which permission you'd need. Screenshot the tooltip and forward it to your admin.
+  </Accordion>
+
+  <Accordion title="I can see the memory list, but clicking a row does nothing">
+    You can **see** memories exist (`mem_list`) but you can't **read** them (`mem_read`). Ask your admin to grant `project:mem_read`.
+  </Accordion>
+
+  <Accordion title="My API call came back with 403 INSUFFICIENT_PERMISSION">
+    The error response names which permission your credential is missing. Find it in the table below or in the relevant section above, then ask your admin to grant that permission to the role tied to your MCP server's credential.
+  </Accordion>
+
+  <Accordion title="I asked my admin for a permission — how do they actually grant it?">
+    Admins reach into one of three places depending on what's needed:
+
+    - **Permission policy** (under **Team > Permission Settings**) — to enable a capability your role doesn't include by default. The admin adds an Allow rule with the identifier you sent.
+    - **Resource scope** (under **Members > [you] > Set resource scope…**) — to extend an `instance`-level capability to a specific project or database, or to narrow it down.
+    - **Role change** (under **Members > [you] > Assign role…**) — if the capability is already in a bigger role and they'd rather hand you that whole role.
+
+    Owners can do all three. Admins can do the first two but **can't promote you** to Admin or to a custom role — that's Owner-only.
+  </Accordion>
+
+  <Accordion title="Typing a URL I can't access — what happens?">
+    - The **project home page** shows a full-page "no permission" message with a contact-admin link.
+    - **A tab inside a project you can't see** redirects you back to the project's default tab.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+Looking for a bird's-eye list of all permissions grouped by area? See the [Permission catalog](/features/team-collaboration/overview#permission-catalog) on the Team collaboration overview.
+
+If the capability you need doesn't appear on your role, contact your team's owner or administrator. They can adjust roles in **Teams > My Teams > Members**.

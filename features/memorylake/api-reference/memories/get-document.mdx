@@ -9,6 +9,10 @@ GET /openapi/memorylake/api/v1/projects/{id}/documents/{documentId}
 
 Returns the details of a single document, including file name and processing status.
 
+<Note>
+**Permission required:** [`project:doc_read`](/features/team-collaboration/permission-reference#read-a-single-document) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

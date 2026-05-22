@@ -18,6 +18,15 @@ For convenience, `drive_item_ids` also accepts two aliases:
 
 To add a file that is not yet in the Library, upload it first using the [Library upload flow](/features/memorylake/api-reference/library/overview#uploading-a-file-end-to-end).
 
+<Note>
+**Permissions required (all of):**
+
+- [`project:doc_add`](/features/team-collaboration/permission-reference#add-a-document-to-a-project) · `instance`
+- [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+
+**Workflow note:** The two permissions above are checked together when this endpoint is called — `drive:item_read` is needed because the server resolves and reads each referenced drive item. If you're uploading a **new** file end-to-end first, the Library upload calls ([Create Upload](/features/memorylake/api-reference/library/create-upload) and [Create Item](/features/memorylake/api-reference/library/create-item)) additionally require [`drive:item_add`](/features/team-collaboration/permission-reference#upload-and-create-files).
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

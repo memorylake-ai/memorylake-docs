@@ -65,6 +65,10 @@ Team collaboration features help you manage shared API endpoints, quotas, and lo
 Learn about team member roles and permission management.
 </Card>
 
+<Card title="Permission Reference" icon="shield-check" href="/features/team-collaboration/permission-reference">
+Look up every fine-grained permission — what it lets you do, what you'll see when it's missing, and the identifier to share with your admin.
+</Card>
+
 <Card title="Invitations and Access" icon="user-plus" href="/features/team-collaboration/invitation-and-access">
 Learn how to invite members and manage access permissions.
 </Card>
@@ -77,3 +81,62 @@ Learn about quota allocation and usage management.
 View team statistics and lifecycle management.
 </Card>
 </CardGroup>
+
+## Permission catalog
+
+Every permission, grouped by feature area. Click a capability to jump to its full description in the [Permission Reference](/features/team-collaboration/permission-reference).
+
+Each row carries a **Level** label, taken from the OpenAPI authorization matrix:
+
+- `instance` — can be granted on a specific resource instance (e.g. one project). Admin can give it on project A and withhold it on project B.
+- `service` — applies to the resource type as a whole. Once granted, it covers every instance of that resource in your team.
+
+### Projects
+
+| Capability | Identifier | Level |
+|---|---|---|
+| [Browse the project list](/features/team-collaboration/permission-reference#browse-the-project-list) | `project:list` | `service` |
+| [Open a project](/features/team-collaboration/permission-reference#open-a-project) | `project:read` | `instance` |
+| [Create a new project](/features/team-collaboration/permission-reference#create-a-new-project) | `project:create` | `service` |
+| [Edit project settings](/features/team-collaboration/permission-reference#edit-project-settings) | `project:modify` | `instance` |
+| [Delete a project](/features/team-collaboration/permission-reference#delete-a-project) | `project:delete` | `instance` |
+| [Combined search](/features/team-collaboration/permission-reference#combined-search-across-documents-and-memories-api-only) | `project:search` | `instance` |
+
+### Documents
+
+| Capability | Identifier | Level |
+|---|---|---|
+| [See the Files tab](/features/team-collaboration/permission-reference#see-the-files-tab) | `project:doc_list` | `instance` |
+| [Read a document](/features/team-collaboration/permission-reference#read-a-single-document) | `project:doc_read` | `instance` |
+| [Add a document](/features/team-collaboration/permission-reference#add-a-document-to-a-project) | `project:doc_add` | `instance` |
+| [Remove a document](/features/team-collaboration/permission-reference#remove-a-document-from-a-project) | `project:doc_delete` | `instance` |
+| [Search documents](/features/team-collaboration/permission-reference#search-documents-inside-a-project-api-only) | `project:doc_search` | `instance` |
+
+### Memories
+
+| Capability | Identifier | Level |
+|---|---|---|
+| [See the Memories tab](/features/team-collaboration/permission-reference#see-the-memories-tab) | `project:mem_list` | `instance` |
+| [Read a memory](/features/team-collaboration/permission-reference#read-a-memorys-content) | `project:mem_read` | `instance` |
+| [Search memories](/features/team-collaboration/permission-reference#search-memories) | `project:mem_search` | `instance` |
+| [Forget a memory](/features/team-collaboration/permission-reference#forget-delete-a-memory) | `project:mem_delete` | `instance` |
+| [Add a memory](/features/team-collaboration/permission-reference#add-a-memory-via-api-api-only) | `project:mem_add` | `instance` |
+| [Resolve a memory conflict](/features/team-collaboration/permission-reference#resolve-conflicting-memories) | `project:mem_conflict_resolve` | `instance` |
+
+### MCP
+
+| Capability | Identifier | Level |
+|---|---|---|
+| [See the Integrations tab](/features/team-collaboration/permission-reference#see-the-integrations-tab) | `project:mcp_read` | `instance` |
+| [List MCP servers](/features/team-collaboration/permission-reference#view-existing-mcp-servers) | `project:mcp_list` | `instance` |
+| [Create an MCP server](/features/team-collaboration/permission-reference#create-a-new-mcp-server) | `project:mcp_add` | `instance` |
+| [Revoke an MCP server](/features/team-collaboration/permission-reference#revoke-an-mcp-server) | `project:mcp_delete` | `instance` |
+
+### Library
+
+| Capability | Identifier | Level |
+|---|---|---|
+| [Read files](/features/team-collaboration/permission-reference#read-your-files) | `drive:item_read` | `service` |
+| [Upload files](/features/team-collaboration/permission-reference#upload-and-create-files) | `drive:item_add` | `service` |
+| [Edit files](/features/team-collaboration/permission-reference#edit-your-files) | `drive:item_modify` | `service` |
+| [Delete files](/features/team-collaboration/permission-reference#delete-files) | `drive:item_delete` | `service` |

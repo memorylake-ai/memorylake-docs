@@ -103,6 +103,7 @@
             "pages": [
               "features/team-collaboration/overview",
               "features/team-collaboration/roles-permissions",
+              "features/team-collaboration/permission-reference",
               "features/team-collaboration/invitation-and-access",
               "features/team-collaboration/quota-and-usage",
               "features/team-collaboration/analytics-and-lifecycle"
@@ -130,7 +131,9 @@
                   "features/memorylake/api-reference/library/list-items",
                   "features/memorylake/api-reference/library/create-upload",
                   "features/memorylake/api-reference/library/create-item",
-                  "features/memorylake/api-reference/library/delete-item"
+                  "features/memorylake/api-reference/library/delete-item",
+                  "features/memorylake/api-reference/library/set-item-xattrs",
+                  "features/memorylake/api-reference/library/delete-item-xattrs"
                 ]
               },
               {

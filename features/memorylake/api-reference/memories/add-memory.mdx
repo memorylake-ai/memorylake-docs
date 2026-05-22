@@ -9,6 +9,10 @@ POST /openapi/memorylake/api/v2/projects/{id}/memories
 
 Submits a user–assistant conversation to the project. Structured memories are automatically extracted from the messages and stored asynchronously. The response includes an event ID that can be used to track processing progress.
 
+<Note>
+**Permission required:** [`project:mem_add`](/features/team-collaboration/permission-reference#add-a-memory-via-api-api-only) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

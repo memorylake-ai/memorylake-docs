@@ -18,6 +18,12 @@ Pick the tab below that matches the item type you're creating. Required fields d
 `parent_item_id` accepts the alias `MY_SPACE` (your workspace root). Pass it directly instead of looking up the root ID. You can also pass any folder's `item_id` to nest deeper.
 </Note>
 
+<Note>
+**Permission required:** [`drive:item_add`](/features/team-collaboration/permission-reference#upload-and-create-files) · `service`
+
+**Workflow note (file mode):** Calling this in `item_type: "file"` mode is step 2 of the Library upload flow; step 1 is [Create Upload](/features/memorylake/api-reference/library/create-upload) (same permission). If you then need the file to appear inside a project, call [Add Documents](/features/memorylake/api-reference/memories/add-document) — that additionally requires [`project:doc_add`](/features/team-collaboration/permission-reference#add-a-document-to-a-project).
+</Note>
+
 ### Request Body
 
 <Tabs>
