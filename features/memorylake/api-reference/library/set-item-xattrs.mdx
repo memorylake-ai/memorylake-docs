@@ -15,6 +15,10 @@ The call **merges** with whatever xattrs the item already has: keys you send are
 The system reserves a few internal xattr keys it manages on its own. Sending values for those keys has no effect — they're silently filtered. The system root folders (`My Space`, `WPS Space`, `Lark Space`) refuse xattr writes entirely and return `403`.
 </Note>
 
+<Note>
+**Permission required:** [`drive:item_modify`](/features/team-collaboration/permission-reference#edit-your-files) · `service`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="item_id" type="string" required>

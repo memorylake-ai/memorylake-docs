@@ -13,6 +13,10 @@ Searches across everything the project knows — both the ingested document cont
 Items in `documents` and `memories` have the same shapes as [Search Documents](/features/memorylake/api-reference/memories/search-documents) and [Search Memories](/features/memorylake/api-reference/memories/search-memories) respectively — the relevant request knobs (`top_n`, `threshold`) carry the same meaning here.
 </Note>
 
+<Note>
+**Permission required:** [`project:search`](/features/team-collaboration/permission-reference#combined-search-across-documents-and-memories-api-only) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

@@ -103,6 +103,7 @@
             "pages": [
               "features/team-collaboration/overview",
               "features/team-collaboration/roles-permissions",
+              "features/team-collaboration/permission-reference",
               "features/team-collaboration/invitation-and-access",
               "features/team-collaboration/quota-and-usage",
               "features/team-collaboration/analytics-and-lifecycle"

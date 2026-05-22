@@ -9,6 +9,10 @@ POST /openapi/memorylake/api/v1/projects/{id}/documents/search
 
 Performs semantic search over all documents in the project. Returns matched content ranked by relevance. Results are categorized into three types — `table`, `paragraph`, and `figure` — each identified by the `type` field.
 
+<Note>
+**Permission required:** [`project:doc_search`](/features/team-collaboration/permission-reference#search-documents-inside-a-project-api-only) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

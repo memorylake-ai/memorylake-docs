@@ -9,6 +9,10 @@ POST /openapi/memorylake/api/v2/projects/{id}/memories/{memoryId}/forget
 
 Marks the memory as forgotten (expired) without deleting it. The memory stays for audit purposes but is excluded from future searches and recalls.
 
+<Note>
+**Permission required:** [`project:mem_delete`](/features/team-collaboration/permission-reference#forget-delete-a-memory) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

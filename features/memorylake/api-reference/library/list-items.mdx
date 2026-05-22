@@ -9,6 +9,10 @@ GET /openapi/memorylake/api/v1/drives/items/{item_id}/children
 
 Returns the items (files and folders) directly under a folder. Uses cursor pagination: if `continuation_token` is returned, pass it back on the next request to fetch the next page. When the token is absent from the response, you've reached the end.
 
+<Note>
+**Permission required:** [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="item_id" type="string" required>

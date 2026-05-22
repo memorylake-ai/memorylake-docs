@@ -17,6 +17,10 @@ This is irreversible. The listed xattr values are gone after the call. The item 
 System-reserved xattr keys cannot be deleted; including them in the `key` list is rejected. The system root folders (`My Space`, `WPS Space`, `Lark Space`) refuse xattr deletion entirely and return `403`.
 </Note>
 
+<Note>
+**Permission required:** [`drive:item_modify`](/features/team-collaboration/permission-reference#edit-your-files) · `service`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="item_id" type="string" required>

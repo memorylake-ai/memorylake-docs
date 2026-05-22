@@ -11,6 +11,10 @@ DELETE /openapi/memorylake/api/v1/projects/{id}
 This is a destructive operation. The project and all its associated data will be permanently removed.
 </Warning>
 
+<Note>
+**Permission required:** [`project:delete`](/features/team-collaboration/permission-reference#delete-a-project) · `instance`
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

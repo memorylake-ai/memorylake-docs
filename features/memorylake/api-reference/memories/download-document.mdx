@@ -9,6 +9,15 @@ GET /openapi/memorylake/api/v1/projects/{id}/documents/{documentId}/download
 
 Downloads the binary content of a project document. The response is either a `303` redirect to the storage download URL, or streamed binary content.
 
+<Note>
+**Permissions required (all of):**
+
+- [`project:doc_read`](/features/team-collaboration/permission-reference#read-a-single-document) · `instance`
+- [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+
+The server resolves the document to its underlying Library file and forwards to the drive download handler — both permissions are checked on every call.
+</Note>
+
 ### Path Parameters
 
 <ParamField path="id" type="string" required>

@@ -9,6 +9,10 @@ POST /openapi/memorylake/api/v1/projects
 
 Creates a new project. Returns the created project with a generated ID in format `proj-{uuid}`.
 
+<Note>
+**Permission required:** [`project:create`](/features/team-collaboration/permission-reference#create-a-new-project) · `service`
+</Note>
+
 ### Request Body
 
 <ParamField body="name" type="string" required>

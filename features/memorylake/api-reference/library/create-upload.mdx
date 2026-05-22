@@ -13,6 +13,12 @@ Creates a chunked upload session. The response contains an `upload_id` and one p
 This endpoint only reserves storage and returns URLs — it does not move any bytes. The file is not visible in the Library until Create Item succeeds.
 </Note>
 
+<Note>
+**Permission required:** [`drive:item_add`](/features/team-collaboration/permission-reference#upload-and-create-files) · `service`
+
+**Workflow note:** This is step 1 of the Library upload flow. Step 2 is [Create Item](/features/memorylake/api-reference/library/create-item) (same permission). To then attach the file to a project, call [Add Documents](/features/memorylake/api-reference/memories/add-document), which additionally requires [`project:doc_add`](/features/team-collaboration/permission-reference#add-a-document-to-a-project).
+</Note>
+
 ### Request Body
 
 <ParamField body="file_size" type="integer" required>
