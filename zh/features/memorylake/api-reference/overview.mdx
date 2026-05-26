@@ -1,0 +1,102 @@
+---
+title: "MemoryLake API 参考"
+description: "MemoryLake 服务的完整 API 文档，包括资料库、项目、文档和记忆"
+---
+
+## API 概览
+
+MemoryLake API 提供对资料库、项目管理、文档搜索和记忆提取的编程访问。您可以使用它构建自定义集成、自动化工作流程并扩展平台功能。
+
+## 基础 URL
+
+```
+https://app.memorylake.ai/openapi/memorylake
+```
+
+<Note>
+请将 `app.memorylake.ai` 替换为您实际的 MemoryLake 实例域名。
+</Note>
+
+## 认证
+
+所有 API 请求都需要通过 Bearer 令牌进行认证。详情请参阅[认证](/zh/features/memorylake/api-reference/authentication)。
+
+## API 章节
+
+<CardGroup cols={2}>
+<Card title="认证" icon="key" href="/zh/features/memorylake/api-reference/authentication">
+了解如何认证 API 请求
+</Card>
+
+<Card title="资料库" icon="folder-tree" href="/zh/features/memorylake/api-reference/library/overview">
+文件和文件夹管理，包括分片上传工作流程
+</Card>
+
+<Card title="项目" icon="diagram-project" href="/zh/features/memorylake/api-reference/projects">
+项目管理和文档操作
+</Card>
+
+<Card title="记忆" icon="brain" href="/zh/features/memorylake/api-reference/memories">
+对话记忆提取和搜索
+</Card>
+
+<Card title="错误" icon="triangle-exclamation" href="/zh/features/memorylake/api-reference/errors">
+错误代码和处理
+</Card>
+
+<Card title="速率限制" icon="gauge" href="/zh/features/memorylake/api-reference/rate-limits">
+API 速率限制和使用配额
+</Card>
+</CardGroup>
+
+## 通用模式
+
+### 响应格式
+
+所有响应遵循以下结构：
+
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    // Response payload
+  }
+}
+```
+
+错误响应：
+```json
+{
+  "success": false,
+  "message": "Error description",
+  "error_code": "ERROR_CODE"
+}
+```
+
+### 分页
+
+列表接口支持分页：
+
+**查询参数**：
+- `page`：页码（默认：1）
+- `size`：每页条数（默认：20，最大：100）
+
+### 时间戳
+
+所有时间戳使用 ISO 8601 格式：
+```
+2024-01-15T10:30:00Z
+```
+
+## 后续步骤
+
+<CardGroup cols={2}>
+<Card title="认证" icon="shield" href="/zh/features/memorylake/api-reference/authentication">
+从认证开始
+</Card>
+
+<Card title="快速开始" icon="rocket" href="/zh/features/memorylake/quickstart">
+查看快速开始指南
+</Card>
+</CardGroup>

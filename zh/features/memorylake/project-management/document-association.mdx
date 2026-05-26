@@ -1,0 +1,108 @@
+---
+title: "将文档关联到项目"
+description: "使用树形选择器从云盘中选择文档并链接到项目"
+---
+
+## 概述
+
+将云盘中的文档关联到项目，为 AI 交互提供上下文并组织相关内容。
+
+## 文档选择流程
+
+<Steps>
+<Step title="打开项目">
+导航到项目仪表板。
+</Step>
+
+<Step title="前往文档标签页">
+点击"文档"标签页。
+</Step>
+
+<Step title="点击添加文档">
+点击"添加文档"按钮。
+
+{/* SCREENSHOT: Add documents button */}
+</Step>
+
+<Step title="浏览文件树">
+一个对话框打开，以带复选框的树形视图显示您的云盘。
+
+{/* SCREENSHOT: Document selector dialog with tree */}
+</Step>
+
+<Step title="选择项目">
+- 勾选要关联的文件或文件夹旁边的复选框
+- 选择一个文件夹会选中其所有内容
+- 半选状态表示部分子项已被选中
+
+{/* SCREENSHOT: Tree selector with selections */}
+</Step>
+
+<Step title="确认选择">
+点击"确认"或"添加"关联所选项目。
+
+<Check>
+文档出现在文档标签页中，并显示处理状态。
+</Check>
+</Step>
+</Steps>
+
+## 选择策略
+
+### 单个文件
+通过勾选复选框来选择特定文件。
+
+### 整个文件夹
+勾选文件夹以包含其所有内容。
+
+### 混合选择
+根据需要组合选择单个文件和文件夹。
+
+## 管理已关联的文档
+
+### 查看文档
+文档标签页显示：
+- 文件/文件夹名称
+- 处理状态
+- 错误详情（如有）
+
+{/* SCREENSHOT: Associated documents list */}
+
+### 文档状态
+
+**Pending**：排队等待处理
+
+**Running**：正在处理中
+
+**Okay**：处理成功，已就绪
+
+**Error**：处理失败（悬停查看详情）
+
+### 移除文档
+
+要解除文档关联：
+1. 在列表中找到文档
+2. 点击移除图标
+3. 确认移除
+
+文档仍保留在您的云盘中，仅关联关系被移除。
+
+## 最佳实践
+
+- 仅关联相关文档
+- 保持项目聚焦（避免大杂烩式的方法）
+- 添加后检查处理状态
+- 移除过时的文档
+- 使用文件夹一次性关联相关文件
+
+## 后续步骤
+
+<CardGroup cols={2}>
+<Card title="记忆" icon="brain" href="/zh/features/memorylake/memories/overview">
+添加记忆以提供上下文
+</Card>
+
+<Card title="MCP 服务器" icon="server" href="/zh/features/memorylake/mcp-servers/overview">
+生成用于访问的 API 密钥
+</Card>
+</CardGroup>

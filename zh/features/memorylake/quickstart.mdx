@@ -1,0 +1,245 @@
+---
+title: "MemoryLake 快速入门"
+description: "10 分钟上手 MemoryLake — 创建第一个项目、上传文档并设置 MCP 服务"
+---
+
+## 欢迎使用 MemoryLake
+
+本指南将带您了解 MemoryLake 的核心功能。完成后，您将创建一个项目、上传文档、添加一条记忆，并生成一个用于外部访问的 MCP 服务 API Key。
+
+## 前提条件
+
+开始之前，请确保：
+- 拥有 MemoryLake 账户访问权限
+- 至少准备一个文档或文件夹用于上传
+- 了解基本的文件管理概念
+
+<Tip>
+已经准备好示例文档了吗？PDF、Office 文档（Word、Excel、PowerPoint）、文本/Markdown 文件和图片都可以在 MemoryLake 中使用。
+</Tip>
+
+## 开始使用
+
+<Steps>
+
+<Step title="访问文档库">
+进入 MemoryLake 的文档管理部分。您将看到个人文件库中已准备好的 `My Space` 文件夹，可以存放您的文件。
+
+{/* SCREENSHOT: Initial drive interface showing empty root folder */}
+
+<Check>
+您应该看到左侧的树形视图显示文件库结构，右侧是准备好存放内容的空白区域。
+</Check>
+</Step>
+
+<Step title="上传您的第一批文档">
+点击"上传"按钮将文件添加到文件库。
+
+您可以：
+- 选择单个文件
+- 一次选择多个文件
+- 上传整个文件夹，保留目录结构
+
+{/* SCREENSHOT: Upload dialog with file selection options */}
+
+<Note>
+MemoryLake 支持常见文档格式 — PDF、Microsoft Word、Excel、PowerPoint、文本/Markdown 和图片。大文件会自动通过分片上传处理。
+</Note>
+
+观察上传进度面板，查看文件处理状态。完成后，文件将出现在文件树中。
+
+{/* SCREENSHOT: Upload progress showing multiple files */}
+
+<Check>
+已上传的文件现在应该在树形视图中可见。尝试展开文件夹查看其内容。
+</Check>
+</Step>
+
+<Step title="使用文件夹组织">
+创建文件夹来组织您的文档：
+
+1. 点击"新建文件夹"按钮或在树形视图中右键点击
+2. 输入描述性的文件夹名称
+3. 使用拖放将文件移入文件夹
+
+{/* SCREENSHOT: Folder creation dialog and drag-drop operation */}
+
+<Tip>
+使用能反映组织结构的有意义的文件夹名称。您可以创建嵌套文件夹来管理复杂层级。
+</Tip>
+</Step>
+
+<Step title="创建第一个项目">
+进入项目管理部分，创建一个新项目：
+
+1. 点击"创建项目"
+2. 输入项目名称（例如"Q1 研究"）
+3. 添加描述说明项目用途
+4. 点击"保存"
+
+{/* SCREENSHOT: Create project dialog with sample data */}
+
+项目帮助您组织相关文档，并为 AI 交互提供上下文。
+
+<Check>
+您应该在项目列表中看到新项目，初始时文档和记忆数量为零。
+</Check>
+</Step>
+
+<Step title="将文档关联到项目">
+将文件库中的文档关联到项目：
+
+1. 点击打开您的项目
+2. 进入"文档"标签页
+3. 点击"添加文档"
+4. 在树形视图中导航并通过复选框选择文件或文件夹
+5. 点击"确认"完成关联
+
+{/* SCREENSHOT: Document selector tree with checkboxes and selections */}
+
+您可以选择单个文件或整个文件夹 — 层级结构将在项目中保留。
+
+<Check>
+文档标签页现在应显示已关联的文档及其处理状态（待处理 → 处理中 → 完成）。
+</Check>
+</Step>
+
+<Step title="创建一条记忆">
+为项目添加上下文知识：
+
+1. 切换到项目中的"记忆"标签页
+2. 点击"添加记忆"
+3. 输入名称（例如"项目指南"）
+4. 添加关键信息、笔记或指示内容
+5. 点击"保存"
+
+{/* SCREENSHOT: Create memory dialog with sample content */}
+
+记忆为通过 MCP 服务访问您项目的 AI 模型提供上下文。
+
+记忆内容示例：
+```
+本项目包含 2024 年第一季度分析的研究材料。
+
+重点关注领域：
+- 市场趋势与分析
+- 竞争对手研究
+- 预算规划文档
+
+分析这些文档时，优先关注最新数据，并与预算约束进行交叉参考。
+```
+
+<Check>
+您的记忆应出现在记忆标签页中，内容可见。
+</Check>
+</Step>
+
+<Step title="生成 MCP 服务 API Key">
+创建 API Key，为外部应用提供项目访问权限：
+
+1. 进入项目中的"MCP 服务"标签页
+2. 点击"添加 MCP 服务"
+3. 输入描述（例如"Claude AI 集成"）
+4. 点击"生成"
+5. **重要**：立即复制密钥 — 仅显示一次！
+
+{/* SCREENSHOT: MCP server creation with secret display and copy button */}
+
+<Warning>
+API 密钥仅在创建时显示一次。请立即将其复制到安全位置。您将使用此密钥对项目请求进行认证。
+</Warning>
+
+您将获得：
+- API Key ID
+- 密钥（请立即复制！）
+- 端点 URL
+
+<Check>
+MCP 服务标签页应显示您的新 API Key，密钥已脱敏（仅显示后缀），以及可复制的完整端点 URL。
+</Check>
+</Step>
+
+<Step title="验证设置">
+确认一切正常运行：
+
+1. **文档**：检查文件同时出现在文件库和项目中
+2. **记忆**：验证记忆已保存且可读
+3. **MCP 服务**：确认 API Key 已列出，并附有端点 URL
+
+{/* SCREENSHOT: Complete project dashboard showing all three tabs with data */}
+
+<Check>
+您的项目面板应显示：
+- 文档数量 > 0
+- 记忆数量 > 0
+- MCP 服务数量 > 0
+</Check>
+</Step>
+
+</Steps>
+
+## 已完成的工作
+
+几分钟内，您已经：
+
+- 在文件库中上传并组织了文档
+- 创建了一个项目来归组相关内容
+- 将文档关联到项目
+- 添加了一条记忆来提供上下文
+- 生成了用于外部访问的 MCP 服务 API Key
+
+## 下一步
+
+掌握基础后，探索以下进阶功能：
+
+<CardGroup cols={2}>
+<Card title="评论" icon="comment" href="/features/memorylake/document-management/metadata-comments">
+为文件添加富文本 Markdown 评论，增强上下文信息
+</Card>
+
+<Card title="外部连接器" icon="plug" href="/features/memorylake/connectors/overview">
+连接 WPS、Dropbox 和其他外部文档服务
+</Card>
+
+<Card title="API 文档" icon="code" href="/features/memorylake/api-reference/overview">
+探索 REST API，编程访问所有功能
+</Card>
+
+<Card title="最佳实践" icon="lightbulb" href="/features/memorylake/memories/best-practices">
+了解如何编写有效的记忆和组织项目
+</Card>
+</CardGroup>
+
+## 常见问题
+
+<AccordionGroup>
+<Accordion title="一个项目可以添加多少文档？">
+项目中的文档数量没有硬性限制。但为了 AI 交互的最佳性能，建议将非常大的文档集分散到多个聚焦的项目中。
+</Accordion>
+
+<Accordion title="同一文档可以用于多个项目吗？">
+可以！您可以将文件库中的同一文档关联到多个项目。文档在文件库中只存在一份，但可以为多个项目提供上下文。
+</Accordion>
+
+<Accordion title="从文件库删除文档会怎样？">
+如果从文件库中删除文档，它也会从引用它的所有项目中移除。删除重要文件前请检查项目关联。
+</Accordion>
+
+<Accordion title="如何使用 MCP 服务 API Key？">
+在 HTTP 请求的 Authorization 请求头中以 Bearer Token 形式携带 API Key。详细信息和示例请参阅 [API 认证指南](/features/memorylake/api-reference/authentication)。
+</Accordion>
+
+<Accordion title="可以撤销或重新生成 API Key 吗？">
+可以，您随时可以在 MCP 服务标签页中删除 API Key。要轮换密钥，先创建新的，然后在更新所有集成后删除旧的。
+</Accordion>
+</AccordionGroup>
+
+## 需要帮助？
+
+- **详细指南**：浏览文档各部分，获取每个功能的深入介绍
+- **故障排除**：查看各部分的排查页面，了解常见问题
+- **API 参考**：查看 [API 文档](/features/memorylake/api-reference/overview)了解编程访问方式
+
+<Tip>
+从小处开始，逐步扩展。您随时可以添加更多文档、创建更多项目、生成更多 API Key 来满足不断增长的需求。
+</Tip>

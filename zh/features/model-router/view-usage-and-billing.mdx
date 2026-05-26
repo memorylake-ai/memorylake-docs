@@ -1,0 +1,149 @@
+---
+title: "查看用量与计费"
+description: "了解如何查看您的 API 用量并理解计费详情"
+---
+
+## 什么是用量与计费？
+
+每次进行 API 调用时，都会消耗配额并生成一条计费记录。本指南将向您展示如何查看用量统计信息并理解计费方式。
+
+<Info>
+每次请求前都会检查配额。如果配额不足，请求将被拒绝。详情请参阅[限制与前置条件](/zh/features/model-router/others/limits-and-prerequisites)。
+</Info>
+
+## 配额工作原理
+
+Model Router 使用两阶段配额系统：
+
+1. **预扣费**：在处理请求之前，系统会检查您是否有足够的配额
+2. **结算**：请求完成后，根据实际使用量计费
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/quota-flow.png"
+    alt="配额检查与结算流程"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+<Info>
+失败的请求不会消耗初始预扣费检查之外的额外配额。您只需为成功请求的实际使用量付费。
+</Info>
+
+## 查看您的总配额和用量
+
+### 在控制台侧边栏
+
+1. 登录 [Memorylake 控制台](https://app.memorylake.ai/panel)
+2. 查看侧边栏中的配额卡片
+3. 您将看到：
+   - **可用配额**：剩余额度
+   - **已用配额**：已消耗额度
+   - **上下文**：当前使用的是个人配额还是团队配额
+
+### 在团队配额页面
+
+1. 导航到控制台中的团队配额页面
+2. 查看您团队的详细配额信息
+3. 查看不同配额来源（个人/团队/混合）的明细
+
+<Info>
+有关团队配额和协作的更多详情，请参阅[团队协作文档](/features/team-collaboration/quota-and-usage)。
+</Info>
+
+## 查看单次调用计费
+
+### 步骤 1：打开日志页面
+
+1. 进入控制台的[日志页面](https://app.memorylake.ai/panel/log)
+2. 您将看到所有 API 调用的列表
+
+### 步骤 2：查看调用详情
+
+1. 点击列表中的任意调用
+2. 将打开详情弹窗，显示：
+   - **输入/输出定价**：每个 token 的费用
+   - **转换过程**：计费的计算方式
+   - **实际扣除配额**：使用了多少配额
+   - **配额来源**：来自个人配额、团队配额还是混合配额
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/billing-list.png"
+    alt="调用日志详情中的定价和计费信息"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/model-router/billing-detail.png"
+    alt="调用日志详情中的定价和计费信息"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 理解计费详情
+
+### 定价信息
+
+- **输入 token**：您发送给模型的 token 费用
+- **输出 token**：模型生成的 token 费用
+- **总费用**：输入和输出费用之和
+
+### 配额来源
+
+您的配额可以来自：
+- **个人配额**：您的个人额度
+- **团队配额**：共享的团队额度
+- **混合**：个人配额和团队配额的组合
+
+### 结算
+
+- 计费基于**实际使用量**，而非估算
+- 失败的请求不会消耗额外配额
+- 您只需为实际使用的量付费
+
+## 模型定价
+
+您还可以在控制台的[可用模型列表页面](https://app.memorylake.ai/panel/available_model)查看模型定价信息。此处显示的定价元数据仅供参考，实际计费以结算结果为准。
+
+<Info>
+模型列表中显示的定价仅供参考。您的实际费用根据结算阶段的真实使用量计算。
+</Info>
+
+## 重要说明
+
+1. **配额限制**：配额用完后，请求将被拒绝。请确保在发起调用前有足够的配额。
+
+2. **独立配额**：不同的 API Key 和分组拥有独立的配额。使用一个 API Key 不会影响另一个。
+
+3. **实时更新**：用量统计实时更新。您可以在发起调用时监控用量。
+
+4. **计费准确性**：您只需为基于实际 token 使用量的成功请求付费。
+
+## 故障排除
+
+### "配额不足"错误
+
+如果您遇到此错误：
+1. 在控制台侧边栏检查您的配额
+2. 确保您使用的模型有足够的配额
+3. 如果需要更多配额，请联系管理员
+
+### 意外扣费
+
+如果您看到意外的扣费：
+1. 在日志中查看调用详情
+2. 检查输入/输出 token 数量
+3. 验证模型定价是否符合您的预期
+
+## 相关文档
+
+- [查看可用模型列表](/zh/features/model-router/list-available-models)
+- [限制与前置条件](/zh/features/model-router/others/limits-and-prerequisites)
+- [错误处理](/zh/features/model-router/others/error-handling)
+- [团队协作 - 配额与用量](/features/team-collaboration/quota-and-usage)

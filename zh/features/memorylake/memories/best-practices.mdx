@@ -1,0 +1,265 @@
+---
+title: "记忆最佳实践"
+description: "在 MemoryLake 项目中有效使用记忆的指南"
+---
+
+## 编写有效的记忆
+
+### 具体且清晰
+
+**不好的写法**：
+```
+This project is about customer data.
+```
+
+**好的写法**：
+```
+This project analyzes Q1 2024 customer survey responses from 1,500 participants.
+
+Focus areas:
+- Net Promoter Score trends
+- Product satisfaction ratings
+- Feature request themes
+
+Survey methodology: Online survey, random sampling, 95% confidence interval
+```
+
+### 提供上下文
+
+帮助读者（人类和 AI）理解：
+- 这个项目为什么存在
+- 它解决什么问题
+- 目标受众是谁
+- 它与其他项目的关系
+
+### 使用清晰的结构
+
+用章节组织内容：
+
+```
+PURPOSE
+Brief description of project goals
+
+CONTEXT
+Background information
+
+KEY INFORMATION
+Important facts, figures, decisions
+
+GUIDELINES
+How to approach the content
+
+RELATED
+Links to related projects or external resources
+```
+
+## 命名规范
+
+### 描述性名称
+
+使名称不言自明：
+- ✅ "Budget Constraints Q1 2024"
+- ✅ "Customer Interview - Key Insights"
+- ❌ "Notes 1"
+- ❌ "Misc"
+
+### 一致的模式
+
+选择一种模式并坚持使用：
+
+**基于主题**：
+- "Research Methodology"
+- "Research Questions"
+- "Research Timeline"
+
+**类别前缀**：
+- "[Context] Project History"
+- "[Guidelines] Analysis Approach"
+- "[Reference] Related Studies"
+
+## 内容指南
+
+### 长度
+
+**理想长度**：每条记忆 100-500 字
+
+**太短**（< 50 字）：
+```
+Project about sales data.
+```
+AI 或协作者无法获得足够的上下文。
+
+**太长**（> 1000 字）：
+难以快速浏览，最好拆分为多条聚焦的记忆。
+
+**恰到好处**：
+```
+This project analyzes sales data from our Q4 2023 campaign across three regions: North America, Europe, and Asia Pacific.
+
+Objectives:
+1. Compare regional performance against targets
+2. Identify top-performing products
+3. Understand seasonal trends
+4. Recommend Q1 2024 strategies
+
+Data sources: CRM exports, Google Analytics, manual sales reports
+
+When analyzing, focus on year-over-year growth rather than absolute numbers, as we expanded team size significantly in 2023.
+
+Related projects: "Q3 2023 Sales Analysis", "2024 Sales Planning"
+```
+
+### 定期更新
+
+记忆应保持最新：
+- 信息变更时及时更新
+- 随项目进展添加新见解
+- 删除过时信息
+- 将历史上下文单独归档
+
+## 按记忆类型的用例
+
+### 项目指南
+
+提供使用项目的说明：
+
+```
+ANALYSIS GUIDELINES
+
+When reviewing these documents:
+1. Prioritize data from the last 6 months
+2. Cross-reference customer feedback with NPS scores
+3. Focus on actionable insights over descriptive statistics
+4. Consider budget constraints ($50K for Q1)
+
+Red flags to watch for:
+- Sample sizes under 100
+- Survey response rates under 30%
+- Conflicting data between sources
+```
+
+### 背景上下文
+
+解释项目历史：
+
+```
+PROJECT HISTORY
+
+This project began in September 2023 after customer complaints about checkout process increased 40%.
+
+Initial hypothesis: Payment gateway issues causing abandonment
+
+Investigation revealed:
+- Gateway was fine
+- UI confusion was main culprit
+- Mobile experience particularly poor
+
+This analysis supports the redesign project (see "Checkout Redesign 2024")
+```
+
+### 关键决策
+
+记录重要选择：
+
+```
+TECHNICAL DECISIONS
+
+Why we chose PostgreSQL over MySQL:
+- Better JSON support for flexible schemas
+- Superior full-text search
+- Team expertise
+- Cost-effective at our scale
+
+Trade-offs accepted:
+- Slightly more complex setup
+- Fewer hosting options
+
+Decision date: January 15, 2024
+Decision makers: Engineering team, CTO approval
+```
+
+### 约束和限制
+
+记录边界条件：
+
+```
+PROJECT CONSTRAINTS
+
+Budget: $75,000 (hard limit)
+Timeline: Must complete by March 31, 2024
+Team: 3 developers, 1 designer (part-time)
+Scope: MVP only - advanced features for Phase 2
+
+Known Limitations:
+- Data only available from 2022 forward
+- API rate limited to 1000 requests/hour
+- No access to competitor pricing data
+```
+
+## 与 MCP 服务器的集成
+
+当记忆将被 AI 模型读取时：
+
+### 明确表达
+
+AI 没有隐含的上下文：
+
+**含糊的写法**：
+```
+Focus on the important stuff.
+```
+
+**明确的写法**：
+```
+When analyzing documents:
+1. Prioritize files in /reports/final/ over /drafts/
+2. Pay special attention to customer quotes (marked with >>)
+3. Ignore internal process notes (in /admin/ folders)
+```
+
+### 提供示例
+
+帮助 AI 理解期望：
+
+```
+RESPONSE STYLE
+
+When answering questions about this project, use this style:
+
+Example good response:
+"According to the Q1 report (page 12), customer satisfaction increased 15% after implementing the new checkout flow. This aligns with the NPS improvement documented in the March survey."
+
+Example poor response:
+"Things got better."
+
+Always cite specific documents and page numbers when available.
+```
+
+## 常见错误避免
+
+❌ **太含糊**："This is an important project"
+✅ **具体的**："This project determines Q2 budget allocation based on Q1 results"
+
+❌ **大杂烩**：一条记忆包含所有内容
+✅ **聚焦的**：多条记忆，每条有明确目的
+
+❌ **过时的**：上次更新是两年前
+✅ **最新的**：随项目发展持续更新
+
+❌ **内部术语**："Use the TPS reports for the Q-analysis"
+✅ **清晰的**："Use the Transaction Processing System reports for quarterly analysis"
+
+❌ **没有结构**：一堵文字墙
+✅ **有组织的**：清晰的章节和换行
+
+## 后续步骤
+
+<CardGroup cols={2}>
+<Card title="记忆概述" icon="brain" href="/zh/features/memorylake/memories/overview">
+创建和管理记忆的完整指南
+</Card>
+
+<Card title="MCP 服务器" icon="server" href="/zh/features/memorylake/mcp-servers/overview">
+为 AI 提供对记忆的访问权限
+</Card>
+</CardGroup>

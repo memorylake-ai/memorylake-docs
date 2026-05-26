@@ -1,0 +1,485 @@
+---
+title: "最小 MVP 示例"
+description: "使用 Python、Node.js 和 TypeScript 编写的可直接运行的代码示例，帮助您快速上手"
+---
+
+## 什么是 MVP 示例？
+
+这些是最小化、完整且可直接运行的代码示例，您可以立即复制使用。每个示例都是独立的，展示了向 Model Router 发起 API 调用所需的基本代码。
+
+<Info>
+在运行这些示例之前，请确保您已：
+1. 创建了 API Key（请参阅[创建 API Key](/zh/features/model-router/getting-started/create-api-key)）
+2. 检查了可用的模型（请参阅[查看可用模型列表](/zh/features/model-router/list-available-models)）
+3. 将 `sk-demo123` 替换为您的实际 API Key
+4. 将模型名称替换为您的 API Key 可用的模型
+</Info>
+
+## Python 示例
+
+### 使用 OpenAI 官方 SDK（推荐）
+
+<Info>
+**推荐**：OpenAI 官方 SDK 是使用 Model Router 最简单的方式。您只需要更改 `base_url` 参数——其他一切与使用 OpenAI API 完全相同。
+</Info>
+
+#### 安装
+
+```bash
+pip install openai
+```
+
+#### 完整示例
+
+```python
+from openai import OpenAI
+
+# Initialize client with Model Router base URL
+client = OpenAI(
+    base_url="https://app.memorylake.ai/v1",  # Only change needed!
+    api_key="sk-your-api-key-here"  # Your Model Router API key
+)
+
+# Replace with a model available to your API key
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": "Hello! How are you?"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+#### 运行示例
+
+1. 将代码保存到文件（例如 `chat.py`）
+2. 安装依赖：`pip install openai`
+3. 将 `api_key` 和 `model` 替换为您的值
+4. 运行：`python chat.py`
+
+<Info>
+**要点**：与直接使用 OpenAI API 的唯一区别是设置 `base_url="https://app.memorylake.ai/v1"`。其他所有代码完全相同！
+</Info>
+
+#### 使用环境变量
+
+您还可以使用环境变量来提高安全性：
+
+```bash
+export OPENAI_API_KEY="sk-your-api-key-here"
+```
+
+```python
+from openai import OpenAI
+
+# Client automatically reads OPENAI_API_KEY from environment
+client = OpenAI(
+    base_url="https://app.memorylake.ai/v1"  # Only change needed!
+)
+
+response = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": "Hello! How are you?"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+### 使用 requests 库（替代方案）
+
+如果您更喜欢直接使用 `requests` 库：
+
+#### 安装
+
+```bash
+pip install requests
+```
+
+#### 完整示例
+
+```python
+import requests
+
+# Replace with your API key
+API_KEY = "sk-your-api-key-here"
+BASE_URL = "https://app.memorylake.ai/v1"
+
+# Replace with a model available to your API key
+MODEL = "gpt-4o-mini"
+
+def chat_completion(messages):
+    """Send a chat completion request"""
+    url = f"{BASE_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": MODEL,
+        "messages": messages,
+        "stream": False
+    }
+    
+    response = requests.post(url, headers=headers, json=data)
+    response.raise_for_status()
+    return response.json()
+
+# Example usage
+if __name__ == "__main__":
+    messages = [
+        {"role": "user", "content": "Hello! How are you?"}
+    ]
+    
+    result = chat_completion(messages)
+    print(result["choices"][0]["message"]["content"])
+```
+
+#### 运行示例
+
+1. 将代码保存到文件（例如 `chat.py`）
+2. 安装依赖：`pip install requests`
+3. 将 `API_KEY` 和 `MODEL` 替换为您的值
+4. 运行：`python chat.py`
+
+## TypeScript/JavaScript 示例
+
+### 使用 OpenAI 官方 SDK（推荐）
+
+<Info>
+**推荐**：OpenAI 官方 SDK 可与 Model Router 无缝配合。您只需要更改 `baseURL` 参数——其他一切与使用 OpenAI API 完全相同。
+</Info>
+
+#### 安装
+
+```bash
+npm install openai
+```
+
+对于 TypeScript 项目，您可能还需要安装类型定义：
+
+```bash
+npm install --save-dev typescript @types/node
+```
+
+#### 完整示例（TypeScript）
+
+```typescript
+import OpenAI from "openai";
+
+// Initialize client with Model Router base URL
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1",  // Only change needed!
+  apiKey: "sk-your-api-key-here"  // Your Model Router API key
+});
+
+// Replace with a model available to your API key
+const response = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Hello! How are you?" }
+  ]
+});
+
+console.log(response.choices[0].message.content);
+```
+
+#### 完整示例（JavaScript）
+
+```javascript
+import OpenAI from "openai";
+
+// Initialize client with Model Router base URL
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1",  // Only change needed!
+  apiKey: "sk-your-api-key-here"  // Your Model Router API key
+});
+
+// Replace with a model available to your API key
+const response = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Hello! How are you?" }
+  ]
+});
+
+console.log(response.choices[0].message.content);
+```
+
+#### 运行示例
+
+1. 将代码保存到文件（例如 `chat.ts` 或 `chat.mjs`）
+2. 安装依赖：`npm install openai`
+3. 将 `apiKey` 和 `model` 替换为您的值
+4. 运行：
+   - TypeScript：`npx ts-node chat.ts`（或先用 `tsc` 编译）
+   - JavaScript：`node chat.mjs`（或使用 CommonJS 时运行 `node chat.js`）
+
+<Info>
+**要点**：与直接使用 OpenAI API 的唯一区别是设置 `baseURL: "https://app.memorylake.ai/v1"`。其他所有代码完全相同！
+</Info>
+
+#### 使用环境变量
+
+您还可以使用环境变量来提高安全性：
+
+```bash
+export OPENAI_API_KEY="sk-your-api-key-here"
+```
+
+```typescript
+import OpenAI from "openai";
+
+// Client automatically reads OPENAI_API_KEY from environment
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1"  // Only change needed!
+});
+
+const response = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Hello! How are you?" }
+  ]
+});
+
+console.log(response.choices[0].message.content);
+```
+
+## 流式响应示例
+
+### Python - 使用 OpenAI 官方 SDK
+
+使用 OpenAI SDK 获取流式响应：
+
+```python
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://app.memorylake.ai/v1",
+    api_key="sk-your-api-key-here"
+)
+
+stream = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[
+        {"role": "user", "content": "Tell me a short story"}
+    ],
+    stream=True
+)
+
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end='', flush=True)
+print()  # New line at the end
+```
+
+### Python - 使用 requests 库
+
+使用 requests 库获取流式响应：
+
+```python
+import requests
+import json
+
+API_KEY = "sk-your-api-key-here"
+BASE_URL = "https://app.memorylake.ai/v1"
+MODEL = "gpt-4o-mini"
+
+def chat_completion_stream(messages):
+    """Send a streaming chat completion request"""
+    url = f"{BASE_URL}/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {API_KEY}",
+        "Content-Type": "application/json"
+    }
+    data = {
+        "model": MODEL,
+        "messages": messages,
+        "stream": True
+    }
+    
+    response = requests.post(url, headers=headers, json=data, stream=True)
+    response.raise_for_status()
+    
+    for line in response.iter_lines():
+        if line:
+            line_text = line.decode('utf-8')
+            if line_text.startswith('data: '):
+                json_str = line_text[6:]  # Remove 'data: ' prefix
+                if json_str == '[DONE]':
+                    break
+                try:
+                    data = json.loads(json_str)
+                    if 'choices' in data and len(data['choices']) > 0:
+                        delta = data['choices'][0].get('delta', {})
+                        if 'content' in delta:
+                            print(delta['content'], end='', flush=True)
+                except json.JSONDecodeError:
+                    pass
+
+# Example usage
+if __name__ == "__main__":
+    messages = [
+        {"role": "user", "content": "Tell me a short story"}
+    ]
+    chat_completion_stream(messages)
+    print()  # New line at the end
+```
+
+### TypeScript/JavaScript - 使用 OpenAI 官方 SDK
+
+使用 OpenAI SDK 获取流式响应：
+
+```typescript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/v1",
+  apiKey: "sk-your-api-key-here"
+});
+
+const stream = await client.chat.completions.create({
+  model: "gpt-4o-mini",
+  messages: [
+    { role: "user", content: "Tell me a short story" }
+  ],
+  stream: true
+});
+
+for await (const chunk of stream) {
+  if (chunk.choices[0]?.delta?.content) {
+    process.stdout.write(chunk.choices[0].delta.content);
+  }
+}
+console.log(); // New line at the end
+```
+
+## 其他官方 SDK
+
+Model Router 兼容多个不同 AI 平台的官方 SDK。大多数 SDK 只需配置 `API_KEY` 和 `BASE_URL` 即可与 Model Router 配合使用。
+
+<Info>
+**要点**：对于大多数官方 SDK，您只需要：
+1. 将 `baseURL` 或 `base_url` 设置为 `https://app.memorylake.ai/v1`（或对应的端点）
+2. 使用您的 Model Router API Key 作为 `apiKey` 或 `api_key`
+3. 其他一切与使用原始平台的 API 完全相同
+</Info>
+
+### Anthropic Claude SDK
+
+官方 [Anthropic Claude SDK](https://platform.claude.com/docs/en/api/client-sdks) 支持 Python、TypeScript/JavaScript、Java、Go、C#、Ruby 和 PHP。
+
+**示例（Python）：**
+
+```python
+from anthropic import Anthropic
+
+client = Anthropic(
+    api_key="sk-your-api-key-here",
+    base_url="https://app.memorylake.ai/claude"  # Claude native endpoint
+)
+
+message = client.messages.create(
+    model="claude-3-opus-20240229",
+    max_tokens=200,
+    messages=[
+        {"role": "user", "content": "Hello!"}
+    ]
+)
+```
+
+**示例（TypeScript）：**
+
+```typescript
+import Anthropic from '@anthropic-ai/sdk';
+
+const client = new Anthropic({
+  apiKey: 'sk-your-api-key-here',
+  baseURL: 'https://app.memorylake.ai/claude'  // Claude native endpoint
+});
+
+const message = await client.messages.create({
+  model: 'claude-3-opus-20240229',
+  max_tokens: 200,
+  messages: [
+    { role: 'user', content: 'Hello!' }
+  ]
+});
+```
+
+**文档**：[Anthropic Client SDKs](https://platform.claude.com/docs/en/api/client-sdks)
+
+### Vercel AI SDK
+
+[Vercel AI SDK](https://ai-sdk.dev/providers/ai-sdk-providers) 为多个 AI 提供商提供统一接口，包括 OpenAI、Anthropic、Google 等。
+
+**示例：**
+
+```typescript
+import { openai } from '@ai-sdk/openai';
+
+const client = openai({
+  baseURL: 'https://app.memorylake.ai/v1',
+  apiKey: 'sk-your-api-key-here'
+});
+```
+
+**文档**：[Vercel AI SDK Providers](https://ai-sdk.dev/providers/ai-sdk-providers)
+
+### Google Gemini SDK
+
+官方 [Google Gemini SDK](https://ai.google.dev/gemini-api/docs/migrate) 支持 Python、Node.js 等语言。
+
+**示例（Python）：**
+
+```python
+import google.generativeai as genai
+
+genai.configure(
+    api_key="sk-your-api-key-here",
+    transport="rest",
+    client_options={
+        "api_endpoint": "https://app.memorylake.ai/gemini"
+    }
+)
+
+model = genai.GenerativeModel('gemini-1.5-pro')
+response = model.generate_content("Hello!")
+```
+
+**文档**：[Google Gemini API Migration Guide](https://ai.google.dev/gemini-api/docs/migrate)
+
+### 通用模式
+
+大多数官方 SDK 遵循类似的模式：
+
+1. **安装 SDK**：使用官方包管理器（pip、npm 等）
+2. **配置客户端**：将 `baseURL`/`base_url` 设置为 Model Router 的端点
+3. **设置 API Key**：使用您的 Model Router API Key
+4. **正常使用**：其他所有代码保持不变
+
+**常用端点：**
+- OpenAI 兼容：`https://app.memorylake.ai/v1`
+- Claude 原生：`https://app.memorylake.ai/claude`
+- Gemini 原生：`https://app.memorylake.ai/gemini`
+
+<Info>
+在使用任何 SDK 之前，请确保通过调用[模型列表端点](/zh/features/model-router/list-available-models)检查您的 API Key 可以使用哪些模型。
+</Info>
+
+## 下一步
+
+1. **测试您的代码**：使用您的 API Key 运行上述示例之一
+2. **查看用量**：请参阅[查看用量与计费](/zh/features/model-router/view-usage-and-billing)以监控您的 API 调用
+3. **处理错误**：如果遇到问题，请了解[错误处理](/zh/features/model-router/others/error-handling)
+4. **深入探索**：查看[直接 API 请求](/zh/features/model-router/getting-started/use-api-key/direct-api-requests)了解更多高级用法
+
+## 相关文档
+
+- [创建 API Key](/zh/features/model-router/getting-started/create-api-key)
+- [查看可用模型列表](/zh/features/model-router/list-available-models)
+- [直接 API 请求](/zh/features/model-router/getting-started/use-api-key/direct-api-requests)
+- [查看用量与计费](/zh/features/model-router/view-usage-and-billing)
+- [错误处理](/zh/features/model-router/others/error-handling)

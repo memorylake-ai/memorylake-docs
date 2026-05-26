@@ -9,182 +9,360 @@
   },
   "favicon": "/favicon.svg",
   "navigation": {
-    "tabs": [
+    "languages": [
       {
-        "tab": "Guides",
-        "groups": [
+        "language": "en",
+        "tabs": [
           {
-            "group": "Getting started",
-            "pages": [
-              "overview",
-              "principles",
-              "quickstart",
-              "authentication"
-            ]
-          },
-          {
-            "group": "Memory Router",
-            "pages": [
-              "features/memory-router/overview",
-              "features/memory-router/how-it-works",
-              "features/memory-router/quickstart",
-              "features/memory-router/deployment-modes",
-              "features/memory-router/observability",
-              "features/memory-router/faq"
-            ]
-          },
-          {
-            "group": "Model Router",
-            "pages": [
-              "features/model-router/overview",
+            "tab": "Guides",
+            "groups": [
               {
-                "group": "Getting Started",
+                "group": "Getting started",
                 "pages": [
-                  "features/model-router/getting-started/create-api-key",
+                  "overview",
+                  "principles",
+                  "quickstart",
+                  "authentication"
+                ]
+              },
+              {
+                "group": "Memory Router",
+                "pages": [
+                  "features/memory-router/overview",
+                  "features/memory-router/how-it-works",
+                  "features/memory-router/quickstart",
+                  "features/memory-router/deployment-modes",
+                  "features/memory-router/observability",
+                  "features/memory-router/faq"
+                ]
+              },
+              {
+                "group": "Model Router",
+                "pages": [
+                  "features/model-router/overview",
                   {
-                    "group": "Use API Key",
+                    "group": "Getting Started",
                     "pages": [
-                      "features/model-router/getting-started/use-api-key/overview",
-                      "features/model-router/getting-started/use-api-key/direct-api-requests",
-                      "features/model-router/getting-started/use-api-key/minimal-mvp-examples",
-                      "features/model-router/getting-started/use-api-key/ai-app-integrations"
+                      "features/model-router/getting-started/create-api-key",
+                      {
+                        "group": "Use API Key",
+                        "pages": [
+                          "features/model-router/getting-started/use-api-key/overview",
+                          "features/model-router/getting-started/use-api-key/direct-api-requests",
+                          "features/model-router/getting-started/use-api-key/minimal-mvp-examples",
+                          "features/model-router/getting-started/use-api-key/ai-app-integrations"
+                        ]
+                      }
+                    ]
+                  },
+                  "features/model-router/list-available-models",
+                  "features/model-router/view-usage-and-billing",
+                  {
+                    "group": "Others",
+                    "pages": [
+                      "features/model-router/others/limits-and-prerequisites",
+                      "features/model-router/others/error-handling",
+                      "features/model-router/others/reliability-and-failover",
+                      "features/model-router/others/multimodal-and-tasks"
                     ]
                   }
                 ]
               },
-              "features/model-router/list-available-models",
-              "features/model-router/view-usage-and-billing",
               {
-                "group": "Others",
+                "group": "MemoryLake",
                 "pages": [
-                  "features/model-router/others/limits-and-prerequisites",
-                  "features/model-router/others/error-handling",
-                  "features/model-router/others/reliability-and-failover",
-                  "features/model-router/others/multimodal-and-tasks"
+                  "features/memorylake/overview",
+                  "features/memorylake/quickstart",
+                  {
+                    "group": "Document Management",
+                    "pages": [
+                      "features/memorylake/document-management/overview",
+                      "features/memorylake/document-management/file-folder-operations",
+                      "features/memorylake/document-management/metadata-comments"
+                    ]
+                  },
+                  {
+                    "group": "Connectors",
+                    "pages": [
+                      "features/memorylake/connectors/overview",
+                      "features/memorylake/connectors/wps-integration"
+                    ]
+                  },
+                  {
+                    "group": "Project Management",
+                    "pages": [
+                      "features/memorylake/project-management/overview",
+                      "features/memorylake/project-management/project-dashboard",
+                      "features/memorylake/project-management/document-association"
+                    ]
+                  },
+                  {
+                    "group": "Memories",
+                    "pages": [
+                      "features/memorylake/memories/overview",
+                      "features/memorylake/memories/best-practices"
+                    ]
+                  },
+                  {
+                    "group": "MCP Servers",
+                    "pages": [
+                      "features/memorylake/mcp-servers/overview",
+                      "features/memorylake/mcp-servers/creating-api-keys"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Team collaboration",
+                "pages": [
+                  "features/team-collaboration/overview",
+                  "features/team-collaboration/roles-permissions",
+                  "features/team-collaboration/permission-reference",
+                  "features/team-collaboration/invitation-and-access",
+                  "features/team-collaboration/quota-and-usage",
+                  "features/team-collaboration/analytics-and-lifecycle"
                 ]
               }
             ]
           },
           {
-            "group": "MemoryLake",
-            "pages": [
-              "features/memorylake/overview",
-              "features/memorylake/quickstart",
+            "tab": "API reference",
+            "groups": [
               {
-                "group": "Document Management",
-                "pages": [
-                  "features/memorylake/document-management/overview",
-                  "features/memorylake/document-management/file-folder-operations",
-                  "features/memorylake/document-management/metadata-comments"
-                ]
+                "group": "API documentation",
+                "pages": []
               },
               {
-                "group": "Connectors",
+                "group": "MemoryLake API",
                 "pages": [
-                  "features/memorylake/connectors/overview",
-                  "features/memorylake/connectors/wps-integration"
-                ]
-              },
-              {
-                "group": "Project Management",
-                "pages": [
-                  "features/memorylake/project-management/overview",
-                  "features/memorylake/project-management/project-dashboard",
-                  "features/memorylake/project-management/document-association"
-                ]
-              },
-              {
-                "group": "Memories",
-                "pages": [
-                  "features/memorylake/memories/overview",
-                  "features/memorylake/memories/best-practices"
-                ]
-              },
-              {
-                "group": "MCP Servers",
-                "pages": [
-                  "features/memorylake/mcp-servers/overview",
-                  "features/memorylake/mcp-servers/creating-api-keys"
+                  "features/memorylake/api-reference/overview",
+                  "features/memorylake/api-reference/authentication",
+                  {
+                    "group": "Library",
+                    "pages": [
+                      "features/memorylake/api-reference/library/overview",
+                      "features/memorylake/api-reference/library/get-item",
+                      "features/memorylake/api-reference/library/list-items",
+                      "features/memorylake/api-reference/library/create-upload",
+                      "features/memorylake/api-reference/library/create-item",
+                      "features/memorylake/api-reference/library/delete-item",
+                      "features/memorylake/api-reference/library/set-item-xattrs",
+                      "features/memorylake/api-reference/library/delete-item-xattrs"
+                    ]
+                  },
+                  {
+                    "group": "Projects",
+                    "pages": [
+                      "features/memorylake/api-reference/projects/list-projects",
+                      "features/memorylake/api-reference/projects/create-project",
+                      "features/memorylake/api-reference/projects/get-project",
+                      "features/memorylake/api-reference/projects/update-project",
+                      "features/memorylake/api-reference/projects/delete-project",
+                      "features/memorylake/api-reference/projects/search-project"
+                    ]
+                  },
+                  {
+                    "group": "Documents",
+                    "pages": [
+                      "features/memorylake/api-reference/memories/list-documents",
+                      "features/memorylake/api-reference/memories/get-document",
+                      "features/memorylake/api-reference/memories/add-document",
+                      "features/memorylake/api-reference/memories/remove-documents",
+                      "features/memorylake/api-reference/memories/search-documents",
+                      "features/memorylake/api-reference/memories/download-document"
+                    ]
+                  },
+                  {
+                    "group": "Memories",
+                    "pages": [
+                      "features/memorylake/api-reference/memories/add-memory",
+                      "features/memorylake/api-reference/memories/list-memories",
+                      "features/memorylake/api-reference/memories/get-memory",
+                      "features/memorylake/api-reference/memories/get-memory-trace",
+                      "features/memorylake/api-reference/memories/search-memories",
+                      "features/memorylake/api-reference/memories/forget-memory",
+                      "features/memorylake/api-reference/memories/list-memory-conflicts",
+                      "features/memorylake/api-reference/memories/get-memory-conflict",
+                      "features/memorylake/api-reference/memories/resolve-memory-conflict"
+                    ]
+                  },
+                  "features/memorylake/api-reference/errors",
+                  "features/memorylake/api-reference/rate-limits"
                 ]
               }
-            ]
-          },
-          {
-            "group": "Team collaboration",
-            "pages": [
-              "features/team-collaboration/overview",
-              "features/team-collaboration/roles-permissions",
-              "features/team-collaboration/permission-reference",
-              "features/team-collaboration/invitation-and-access",
-              "features/team-collaboration/quota-and-usage",
-              "features/team-collaboration/analytics-and-lifecycle"
             ]
           }
         ]
       },
       {
-        "tab": "API reference",
-        "groups": [
+        "language": "zh",
+        "tabs": [
           {
-            "group": "API documentation",
-            "pages": []
+            "tab": "指南",
+            "groups": [
+              {
+                "group": "快速开始",
+                "pages": [
+                  "zh/overview",
+                  "zh/principles",
+                  "zh/quickstart",
+                  "zh/authentication"
+                ]
+              },
+              {
+                "group": "模型路由",
+                "pages": [
+                  "zh/features/model-router/overview",
+                  {
+                    "group": "快速入门",
+                    "pages": [
+                      "zh/features/model-router/getting-started/create-api-key",
+                      {
+                        "group": "使用 API Key",
+                        "pages": [
+                          "zh/features/model-router/getting-started/use-api-key/overview",
+                          "zh/features/model-router/getting-started/use-api-key/direct-api-requests",
+                          "zh/features/model-router/getting-started/use-api-key/minimal-mvp-examples",
+                          "zh/features/model-router/getting-started/use-api-key/ai-app-integrations"
+                        ]
+                      }
+                    ]
+                  },
+                  "zh/features/model-router/list-available-models",
+                  "zh/features/model-router/view-usage-and-billing",
+                  {
+                    "group": "其他",
+                    "pages": [
+                      "zh/features/model-router/others/limits-and-prerequisites",
+                      "zh/features/model-router/others/error-handling",
+                      "zh/features/model-router/others/reliability-and-failover",
+                      "zh/features/model-router/others/multimodal-and-tasks"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "MemoryLake",
+                "pages": [
+                  "zh/features/memorylake/overview",
+                  "zh/features/memorylake/quickstart",
+                  {
+                    "group": "文档管理",
+                    "pages": [
+                      "zh/features/memorylake/document-management/overview",
+                      "zh/features/memorylake/document-management/file-folder-operations",
+                      "zh/features/memorylake/document-management/metadata-comments"
+                    ]
+                  },
+                  {
+                    "group": "连接器",
+                    "pages": [
+                      "zh/features/memorylake/connectors/overview",
+                      "zh/features/memorylake/connectors/wps-integration"
+                    ]
+                  },
+                  {
+                    "group": "项目管理",
+                    "pages": [
+                      "zh/features/memorylake/project-management/overview",
+                      "zh/features/memorylake/project-management/project-dashboard",
+                      "zh/features/memorylake/project-management/document-association"
+                    ]
+                  },
+                  {
+                    "group": "记忆",
+                    "pages": [
+                      "zh/features/memorylake/memories/overview",
+                      "zh/features/memorylake/memories/best-practices"
+                    ]
+                  },
+                  {
+                    "group": "MCP 服务",
+                    "pages": [
+                      "zh/features/memorylake/mcp-servers/overview",
+                      "zh/features/memorylake/mcp-servers/creating-api-keys"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "团队协作",
+                "pages": [
+                  "zh/features/team-collaboration/overview",
+                  "zh/features/team-collaboration/roles-permissions",
+                  "zh/features/team-collaboration/permission-reference",
+                  "zh/features/team-collaboration/invitation-and-access",
+                  "zh/features/team-collaboration/quota-and-usage",
+                  "zh/features/team-collaboration/analytics-and-lifecycle"
+                ]
+              }
+            ]
           },
           {
-            "group": "MemoryLake API",
-            "pages": [
-              "features/memorylake/api-reference/overview",
-              "features/memorylake/api-reference/authentication",
+            "tab": "API 参考",
+            "groups": [
               {
-                "group": "Library",
-                "pages": [
-                  "features/memorylake/api-reference/library/overview",
-                  "features/memorylake/api-reference/library/get-item",
-                  "features/memorylake/api-reference/library/list-items",
-                  "features/memorylake/api-reference/library/create-upload",
-                  "features/memorylake/api-reference/library/create-item",
-                  "features/memorylake/api-reference/library/delete-item",
-                  "features/memorylake/api-reference/library/set-item-xattrs",
-                  "features/memorylake/api-reference/library/delete-item-xattrs"
-                ]
+                "group": "API 文档",
+                "pages": []
               },
               {
-                "group": "Projects",
+                "group": "MemoryLake API",
                 "pages": [
-                  "features/memorylake/api-reference/projects/list-projects",
-                  "features/memorylake/api-reference/projects/create-project",
-                  "features/memorylake/api-reference/projects/get-project",
-                  "features/memorylake/api-reference/projects/update-project",
-                  "features/memorylake/api-reference/projects/delete-project",
-                  "features/memorylake/api-reference/projects/search-project"
+                  "zh/features/memorylake/api-reference/overview",
+                  "zh/features/memorylake/api-reference/authentication",
+                  {
+                    "group": "文件库",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/library/overview",
+                      "zh/features/memorylake/api-reference/library/get-item",
+                      "zh/features/memorylake/api-reference/library/list-items",
+                      "zh/features/memorylake/api-reference/library/create-upload",
+                      "zh/features/memorylake/api-reference/library/create-item",
+                      "zh/features/memorylake/api-reference/library/delete-item",
+                      "zh/features/memorylake/api-reference/library/set-item-xattrs",
+                      "zh/features/memorylake/api-reference/library/delete-item-xattrs"
+                    ]
+                  },
+                  {
+                    "group": "项目",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/projects/list-projects",
+                      "zh/features/memorylake/api-reference/projects/create-project",
+                      "zh/features/memorylake/api-reference/projects/get-project",
+                      "zh/features/memorylake/api-reference/projects/update-project",
+                      "zh/features/memorylake/api-reference/projects/delete-project",
+                      "zh/features/memorylake/api-reference/projects/search-project"
+                    ]
+                  },
+                  {
+                    "group": "文档",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/memories/list-documents",
+                      "zh/features/memorylake/api-reference/memories/get-document",
+                      "zh/features/memorylake/api-reference/memories/add-document",
+                      "zh/features/memorylake/api-reference/memories/remove-documents",
+                      "zh/features/memorylake/api-reference/memories/search-documents",
+                      "zh/features/memorylake/api-reference/memories/download-document"
+                    ]
+                  },
+                  {
+                    "group": "记忆",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/memories/add-memory",
+                      "zh/features/memorylake/api-reference/memories/list-memories",
+                      "zh/features/memorylake/api-reference/memories/get-memory",
+                      "zh/features/memorylake/api-reference/memories/get-memory-trace",
+                      "zh/features/memorylake/api-reference/memories/search-memories",
+                      "zh/features/memorylake/api-reference/memories/forget-memory",
+                      "zh/features/memorylake/api-reference/memories/list-memory-conflicts",
+                      "zh/features/memorylake/api-reference/memories/get-memory-conflict",
+                      "zh/features/memorylake/api-reference/memories/resolve-memory-conflict"
+                    ]
+                  },
+                  "zh/features/memorylake/api-reference/errors",
+                  "zh/features/memorylake/api-reference/rate-limits"
                 ]
-              },
-              {
-                "group": "Documents",
-                "pages": [
-                  "features/memorylake/api-reference/memories/list-documents",
-                  "features/memorylake/api-reference/memories/get-document",
-                  "features/memorylake/api-reference/memories/add-document",
-                  "features/memorylake/api-reference/memories/remove-documents",
-                  "features/memorylake/api-reference/memories/search-documents",
-                  "features/memorylake/api-reference/memories/download-document"
-                ]
-              },
-              {
-                "group": "Memories",
-                "pages": [
-                  "features/memorylake/api-reference/memories/add-memory",
-                  "features/memorylake/api-reference/memories/list-memories",
-                  "features/memorylake/api-reference/memories/get-memory",
-                  "features/memorylake/api-reference/memories/get-memory-trace",
-                  "features/memorylake/api-reference/memories/search-memories",
-                  "features/memorylake/api-reference/memories/forget-memory",
-                  "features/memorylake/api-reference/memories/list-memory-conflicts",
-                  "features/memorylake/api-reference/memories/get-memory-conflict",
-                  "features/memorylake/api-reference/memories/resolve-memory-conflict"
-                ]
-              },
-              "features/memorylake/api-reference/errors",
-              "features/memorylake/api-reference/rate-limits"
+              }
             ]
           }
         ]

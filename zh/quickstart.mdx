@@ -1,0 +1,87 @@
+---
+title: "快速开始"
+description: "使用统一入口完成首次模型调用，涵盖 OpenAI / Claude / Gemini 示例以及配额和日志要点"
+---
+
+## 您将获得
+
+- 复用现有的 OpenAI / Claude / Gemini 客户端；只需更改 Base URL 和 Token 即可调用。
+- 平台验证配额并预扣，不足时直接拒绝，防止透支。
+- 调用日志记录模型、Token 名称、渠道、请求延迟和令牌数等字段，便于排查和对账。
+
+## 适用场景
+
+- 需要快速验证 Token 可用性和配额设置。
+- 想要切换到统一入口而无需修改现有客户端代码。
+- 需要查看请求延迟、令牌数和消费，以支持后续对账或排查。
+
+## 快速上手
+
+1) **准备**：复制您的 Token 并记下平台 API Base（示例：`https://app.memorylake.ai`）。
+2) **选择模型**：如不确定，先获取模型列表：`GET /v1/models`（OpenAI 兼容端点）。
+3) **发送最简调用**：按照官方格式，仅替换 Base URL 和 Token：
+
+<CodeGroup>
+```bash OpenAI 兼容 (chat/completions)
+curl --request POST \
+  --url https://app.memorylake.ai/v1/chat/completions \
+  --header 'Authorization: Bearer sk-your-token' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "hi~"}]
+  }'
+```
+
+```bash Claude 兼容 (messages)
+curl --request POST \
+  --url https://app.memorylake.ai/claude/v1/messages \
+  --header 'x-api-key: sk-your-token' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "model": "claude-3-haiku-20240307",
+    "max_tokens": 1024,
+    "messages": [{"role": "user", "content": "hi~"}]
+  }'
+```
+
+```bash Gemini 兼容 (generateContent)
+curl --request POST \
+  --url https://app.memorylake.ai/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
+  --header 'x-goog-api-key: sk-your-token' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "contents": [{
+      "role": "user",
+      "parts": [{"text": "hi~"}]
+    }]
+  }'
+```
+</CodeGroup>
+
+<Note>
+路径约定：OpenAI 端点位于 `/v1`，Claude 位于 `/claude/v1`，Gemini 位于 `/gemini/:version`。所有调用示例使用平台实际可用路径。
+</Note>
+
+## 关键使用要点
+
+- **配额规则**：每次调用验证并预扣配额；配额不足时拒绝请求。成功返回确认扣除；失败回滚预扣。
+- **模型选择**：支持 OpenAI / Claude / Gemini 兼容格式。通过 `GET /v1/models` 或对应的模型列表端点查看当前可用模型。
+- **渠道和代理**：可根据需要为渠道配置代理或倍率。最终路由根据模型、渠道配置和可选的指定渠道请求头进行分发。
+- **特殊功能**：支持 o1/o3 ReasoningEffort 选择、Claude thinking、Gemini 搜索和代码执行等能力，通过官方参数透传。
+
+## 成功调用后您将看到
+
+- **日志记录**：记录模型名称、Token 名称、渠道、请求延迟（`request_time`）、提示和完成令牌数等字段，用于追踪和排查。
+- **聚合统计**：按日期聚合请求次数、消费配额、令牌数和请求延迟，便于看板展示和配额对账。
+
+## 常见问题排查
+
+- **配额不足**：确认 Token 或账户配额充足；配额不足直接拒绝请求。
+- **无可用路由**：确认目标模型已在当前路由中启用，或调整模型选择。
+- **指定路由**：需要固定路由时，通过 Token 后缀或特定请求头指定；不指定则使用默认自动路由。
+
+## 您可能还想了解
+
+- 想查看更多示例或特殊参数用法：查看[协议与入口](/features/model-router/protocols-and-entrypoints)文档。
+- 想验证计费：使用日志字段和聚合统计进行对账；如需验证倍率和模型通配符，先使用测试 Token。
