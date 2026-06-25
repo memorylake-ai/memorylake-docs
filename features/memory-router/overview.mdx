@@ -1,0 +1,89 @@
+---
+title: "Overview"
+description: "A drop-in memory proxy that adds persistent memory to any LLM with a single base-URL change"
+---
+
+## Quick Introduction
+
+Memory Router is a transparent proxy that sits between your app and the model. Point your existing SDK at MemoryLake and every conversation gains long-term memory and an optimized context window — no new SDK, no retrieval pipeline to build.
+
+- **One-line integration** — change the base URL, keep your SDK and code exactly as they are
+- **BYOK or hosted** — bring your own provider key (encrypted, never stored), or use MemoryLake-hosted models with a single key
+- **Shared memory pool** — the Router and the [MemoryLake API](/features/memorylake/overview) read and write the same memories, so there is one source of truth
+
+<Info>
+Memory Router is OpenAI-protocol compatible and speaks the same API as your provider. Your prompts, streaming, and tool calls stay identical.
+</Info>
+
+## The Problem It Solves
+
+Every LLM call is stateless. To fake continuity you re-send the entire history on every turn — which is slow, expensive, and eventually overflows the context window. Bolting on a vector DB and retrieval pipeline solves it, but it is weeks of plumbing you have to build and maintain.
+
+<CardGroup cols={2}>
+<Card title="Without a memory layer" icon="circle-x">
+- Full chat history re-sent on every call — token cost climbs with conversation length.
+- Long sessions hit the context-window ceiling and start truncating mid-task.
+- Memory lives in one app — switch models or sessions and the context is gone.
+</Card>
+
+<Card title="Building it yourself" icon="hammer">
+- Stand up a vector DB, embeddings pipeline, chunking, and retrieval logic.
+- Write extraction, dedup, and relevance ranking — then keep it tuned.
+- Maintain it across every provider and every model you support.
+</Card>
+</CardGroup>
+
+Memory Router collapses all of that into one base-URL change. **The memory layer is the proxy.**
+
+## What You Get
+
+| Capability | What it means |
+| --- | --- |
+| **One-line integration** | Change the base URL. Keep your SDK and your code exactly as they are. |
+| **BYOK or hosted** | Bring your own provider key (encrypted, never stored) or use MemoryLake-hosted models with a single key. |
+| **Automatic context optimization** | Redundant history is removed and only relevant memory is injected, shrinking tokens per call. |
+| **Shared memory pool** | The Router and the MemoryLake API read and write the same memories — one source of truth. |
+| **Graceful fallback** | If MemoryLake is ever unavailable, the request passes straight through to your provider. Zero downtime. |
+| **Full observability** | Response headers report conversation IDs, context changes, token counts, and memories created or retrieved. |
+
+## Direct API Call vs. Memory Router
+
+|  | Direct provider call | With Memory Router |
+| --- | --- | --- |
+| Long-term memory | You build and host it | Built in, automatic |
+| Context window | Re-send everything, then truncate | Optimized — only what matters |
+| Keys & accounts | A provider account is required | BYOK or use just a MemoryLake key |
+| Code changes | New SDK + retrieval pipeline | One base-URL change |
+| Across sessions & models | Memory is siloed per app | Shared memory pool |
+| Provider outage of memory layer | Your problem to handle | Graceful passthrough |
+| Visibility | None by default | Diagnostic response headers |
+
+## Quick Start
+
+1. **[Get a MemoryLake key](/features/memory-router/quickstart#step-1-get-a-memorylake-key)**: Sign up and create an API key in the console.
+2. **[Pick a mode and swap the base URL](/features/memory-router/deployment-modes)**: Choose BYOK or MemoryLake-hosted and point your SDK at the Router.
+3. **[Call as normal](/features/memory-router/quickstart#step-3-call-as-normal)**: Send requests exactly as you do today — memory is recalled and stored automatically.
+
+## Documentation
+
+<CardGroup cols={2}>
+<Card title="How It Works" icon="route" href="/features/memory-router/how-it-works">
+Understand the transparent proxy and what happens on each request.
+</Card>
+
+<Card title="Quickstart" icon="rocket" href="/features/memory-router/quickstart">
+Go live in three steps with copy-paste code for BYOK and hosted modes.
+</Card>
+
+<Card title="Deployment Modes" icon="key" href="/features/memory-router/deployment-modes">
+Compare BYOK and MemoryLake-hosted, base URLs, supported providers, and key safety.
+</Card>
+
+<Card title="Observability" icon="activity" href="/features/memory-router/observability">
+Read the diagnostic response headers and understand graceful fallback.
+</Card>
+
+<Card title="FAQ" icon="circle-help" href="/features/memory-router/faq">
+Common questions about code changes, providers, security, and pricing.
+</Card>
+</CardGroup>

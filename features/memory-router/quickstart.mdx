@@ -1,0 +1,137 @@
+---
+title: "Quickstart"
+description: "Add persistent memory to your LLM calls in three steps"
+---
+
+Get Memory Router running in three steps. The only change to your application is the base URL (and, in BYOK mode, one header).
+
+## Step 1: Get a MemoryLake key
+
+Sign up for MemoryLake and create an API key in the [console](https://app.memorylake.ai). The Free tier includes memory storage to start.
+
+<Info>
+Keep your MemoryLake key in an environment variable such as `MEMORYLAKE_API_KEY`. See [Authentication](/authentication) for details on managing keys.
+</Info>
+
+## Step 2: Pick a mode and swap the base URL
+
+Choose how you want to connect, then point your SDK at the matching Router endpoint:
+
+| Mode | Base URL | Keys |
+| --- | --- | --- |
+| **BYOK** (bring your own key) | `https://router.memorylake.ai/v1/openai` | Your provider key + MemoryLake key |
+| **MemoryLake-hosted** | `https://router.memorylake.ai/v1` | MemoryLake key only |
+
+For BYOK, keep your provider key as the SDK's API key and add the MemoryLake key as the `x-memorylake-api-key` header. For hosted, just use your MemoryLake key — no provider account required.
+
+See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
+
+### BYOK — your provider key
+
+<CodeGroup>
+```ts TypeScript
+import OpenAI from "openai";
+
+// BYOK: you send your own provider key. We encrypt it in transit,
+// forward it to the provider, and never store it.
+const client = new OpenAI({
+  baseURL: "https://router.memorylake.ai/v1/openai",
+  apiKey: process.env.OPENAI_API_KEY,        // your provider key
+  defaultHeaders: {
+    // encrypted in transit · passthrough only · never stored
+    "x-memorylake-api-key": process.env.MEMORYLAKE_API_KEY,
+  },
+});
+```
+```py Python
+from openai import OpenAI
+import os
+
+# BYOK: you send your own provider key. We encrypt it in transit,
+# forward it to the provider, and never store it.
+client = OpenAI(
+    base_url="https://router.memorylake.ai/v1/openai",
+    api_key=os.environ["OPENAI_API_KEY"],        # your provider key
+    default_headers={
+        # encrypted in transit · passthrough only · never stored
+        "x-memorylake-api-key": os.environ["MEMORYLAKE_API_KEY"],
+    },
+)
+```
+```bash cURL
+curl https://router.memorylake.ai/v1/openai/chat/completions \
+  -H "Authorization: Bearer $OPENAI_API_KEY" \
+  -H "x-memorylake-api-key: $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-5",
+    "messages": [{ "role": "user", "content": "Hello, how are you?" }]
+  }'
+```
+</CodeGroup>
+
+### MemoryLake-hosted — one key
+
+<CodeGroup>
+```ts TypeScript
+import OpenAI from "openai";
+
+// Non-BYOK: no provider account. MemoryLake hosts the models,
+// so a single MemoryLake key is all you need.
+const client = new OpenAI({
+  baseURL: "https://router.memorylake.ai/v1",
+  apiKey: process.env.MEMORYLAKE_API_KEY,
+});
+
+// Pick any built-in model, e.g. "claude-opus-4-8" or "gpt-5".
+```
+```py Python
+from openai import OpenAI
+import os
+
+# Non-BYOK: no provider account. MemoryLake hosts the models,
+# so a single MemoryLake key is all you need.
+client = OpenAI(
+    base_url="https://router.memorylake.ai/v1",
+    api_key=os.environ["MEMORYLAKE_API_KEY"],
+)
+
+# Pick any built-in model, e.g. "claude-opus-4-8" or "gpt-5".
+```
+```bash cURL
+curl https://router.memorylake.ai/v1/chat/completions \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-opus-4-8",
+    "messages": [{ "role": "user", "content": "Hello, how are you?" }]
+  }'
+```
+</CodeGroup>
+
+## Step 3: Call as normal
+
+Send requests exactly as you do today. Memory is recalled and stored automatically — no extra calls, no retrieval code.
+
+```ts TypeScript
+const completion = await client.chat.completions.create({
+  model: "claude-opus-4-8",
+  messages: [{ role: "user", content: "Remind me what we decided last time." }],
+});
+
+console.log(completion.choices[0].message.content);
+```
+
+Read the [diagnostic response headers](/features/memory-router/observability) to confirm that memory was injected and to see token savings on each call.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Deployment Modes" icon="key" href="/features/memory-router/deployment-modes">
+Full comparison of BYOK and hosted, plus supported providers.
+</Card>
+
+<Card title="Observability" icon="activity" href="/features/memory-router/observability">
+Understand the diagnostic headers and graceful fallback.
+</Card>
+</CardGroup>

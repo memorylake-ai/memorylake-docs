@@ -23,6 +23,17 @@
             ]
           },
           {
+            "group": "Memory Router",
+            "pages": [
+              "features/memory-router/overview",
+              "features/memory-router/how-it-works",
+              "features/memory-router/quickstart",
+              "features/memory-router/deployment-modes",
+              "features/memory-router/observability",
+              "features/memory-router/faq"
+            ]
+          },
+          {
             "group": "Model Router",
             "pages": [
               "features/model-router/overview",

@@ -1,0 +1,41 @@
+---
+title: "Observability"
+description: "Read the diagnostic response headers and understand graceful fallback — no black box"
+---
+
+Memory Router returns diagnostic headers so you can see exactly how each request was handled. Every response tells you what the Router did — what context it changed, how many tokens it saved, and which memories it touched.
+
+## Diagnostic Response Headers
+
+Each response carries the following diagnostics:
+
+| Signal | What it tells you |
+| --- | --- |
+| **Conversation ID** | The thread the request was attributed to, so you can group and inspect turns. |
+| **Context modified** | Whether memory was injected or history was trimmed for this call. |
+| **Token counts** | How many tokens were sent after optimization versus a raw replay. |
+| **Memories touched** | How many memory chunks were retrieved and how many were created. |
+
+<Tip>
+Use **Token counts** to verify savings as conversations grow, and **Context modified** to confirm that memory injection is happening on the turns you expect.
+</Tip>
+
+## Graceful Fallback
+
+In BYOK mode, Memory Router **fails open**: if MemoryLake is ever unavailable, the request passes straight through to your provider so your application keeps working with zero downtime.
+
+<Info>
+Because the Router speaks your provider's protocol, a passthrough request returns the same response shape as a direct call — your application keeps working without code changes.
+</Info>
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Deployment Modes" icon="key" href="/features/memory-router/deployment-modes">
+BYOK vs. hosted, base URLs, and supported providers.
+</Card>
+
+<Card title="FAQ" icon="circle-help" href="/features/memory-router/faq">
+Common questions about code, providers, security, and pricing.
+</Card>
+</CardGroup>

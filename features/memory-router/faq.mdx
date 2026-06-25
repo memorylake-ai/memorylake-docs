@@ -1,0 +1,38 @@
+---
+title: "FAQ"
+description: "Common questions about Memory Router — code changes, providers, security, fallback, and pricing"
+---
+
+<AccordionGroup>
+<Accordion title="Do I need to change my code?">
+Only the base URL and one header. Your prompts, streaming, tool calls, and response handling stay identical — Memory Router speaks the same API as your provider.
+</Accordion>
+
+<Accordion title="Which providers are supported?">
+OpenAI, Anthropic, Google Gemini, Groq, DeepSeek, OpenRouter, and any OpenAI-compatible endpoint. The OpenAI Assistants API is not yet supported. See [Deployment Modes](/features/memory-router/deployment-modes#supported-providers) for the full list.
+</Accordion>
+
+<Accordion title="What is the difference between BYOK and MemoryLake-hosted?">
+BYOK (Bring Your Own Key) means you supply your own provider key plus a MemoryLake key — billing and rate limits stay with your provider account. MemoryLake-hosted needs only a MemoryLake key: we run the major models for you, so you skip provider sign-up entirely.
+</Accordion>
+
+<Accordion title="In BYOK mode, is my provider key safe?">
+Yes. Your provider key is encrypted in transit and forwarded to the provider on each call. MemoryLake never stores, logs, or reuses it — it is passthrough only.
+</Accordion>
+
+<Accordion title="What happens if MemoryLake is down?">
+In BYOK mode Memory Router fails open: the request passes straight through to your provider so your application keeps working with zero downtime. See [Observability](/features/memory-router/observability#graceful-fallback).
+</Accordion>
+
+<Accordion title="How does it reduce tokens?">
+Instead of replaying the entire history each turn, the Router removes redundant context and injects only the relevant memories — fewer tokens per call as conversations grow.
+</Accordion>
+
+<Accordion title="Is the memory shared with the MemoryLake API?">
+Yes. The Router and the [MemoryLake API](/features/memorylake/overview) operate on the same memory pool, so anything stored one way is retrievable the other.
+</Accordion>
+
+<Accordion title="Is there a free plan?">
+Yes. Memory Router is available on the Free tier so you can integrate and test before scaling up.
+</Accordion>
+</AccordionGroup>
