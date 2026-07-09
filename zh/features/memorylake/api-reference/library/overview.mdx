@@ -19,7 +19,7 @@ description: "管理资料库中的文件和文件夹 — MemoryLake 项目背�
 分块上传：[创建上传会话](/zh/features/memorylake/api-reference/library/create-upload)，PUT 每个分块，然后[创建文件项](/zh/features/memorylake/api-reference/library/create-item)。
 </Step>
 <Step title="将文件导入项目">
-使用上一步返回的 `item_id` 调用[添加文档](/zh/features/memorylake/api-reference/memories/add-document)。
+使用上一步返回的 `item_id` 调用[导入文档](/zh/features/memorylake/api-reference/v3-documents/import-documents)。
 </Step>
 </Steps>
 
@@ -109,7 +109,7 @@ def upload_file_to_library(path: str, parent_item_id: str = "MY_SPACE") -> str:
 | `replace` | 仅限文件。删除现有文件并创建新文件。 | 新 ID |
 
 <Warning>
-`overwrite` 和 `replace` 并非同义词。`overwrite` 保留现有的 `item_id`；`replace` 会分配一个新的 ID。两个选项都不会重新处理已从该文件导入的项目文档 — 如果你需要索引新内容，请重新调用[添加文档](/zh/features/memorylake/api-reference/memories/add-document)。
+`overwrite` 和 `replace` 并非同义词。`overwrite` 保留现有的 `item_id`；`replace` 会分配一个新的 ID。两个选项都不会重新处理已从该文件导入的项目文档 — 如果你需要索引新内容，请重新调用[导入文档](/zh/features/memorylake/api-reference/v3-documents/import-documents)。
 </Warning>
 
 ## 接口列表

@@ -1,0 +1,42 @@
+---
+title: "Overview"
+description: "Actors are the identity layer in MemoryLake — the subject of all memories"
+---
+
+An **Actor** represents a participant identity in MemoryLake. Every message in a conversation is attributed to an actor, and every fact extracted from those conversations is associated with one. Actors are the **subject of memory** — they are what MemoryLake "remembers about."
+
+## Actor Types
+
+| Type | Description |
+|------|-------------|
+| `HUMAN` | An end user interacting with your application |
+| `ASSISTANT` | An AI agent (automatically created when you [create an Agent](/features/memorylake/api-reference/agents/create-agent)) |
+
+## How Actors Work
+
+1. **Create** an actor globally with a `custom_id` that maps to your user ID
+2. **Bind** the actor to one or more workspaces
+3. **Use** the actor's ID when [appending messages](/features/memorylake/api-reference/conversations/create-message) to conversations
+4. **Query** the actor's accumulated facts via [Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts)
+
+## Actor Facts vs Project Facts
+
+MemoryLake stores facts at two scopes:
+
+- **Actor Facts** — knowledge about a specific person or agent, accumulated across all projects in a workspace. Example: *"Jane prefers dark mode"*
+- **Project Facts** — knowledge scoped to a specific project. Example: *"Q1 revenue was $12.5M"*
+
+When an actor participates in conversations across multiple projects, their actor facts follow them — enabling **per-user memory** across your entire application.
+
+## Endpoints
+
+| Operation | Method | Path |
+|-----------|--------|------|
+| [List Actors](/features/memorylake/api-reference/actors/list-actors) | `GET` | `/api/v3/actors` |
+| [Create Actor](/features/memorylake/api-reference/actors/create-actor) | `POST` | `/api/v3/actors` |
+| [Get Actor](/features/memorylake/api-reference/actors/get-actor) | `GET` | `/api/v3/actors/{id}` |
+| [Update Actor](/features/memorylake/api-reference/actors/update-actor) | `PATCH` | `/api/v3/actors/{id}` |
+| [Delete Actor](/features/memorylake/api-reference/actors/delete-actor) | `DELETE` | `/api/v3/actors/{id}` |
+| [Bind to Workspace](/features/memorylake/api-reference/actors/bind-actor) | `POST` | `/api/v3/workspaces/{id}/actors` |
+| [List in Workspace](/features/memorylake/api-reference/actors/list-workspace-actors) | `GET` | `/api/v3/workspaces/{id}/actors` |
+| [Unbind from Workspace](/features/memorylake/api-reference/actors/unbind-actor) | `DELETE` | `/api/v3/workspaces/{id}/actors/{actorId}` |

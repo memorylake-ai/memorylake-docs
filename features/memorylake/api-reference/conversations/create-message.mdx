@@ -1,0 +1,157 @@
+---
+title: "Append Conversation Message"
+description: "Append a message to a conversation"
+---
+
+```
+POST /openapi/memorylake/api/v3/conversations/{conversationId}/messages
+```
+
+Appends a new message to a conversation. Each message contains one or more content blocks (text, file, or both) and is attributed to an actor. MemoryLake automatically processes new messages to extract structured facts.
+
+<Note>
+**Permission required:** `project:conv_append`
+</Note>
+
+### Path Parameters
+
+<ParamField path="conversationId" type="string" required>
+Conversation identifier
+</ParamField>
+
+### Request Body
+
+<ParamField body="content" type="array" required>
+Array of content blocks that make up the message body. Each block must include a `block_type` field.
+
+**Text block:** `{ "block_type": "text", "text": "message content" }`
+
+**Image block:** `{ "block_type": "image", "uri": "drive://...", "mime_type": "image/png" }`
+</ParamField>
+
+<ParamField body="actor_id" type="string" required>
+ID of the actor sending this message. Should reference an actor participating in the conversation.
+</ParamField>
+
+<ParamField body="timestamp" type="string">
+ISO 8601 timestamp for when the message originally occurred. Use this when ingesting historical conversations so MemoryLake preserves the original timeline.
+</ParamField>
+
+<ParamField body="metadata" type="object">
+Arbitrary key-value metadata to attach to the message
+</ParamField>
+
+<ParamField body="custom_id" type="string" required>
+Caller-defined unique identifier for the message within the conversation
+</ParamField>
+
+<ParamField body="parent_message_id" type="string">
+ID of the parent message, for threaded conversations. When set, this message is treated as a reply to the specified parent.
+</ParamField>
+
+<RequestExample>
+```bash Text message
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "content": [
+      {
+        "block_type": "text",
+        "text": "Can you summarize last quarter'\''s revenue numbers?"
+      }
+    ],
+    "actor_id": "actor_user_jane",
+    "timestamp": "2025-06-01T14:10:00Z",
+    "metadata": {
+      "source": "web-app"
+    }
+  }'
+```
+
+```bash Image attachment
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "content": [
+      {
+        "block_type": "text",
+        "text": "Here is the chart for your review."
+      },
+      {
+        "block_type": "image",
+        "uri": "drive://items/item_abc123/chart.png",
+        "mime_type": "image/png"
+      }
+    ],
+    "actor_id": "actor_assistant_v2",
+    "timestamp": "2025-06-01T14:10:30Z"
+  }'
+```
+
+```bash Threaded reply
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "content": [
+      {
+        "block_type": "text",
+        "text": "Good point — I'\''ve updated the figures in the attached version."
+      }
+    ],
+    "actor_id": "actor_user_jane",
+    "parent_message_id": "msg_9e4b2c3d5f6a7b8c"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Message object">
+  <ResponseField name="id" type="string">Unique message identifier</ResponseField>
+  <ResponseField name="content" type="array">
+  Array of content blocks that make up the message body
+  <Expandable title="Content block">
+    <ResponseField name="block_type" type="string">Block type: `text` or `image`</ResponseField>
+    <ResponseField name="text" type="string">Text content (present when `block_type` is `text`)</ResponseField>
+    <ResponseField name="uri" type="string">Drive resource URI (present when `block_type` is `image`)</ResponseField>
+    <ResponseField name="mime_type" type="string">MIME type of the image (present when `block_type` is `image`)</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the message</ResponseField>
+  <ResponseField name="timestamp" type="string">Caller-provided timestamp for when the message originally occurred (ISO 8601)</ResponseField>
+  <ResponseField name="conversation_id" type="string">ID of the conversation this message belongs to</ResponseField>
+  <ResponseField name="sequence_no" type="integer">Position of this message within the conversation</ResponseField>
+  <ResponseField name="actor_id" type="string">ID of the actor who sent this message</ResponseField>
+  <ResponseField name="actor_type" type="string">Type of the actor: `HUMAN` or `ASSISTANT`</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "msg_3f4a5b6c7d8e9f0a",
+    "content": [
+      {
+        "block_type": "text",
+        "text": "Can you summarize last quarter's revenue numbers?"
+      }
+    ],
+    "metadata": {
+      "source": "web-app"
+    },
+    "timestamp": "2025-06-01T14:10:00Z",
+    "conversation_id": "conv_7d2e3f4a5b6c7d8e",
+    "sequence_no": 3,
+    "actor_id": "actor_user_jane",
+    "created_at": "2025-06-01T14:10:05Z"
+  }
+}
+```
+</ResponseExample>

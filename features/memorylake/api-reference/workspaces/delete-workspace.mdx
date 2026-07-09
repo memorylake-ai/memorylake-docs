@@ -1,0 +1,45 @@
+---
+title: "Delete Workspace"
+description: "Permanently delete a workspace"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{id}
+```
+
+<Warning>
+This is a destructive operation. The workspace and all its associated data will be permanently removed.
+</Warning>
+
+Permanently deletes a workspace by its ID.
+
+<Note>
+**Permission required:** `workspace:delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Workspace ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>

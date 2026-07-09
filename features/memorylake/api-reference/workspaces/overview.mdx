@@ -1,0 +1,42 @@
+---
+title: "Overview"
+description: "Workspaces are the top-level namespace for data isolation in MemoryLake"
+---
+
+A **Workspace** is the top-level organizational boundary in MemoryLake. It acts as a namespace that isolates all data within it — projects, documents, conversations, and facts are all scoped to a workspace.
+
+## When to Use Workspaces
+
+Create separate workspaces to isolate data between different tenants, teams, or environments. Everything inside a workspace is invisible to other workspaces.
+
+Common patterns:
+- **Multi-tenant apps** — one workspace per customer
+- **Environment separation** — separate workspaces for development, staging, and production
+- **Team isolation** — one workspace per business unit
+
+## Relationships
+
+```
+Workspace
+├── Projects (knowledge containers)
+│   ├── Documents
+│   ├── Conversations → Facts (project-scoped)
+│   └── Project Facts
+├── Actor bindings (who can participate)
+│   └── Actor Facts (per-user memory)
+└── Agent bindings (which agents are available)
+```
+
+- [Actors](/features/memorylake/api-reference/actors/overview) and [Agents](/features/memorylake/api-reference/agents/overview) are created globally, then **bound** to a workspace to operate within it.
+- [Projects](/features/memorylake/api-reference/v3-projects/overview) live inside a workspace and hold the actual memory data.
+- [Search](/features/memorylake/api-reference/search/search-memories) operates at the workspace level, querying across all projects within it.
+
+## Endpoints
+
+| Operation | Method | Path |
+|-----------|--------|------|
+| [List Workspaces](/features/memorylake/api-reference/workspaces/list-workspaces) | `GET` | `/api/v3/workspaces` |
+| [Create Workspace](/features/memorylake/api-reference/workspaces/create-workspace) | `POST` | `/api/v3/workspaces` |
+| [Get Workspace](/features/memorylake/api-reference/workspaces/get-workspace) | `GET` | `/api/v3/workspaces/{id}` |
+| [Update Workspace](/features/memorylake/api-reference/workspaces/update-workspace) | `PATCH` | `/api/v3/workspaces/{id}` |
+| [Delete Workspace](/features/memorylake/api-reference/workspaces/delete-workspace) | `DELETE` | `/api/v3/workspaces/{id}` |

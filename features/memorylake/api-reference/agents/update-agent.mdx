@@ -1,0 +1,163 @@
+---
+title: "Update Agent"
+description: "Update an agent's identity fields such as name, description, and metadata"
+---
+
+```
+PATCH /openapi/memorylake/api/v3/agents/{id}
+```
+
+Updates an existing agent's identity fields. Only the fields you include in the request body are modified; omitted fields remain unchanged.
+
+This endpoint updates identity fields only (name, description, metadata). To change the agent's model, capabilities, policies, or other configuration, create a new version with the [Create Agent Version](/features/memorylake/api-reference/agents/create-agent-version) endpoint.
+
+<Note>
+**Permission required:** `agent:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Agent identifier
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string">
+Updated agent name
+</ParamField>
+
+<ParamField body="description" type="string">
+Updated agent description
+</ParamField>
+
+<ParamField body="metadata" type="object">
+Updated key-value pairs. Replaces the existing metadata entirely.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents/agt_r8k2m1n3' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Support Assistant (Production)",
+    "description": "Production support agent with knowledge base integration"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Agent object">
+  <ResponseField name="id" type="string">Unique agent identifier</ResponseField>
+  <ResponseField name="name" type="string">Updated agent name</ResponseField>
+  <ResponseField name="description" type="string">Updated agent description</ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value pairs for storing additional agent information</ResponseField>
+  <ResponseField name="version" type="integer">Current active version number</ResponseField>
+  <ResponseField name="model" type="string">Model used by the agent</ResponseField>
+  <ResponseField name="capabilities" type="array">List of capability identifiers the agent supports</ResponseField>
+  <ResponseField name="policies" type="object">
+  Execution policies that constrain agent behavior
+  <Expandable title="Policies object">
+    <ResponseField name="max_turns" type="integer">Maximum number of conversation turns per run</ResponseField>
+    <ResponseField name="max_tool_calls" type="integer">Maximum number of tool calls per turn</ResponseField>
+    <ResponseField name="allow_tools" type="array">Allowlist of tool names the agent may invoke</ResponseField>
+    <ResponseField name="deny_tools" type="array">Denylist of tool names the agent must not invoke</ResponseField>
+    <ResponseField name="subagent_timeout" type="integer">Maximum seconds a subagent may run before being cancelled</ResponseField>
+    <ResponseField name="subagent_max_concurrency" type="integer">Maximum number of subagents that may run concurrently</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="output" type="object">
+  Output configuration for the agent
+  <Expandable title="Output object">
+    <ResponseField name="mode" type="string">Output mode</ResponseField>
+    <ResponseField name="json_schema" type="object">JSON Schema for structured output</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="subagents" type="array">
+  Subagent definitions attached to this agent
+  <Expandable title="Subagent object">
+    <ResponseField name="name" type="string">Subagent name</ResponseField>
+    <ResponseField name="mode" type="string">Execution mode for the subagent</ResponseField>
+    <ResponseField name="context" type="string">Context instructions passed to the subagent</ResponseField>
+    <ResponseField name="inherit_tools" type="boolean">Whether the subagent inherits the parent agent's tools</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="skills" type="array">
+  Skills attached to this agent
+  <Expandable title="Skill reference">
+    <ResponseField name="skill_id" type="string">Skill identifier</ResponseField>
+    <ResponseField name="skill_version" type="integer">Skill version number</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="custom_id" type="string">Custom identifier for external system integration</ResponseField>
+  <ResponseField name="actor_id" type="string">Actor identifier associated with this agent</ResponseField>
+  <ResponseField name="latest_version" type="integer">Latest version number available for this agent</ResponseField>
+  <ResponseField name="system_prompt" type="string">System prompt used to instruct the agent</ResponseField>
+  <ResponseField name="model_settings" type="object">Model-specific settings such as temperature and max tokens</ResponseField>
+  <ResponseField name="runtime_bindings" type="object">Runtime binding configuration for tools and data sources</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "agt_r8k2m1n3",
+    "name": "Support Assistant (Production)",
+    "description": "Production support agent with knowledge base integration",
+    "metadata": {
+      "team": "customer-success",
+      "tier": "production"
+    },
+    "version": 3,
+    "model": "gpt-4o",
+    "capabilities": ["tool_use", "memory_read", "memory_write"],
+    "policies": {
+      "max_turns": 20,
+      "max_tool_calls": 10,
+      "allow_tools": ["search_kb", "create_ticket"],
+      "deny_tools": [],
+      "subagent_timeout": 300,
+      "subagent_max_concurrency": 3
+    },
+    "output": {
+      "mode": "text",
+      "json_schema": null
+    },
+    "subagents": [
+      {
+        "name": "ticket-creator",
+        "mode": "delegate",
+        "context": "Create support tickets from conversation context",
+        "inherit_tools": false
+      }
+    ],
+    "skills": [
+      {
+        "skill_id": "skl_kb_search",
+        "skill_version": 2
+      }
+    ],
+    "custom_id": "support-assistant-v1",
+    "actor_id": "act_p4q7w2x9",
+    "latest_version": 3,
+    "system_prompt": "You are a helpful support assistant. Use the knowledge base to answer questions accurately.",
+    "model_settings": {
+      "temperature": 0.7,
+      "max_tokens": 4096
+    },
+    "runtime_bindings": {
+      "knowledge_base": "kb_prod_docs"
+    },
+    "created_at": "2025-03-10T09:00:00Z",
+    "updated_at": "2025-05-01T11:45:00Z"
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,61 @@
+---
+title: "Delete Documents"
+description: "Remove one or more documents from a project"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/documents
+```
+
+Removes documents from a project. The original files in the Library are not affected -- only the project references and any extracted content are deleted.
+
+<Note>
+**Permission required:** `project:doc_delete`
+</Note>
+
+<Warning>
+This is irreversible. All indexed content and memories derived from the deleted documents are permanently removed from the project.
+</Warning>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID that owns the project.
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project to delete documents from.
+</ParamField>
+
+### Body Parameters
+
+<ParamField body="ids" type="string[]" required>
+Array of document IDs to delete.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a1b2c3d4e5f6/projects/proj-7g8h9i0j1k2l/memories/documents' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "ids": [
+      "doc-3m4n5o6p7q8r",
+      "doc-8s9t0u1v2w3x"
+    ]
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns an empty `data` object on success.
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {}
+}
+```
+</ResponseExample>

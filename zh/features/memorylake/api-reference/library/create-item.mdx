@@ -21,7 +21,7 @@ POST /openapi/memorylake/api/v1/drives/items
 <Note>
 **所需权限：** [`drive:item_add`](/features/team-collaboration/permission-reference#upload-and-create-files) · `service`
 
-**流程说明（文件模式）：** 以 `item_type: "file"` 模式调用此接口是资料库上传流程的第 2 步；第 1 步是[创建上传](/zh/features/memorylake/api-reference/library/create-upload)（相同权限）。如需将文件添加到项目中，请调用[添加文档](/zh/features/memorylake/api-reference/memories/add-document) — 该操作还需要 [`project:doc_add`](/features/team-collaboration/permission-reference#add-a-document-to-a-project) 权限。
+**流程说明（文件模式）：** 以 `item_type: "file"` 模式调用此接口是资料库上传流程的第 2 步；第 1 步是[创建上传](/zh/features/memorylake/api-reference/library/create-upload)（相同权限）。如需将文件添加到项目中，请调用[导入文档](/zh/features/memorylake/api-reference/v3-documents/import-documents) — 该操作还需要 [`project:doc_add`](/features/team-collaboration/permission-reference#add-a-document-to-a-project) 权限。
 </Note>
 
 ### 请求体
@@ -104,7 +104,7 @@ POST /openapi/memorylake/api/v1/drives/items
 </ParamField>
 
 <Warning>
-`overwrite` 仅替换资料库中存储的文件字节 — **不会**重新处理或重新索引之前从该文件导入的任何项目文档。要将新内容传播到项目中，请在覆盖后再次调用[添加文档](/zh/features/memorylake/api-reference/memories/add-document)（或使用新文件）。
+`overwrite` 仅替换资料库中存储的文件字节 — **不会**重新处理或重新索引之前从该文件导入的任何项目文档。要将新内容传播到项目中，请在覆盖后再次调用[导入文档](/zh/features/memorylake/api-reference/v3-documents/import-documents)（或使用新文件）。
 </Warning>
 
 <ParamField body="x_attrs" type="object">
@@ -151,6 +151,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items' 
 
 <ResponseField name="data" type="object">
 <Expandable title="已创建的项">
+  <ResponseField name="uri" type="string">已创建项的 Drive 资源 URI</ResponseField>
   <ResponseField name="item_id" type="string">结果项的 ID。使用 `overwrite` 时，等于现有文件的 `item_id`（保留）。使用 `replace`、`rename` 或全新创建时，分配新的 `item_id`。</ResponseField>
   <ResponseField name="name" type="string">实际名称。当 `rename` 策略产生自动后缀时，与请求中的 `name` 不同。</ResponseField>
 </Expandable>
@@ -161,6 +162,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items' 
 {
   "success": true,
   "data": {
+    "uri": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5",
     "item_id": "sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5",
     "name": "report.pdf"
   }

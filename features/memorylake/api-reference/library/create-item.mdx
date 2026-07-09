@@ -21,7 +21,7 @@ Pick the tab below that matches the item type you're creating. Required fields d
 <Note>
 **Permission required:** [`drive:item_add`](/features/team-collaboration/permission-reference#upload-and-create-files) · `service`
 
-**Workflow note (file mode):** Calling this in `item_type: "file"` mode is step 2 of the Library upload flow; step 1 is [Create Upload](/features/memorylake/api-reference/library/create-upload) (same permission). If you then need the file to appear inside a project, call [Add Documents](/features/memorylake/api-reference/memories/add-document) — that additionally requires [`project:doc_add`](/features/team-collaboration/permission-reference#add-a-document-to-a-project).
+**Workflow note (file mode):** Calling this in `item_type: "file"` mode is step 2 of the Library upload flow; step 1 is [Create Upload](/features/memorylake/api-reference/library/create-upload) (same permission). If you then need the file to appear inside a project, call [Import Documents](/features/memorylake/api-reference/v3-documents/import-documents) — that additionally requires [`project:doc_add`](/features/team-collaboration/permission-reference#add-a-document-to-a-project).
 </Note>
 
 ### Request Body
@@ -104,7 +104,7 @@ Behavior if the name already exists in `parent_item_id`:
 </ParamField>
 
 <Warning>
-`overwrite` only replaces the file bytes stored in the Library — it does **not** re-process or re-index any project documents that were previously imported from the file. To propagate new content into a project, call [Add Documents](/features/memorylake/api-reference/memories/add-document) again after the overwrite (or use a fresh file).
+`overwrite` only replaces the file bytes stored in the Library — it does **not** re-process or re-index any project documents that were previously imported from the file. To propagate new content into a project, call [Import Documents](/features/memorylake/api-reference/v3-documents/import-documents) again after the overwrite (or use a fresh file).
 </Warning>
 
 <ParamField body="x_attrs" type="object">
@@ -151,6 +151,7 @@ The response shape is the same for folders and files.
 
 <ResponseField name="data" type="object">
 <Expandable title="Created item">
+  <ResponseField name="uri" type="string">Drive resource URI of the created item</ResponseField>
   <ResponseField name="item_id" type="string">ID of the resulting item. With `overwrite`, this equals the existing file's `item_id` (preserved). With `replace`, `rename`, or a fresh creation, a new `item_id` is issued.</ResponseField>
   <ResponseField name="name" type="string">Effective name. Differs from the requested `name` when `rename` produced an auto-suffix.</ResponseField>
 </Expandable>
@@ -161,6 +162,7 @@ The response shape is the same for folders and files.
 {
   "success": true,
   "data": {
+    "uri": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5",
     "item_id": "sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5",
     "name": "report.pdf"
   }

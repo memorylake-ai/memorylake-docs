@@ -1,0 +1,84 @@
+---
+title: "Create Workspace"
+description: "Create a new workspace with a name and optional metadata"
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces
+```
+
+Creates a new workspace. Each workspace requires a `custom_id` that you define, which serves as a stable external identifier you can use to reference the workspace in your own systems.
+
+<Note>
+**Permission required:** `workspace:create`
+</Note>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+Workspace name
+</ParamField>
+
+<ParamField body="custom_id" type="string" required>
+Caller-defined unique identifier for external reference. Must be unique across all your workspaces.
+</ParamField>
+
+<ParamField body="description" type="string">
+Workspace description
+</ParamField>
+
+<ParamField body="metadata" type="object">
+Arbitrary key-value metadata to attach to the workspace
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "My Research Workspace",
+    "custom_id": "research-ws-001",
+    "description": "Central workspace for research documents and notes",
+    "metadata": {
+      "team": "research",
+      "priority": "high"
+    }
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Workspace object">
+  <ResponseField name="id" type="string">Unique workspace identifier</ResponseField>
+  <ResponseField name="name" type="string">Workspace name</ResponseField>
+  <ResponseField name="description" type="string">Workspace description</ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the workspace</ResponseField>
+  <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "id": "ws_abc123def456",
+    "name": "My Research Workspace",
+    "description": "Central workspace for research documents and notes",
+    "metadata": {
+      "team": "research",
+      "priority": "high"
+    },
+    "custom_id": "research-ws-001",
+    "created_at": "2025-03-10T08:30:00Z",
+    "updated_at": "2025-03-10T08:30:00Z"
+  }
+}
+```
+</ResponseExample>

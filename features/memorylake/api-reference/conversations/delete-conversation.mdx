@@ -1,0 +1,53 @@
+---
+title: "Delete Conversation"
+description: "Permanently delete a conversation and all its messages"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/conversations/{conversationId}
+```
+
+<Warning>
+This is a destructive operation. The conversation and all its messages will be permanently removed.
+</Warning>
+
+Permanently deletes a conversation and all messages it contains. Facts that were previously extracted from the conversation's messages are not affected.
+
+<Note>
+**Permission required:** `project:conv_delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project identifier
+</ParamField>
+
+<ParamField path="conversationId" type="string" required>
+Conversation identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conversations/conv_7d2e3f4a5b6c7d8e' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Conversation deleted successfully"
+}
+```
+</ResponseExample>

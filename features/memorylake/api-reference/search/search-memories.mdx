@@ -1,0 +1,129 @@
+---
+title: "Search Memories"
+description: "Search across all memory sources in a workspace using natural language"
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/search
+```
+
+Searches across all memory sources in a workspace — documents and facts — using a natural language query. Results are grouped by source type so you can present each category separately or merge them in your UI. Use the optional filters to narrow results to specific projects, actors, or memory types.
+
+<Note>
+**Permission required:** `workspace:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+### Request Body
+
+<ParamField body="query" type="string" required>
+Natural language search query
+</ParamField>
+
+<ParamField body="threshold" type="number">
+Minimum relevance score between `0.0` and `1.0`. Results below this score are excluded.
+</ParamField>
+
+<ParamField body="project_ids" type="array of strings">
+Limit search to specific projects. When omitted, all projects in the workspace are searched.
+</ParamField>
+
+<ParamField body="actor_ids" type="array of strings">
+Limit search to memories associated with specific actors
+</ParamField>
+
+<ParamField body="memory_types" type="array of strings">
+Filter results by memory type. Accepted values: `document`, `fact`. When omitted, all types are searched.
+</ParamField>
+
+<ParamField body="top_k" type="integer">
+Maximum number of results to return per source type
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/search' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "query": "What were the quarterly revenue figures?",
+    "threshold": 0.5,
+    "project_ids": ["proj_def456"],
+    "memory_types": ["document", "fact"],
+    "top_k": 10
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Search results grouped by source type">
+  <ResponseField name="documents" type="array">
+  Document search results, grouped by source document
+  <Expandable title="DocumentSearchResult">
+    <ResponseField name="document_id" type="string">Document identifier</ResponseField>
+    <ResponseField name="document_name" type="string">Display name of the document</ResponseField>
+    <ResponseField name="file_name" type="string">Original file name</ResponseField>
+    <ResponseField name="document_summary" type="string">Summary of the document</ResponseField>
+    <ResponseField name="source_type" type="string">Source type of the document (e.g. `upload`, `connector`)</ResponseField>
+    <ResponseField name="sheet_name" type="string">Worksheet name, if the document is a workbook</ResponseField>
+    <ResponseField name="items" type="array">
+    Matched content items within the document
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="facts" type="array">
+  Fact search results
+  <Expandable title="FactSearchResult">
+    <ResponseField name="id" type="string">Fact identifier</ResponseField>
+    <ResponseField name="fact" type="string">The fact text</ResponseField>
+    <ResponseField name="score" type="number">Relevance score</ResponseField>
+    <ResponseField name="metadata" type="object">Additional metadata associated with the fact</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+    <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "documents": [
+      {
+        "document_id": "doc-abc123",
+        "document_name": "Q1 2024 Financial Report",
+        "file_name": "q1_2024_report.pdf",
+        "document_summary": "Quarterly financial report covering revenue, expenses, and projections for Q1 2024.",
+        "source_type": "upload",
+        "sheet_name": null,
+        "items": [
+          {
+            "text": "Q1 2024 revenue reached $12.5M, a 15% increase over Q4 2023.",
+            "range": "p8"
+          }
+        ]
+      }
+    ],
+    "facts": [
+      {
+        "id": "fact-xyz789",
+        "fact": "Company quarterly revenue for Q1 2024 was $12.5M",
+        "score": 0.92,
+        "metadata": {},
+        "created_at": "2024-04-01T09:00:00Z",
+        "updated_at": "2024-04-01T09:00:00Z"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

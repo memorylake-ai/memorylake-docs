@@ -1,0 +1,119 @@
+---
+title: "List Messages"
+description: "Returns a paginated list of messages in a conversation"
+---
+
+```
+GET /openapi/memorylake/api/v3/conversations/{conversationId}/messages
+```
+
+Returns a paginated list of messages within a conversation, ordered by sequence number. You can use `after_message_id` to fetch only messages added after a known point, which is useful for syncing new messages incrementally.
+
+<Note>
+**Permission required:** `project:conv_read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="conversationId" type="string" required>
+Conversation identifier
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of messages to return per page
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page of results
+</ParamField>
+
+<ParamField query="after_message_id" type="string">
+Only return messages created after this message ID. Use this for incremental sync.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages?page_size=50' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash After a specific message
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages?after_message_id=msg_1a2b3c4d5e6f7a8b' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated message list">
+  <ResponseField name="items" type="array">
+  Array of message objects
+  <Expandable title="Message object">
+    <ResponseField name="id" type="string">Unique message identifier</ResponseField>
+    <ResponseField name="content" type="array">
+    Array of content blocks that make up the message body
+    <Expandable title="Content block">
+      <ResponseField name="block_type" type="string">Block type: `text` or `image`</ResponseField>
+      <ResponseField name="text" type="string">Text content (present when `block_type` is `text`)</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the message</ResponseField>
+    <ResponseField name="timestamp" type="string">Caller-provided timestamp for when the message originally occurred (ISO 8601)</ResponseField>
+    <ResponseField name="conversation_id" type="string">ID of the conversation this message belongs to</ResponseField>
+    <ResponseField name="sequence_no" type="integer">Position of this message within the conversation, starting at 1</ResponseField>
+    <ResponseField name="actor_id" type="string">ID of the actor who sent this message</ResponseField>
+    <ResponseField name="actor_type" type="string">Type of the actor: `HUMAN` or `ASSISTANT`</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string|null">
+  Token to retrieve the next page. `null` when there are no more results.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "msg_1a2b3c4d5e6f7a8b",
+        "content": [
+          {
+            "block_type": "text",
+            "text": "Hi, I'd like to learn more about your enterprise plan."
+          }
+        ],
+        "metadata": {},
+        "timestamp": "2025-06-01T14:05:00Z",
+        "conversation_id": "conv_7d2e3f4a5b6c7d8e",
+        "sequence_no": 1,
+        "actor_id": "actor_user_jane",
+        "created_at": "2025-06-01T14:05:12Z"
+      },
+      {
+        "id": "msg_9e4b2c3d5f6a7b8c",
+        "content": [
+          {
+            "block_type": "text",
+            "text": "Of course! Our enterprise plan includes dedicated support, custom integrations, and advanced analytics. Would you like me to walk you through the details?"
+          }
+        ],
+        "metadata": {},
+        "timestamp": "2025-06-01T14:05:30Z",
+        "conversation_id": "conv_7d2e3f4a5b6c7d8e",
+        "sequence_no": 2,
+        "actor_id": "actor_assistant_v2",
+        "created_at": "2025-06-01T14:05:35Z"
+      }
+    ],
+    "continuation_token": null
+  }
+}
+```
+</ResponseExample>

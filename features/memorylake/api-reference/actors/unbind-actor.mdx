@@ -1,0 +1,45 @@
+---
+title: "Unbind Actor from Workspace"
+description: "Remove an actor's binding from a workspace"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}
+```
+
+Removes an actor's binding from a workspace. The actor itself is not deleted and can be re-bound later. After unbinding, the actor can no longer participate in new conversations within this workspace.
+
+<Note>
+**Permission required:** `workspace:actor_unbind`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="actorId" type="string" required>
+Actor ID to unbind from the workspace
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7k8m9n0p1q2r/actors/act-a1b2c3d4e5f6' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>

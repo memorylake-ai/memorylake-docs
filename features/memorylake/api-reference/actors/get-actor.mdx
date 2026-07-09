@@ -1,0 +1,74 @@
+---
+title: "Get Actor"
+description: "Retrieve a single actor by ID or custom ID"
+---
+
+```
+GET /openapi/memorylake/api/v3/actors/{id}
+```
+
+Returns the full details of a single actor. By default, `{id}` is treated as the MemoryLake actor ID. Set `by_custom_id=true` to look up the actor by its `custom_id` instead.
+
+<Note>
+**Permission required:** `actor:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Actor ID, or the actor's `custom_id` when `by_custom_id` is `true`.
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="by_custom_id" type="boolean" default="false">
+When `true`, the path parameter is interpreted as the actor's `custom_id` rather than its MemoryLake ID.
+</ParamField>
+
+<RequestExample>
+```bash By actor ID
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/act-a1b2c3d4e5f6' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash By custom ID
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/user-ext-001?by_custom_id=true' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Actor">
+  <ResponseField name="id" type="string">Actor ID</ResponseField>
+  <ResponseField name="custom_id" type="string">Caller-defined external identifier</ResponseField>
+  <ResponseField name="actor_type" type="string">Actor type</ResponseField>
+  <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
+  <ResponseField name="description" type="string">Actor description</ResponseField>
+  <ResponseField name="metadata" type="object">Caller-defined metadata</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "act-a1b2c3d4e5f6",
+    "custom_id": "user-ext-001",
+    "actor_type": "user",
+    "display_name": "Alice Chen",
+    "description": "Primary end user for the mobile app",
+    "metadata": {
+      "tier": "premium",
+      "region": "us-west"
+    },
+    "created_at": "2025-03-10T08:00:00Z",
+    "updated_at": "2025-03-10T08:00:00Z"
+  }
+}
+```
+</ResponseExample>

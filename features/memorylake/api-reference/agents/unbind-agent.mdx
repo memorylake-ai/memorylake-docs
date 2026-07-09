@@ -1,0 +1,44 @@
+---
+title: "Unbind Agent from Workspace"
+description: "Remove an agent binding from a workspace"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents/{agentId}
+```
+
+Removes the binding between an agent and a workspace. After unbinding, the agent is no longer available for A2A communication within the workspace. The agent definition itself is not deleted.
+
+<Note>
+**Permission required:** `workspace:agent_unbind`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="agentId" type="string" required>
+Agent identifier to unbind from the workspace
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+Returns an empty `data` field on success.
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {}
+}
+```
+</ResponseExample>

@@ -138,6 +138,15 @@
                   "features/memorylake/api-reference/overview",
                   "features/memorylake/api-reference/authentication",
                   {
+                    "group": "Core Memory Operations",
+                    "pages": [
+                      "features/memorylake/api-reference/core-memory/overview",
+                      "features/memorylake/api-reference/v3-documents/import-documents",
+                      "features/memorylake/api-reference/conversations/create-message",
+                      "features/memorylake/api-reference/search/search-memories"
+                    ]
+                  },
+                  {
                     "group": "Library",
                     "pages": [
                       "features/memorylake/api-reference/library/overview",
@@ -151,39 +160,142 @@
                     ]
                   },
                   {
+                    "group": "Workspaces",
+                    "pages": [
+                      "features/memorylake/api-reference/workspaces/overview",
+                      "features/memorylake/api-reference/workspaces/list-workspaces",
+                      "features/memorylake/api-reference/workspaces/create-workspace",
+                      "features/memorylake/api-reference/workspaces/get-workspace",
+                      "features/memorylake/api-reference/workspaces/update-workspace",
+                      "features/memorylake/api-reference/workspaces/delete-workspace"
+                    ]
+                  },
+                  {
+                    "group": "Actors",
+                    "pages": [
+                      "features/memorylake/api-reference/actors/overview",
+                      "features/memorylake/api-reference/actors/list-actors",
+                      "features/memorylake/api-reference/actors/create-actor",
+                      "features/memorylake/api-reference/actors/get-actor",
+                      "features/memorylake/api-reference/actors/update-actor",
+                      "features/memorylake/api-reference/actors/delete-actor",
+                      "features/memorylake/api-reference/actors/list-workspace-actors",
+                      "features/memorylake/api-reference/actors/bind-actor",
+                      "features/memorylake/api-reference/actors/unbind-actor",
+                      {
+                        "group": "Actor Facts",
+                        "pages": [
+                          "features/memorylake/api-reference/facts/list-actor-facts",
+                          "features/memorylake/api-reference/facts/get-actor-fact",
+                          "features/memorylake/api-reference/facts/update-actor-fact",
+                                                    "features/memorylake/api-reference/facts/forget-actor-fact",
+                          "features/memorylake/api-reference/facts/batch-forget-actor-facts"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Agents",
+                    "pages": [
+                      "features/memorylake/api-reference/agents/overview",
+                      "features/memorylake/api-reference/a2a/overview",
+                      "features/memorylake/api-reference/agents/list-agents",
+                      "features/memorylake/api-reference/agents/create-agent",
+                      "features/memorylake/api-reference/agents/get-agent",
+                      "features/memorylake/api-reference/agents/update-agent",
+                      "features/memorylake/api-reference/agents/delete-agent",
+                      {
+                        "group": "Versions",
+                        "pages": [
+                          "features/memorylake/api-reference/agents/list-agent-versions",
+                          "features/memorylake/api-reference/agents/create-agent-version",
+                          "features/memorylake/api-reference/agents/get-agent-version"
+                        ]
+                      },
+                      "features/memorylake/api-reference/agents/list-workspace-agents",
+                      "features/memorylake/api-reference/agents/bind-agent",
+                      "features/memorylake/api-reference/agents/unbind-agent"
+                    ]
+                  },
+                  {
                     "group": "Projects",
                     "pages": [
-                      "features/memorylake/api-reference/projects/list-projects",
-                      "features/memorylake/api-reference/projects/create-project",
-                      "features/memorylake/api-reference/projects/get-project",
-                      "features/memorylake/api-reference/projects/update-project",
-                      "features/memorylake/api-reference/projects/delete-project",
-                      "features/memorylake/api-reference/projects/search-project"
+                      "features/memorylake/api-reference/v3-projects/overview",
+                      "features/memorylake/api-reference/v3-projects/list-projects",
+                      "features/memorylake/api-reference/v3-projects/create-project",
+                      "features/memorylake/api-reference/v3-projects/get-project",
+                      "features/memorylake/api-reference/v3-projects/update-project",
+                      "features/memorylake/api-reference/v3-projects/delete-project",
+                      {
+                        "group": "Documents",
+                        "pages": [
+                          "features/memorylake/api-reference/v3-documents/list-documents",
+                          "features/memorylake/api-reference/v3-documents/get-document",
+                          "features/memorylake/api-reference/v3-documents/delete-documents"
+                        ]
+                      },
+                      {
+                        "group": "Conversations",
+                        "pages": [
+                          "features/memorylake/api-reference/conversations/list-conversations",
+                          "features/memorylake/api-reference/conversations/create-conversation",
+                          "features/memorylake/api-reference/conversations/get-conversation",
+                          "features/memorylake/api-reference/conversations/delete-conversation",
+                          "features/memorylake/api-reference/conversations/list-messages",
+                          "features/memorylake/api-reference/conversations/batch-get-messages"
+                        ]
+                      },
+                      {
+                        "group": "Project Facts",
+                        "pages": [
+                          "features/memorylake/api-reference/facts/list-facts",
+                          "features/memorylake/api-reference/facts/get-fact",
+                          "features/memorylake/api-reference/facts/update-fact",
+                          "features/memorylake/api-reference/facts/forget-fact",
+                          "features/memorylake/api-reference/facts/batch-forget-facts"
+                        ]
+                      }
                     ]
                   },
                   {
-                    "group": "Documents",
+                    "group": "Deprecated",
                     "pages": [
-                      "features/memorylake/api-reference/memories/list-documents",
-                      "features/memorylake/api-reference/memories/get-document",
-                      "features/memorylake/api-reference/memories/add-document",
-                      "features/memorylake/api-reference/memories/remove-documents",
-                      "features/memorylake/api-reference/memories/search-documents",
-                      "features/memorylake/api-reference/memories/download-document"
-                    ]
-                  },
-                  {
-                    "group": "Memories",
-                    "pages": [
-                      "features/memorylake/api-reference/memories/add-memory",
-                      "features/memorylake/api-reference/memories/list-memories",
-                      "features/memorylake/api-reference/memories/get-memory",
-                      "features/memorylake/api-reference/memories/get-memory-trace",
-                      "features/memorylake/api-reference/memories/search-memories",
-                      "features/memorylake/api-reference/memories/forget-memory",
-                      "features/memorylake/api-reference/memories/list-memory-conflicts",
-                      "features/memorylake/api-reference/memories/get-memory-conflict",
-                      "features/memorylake/api-reference/memories/resolve-memory-conflict"
+                      {
+                        "group": "Projects",
+                        "pages": [
+                          "features/memorylake/api-reference/projects/list-projects",
+                          "features/memorylake/api-reference/projects/create-project",
+                          "features/memorylake/api-reference/projects/get-project",
+                          "features/memorylake/api-reference/projects/update-project",
+                          "features/memorylake/api-reference/projects/delete-project",
+                          "features/memorylake/api-reference/projects/search-project"
+                        ]
+                      },
+                      {
+                        "group": "Documents",
+                        "pages": [
+                          "features/memorylake/api-reference/memories/list-documents",
+                          "features/memorylake/api-reference/memories/get-document",
+                          "features/memorylake/api-reference/memories/add-document",
+                          "features/memorylake/api-reference/memories/remove-documents",
+                          "features/memorylake/api-reference/memories/search-documents",
+                          "features/memorylake/api-reference/memories/download-document"
+                        ]
+                      },
+                      {
+                        "group": "Memories",
+                        "pages": [
+                          "features/memorylake/api-reference/memories/add-memory",
+                          "features/memorylake/api-reference/memories/list-memories",
+                          "features/memorylake/api-reference/memories/get-memory",
+                          "features/memorylake/api-reference/memories/get-memory-trace",
+                          "features/memorylake/api-reference/memories/search-memories",
+                          "features/memorylake/api-reference/memories/forget-memory",
+                          "features/memorylake/api-reference/memories/list-memory-conflicts",
+                          "features/memorylake/api-reference/memories/get-memory-conflict",
+                          "features/memorylake/api-reference/memories/resolve-memory-conflict"
+                        ]
+                      }
                     ]
                   },
                   "features/memorylake/api-reference/errors",
@@ -311,6 +423,15 @@
                   "zh/features/memorylake/api-reference/overview",
                   "zh/features/memorylake/api-reference/authentication",
                   {
+                    "group": "Core Memory Operations",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/core-memory/overview",
+                      "zh/features/memorylake/api-reference/v3-documents/import-documents",
+                      "zh/features/memorylake/api-reference/conversations/create-message",
+                      "zh/features/memorylake/api-reference/search/search-memories"
+                    ]
+                  },
+                  {
                     "group": "文件库",
                     "pages": [
                       "zh/features/memorylake/api-reference/library/overview",
@@ -324,39 +445,142 @@
                     ]
                   },
                   {
+                    "group": "工作空间",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/workspaces/overview",
+                      "zh/features/memorylake/api-reference/workspaces/list-workspaces",
+                      "zh/features/memorylake/api-reference/workspaces/create-workspace",
+                      "zh/features/memorylake/api-reference/workspaces/get-workspace",
+                      "zh/features/memorylake/api-reference/workspaces/update-workspace",
+                      "zh/features/memorylake/api-reference/workspaces/delete-workspace"
+                    ]
+                  },
+                  {
+                    "group": "Actors",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/actors/overview",
+                      "zh/features/memorylake/api-reference/actors/list-actors",
+                      "zh/features/memorylake/api-reference/actors/create-actor",
+                      "zh/features/memorylake/api-reference/actors/get-actor",
+                      "zh/features/memorylake/api-reference/actors/update-actor",
+                      "zh/features/memorylake/api-reference/actors/delete-actor",
+                      "zh/features/memorylake/api-reference/actors/list-workspace-actors",
+                      "zh/features/memorylake/api-reference/actors/bind-actor",
+                      "zh/features/memorylake/api-reference/actors/unbind-actor",
+                      {
+                        "group": "Actor 事实",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/facts/list-actor-facts",
+                          "zh/features/memorylake/api-reference/facts/get-actor-fact",
+                          "zh/features/memorylake/api-reference/facts/update-actor-fact",
+                                                    "zh/features/memorylake/api-reference/facts/forget-actor-fact",
+                          "zh/features/memorylake/api-reference/facts/batch-forget-actor-facts"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "Agents",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/agents/overview",
+                      "zh/features/memorylake/api-reference/a2a/overview",
+                      "zh/features/memorylake/api-reference/agents/list-agents",
+                      "zh/features/memorylake/api-reference/agents/create-agent",
+                      "zh/features/memorylake/api-reference/agents/get-agent",
+                      "zh/features/memorylake/api-reference/agents/update-agent",
+                      "zh/features/memorylake/api-reference/agents/delete-agent",
+                      {
+                        "group": "版本",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/agents/list-agent-versions",
+                          "zh/features/memorylake/api-reference/agents/create-agent-version",
+                          "zh/features/memorylake/api-reference/agents/get-agent-version"
+                        ]
+                      },
+                      "zh/features/memorylake/api-reference/agents/list-workspace-agents",
+                      "zh/features/memorylake/api-reference/agents/bind-agent",
+                      "zh/features/memorylake/api-reference/agents/unbind-agent"
+                    ]
+                  },
+                  {
                     "group": "项目",
                     "pages": [
-                      "zh/features/memorylake/api-reference/projects/list-projects",
-                      "zh/features/memorylake/api-reference/projects/create-project",
-                      "zh/features/memorylake/api-reference/projects/get-project",
-                      "zh/features/memorylake/api-reference/projects/update-project",
-                      "zh/features/memorylake/api-reference/projects/delete-project",
-                      "zh/features/memorylake/api-reference/projects/search-project"
+                      "zh/features/memorylake/api-reference/v3-projects/overview",
+                      "zh/features/memorylake/api-reference/v3-projects/list-projects",
+                      "zh/features/memorylake/api-reference/v3-projects/create-project",
+                      "zh/features/memorylake/api-reference/v3-projects/get-project",
+                      "zh/features/memorylake/api-reference/v3-projects/update-project",
+                      "zh/features/memorylake/api-reference/v3-projects/delete-project",
+                      {
+                        "group": "文档",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/v3-documents/list-documents",
+                          "zh/features/memorylake/api-reference/v3-documents/get-document",
+                          "zh/features/memorylake/api-reference/v3-documents/delete-documents"
+                        ]
+                      },
+                      {
+                        "group": "会话",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/conversations/list-conversations",
+                          "zh/features/memorylake/api-reference/conversations/create-conversation",
+                          "zh/features/memorylake/api-reference/conversations/get-conversation",
+                          "zh/features/memorylake/api-reference/conversations/delete-conversation",
+                          "zh/features/memorylake/api-reference/conversations/list-messages",
+                          "zh/features/memorylake/api-reference/conversations/batch-get-messages"
+                        ]
+                      },
+                      {
+                        "group": "项目事实",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/facts/list-facts",
+                          "zh/features/memorylake/api-reference/facts/get-fact",
+                          "zh/features/memorylake/api-reference/facts/update-fact",
+                          "zh/features/memorylake/api-reference/facts/forget-fact",
+                          "zh/features/memorylake/api-reference/facts/batch-forget-facts"
+                        ]
+                      }
                     ]
                   },
                   {
-                    "group": "文档",
+                    "group": "已弃用",
                     "pages": [
-                      "zh/features/memorylake/api-reference/memories/list-documents",
-                      "zh/features/memorylake/api-reference/memories/get-document",
-                      "zh/features/memorylake/api-reference/memories/add-document",
-                      "zh/features/memorylake/api-reference/memories/remove-documents",
-                      "zh/features/memorylake/api-reference/memories/search-documents",
-                      "zh/features/memorylake/api-reference/memories/download-document"
-                    ]
-                  },
-                  {
-                    "group": "记忆",
-                    "pages": [
-                      "zh/features/memorylake/api-reference/memories/add-memory",
-                      "zh/features/memorylake/api-reference/memories/list-memories",
-                      "zh/features/memorylake/api-reference/memories/get-memory",
-                      "zh/features/memorylake/api-reference/memories/get-memory-trace",
-                      "zh/features/memorylake/api-reference/memories/search-memories",
-                      "zh/features/memorylake/api-reference/memories/forget-memory",
-                      "zh/features/memorylake/api-reference/memories/list-memory-conflicts",
-                      "zh/features/memorylake/api-reference/memories/get-memory-conflict",
-                      "zh/features/memorylake/api-reference/memories/resolve-memory-conflict"
+                      {
+                        "group": "项目",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/projects/list-projects",
+                          "zh/features/memorylake/api-reference/projects/create-project",
+                          "zh/features/memorylake/api-reference/projects/get-project",
+                          "zh/features/memorylake/api-reference/projects/update-project",
+                          "zh/features/memorylake/api-reference/projects/delete-project",
+                          "zh/features/memorylake/api-reference/projects/search-project"
+                        ]
+                      },
+                      {
+                        "group": "文档",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/memories/list-documents",
+                          "zh/features/memorylake/api-reference/memories/get-document",
+                          "zh/features/memorylake/api-reference/memories/add-document",
+                          "zh/features/memorylake/api-reference/memories/remove-documents",
+                          "zh/features/memorylake/api-reference/memories/search-documents",
+                          "zh/features/memorylake/api-reference/memories/download-document"
+                        ]
+                      },
+                      {
+                        "group": "记忆",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/memories/add-memory",
+                          "zh/features/memorylake/api-reference/memories/list-memories",
+                          "zh/features/memorylake/api-reference/memories/get-memory",
+                          "zh/features/memorylake/api-reference/memories/get-memory-trace",
+                          "zh/features/memorylake/api-reference/memories/search-memories",
+                          "zh/features/memorylake/api-reference/memories/forget-memory",
+                          "zh/features/memorylake/api-reference/memories/list-memory-conflicts",
+                          "zh/features/memorylake/api-reference/memories/get-memory-conflict",
+                          "zh/features/memorylake/api-reference/memories/resolve-memory-conflict"
+                        ]
+                      }
                     ]
                   },
                   "zh/features/memorylake/api-reference/errors",

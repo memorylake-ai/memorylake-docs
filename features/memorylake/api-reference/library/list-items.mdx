@@ -48,6 +48,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/MY
   <ResponseField name="items" type="array">
   Array of library items
   <Expandable title="Library item">
+    <ResponseField name="uri" type="string">Drive resource URI</ResponseField>
     <ResponseField name="item_id" type="string">Item ID</ResponseField>
     <ResponseField name="name" type="string">Item name</ResponseField>
     <ResponseField name="type" type="string">Item type: `file` or `directory`</ResponseField>
@@ -70,6 +71,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/MY
   "data": {
     "items": [
       {
+        "uri": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5",
         "item_id": "sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5",
         "name": "Reports",
         "type": "directory",
@@ -79,6 +81,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/MY
         "x_attrs": {}
       },
       {
+        "uri": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7",
         "item_id": "sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7",
         "name": "report.pdf",
         "type": "file",

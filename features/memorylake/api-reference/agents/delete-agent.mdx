@@ -1,0 +1,44 @@
+---
+title: "Delete Agent"
+description: "Permanently delete an agent and all its versions"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/agents/{id}
+```
+
+<Warning>
+This is a destructive operation. The agent and all its versions are permanently removed. Any workspace bindings for this agent are also deleted.
+</Warning>
+
+Permanently deletes an agent. This action cannot be undone.
+
+<Note>
+**Permission required:** `agent:delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Agent identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents/agt_r8k2m1n3' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+Returns an empty `data` field on success.
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {}
+}
+```
+</ResponseExample>

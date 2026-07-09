@@ -1,11 +1,11 @@
 ---
 title: "MemoryLake API Reference"
-description: "Complete API documentation for MemoryLake services including the Library, projects, documents, and memories"
+description: "Complete API documentation for MemoryLake — turn documents and conversations into searchable, structured memories"
 ---
 
 ## API Overview
 
-The MemoryLake API provides programmatic access to the Library, project management, document search, and memory extraction. Use it to build custom integrations, automate workflows, and extend platform functionality.
+The MemoryLake API lets you feed documents and conversations into a project, automatically extract structured facts, and search across all memory sources with natural language. Use it to build AI applications with long-term memory.
 
 ## Base URL
 
@@ -13,39 +13,35 @@ The MemoryLake API provides programmatic access to the Library, project manageme
 https://app.memorylake.ai/openapi/memorylake
 ```
 
-<Note>
-Replace `app.memorylake.ai` with your actual MemoryLake instance domain.
-</Note>
-
 ## Authentication
 
-All API requests require authentication via Bearer token. See [Authentication](/features/memorylake/api-reference/authentication) for details.
+All API requests require a Bearer token in the `Authorization` header. See [Authentication](/features/memorylake/api-reference/authentication) for details.
 
 ## API Sections
 
 <CardGroup cols={2}>
-<Card title="Authentication" icon="key" href="/features/memorylake/api-reference/authentication">
-Learn how to authenticate API requests
+<Card title="Core Memory Operations" icon="brain" href="/features/memorylake/api-reference/core-memory/overview">
+The 3 essential APIs: import documents, append conversation messages, and search memories.
 </Card>
 
 <Card title="Library" icon="folder-tree" href="/features/memorylake/api-reference/library/overview">
-File and folder management, including the chunked upload workflow
+File storage — upload and manage files before importing them into projects.
 </Card>
 
-<Card title="Projects" icon="diagram-project" href="/features/memorylake/api-reference/projects">
-Project management and document operations
+<Card title="Workspaces" icon="layer-group" href="/features/memorylake/api-reference/workspaces/list-workspaces">
+Create and manage workspaces — the top-level namespace for data isolation.
 </Card>
 
-<Card title="Memories" icon="brain" href="/features/memorylake/api-reference/memories">
-Conversation memory extraction and search
+<Card title="Actors" icon="user" href="/features/memorylake/api-reference/actors/list-actors">
+Manage participant identities and their associated facts.
 </Card>
 
-<Card title="Errors" icon="triangle-exclamation" href="/features/memorylake/api-reference/errors">
-Error codes and handling
+<Card title="Agents" icon="robot" href="/features/memorylake/api-reference/agents/list-agents">
+Define AI agents with versioning and A2A protocol support.
 </Card>
 
-<Card title="Rate Limits" icon="gauge" href="/features/memorylake/api-reference/rate-limits">
-API rate limiting and quotas
+<Card title="Projects" icon="diagram-project" href="/features/memorylake/api-reference/v3-projects/list-projects">
+Manage projects and their documents, conversations, and facts.
 </Card>
 </CardGroup>
 
@@ -76,11 +72,13 @@ Error responses:
 
 ### Pagination
 
-List endpoints support pagination:
+List endpoints use continuation-token pagination:
 
 **Query Parameters**:
-- `page`: Page number (default: 1)
-- `size`: Items per page (default: 20, max: 100)
+- `page_size`: Number of items per page
+- `continuation_token`: Token from a previous response to fetch the next page
+
+When the response `continuation_token` is `null`, there are no more pages.
 
 ### Timestamps
 
@@ -92,11 +90,11 @@ All timestamps use ISO 8601 format:
 ## Next Steps
 
 <CardGroup cols={2}>
-<Card title="Authentication" icon="shield" href="/features/memorylake/api-reference/authentication">
-Start with authentication
+<Card title="Core Memory Operations" icon="rocket" href="/features/memorylake/api-reference/core-memory/overview">
+Start with the core APIs — see the workflow and prerequisites
 </Card>
 
-<Card title="Quick Start" icon="rocket" href="/features/memorylake/quickstart">
-Follow the quick start guide
+<Card title="Authentication" icon="key" href="/features/memorylake/api-reference/authentication">
+Set up your API credentials
 </Card>
 </CardGroup>

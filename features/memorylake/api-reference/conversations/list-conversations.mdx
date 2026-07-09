@@ -1,0 +1,94 @@
+---
+title: "List Conversations"
+description: "Returns a paginated list of conversations in a project"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/conversations
+```
+
+Returns a paginated list of conversations within a project. Use continuation tokens to iterate through large result sets.
+
+<Note>
+**Permission required:** `project:conv_list`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project identifier
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of conversations to return per page
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page of results
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conversations?page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated conversation list">
+  <ResponseField name="items" type="array">
+  Array of conversation objects
+  <Expandable title="Conversation object">
+    <ResponseField name="id" type="string">Unique conversation identifier</ResponseField>
+    <ResponseField name="name" type="string">Display name for the conversation</ResponseField>
+    <ResponseField name="kind" type="string">Conversation type (e.g. `chat`, `support`, `interview`)</ResponseField>
+    <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the conversation</ResponseField>
+    <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
+    <ResponseField name="project_id" type="string">ID of the project this conversation belongs to</ResponseField>
+    <ResponseField name="actor_ids" type="array">IDs of actors participating in the conversation</ResponseField>
+    <ResponseField name="current_message_id" type="string">ID of the latest message in the conversation</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+    <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string|null">
+  Token to retrieve the next page. `null` when there are no more results.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "conv_8f3a1b2c4d5e6f7a",
+        "name": "Onboarding Session",
+        "kind": "chat",
+        "metadata": {
+          "channel": "web",
+          "language": "en"
+        },
+        "custom_id": "session-20250601-001",
+        "project_id": "proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
+        "actor_ids": ["actor_user_jane", "actor_assistant_v2"],
+        "current_message_id": "msg_9e4b2c3d5f6a7b8c",
+        "created_at": "2025-06-01T09:15:00Z",
+        "updated_at": "2025-06-01T09:42:00Z"
+      }
+    ],
+    "continuation_token": "eyJsYXN0X2lkIjoiY29udl84ZjNhMWIyYzRkNWU2ZjdhIn0"
+  }
+}
+```
+</ResponseExample>
