@@ -63,7 +63,7 @@ Output configuration for the agent
 Subagent definitions to attach to this agent
 <Expandable title="Subagent object">
   <ParamField body="subagents[].name" type="string">Subagent name</ParamField>
-  <ParamField body="subagents[].mode" type="string">Execution mode for the subagent</ParamField>
+  <ParamField body="subagents[].mode" type="string">Execution mode: `fork` or `swarm`</ParamField>
   <ParamField body="subagents[].context" type="string">Context instructions passed to the subagent</ParamField>
   <ParamField body="subagents[].inherit_tools" type="boolean">Whether the subagent inherits the parent agent's tools</ParamField>
 </Expandable>
@@ -109,7 +109,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
     "subagents": [
       {
         "name": "ticket-creator",
-        "mode": "delegate",
+        "mode": "fork",
         "context": "Create support tickets from conversation context",
         "inherit_tools": false
       }
@@ -159,7 +159,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
   Subagent definitions attached to this agent
   <Expandable title="Subagent object">
     <ResponseField name="name" type="string">Subagent name</ResponseField>
-    <ResponseField name="mode" type="string">Execution mode for the subagent</ResponseField>
+    <ResponseField name="mode" type="string">Execution mode: `fork` or `swarm`</ResponseField>
     <ResponseField name="context" type="string">Context instructions passed to the subagent</ResponseField>
     <ResponseField name="inherit_tools" type="boolean">Whether the subagent inherits the parent agent's tools</ResponseField>
   </Expandable>
@@ -212,7 +212,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
     "subagents": [
       {
         "name": "ticket-creator",
-        "mode": "delegate",
+        "mode": "fork",
         "context": "Create support tickets from conversation context",
         "inherit_tools": false
       }

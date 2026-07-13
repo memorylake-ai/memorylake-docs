@@ -48,10 +48,10 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   <ResponseField name="content" type="array">
   内容块数组
   <Expandable title="内容块">
-    <ResponseField name="block_type" type="string">块类型：`text` 或 `image`</ResponseField>
-    <ResponseField name="text" type="string">文本内容（当 `block_type` 为 `text` 时存在）</ResponseField>
-    <ResponseField name="uri" type="string">Drive 资源 URI（当 `block_type` 为 `image` 时存在）</ResponseField>
-    <ResponseField name="mime_type" type="string">MIME 类型（当 `block_type` 为 `image` 时存在）</ResponseField>
+    <ResponseField name="block_type" type="string">块类型：`TEXT`、`FILE`、`IMAGE`、`THINKING`、`TOOL_USE`、`TOOL_RESULT`</ResponseField>
+    <ResponseField name="text" type="string">文本内容（当 `block_type` 为 `TEXT` 时存在）</ResponseField>
+    <ResponseField name="uri" type="string">Drive 资源 URI（当 `block_type` 为 `IMAGE` 时存在）</ResponseField>
+    <ResponseField name="mime_type" type="string">MIME 类型（当 `block_type` 为 `IMAGE` 时存在）</ResponseField>
   </Expandable>
   </ResponseField>
   <ResponseField name="metadata" type="object">附加的键值元数据</ResponseField>
@@ -73,7 +73,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
       "id": "msg_3f4a5b6c7d8e9f0a",
       "content": [
         {
-          "block_type": "text",
+          "block_type": "TEXT",
           "text": "Can you summarize last quarter's revenue numbers?"
         }
       ],
@@ -88,7 +88,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
       "id": "msg_9e4b2c3d5f6a7b8c",
       "content": [
         {
-          "block_type": "text",
+          "block_type": "TEXT",
           "text": "Q1 revenue was $12.5M, up 15% from the previous quarter."
         }
       ],

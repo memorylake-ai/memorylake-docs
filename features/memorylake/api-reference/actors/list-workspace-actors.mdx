@@ -50,7 +50,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7
   <Expandable title="Actor binding">
     <ResponseField name="actor_id" type="string">Actor ID</ResponseField>
     <ResponseField name="custom_id" type="string">Caller-defined external identifier</ResponseField>
-    <ResponseField name="actor_type" type="string">Actor type</ResponseField>
+    <ResponseField name="actor_type" type="string">Actor type: `HUMAN` or `ASSISTANT`</ResponseField>
     <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
     <ResponseField name="bound_at" type="string">Timestamp when the actor was bound to this workspace</ResponseField>
   </Expandable>
@@ -68,7 +68,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7
       {
         "actor_id": "act-a1b2c3d4e5f6",
         "custom_id": "user-ext-001",
-        "actor_type": "user",
+        "actor_type": "HUMAN",
         "display_name": "Alice Chen",
         "bound_at": "2025-03-15T09:00:00Z"
       },

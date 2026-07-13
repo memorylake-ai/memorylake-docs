@@ -57,7 +57,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
   <ResponseField name="details" type="array">
   Per-file import results.
   <Expandable title="Import detail">
-    <ResponseField name="result" type="string">Outcome for this file: `success`, `failure`, or `duplicate`.</ResponseField>
+    <ResponseField name="result" type="string">Outcome for this file: `success`, `failed`, or `duplicate`.</ResponseField>
     <ResponseField name="drive_item_id" type="string">Library item ID that was processed.</ResponseField>
     <ResponseField name="document_id" type="string">Document ID assigned to the imported file. Present when `result` is `success`.</ResponseField>
   </Expandable>

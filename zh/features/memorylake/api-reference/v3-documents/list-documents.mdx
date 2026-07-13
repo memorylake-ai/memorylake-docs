@@ -54,15 +54,15 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a
   <Expandable title="ProjectDocumentItem">
     <ResponseField name="id" type="string">文档 ID。</ResponseField>
     <ResponseField name="name" type="string">文档的文件名。</ResponseField>
-    <ResponseField name="status" type="string">处理状态：`processing`、`ready` 或 `failed`。</ResponseField>
-    <ResponseField name="error" type="object|null">当 `status` 为 `failed` 时的错误详情。否则为 `null`。</ResponseField>
+    <ResponseField name="status" type="string">处理状态：`pending`、`running`、`okay` 或 `error`。</ResponseField>
+    <ResponseField name="error" type="object|null">当 `status` 为 `error` 时的错误详情。否则为 `null`。</ResponseField>
     <ResponseField name="usage" type="object">
     处理的 token 用量。
     <Expandable title="Usage">
       <ResponseField name="files_process_tokens" type="integer">处理此文档消耗的 token 数量。</ResponseField>
     </Expandable>
     </ResponseField>
-    <ResponseField name="document_type" type="string">表示文档类型的判别符（例如 `pdf`、`docx`、`txt`）。</ResponseField>
+    <ResponseField name="document_type" type="string">文档类型：`drive_file`。</ResponseField>
     <ResponseField name="created_at" type="string">文档导入时的 ISO 8601 时间戳。</ResponseField>
   </Expandable>
   </ResponseField>
@@ -79,23 +79,23 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a
       {
         "id": "doc-3m4n5o6p7q8r",
         "name": "quarterly-report.pdf",
-        "status": "ready",
+        "status": "okay",
         "error": null,
         "usage": {
           "files_process_tokens": 15230
         },
-        "document_type": "pdf",
+        "document_type": "drive_file",
         "created_at": "2025-03-10T14:22:00Z"
       },
       {
         "id": "doc-8s9t0u1v2w3x",
         "name": "product-spec.docx",
-        "status": "processing",
+        "status": "running",
         "error": null,
         "usage": {
           "files_process_tokens": 0
         },
-        "document_type": "docx",
+        "document_type": "drive_file",
         "created_at": "2025-03-11T09:15:00Z"
       }
     ],

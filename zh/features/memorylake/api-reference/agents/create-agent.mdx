@@ -63,7 +63,7 @@ Agent 的输出配置
 要附加到此 Agent 的子 Agent 定义
 <Expandable title="Subagent 对象">
   <ParamField body="subagents[].name" type="string">子 Agent 名称</ParamField>
-  <ParamField body="subagents[].mode" type="string">子 Agent 的执行模式</ParamField>
+  <ParamField body="subagents[].mode" type="string">执行模式：`fork` 或 `swarm`</ParamField>
   <ParamField body="subagents[].context" type="string">传递给子 Agent 的上下文指令</ParamField>
   <ParamField body="subagents[].inherit_tools" type="boolean">子 Agent 是否继承父 Agent 的工具</ParamField>
 </Expandable>
@@ -109,7 +109,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
     "subagents": [
       {
         "name": "ticket-creator",
-        "mode": "delegate",
+        "mode": "fork",
         "context": "Create support tickets from conversation context",
         "inherit_tools": false
       }
@@ -159,7 +159,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
   附加到此 Agent 的子 Agent 定义
   <Expandable title="Subagent 对象">
     <ResponseField name="name" type="string">子 Agent 名称</ResponseField>
-    <ResponseField name="mode" type="string">子 Agent 的执行模式</ResponseField>
+    <ResponseField name="mode" type="string">执行模式：`fork` 或 `swarm`</ResponseField>
     <ResponseField name="context" type="string">传递给子 Agent 的上下文指令</ResponseField>
     <ResponseField name="inherit_tools" type="boolean">子 Agent 是否继承父 Agent 的工具</ResponseField>
   </Expandable>
@@ -212,7 +212,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
     "subagents": [
       {
         "name": "ticket-creator",
-        "mode": "delegate",
+        "mode": "fork",
         "context": "Create support tickets from conversation context",
         "inherit_tools": false
       }

@@ -1,132 +1,83 @@
 ---
-title: "MemoryLake 概览"
-description: "集文档存储、外部连接器、记忆和 MCP 服务于一体的知识管理与项目组织系统"
+title: "概览"
+description: "将文档和会话转化为可搜索的结构化记忆，服务于 AI 应用"
 ---
 
 ## 什么是 MemoryLake？
 
-MemoryLake 是一个功能强大的知识管理平台，帮助您组织文档、构建知识库，并通过 UI 和 API 接口为您的信息提供上下文访问。无论是管理研究材料、构建团队知识库，还是将 AI 与您的文档集成，MemoryLake 都能提供所需的工具。
+MemoryLake 是面向 AI 应用的记忆平台。您将文档和会话输入其中，它会自动提取结构化事实，供您的 Agent 和应用搜索与检索。可以将它理解为 AI 的长期记忆——持久化、可查询，并按"谁说了什么"进行组织。
 
-## 核心功能
+MemoryLake 围绕三大支柱构建：
 
-<CardGroup cols={2}>
-<Card title="文档管理" icon="folder-tree" href="/features/memorylake/document-management/overview">
-在层级文件夹中存储和组织文件，支持评论和直观的树形导航。
+<CardGroup cols={3}>
+<Card title="文档记忆" icon="file-lines">
+将文件导入项目。MemoryLake 为其建立语义搜索索引，让您的 AI 能在整个知识库中找到相关内容。
 </Card>
 
-<Card title="外部连接器" icon="plug" href="/features/memorylake/connectors/overview">
-通过 OAuth 认证，将 WPS、Dropbox、飞书等外部文档服务直接集成到您的工作空间。
+<Card title="会话记忆" icon="comments">
+提交用户与助手的会话。MemoryLake 自动提取结构化事实——偏好、决策、上下文——并将其关联到正确的 Actor。
 </Card>
 
-<Card title="项目管理" icon="diagram-project" href="/features/memorylake/project-management/overview">
-将相关文档归入项目，更好地组织内容，为 AI 交互提供结构化上下文。
-</Card>
-
-<Card title="记忆" icon="brain" href="/features/memorylake/memories/overview">
-在项目中存储知识片段、笔记和上下文信息，增强 AI 理解和团队协作。
-</Card>
-
-<Card title="MCP 服务" icon="key" href="/features/memorylake/mcp-servers/overview">
-生成 API Key 和端点，为外部应用和 AI 模型提供对项目数据的安全访问。
-</Card>
-
-<Card title="API 接口" icon="code" href="/features/memorylake/api-reference/overview">
-完整的 REST API，可编程访问 MemoryLake 的所有功能，包括文档、项目、记忆和连接器。
+<Card title="统一搜索" icon="magnifying-glass">
+通过一次自然语言搜索，同时查询文档和事实。无论信息以何种方式进入系统，都能获取最相关的结果。
 </Card>
 </CardGroup>
 
-## 核心能力
+## 资源模型
 
-### 文档存储与组织
+MemoryLake 按清晰的层级结构组织数据：
 
-- **层级文件系统**：在文件夹和子文件夹中组织文档，支持无限嵌套
-- **文件上传**：上传单个文件或整个文件夹，保留目录结构
-- **富文本评论**：为任意文件或文件夹添加 Markdown 格式的评论
-- **树形导航**：直观的文件浏览器，支持拖放和可调整列宽
-- **文件操作**：创建、重命名、移动、删除和下载文件，完整的 CRUD 支持
+```
+工作空间（数据隔离边界）
+  |
+  +-- Actor（参与者身份——HUMAN 或 ASSISTANT）
+  |     +-- Actor 事实（每用户记忆，跨项目跟随 Actor）
+  |
+  +-- 项目（知识容器）
+        +-- 文档（导入的文件，已建立搜索索引）
+        +-- 会话
+        |     +-- 消息（用户与助手的交互）
+        +-- 项目事实（提取的知识，作用域限定在本项目）
+```
 
-### 外部服务集成
+**工作空间**提供数据隔离——类似于租户。每个工作空间拥有独立的 Actor、项目和搜索索引。
 
-- **连接器框架**：可扩展架构，支持集成多种文档服务
-- **OAuth 认证**：通过标准 OAuth 2.0 流程安全连接外部服务
-- **挂载点**：像访问本地文件一样访问外部文档库
-- **当前支持**：WPS（金山办公），框架已支持 Dropbox、飞书等更多服务
+**Actor**代表参与者。每个人类用户或 AI 助手都会获得一个 Actor 身份。关于某个 Actor 的事实会跨工作空间内所有项目跟随该 Actor。
 
-### 基于项目的组织
+**项目**是知识容器。项目中包含文档、会话以及从中提取的事实。通常为每个用例、领域或应用创建一个项目。
 
-- **项目管理**：创建项目，将相关文档和记忆分组
-- **文档关联**：通过树形选择器将文件库中的文档关联到项目
-- **统计面板**：一目了然地查看文档数量、记忆数量和 MCP 服务状态
-- **行内编辑**：直接在面板中更新项目名称和描述
+## 工作原理
 
-### 记忆知识上下文
+<Steps>
+<Step title="摄入">
+您通过两个通道将数据引入项目：从文档库导入文档，或通过 API 提交会话。两个通道的数据汇入同一个项目。
+</Step>
 
-- **文本存储**：将笔记、指南和上下文信息作为记忆存储
-- **项目范围**：每条记忆属于一个项目，为该项目提供上下文
-- **CRUD 操作**：通过简洁的界面创建、读取、更新和删除记忆
-- **AI 集成**：记忆为通过 MCP 服务访问您项目的 AI 模型提供上下文
+<Step title="提取">
+MemoryLake 自动处理您的内容。文档会被建立语义搜索索引。会话会被分析以提取结构化事实——例如用户偏好、既定目标、决策和上下文。
+</Step>
 
-### 编程访问
-
-- **MCP 服务端点**：为 AI 模型和外部应用生成认证 URL
-- **API Key 管理**：为每个项目创建多个 API Key，安全管理密钥
-- **RESTful API**：完整覆盖文件库、项目、记忆和连接器的 API
-- **认证方式**：支持基于会话和 API Key 两种认证方式
-
-## 常见使用场景
-
-<AccordionGroup>
-<Accordion title="研究资料组织">
-  在层级结构中组织研究论文、笔记和参考资料。将相关文档关联到项目，添加包含洞察或摘要的记忆，并通过 MCP 服务为 AI 模型提供上下文访问。
-</Accordion>
-
-<Accordion title="团队知识库">
-  为您的团队构建集中式知识库。连接 WPS 等外部文档服务，按项目组织文档，并添加记忆来沉淀机构知识和最佳实践。
-</Accordion>
-
-<Accordion title="AI 上下文管理">
-  通过将文档组织到项目中并创建引导 AI 行为的记忆，为 AI 模型提供相关上下文。使用 MCP 服务让 AI 助手安全地只读访问您的知识库。
-</Accordion>
-
-<Accordion title="文档工作流集成">
-  通过 REST API 将 MemoryLake 与现有工作流集成。通过编程方式自动化文档上传、项目创建和记忆管理。
-</Accordion>
-</AccordionGroup>
-
-## 架构概览
-
-MemoryLake 基于现代架构构建，结合了：
-
-- **文档存储**：安全的云端文件和文件夹存储
-- **评论层**：丰富的评论系统，增强上下文信息
-- **连接器层**：可扩展的外部服务集成框架
-- **项目层**：将相关内容分组的组织结构
-- **API 层**：RESTful API 和 MCP 服务端点，支持外部访问
-- **认证**：安全的认证机制，支持会话管理和 API Key
+<Step title="搜索">
+使用自然语言查询工作空间。MemoryLake 同时搜索文档内容和提取的事实，在一次响应中返回最相关的结果。
+</Step>
+</Steps>
 
 ## 开始使用
 
-准备好开始使用 MemoryLake 了吗？跟随快速入门指南，几分钟即可上手。
-
-<Card title="快速入门指南" icon="rocket" href="/zh/features/memorylake/quickstart">
-在 10 分钟内创建第一个项目、上传文档并设置 MCP 服务。
+<CardGroup cols={2}>
+<Card title="快速入门" icon="rocket" href="/zh/features/memorylake/quickstart">
+创建工作空间、提交会话并搜索记忆，仅需 5 分钟。
 </Card>
 
-## 文档结构
+<Card title="工作空间与项目" icon="layer-group" href="/zh/features/memorylake/core-concepts/workspaces-and-projects">
+了解资源层级结构，以及何时使用多个工作空间与多个项目。
+</Card>
 
-我们的文档按以下部分组织：
+<Card title="Actor 与记忆" icon="user" href="/zh/features/memorylake/core-concepts/actors-and-memory">
+了解 Actor 如何提供跨项目的每用户记忆。
+</Card>
 
-- **文档管理**：了解如何上传、组织和管理您的文件
-- **连接器**：将外部文档服务集成到您的工作空间
-- **项目管理**：创建和管理项目来组织您的内容
-- **记忆**：为项目添加上下文知识
-- **MCP 服务**：生成 API Key 并配置外部访问
-- **API 参考**：面向开发者的完整 REST API 文档
-
-## 支持
-
-需要帮助或有问题？我们的文档涵盖常见场景和故障排除。每个部分都包含详细指南、示例和排查信息，帮助您成功使用 MemoryLake。
-
-<Note>
-MemoryLake 可随您的需求扩展，从个人研究项目到团队级知识管理。从您需要的功能开始，随需求增长逐步扩展。
-</Note>
+<Card title="记忆管道" icon="diagram-project" href="/zh/features/memorylake/core-concepts/memory-pipeline">
+了解会话如何转化为结构化事实，以及搜索如何统一一切。
+</Card>
+</CardGroup>

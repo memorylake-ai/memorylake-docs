@@ -24,9 +24,11 @@ POST /openapi/memorylake/api/v3/conversations/{conversationId}/messages
 <ParamField body="content" type="array" required>
 组成消息体的内容块数组。每个块必须包含 `block_type` 字段。
 
-**文本块：** `{ "block_type": "text", "text": "message content" }`
+可接受的 `block_type` 值：`TEXT`、`FILE`、`IMAGE`、`THINKING`、`TOOL_USE`、`TOOL_RESULT`。
 
-**图片块：** `{ "block_type": "image", "uri": "drive://...", "mime_type": "image/png" }`
+**文本块：** `{ "block_type": "TEXT", "text": "message content" }`
+
+**图片块：** `{ "block_type": "IMAGE", "uri": "drive://...", "mime_type": "image/png" }`
 </ParamField>
 
 <ParamField body="actor_id" type="string" required>
@@ -57,7 +59,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   -d '{
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Can you summarize last quarter'\''s revenue numbers?"
       }
     ],
@@ -76,11 +78,11 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   -d '{
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Here is the chart for your review."
       },
       {
-        "block_type": "image",
+        "block_type": "IMAGE",
         "uri": "drive://items/item_abc123/chart.png",
         "mime_type": "image/png"
       }
@@ -97,7 +99,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   -d '{
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Good point — I'\''ve updated the figures in the attached version."
       }
     ],
@@ -115,10 +117,10 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   <ResponseField name="content" type="array">
   组成消息体的内容块数组
   <Expandable title="内容块">
-    <ResponseField name="block_type" type="string">块类型：`text` 或 `image`</ResponseField>
-    <ResponseField name="text" type="string">文本内容（当 `block_type` 为 `text` 时存在）</ResponseField>
-    <ResponseField name="uri" type="string">Drive 资源 URI（当 `block_type` 为 `image` 时存在）</ResponseField>
-    <ResponseField name="mime_type" type="string">图片 MIME 类型（当 `block_type` 为 `image` 时存在）</ResponseField>
+    <ResponseField name="block_type" type="string">块类型：`TEXT`、`FILE`、`IMAGE`、`THINKING`、`TOOL_USE`、`TOOL_RESULT`</ResponseField>
+    <ResponseField name="text" type="string">文本内容（当 `block_type` 为 `TEXT` 时存在）</ResponseField>
+    <ResponseField name="uri" type="string">Drive 资源 URI（当 `block_type` 为 `IMAGE` 时存在）</ResponseField>
+    <ResponseField name="mime_type" type="string">图片 MIME 类型（当 `block_type` 为 `IMAGE` 时存在）</ResponseField>
   </Expandable>
   </ResponseField>
   <ResponseField name="metadata" type="object">附加到消息的任意键值元数据</ResponseField>
@@ -139,7 +141,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
     "id": "msg_3f4a5b6c7d8e9f0a",
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Can you summarize last quarter's revenue numbers?"
       }
     ],

@@ -56,8 +56,8 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
     <ResponseField name="content" type="array">
     组成消息体的内容块数组
     <Expandable title="内容块">
-      <ResponseField name="block_type" type="string">块类型：`text` 或 `image`</ResponseField>
-      <ResponseField name="text" type="string">文本内容（当 `block_type` 为 `text` 时存在）</ResponseField>
+      <ResponseField name="block_type" type="string">块类型：`TEXT`、`FILE`、`IMAGE`、`THINKING`、`TOOL_USE`、`TOOL_RESULT`</ResponseField>
+      <ResponseField name="text" type="string">文本内容（当 `block_type` 为 `TEXT` 时存在）</ResponseField>
     </Expandable>
     </ResponseField>
     <ResponseField name="metadata" type="object">附加到消息的任意键值元数据</ResponseField>
@@ -85,7 +85,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
         "id": "msg_1a2b3c4d5e6f7a8b",
         "content": [
           {
-            "block_type": "text",
+            "block_type": "TEXT",
             "text": "Hi, I'd like to learn more about your enterprise plan."
           }
         ],
@@ -100,7 +100,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
         "id": "msg_9e4b2c3d5f6a7b8c",
         "content": [
           {
-            "block_type": "text",
+            "block_type": "TEXT",
             "text": "Of course! Our enterprise plan includes dedicated support, custom integrations, and advanced analytics. Would you like me to walk you through the details?"
           }
         ],

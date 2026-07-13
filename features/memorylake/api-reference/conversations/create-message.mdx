@@ -24,9 +24,11 @@ Conversation identifier
 <ParamField body="content" type="array" required>
 Array of content blocks that make up the message body. Each block must include a `block_type` field.
 
-**Text block:** `{ "block_type": "text", "text": "message content" }`
+Accepted `block_type` values: `TEXT`, `FILE`, `IMAGE`, `THINKING`, `TOOL_USE`, `TOOL_RESULT`.
 
-**Image block:** `{ "block_type": "image", "uri": "drive://...", "mime_type": "image/png" }`
+**Text block:** `{ "block_type": "TEXT", "text": "message content" }`
+
+**Image block:** `{ "block_type": "IMAGE", "uri": "drive://...", "mime_type": "image/png" }`
 </ParamField>
 
 <ParamField body="actor_id" type="string" required>
@@ -57,7 +59,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   -d '{
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Can you summarize last quarter'\''s revenue numbers?"
       }
     ],
@@ -76,11 +78,11 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   -d '{
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Here is the chart for your review."
       },
       {
-        "block_type": "image",
+        "block_type": "IMAGE",
         "uri": "drive://items/item_abc123/chart.png",
         "mime_type": "image/png"
       }
@@ -97,7 +99,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   -d '{
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Good point — I'\''ve updated the figures in the attached version."
       }
     ],
@@ -115,10 +117,10 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
   <ResponseField name="content" type="array">
   Array of content blocks that make up the message body
   <Expandable title="Content block">
-    <ResponseField name="block_type" type="string">Block type: `text` or `image`</ResponseField>
-    <ResponseField name="text" type="string">Text content (present when `block_type` is `text`)</ResponseField>
-    <ResponseField name="uri" type="string">Drive resource URI (present when `block_type` is `image`)</ResponseField>
-    <ResponseField name="mime_type" type="string">MIME type of the image (present when `block_type` is `image`)</ResponseField>
+    <ResponseField name="block_type" type="string">Block type: `TEXT`, `FILE`, `IMAGE`, `THINKING`, `TOOL_USE`, `TOOL_RESULT`</ResponseField>
+    <ResponseField name="text" type="string">Text content (present when `block_type` is `TEXT`)</ResponseField>
+    <ResponseField name="uri" type="string">Drive resource URI (present when `block_type` is `IMAGE`)</ResponseField>
+    <ResponseField name="mime_type" type="string">MIME type of the image (present when `block_type` is `IMAGE`)</ResponseField>
   </Expandable>
   </ResponseField>
   <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the message</ResponseField>
@@ -139,7 +141,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
     "id": "msg_3f4a5b6c7d8e9f0a",
     "content": [
       {
-        "block_type": "text",
+        "block_type": "TEXT",
         "text": "Can you summarize last quarter's revenue numbers?"
       }
     ],

@@ -56,8 +56,8 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
     <ResponseField name="content" type="array">
     Array of content blocks that make up the message body
     <Expandable title="Content block">
-      <ResponseField name="block_type" type="string">Block type: `text` or `image`</ResponseField>
-      <ResponseField name="text" type="string">Text content (present when `block_type` is `text`)</ResponseField>
+      <ResponseField name="block_type" type="string">Block type: `TEXT`, `FILE`, `IMAGE`, `THINKING`, `TOOL_USE`, `TOOL_RESULT`</ResponseField>
+      <ResponseField name="text" type="string">Text content (present when `block_type` is `TEXT`)</ResponseField>
     </Expandable>
     </ResponseField>
     <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the message</ResponseField>
@@ -85,7 +85,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
         "id": "msg_1a2b3c4d5e6f7a8b",
         "content": [
           {
-            "block_type": "text",
+            "block_type": "TEXT",
             "text": "Hi, I'd like to learn more about your enterprise plan."
           }
         ],
@@ -100,7 +100,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
         "id": "msg_9e4b2c3d5f6a7b8c",
         "content": [
           {
-            "block_type": "text",
+            "block_type": "TEXT",
             "text": "Of course! Our enterprise plan includes dedicated support, custom integrations, and advanced analytics. Would you like me to walk you through the details?"
           }
         ],

@@ -54,15 +54,15 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a
   <Expandable title="ProjectDocumentItem">
     <ResponseField name="id" type="string">Document ID.</ResponseField>
     <ResponseField name="name" type="string">File name of the document.</ResponseField>
-    <ResponseField name="status" type="string">Processing status: `processing`, `ready`, or `failed`.</ResponseField>
-    <ResponseField name="error" type="object|null">Error details when `status` is `failed`. `null` otherwise.</ResponseField>
+    <ResponseField name="status" type="string">Processing status: `pending`, `running`, `okay`, or `error`.</ResponseField>
+    <ResponseField name="error" type="object|null">Error details when `status` is `error`. `null` otherwise.</ResponseField>
     <ResponseField name="usage" type="object">
     Token usage for processing.
     <Expandable title="Usage">
       <ResponseField name="files_process_tokens" type="integer">Number of tokens consumed to process this document.</ResponseField>
     </Expandable>
     </ResponseField>
-    <ResponseField name="document_type" type="string">Discriminator indicating the kind of document (e.g. `pdf`, `docx`, `txt`).</ResponseField>
+    <ResponseField name="document_type" type="string">Document type: `drive_file`.</ResponseField>
     <ResponseField name="created_at" type="string">ISO 8601 timestamp when the document was imported.</ResponseField>
   </Expandable>
   </ResponseField>
@@ -79,23 +79,23 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a
       {
         "id": "doc-3m4n5o6p7q8r",
         "name": "quarterly-report.pdf",
-        "status": "ready",
+        "status": "okay",
         "error": null,
         "usage": {
           "files_process_tokens": 15230
         },
-        "document_type": "pdf",
+        "document_type": "drive_file",
         "created_at": "2025-03-10T14:22:00Z"
       },
       {
         "id": "doc-8s9t0u1v2w3x",
         "name": "product-spec.docx",
-        "status": "processing",
+        "status": "running",
         "error": null,
         "usage": {
           "files_process_tokens": 0
         },
-        "document_type": "docx",
+        "document_type": "drive_file",
         "created_at": "2025-03-11T09:15:00Z"
       }
     ],

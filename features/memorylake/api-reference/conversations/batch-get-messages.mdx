@@ -48,10 +48,10 @@ Array of message objects matching the requested entry IDs
   <ResponseField name="content" type="array">
   Array of content blocks
   <Expandable title="Content block">
-    <ResponseField name="block_type" type="string">Block type: `text` or `image`</ResponseField>
-    <ResponseField name="text" type="string">Text content (present when `block_type` is `text`)</ResponseField>
-    <ResponseField name="uri" type="string">Drive resource URI (present when `block_type` is `image`)</ResponseField>
-    <ResponseField name="mime_type" type="string">MIME type (present when `block_type` is `image`)</ResponseField>
+    <ResponseField name="block_type" type="string">Block type: `TEXT`, `FILE`, `IMAGE`, `THINKING`, `TOOL_USE`, `TOOL_RESULT`</ResponseField>
+    <ResponseField name="text" type="string">Text content (present when `block_type` is `TEXT`)</ResponseField>
+    <ResponseField name="uri" type="string">Drive resource URI (present when `block_type` is `IMAGE`)</ResponseField>
+    <ResponseField name="mime_type" type="string">MIME type (present when `block_type` is `IMAGE`)</ResponseField>
   </Expandable>
   </ResponseField>
   <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the message</ResponseField>
@@ -73,7 +73,7 @@ Array of message objects matching the requested entry IDs
       "id": "msg_3f4a5b6c7d8e9f0a",
       "content": [
         {
-          "block_type": "text",
+          "block_type": "TEXT",
           "text": "Can you summarize last quarter's revenue numbers?"
         }
       ],
@@ -88,7 +88,7 @@ Array of message objects matching the requested entry IDs
       "id": "msg_9e4b2c3d5f6a7b8c",
       "content": [
         {
-          "block_type": "text",
+          "block_type": "TEXT",
           "text": "Q1 revenue was $12.5M, up 15% from the previous quarter."
         }
       ],

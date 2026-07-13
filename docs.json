@@ -74,37 +74,15 @@
                   "features/memorylake/overview",
                   "features/memorylake/quickstart",
                   {
-                    "group": "Document Management",
+                    "group": "Core Concepts",
                     "pages": [
-                      "features/memorylake/document-management/overview",
-                      "features/memorylake/document-management/file-folder-operations",
-                      "features/memorylake/document-management/metadata-comments"
+                      "features/memorylake/core-concepts/workspaces-and-projects",
+                      "features/memorylake/core-concepts/actors-and-memory",
+                      "features/memorylake/core-concepts/memory-pipeline"
                     ]
                   },
                   {
-                    "group": "Connectors",
-                    "pages": [
-                      "features/memorylake/connectors/overview",
-                      "features/memorylake/connectors/wps-integration"
-                    ]
-                  },
-                  {
-                    "group": "Project Management",
-                    "pages": [
-                      "features/memorylake/project-management/overview",
-                      "features/memorylake/project-management/project-dashboard",
-                      "features/memorylake/project-management/document-association"
-                    ]
-                  },
-                  {
-                    "group": "Memories",
-                    "pages": [
-                      "features/memorylake/memories/overview",
-                      "features/memorylake/memories/best-practices"
-                    ]
-                  },
-                  {
-                    "group": "MCP Servers",
+                    "group": "MCP Integration",
                     "pages": [
                       "features/memorylake/mcp-servers/overview",
                       "features/memorylake/mcp-servers/creating-api-keys"
@@ -167,7 +145,18 @@
                       "features/memorylake/api-reference/workspaces/create-workspace",
                       "features/memorylake/api-reference/workspaces/get-workspace",
                       "features/memorylake/api-reference/workspaces/update-workspace",
-                      "features/memorylake/api-reference/workspaces/delete-workspace"
+                      "features/memorylake/api-reference/workspaces/delete-workspace",
+                      {
+                        "group": "Conversations",
+                        "pages": [
+                          "features/memorylake/api-reference/conversations/list-conversations",
+                          "features/memorylake/api-reference/conversations/create-conversation",
+                          "features/memorylake/api-reference/conversations/get-conversation",
+                          "features/memorylake/api-reference/conversations/delete-conversation",
+                          "features/memorylake/api-reference/conversations/list-messages",
+                          "features/memorylake/api-reference/conversations/batch-get-messages"
+                        ]
+                      }
                     ]
                   },
                   {
@@ -232,17 +221,6 @@
                           "features/memorylake/api-reference/v3-documents/list-documents",
                           "features/memorylake/api-reference/v3-documents/get-document",
                           "features/memorylake/api-reference/v3-documents/delete-documents"
-                        ]
-                      },
-                      {
-                        "group": "Conversations",
-                        "pages": [
-                          "features/memorylake/api-reference/conversations/list-conversations",
-                          "features/memorylake/api-reference/conversations/create-conversation",
-                          "features/memorylake/api-reference/conversations/get-conversation",
-                          "features/memorylake/api-reference/conversations/delete-conversation",
-                          "features/memorylake/api-reference/conversations/list-messages",
-                          "features/memorylake/api-reference/conversations/batch-get-messages"
                         ]
                       },
                       {
@@ -359,37 +337,15 @@
                   "zh/features/memorylake/overview",
                   "zh/features/memorylake/quickstart",
                   {
-                    "group": "文档管理",
+                    "group": "核心概念",
                     "pages": [
-                      "zh/features/memorylake/document-management/overview",
-                      "zh/features/memorylake/document-management/file-folder-operations",
-                      "zh/features/memorylake/document-management/metadata-comments"
+                      "zh/features/memorylake/core-concepts/workspaces-and-projects",
+                      "zh/features/memorylake/core-concepts/actors-and-memory",
+                      "zh/features/memorylake/core-concepts/memory-pipeline"
                     ]
                   },
                   {
-                    "group": "连接器",
-                    "pages": [
-                      "zh/features/memorylake/connectors/overview",
-                      "zh/features/memorylake/connectors/wps-integration"
-                    ]
-                  },
-                  {
-                    "group": "项目管理",
-                    "pages": [
-                      "zh/features/memorylake/project-management/overview",
-                      "zh/features/memorylake/project-management/project-dashboard",
-                      "zh/features/memorylake/project-management/document-association"
-                    ]
-                  },
-                  {
-                    "group": "记忆",
-                    "pages": [
-                      "zh/features/memorylake/memories/overview",
-                      "zh/features/memorylake/memories/best-practices"
-                    ]
-                  },
-                  {
-                    "group": "MCP 服务",
+                    "group": "MCP 集成",
                     "pages": [
                       "zh/features/memorylake/mcp-servers/overview",
                       "zh/features/memorylake/mcp-servers/creating-api-keys"
@@ -452,7 +408,18 @@
                       "zh/features/memorylake/api-reference/workspaces/create-workspace",
                       "zh/features/memorylake/api-reference/workspaces/get-workspace",
                       "zh/features/memorylake/api-reference/workspaces/update-workspace",
-                      "zh/features/memorylake/api-reference/workspaces/delete-workspace"
+                      "zh/features/memorylake/api-reference/workspaces/delete-workspace",
+                      {
+                        "group": "会话",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/conversations/list-conversations",
+                          "zh/features/memorylake/api-reference/conversations/create-conversation",
+                          "zh/features/memorylake/api-reference/conversations/get-conversation",
+                          "zh/features/memorylake/api-reference/conversations/delete-conversation",
+                          "zh/features/memorylake/api-reference/conversations/list-messages",
+                          "zh/features/memorylake/api-reference/conversations/batch-get-messages"
+                        ]
+                      }
                     ]
                   },
                   {
@@ -517,17 +484,6 @@
                           "zh/features/memorylake/api-reference/v3-documents/list-documents",
                           "zh/features/memorylake/api-reference/v3-documents/get-document",
                           "zh/features/memorylake/api-reference/v3-documents/delete-documents"
-                        ]
-                      },
-                      {
-                        "group": "会话",
-                        "pages": [
-                          "zh/features/memorylake/api-reference/conversations/list-conversations",
-                          "zh/features/memorylake/api-reference/conversations/create-conversation",
-                          "zh/features/memorylake/api-reference/conversations/get-conversation",
-                          "zh/features/memorylake/api-reference/conversations/delete-conversation",
-                          "zh/features/memorylake/api-reference/conversations/list-messages",
-                          "zh/features/memorylake/api-reference/conversations/batch-get-messages"
                         ]
                       },
                       {

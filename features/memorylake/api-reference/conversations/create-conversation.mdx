@@ -1,16 +1,16 @@
 ---
 title: "Create Conversation"
-description: "Create a new conversation in a project"
+description: "Create a new conversation in a workspace"
 ---
 
 ```
-POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/conversations
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conversations
 ```
 
-Creates a new conversation within a project. A conversation groups related messages together so MemoryLake can extract structured facts from the exchange. You must provide a `custom_id` to identify the conversation in your system.
+Creates a new conversation within a workspace. A conversation groups related messages together so MemoryLake can extract structured facts from the exchange. You must attach exactly one read-write project via `rw_project_ids` — this is the project where extracted facts and memory are stored.
 
 <Note>
-**Permission required:** `project:conv_create`
+**Permission required:** `workspace:conv_create` (plus `project:mem_add` and `project:doc_add` on the specified project)
 </Note>
 
 ### Path Parameters
@@ -19,22 +19,22 @@ Creates a new conversation within a project. A conversation groups related messa
 Workspace identifier
 </ParamField>
 
-<ParamField path="projectId" type="string" required>
-Project identifier
-</ParamField>
-
 ### Request Body
 
 <ParamField body="custom_id" type="string" required>
-Caller-defined unique identifier for external reference. Use this to correlate the conversation with records in your own system.
+Caller-defined unique identifier. Use this to correlate the conversation with records in your own system.
+</ParamField>
+
+<ParamField body="kind" type="string" required>
+Conversation kind: `DIRECT` (one-on-one) or `GROUP` (multi-participant).
+</ParamField>
+
+<ParamField body="rw_project_ids" type="array" required>
+Read-write project(s) the conversation reads context from and writes facts to. Exactly one project ID is required.
 </ParamField>
 
 <ParamField body="name" type="string">
 Display name for the conversation
-</ParamField>
-
-<ParamField body="kind" type="string" required>
-Conversation type (e.g. `chat`, `support`, `interview`). Use this to categorize conversations by purpose.
 </ParamField>
 
 <ParamField body="metadata" type="object">
@@ -47,18 +47,19 @@ IDs of actors participating in the conversation. Each ID should reference an act
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conversations' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/memories/conversations' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "custom_id": "session-20250601-042",
     "name": "Product Feedback Call",
-    "kind": "interview",
+    "kind": "DIRECT",
+    "rw_project_ids": ["proj_def456"],
     "metadata": {
       "channel": "zoom",
       "language": "en"
     },
-    "actor_ids": ["actor_user_jane", "actor_interviewer_alex"]
+    "actor_ids": ["actor_user_jane", "actor_assistant_v2"]
   }'
 ```
 </RequestExample>
@@ -69,10 +70,10 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
 <Expandable title="Conversation object">
   <ResponseField name="id" type="string">Unique conversation identifier</ResponseField>
   <ResponseField name="name" type="string">Display name for the conversation</ResponseField>
-  <ResponseField name="kind" type="string">Conversation type</ResponseField>
+  <ResponseField name="kind" type="string">Conversation kind: `DIRECT` or `GROUP`</ResponseField>
   <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the conversation</ResponseField>
-  <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
-  <ResponseField name="project_id" type="string">ID of the project this conversation belongs to</ResponseField>
+  <ResponseField name="custom_id" type="string">Caller-defined unique identifier</ResponseField>
+  <ResponseField name="rw_project_ids" type="array">Read-write project(s) this conversation reads/writes memory to</ResponseField>
   <ResponseField name="actor_ids" type="array">IDs of actors participating in the conversation</ResponseField>
   <ResponseField name="current_message_id" type="string">ID of the latest message in the conversation</ResponseField>
   <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
@@ -87,14 +88,14 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
   "data": {
     "id": "conv_7d2e3f4a5b6c7d8e",
     "name": "Product Feedback Call",
-    "kind": "interview",
+    "kind": "DIRECT",
     "metadata": {
       "channel": "zoom",
       "language": "en"
     },
     "custom_id": "session-20250601-042",
-    "project_id": "proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6",
-    "actor_ids": ["actor_user_jane", "actor_interviewer_alex"],
+    "rw_project_ids": ["proj_def456"],
+    "actor_ids": ["actor_user_jane", "actor_assistant_v2"],
     "current_message_id": null,
     "created_at": "2025-06-01T14:00:00Z",
     "updated_at": "2025-06-01T14:00:00Z"

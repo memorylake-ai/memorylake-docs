@@ -57,7 +57,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
   <ResponseField name="details" type="array">
   每个文件的导入结果。
   <Expandable title="导入详情">
-    <ResponseField name="result" type="string">该文件的结果：`success`、`failure` 或 `duplicate`。</ResponseField>
+    <ResponseField name="result" type="string">该文件的结果：`success`、`failed` 或 `duplicate`。</ResponseField>
     <ResponseField name="drive_item_id" type="string">已处理的资料库项目 ID。</ResponseField>
     <ResponseField name="document_id" type="string">分配给已导入文件的文档 ID。当 `result` 为 `success` 时存在。</ResponseField>
   </Expandable>
