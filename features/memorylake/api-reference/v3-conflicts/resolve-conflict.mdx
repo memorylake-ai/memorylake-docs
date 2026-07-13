@@ -1,0 +1,89 @@
+---
+title: "Resolve Memory Conflict"
+description: "Apply a resolution strategy to a memory conflict"
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conflicts/{conflictId}/resolve
+```
+
+Applies a resolution strategy to a conflict. You can keep one of the conflicting facts, merge them into a single updated fact, or dismiss the conflict as a false positive.
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="conflictId" type="string" required>
+Conflict identifier
+</ParamField>
+
+### Request Body
+
+<ParamField body="strategy" type="string" required>
+Resolution strategy to apply:
+
+| Strategy | What it does |
+|---|---|
+| `keep_first` | Keep the first (older) fact and discard the second |
+| `keep_second` | Keep the second (newer) fact and discard the first |
+| `merge` | Replace both facts with a single merged fact. **Requires** `merged_content`. |
+| `dismiss` | Mark the conflict as resolved without changing any facts |
+</ParamField>
+
+<ParamField body="keep_source_id" type="string">
+ID of the fact to keep. Required when `strategy` is `keep_first` or `keep_second`.
+</ParamField>
+
+<ParamField body="merged_content" type="string">
+The merged fact text. Required when `strategy` is `merge`; ignored otherwise.
+</ParamField>
+
+<RequestExample>
+```bash Keep the newer fact
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/conflicts/conf-abc123/resolve' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "strategy": "keep_second",
+    "keep_source_id": "fact-002"
+  }'
+```
+
+```bash Merge both facts
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/conflicts/conf-abc123/resolve' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "strategy": "merge",
+    "merged_content": "Project deadline was originally March 2025 but was moved to June 2025"
+  }'
+```
+
+```bash Dismiss
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/conflicts/conf-abc123/resolve' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "strategy": "dismiss"
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns an empty `data` object on success.
+
+<ResponseField name="data" type="object">
+Empty object confirming the conflict was resolved
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {}
+}
+```
+</ResponseExample>

@@ -1,0 +1,154 @@
+---
+title: "Actors & Memory"
+description: "How actors provide per-user identity and cross-project memory in MemoryLake"
+---
+
+## What is an Actor?
+
+An actor is a participant identity in MemoryLake. Every person or AI assistant that takes part in conversations gets an actor, and MemoryLake uses that identity to associate facts with the right participant.
+
+Actors are the **subject** of memory. When MemoryLake extracts a fact like "Jane prefers concise answers," it attaches that fact to Jane's actor. The fact then follows Jane across every project in the workspace -- if she switches from the support bot to the product assistant, her preferences are already known.
+
+### Actor types
+
+MemoryLake supports two actor types:
+
+| Type | Description | Example |
+|---|---|---|
+| `HUMAN` | A real person interacting with your application | An end user, a team member |
+| `ASSISTANT` | An AI agent or bot | A customer support agent, a coding assistant |
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/actors \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Jane",
+    "type": "HUMAN"
+  }'
+```
+
+### Actors and agents
+
+When you create an **Agent** in MemoryLake (an AI agent definition with a model, system prompt, and capabilities), an Actor is automatically generated for it. This means agents accumulate memory too -- the system can learn which tools an agent uses most, which patterns it follows, and what context it needs.
+
+You do not need to create an actor manually for agents. The actor is created as part of the agent lifecycle.
+
+## Two Scopes of Memory
+
+MemoryLake extracts facts from conversations and stores them at two scopes:
+
+### Project Facts
+
+Project facts are knowledge extracted from conversations that applies to the project as a whole. These facts are not tied to any specific actor.
+
+**Examples of project facts:**
+- "The billing feature targets Q3 launch"
+- "The team uses PostgreSQL for the database"
+- "Support tickets should be escalated after 24 hours"
+
+Project facts are scoped to a single project and appear in search results when you query that project's workspace.
+
+### Actor Facts
+
+Actor facts are knowledge associated with a specific person or assistant. These facts follow the actor across all projects within a workspace.
+
+**Examples of actor facts:**
+- "Jane prefers concise answers"
+- "Jane works at Acme Corp as a product manager"
+- "Jane uses dark mode in all her apps"
+
+Actor facts are what make MemoryLake's per-user memory work. Regardless of which project Jane interacts with, her preferences and context are available.
+
+<Note>
+Both fact types are extracted automatically from conversations. You do not need to manually categorize facts -- MemoryLake determines the appropriate scope during extraction.
+</Note>
+
+## How Per-User Memory Works
+
+Here is a practical example. Imagine Jane interacts with three different projects in the same workspace:
+
+```
+Workspace: "Acme Corp"
+
+  Project: "Support Bot"
+    Jane says: "I prefer email over chat for follow-ups"
+    -> Actor Fact: "Jane prefers email over chat for follow-ups"
+
+  Project: "Product Assistant"  
+    Jane says: "I manage the billing team"
+    -> Actor Fact: "Jane manages the billing team"
+
+  Project: "Engineering Docs"
+    Jane searches for billing-related architecture docs
+    -> The assistant already knows Jane manages billing (from her actor facts)
+```
+
+When Jane moves to a new project, the assistant can query her actor facts and immediately know:
+- She prefers email over chat
+- She manages the billing team
+- She prefers concise answers
+- She uses dark mode
+
+This happens automatically. You submit messages with Jane's `actor_id`, and MemoryLake handles the rest.
+
+### Binding actors to workspaces
+
+For an actor's facts to be accessible within a workspace, the actor must be **bound** to that workspace. Binding tells MemoryLake that this actor participates in this workspace's projects.
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspace_id}/actors/{actor_id}/bind \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY"
+```
+
+<Tip>
+Bind actors to a workspace before submitting conversations. This ensures facts are correctly associated and searchable from the start.
+</Tip>
+
+See the [Bind Actor API reference](/features/memorylake/api-reference/actors/bind-actor) for details.
+
+## Managing Facts
+
+You have full control over the facts MemoryLake extracts. For both project facts and actor facts, you can:
+
+- **List** all facts to see what MemoryLake has learned
+- **Get** a specific fact by ID
+- **Update** a fact to correct or refine it
+- **Forget** a fact to remove it permanently
+- **Batch forget** multiple facts at once
+
+This is useful for data privacy (removing a user's facts when they request deletion), correcting inaccurate extractions, or managing the knowledge base over time.
+
+<Warning>
+Forgetting a fact is permanent. The fact is deleted and cannot be recovered. Use batch forget carefully.
+</Warning>
+
+## Best Practices
+
+**One actor per real identity.** Do not create multiple actors for the same person. Memory only works when facts accumulate on a single actor identity.
+
+**Include `actor_id` in user messages.** When you submit messages to a conversation, include the `actor_id` on messages from the user. This is how MemoryLake knows which actor to associate facts with.
+
+**Use HUMAN for people, ASSISTANT for bots.** The type distinction helps MemoryLake understand the conversation dynamics and extract facts more accurately.
+
+**Bind before you converse.** Bind actors to a workspace before submitting conversations. This ensures facts are properly indexed and searchable.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Memory Pipeline" icon="diagram-project" href="/features/memorylake/core-concepts/memory-pipeline">
+Understand how conversations become structured facts
+</Card>
+
+<Card title="Workspaces & Projects" icon="layer-group" href="/features/memorylake/core-concepts/workspaces-and-projects">
+Learn about the resource hierarchy that actors live within
+</Card>
+
+<Card title="Actors API" icon="code" href="/features/memorylake/api-reference/actors/overview">
+Full API reference for actor operations
+</Card>
+
+<Card title="Actor Facts API" icon="code" href="/features/memorylake/api-reference/facts/list-actor-facts">
+API reference for listing and managing actor facts
+</Card>
+</CardGroup>

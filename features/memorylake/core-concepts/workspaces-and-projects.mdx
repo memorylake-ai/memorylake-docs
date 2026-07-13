@@ -1,0 +1,141 @@
+---
+title: "Workspaces & Projects"
+description: "Understand the resource hierarchy -- workspaces for data isolation, projects for organizing knowledge"
+---
+
+## Workspaces
+
+A workspace is the top-level namespace in MemoryLake. It provides complete data isolation -- actors, projects, documents, conversations, and facts within one workspace are invisible to another.
+
+You can think of a workspace as a tenant. If you are building a multi-tenant application, each of your customers gets their own workspace. If you are a single team, you might use one workspace for production and another for development.
+
+### What a workspace contains
+
+```
+Workspace
+  +-- Actors (participant identities bound to this workspace)
+  +-- Agents (AI agent definitions bound to this workspace)
+  +-- Projects
+        +-- Documents
+        +-- Conversations + Messages
+        +-- Project Facts
+```
+
+Every resource in MemoryLake belongs to a workspace. When you search, you search within a workspace. When an actor accumulates facts, those facts live within the workspace where the conversations happened.
+
+### Creating a workspace
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Production",
+    "description": "Production workspace for customer-facing agents"
+  }'
+```
+
+See the [Workspaces API reference](/features/memorylake/api-reference/workspaces/overview) for the full set of workspace operations.
+
+## Projects
+
+A project is a knowledge container within a workspace. It holds the three types of content that MemoryLake works with:
+
+- **Documents** -- files imported from the Library, indexed for semantic search
+- **Conversations** -- user-assistant message exchanges
+- **Project Facts** -- structured knowledge extracted from conversations, scoped to this project
+
+### When to create a project
+
+Create a project for each distinct knowledge domain, use case, or application. Some examples:
+
+| Scenario | Project structure |
+|---|---|
+| A customer support bot | One project per product line or knowledge domain |
+| A personal assistant | One project per user, or one shared project with actor-level memory |
+| A research tool | One project per research topic or dataset |
+| A coding assistant | One project per repository or codebase |
+
+<Tip>
+Projects are lightweight. It is better to create multiple focused projects than one large project with mixed content. Smaller, focused projects produce better search results.
+</Tip>
+
+### Creating a project
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspace_id}/projects \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Customer Support - Billing",
+    "description": "Knowledge base for billing-related support queries"
+  }'
+```
+
+See the [Projects API reference](/features/memorylake/api-reference/v3-projects/overview) for the full set of project operations.
+
+## Workspaces vs. Projects
+
+Use this decision guide to choose the right level of separation:
+
+| Need | Use |
+|---|---|
+| **Data isolation between tenants** | Separate workspaces |
+| **Different environments** (dev, staging, prod) | Separate workspaces |
+| **Different knowledge domains** within the same tenant | Separate projects in one workspace |
+| **Per-user memory** that follows the user across domains | One workspace with multiple projects (actors carry facts across projects) |
+| **Shared search** across multiple knowledge sources | Multiple projects in one workspace (search is workspace-scoped) |
+
+<Note>
+Search operates at the workspace level. If you need to search across multiple knowledge domains in a single query, put those domains in separate projects within the same workspace.
+</Note>
+
+### Multi-tenant patterns
+
+For multi-tenant applications, the most common pattern is **one workspace per tenant**:
+
+```
+Your Application
+  +-- Workspace: "Acme Corp"
+  |     +-- Project: "Engineering Docs"
+  |     +-- Project: "Support Knowledge Base"
+  |
+  +-- Workspace: "Globex Inc"
+        +-- Project: "Product Docs"
+        +-- Project: "Internal Wiki"
+```
+
+This guarantees that Acme Corp's data is never visible to Globex Inc, and vice versa. Each workspace has its own actors, so user memory is also isolated between tenants.
+
+### Single-tenant patterns
+
+For single-team or single-application use cases, you typically use **one workspace with multiple projects**:
+
+```
+Workspace: "My Team"
+  +-- Project: "Product Knowledge"
+  +-- Project: "Engineering Runbooks"
+  +-- Project: "Customer Feedback"
+```
+
+Actors in this workspace can accumulate facts across all three projects. When Jane asks a question in the "Product Knowledge" project and later interacts with the "Engineering Runbooks" project, her actor facts from both interactions are available.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Actors & Memory" icon="user" href="/features/memorylake/core-concepts/actors-and-memory">
+Learn how actors provide per-user memory across projects
+</Card>
+
+<Card title="Memory Pipeline" icon="diagram-project" href="/features/memorylake/core-concepts/memory-pipeline">
+Understand how conversations become structured facts
+</Card>
+
+<Card title="Workspaces API" icon="code" href="/features/memorylake/api-reference/workspaces/overview">
+Full API reference for workspace operations
+</Card>
+
+<Card title="Projects API" icon="code" href="/features/memorylake/api-reference/v3-projects/overview">
+Full API reference for project operations
+</Card>
+</CardGroup>

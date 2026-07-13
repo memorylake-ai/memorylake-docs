@@ -1,0 +1,67 @@
+---
+title: "Get Workspace"
+description: "Retrieve workspace details by ID or custom ID"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{id}
+```
+
+Retrieves a workspace by its internal ID or by its `custom_id`. To look up a workspace using your caller-defined `custom_id`, set the `by_custom_id` query parameter to `true` and pass the custom ID as the path parameter.
+
+<Note>
+**Permission required:** `workspace:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Workspace identifier. Pass the internal workspace ID, or the `custom_id` value when `by_custom_id` is set to `true`.
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="by_custom_id" type="boolean" default="false">
+Set to `true` to look up the workspace by `custom_id` instead of the internal ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Workspace object">
+  <ResponseField name="id" type="string">Unique workspace identifier</ResponseField>
+  <ResponseField name="name" type="string">Workspace name</ResponseField>
+  <ResponseField name="description" type="string">Workspace description</ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the workspace</ResponseField>
+  <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "ws_abc123def456",
+    "name": "My Research Workspace",
+    "description": "Central workspace for research documents and notes",
+    "metadata": {
+      "team": "research",
+      "priority": "high"
+    },
+    "custom_id": "research-ws-001",
+    "created_at": "2025-03-10T08:30:00Z",
+    "updated_at": "2025-03-15T12:00:00Z"
+  }
+}
+```
+</ResponseExample>

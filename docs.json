@@ -71,37 +71,15 @@
               "features/memorylake/overview",
               "features/memorylake/quickstart",
               {
-                "group": "Document Management",
+                "group": "Core Concepts",
                 "pages": [
-                  "features/memorylake/document-management/overview",
-                  "features/memorylake/document-management/file-folder-operations",
-                  "features/memorylake/document-management/metadata-comments"
+                  "features/memorylake/core-concepts/workspaces-and-projects",
+                  "features/memorylake/core-concepts/actors-and-memory",
+                  "features/memorylake/core-concepts/memory-pipeline"
                 ]
               },
               {
-                "group": "Connectors",
-                "pages": [
-                  "features/memorylake/connectors/overview",
-                  "features/memorylake/connectors/wps-integration"
-                ]
-              },
-              {
-                "group": "Project Management",
-                "pages": [
-                  "features/memorylake/project-management/overview",
-                  "features/memorylake/project-management/project-dashboard",
-                  "features/memorylake/project-management/document-association"
-                ]
-              },
-              {
-                "group": "Memories",
-                "pages": [
-                  "features/memorylake/memories/overview",
-                  "features/memorylake/memories/best-practices"
-                ]
-              },
-              {
-                "group": "MCP Servers",
+                "group": "MCP Integration",
                 "pages": [
                   "features/memorylake/mcp-servers/overview",
                   "features/memorylake/mcp-servers/creating-api-keys"
@@ -135,6 +113,15 @@
               "features/memorylake/api-reference/overview",
               "features/memorylake/api-reference/authentication",
               {
+                "group": "Core Memory Operations",
+                "pages": [
+                  "features/memorylake/api-reference/core-memory/overview",
+                  "features/memorylake/api-reference/v3-documents/import-documents",
+                  "features/memorylake/api-reference/conversations/create-message",
+                  "features/memorylake/api-reference/search/search-memories"
+                ]
+              },
+              {
                 "group": "Library",
                 "pages": [
                   "features/memorylake/api-reference/library/overview",
@@ -148,39 +135,142 @@
                 ]
               },
               {
+                "group": "Workspaces",
+                "pages": [
+                  "features/memorylake/api-reference/workspaces/overview",
+                  "features/memorylake/api-reference/workspaces/list-workspaces",
+                  "features/memorylake/api-reference/workspaces/create-workspace",
+                  "features/memorylake/api-reference/workspaces/get-workspace",
+                  "features/memorylake/api-reference/workspaces/update-workspace",
+                  "features/memorylake/api-reference/workspaces/delete-workspace",
+                  {
+                    "group": "Conversations",
+                    "pages": [
+                      "features/memorylake/api-reference/conversations/list-conversations",
+                      "features/memorylake/api-reference/conversations/create-conversation",
+                      "features/memorylake/api-reference/conversations/get-conversation",
+                      "features/memorylake/api-reference/conversations/delete-conversation",
+                      "features/memorylake/api-reference/conversations/list-messages",
+                      "features/memorylake/api-reference/conversations/batch-get-messages"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Actors",
+                "pages": [
+                  "features/memorylake/api-reference/actors/overview",
+                  "features/memorylake/api-reference/actors/list-actors",
+                  "features/memorylake/api-reference/actors/create-actor",
+                  "features/memorylake/api-reference/actors/get-actor",
+                  "features/memorylake/api-reference/actors/update-actor",
+                  "features/memorylake/api-reference/actors/delete-actor",
+                  "features/memorylake/api-reference/actors/list-workspace-actors",
+                  "features/memorylake/api-reference/actors/bind-actor",
+                  "features/memorylake/api-reference/actors/unbind-actor",
+                  {
+                    "group": "Actor Facts",
+                    "pages": [
+                      "features/memorylake/api-reference/facts/list-actor-facts",
+                      "features/memorylake/api-reference/facts/get-actor-fact",
+                      "features/memorylake/api-reference/facts/update-actor-fact",
+                      "features/memorylake/api-reference/facts/forget-actor-fact",
+                      "features/memorylake/api-reference/facts/batch-forget-actor-facts"
+                    ]
+                  }
+                ]
+              },
+              {
+                "group": "Agents",
+                "pages": [
+                  "features/memorylake/api-reference/agents/overview",
+                  "features/memorylake/api-reference/a2a/overview",
+                  "features/memorylake/api-reference/agents/list-agents",
+                  "features/memorylake/api-reference/agents/create-agent",
+                  "features/memorylake/api-reference/agents/get-agent",
+                  "features/memorylake/api-reference/agents/update-agent",
+                  "features/memorylake/api-reference/agents/delete-agent",
+                  {
+                    "group": "Versions",
+                    "pages": [
+                      "features/memorylake/api-reference/agents/list-agent-versions",
+                      "features/memorylake/api-reference/agents/create-agent-version",
+                      "features/memorylake/api-reference/agents/get-agent-version"
+                    ]
+                  },
+                  "features/memorylake/api-reference/agents/list-workspace-agents",
+                  "features/memorylake/api-reference/agents/bind-agent",
+                  "features/memorylake/api-reference/agents/unbind-agent"
+                ]
+              },
+              {
                 "group": "Projects",
                 "pages": [
-                  "features/memorylake/api-reference/projects/list-projects",
-                  "features/memorylake/api-reference/projects/create-project",
-                  "features/memorylake/api-reference/projects/get-project",
-                  "features/memorylake/api-reference/projects/update-project",
-                  "features/memorylake/api-reference/projects/delete-project",
-                  "features/memorylake/api-reference/projects/search-project"
+                  "features/memorylake/api-reference/v3-projects/overview",
+                  "features/memorylake/api-reference/v3-projects/list-projects",
+                  "features/memorylake/api-reference/v3-projects/create-project",
+                  "features/memorylake/api-reference/v3-projects/get-project",
+                  "features/memorylake/api-reference/v3-projects/update-project",
+                  "features/memorylake/api-reference/v3-projects/delete-project",
+                  {
+                    "group": "Documents",
+                    "pages": [
+                      "features/memorylake/api-reference/v3-documents/list-documents",
+                      "features/memorylake/api-reference/v3-documents/get-document",
+                      "features/memorylake/api-reference/v3-documents/delete-documents"
+                    ]
+                  },
+                  {
+                    "group": "Project Facts",
+                    "pages": [
+                      "features/memorylake/api-reference/facts/list-facts",
+                      "features/memorylake/api-reference/facts/get-fact",
+                      "features/memorylake/api-reference/facts/update-fact",
+                      "features/memorylake/api-reference/facts/forget-fact",
+                      "features/memorylake/api-reference/facts/batch-forget-facts"
+                    ]
+                  }
                 ]
               },
               {
-                "group": "Documents",
+                "group": "Deprecated",
                 "pages": [
-                  "features/memorylake/api-reference/memories/list-documents",
-                  "features/memorylake/api-reference/memories/get-document",
-                  "features/memorylake/api-reference/memories/add-document",
-                  "features/memorylake/api-reference/memories/remove-documents",
-                  "features/memorylake/api-reference/memories/search-documents",
-                  "features/memorylake/api-reference/memories/download-document"
-                ]
-              },
-              {
-                "group": "Memories",
-                "pages": [
-                  "features/memorylake/api-reference/memories/add-memory",
-                  "features/memorylake/api-reference/memories/list-memories",
-                  "features/memorylake/api-reference/memories/get-memory",
-                  "features/memorylake/api-reference/memories/get-memory-trace",
-                  "features/memorylake/api-reference/memories/search-memories",
-                  "features/memorylake/api-reference/memories/forget-memory",
-                  "features/memorylake/api-reference/memories/list-memory-conflicts",
-                  "features/memorylake/api-reference/memories/get-memory-conflict",
-                  "features/memorylake/api-reference/memories/resolve-memory-conflict"
+                  {
+                    "group": "Projects",
+                    "pages": [
+                      "features/memorylake/api-reference/projects/list-projects",
+                      "features/memorylake/api-reference/projects/create-project",
+                      "features/memorylake/api-reference/projects/get-project",
+                      "features/memorylake/api-reference/projects/update-project",
+                      "features/memorylake/api-reference/projects/delete-project",
+                      "features/memorylake/api-reference/projects/search-project"
+                    ]
+                  },
+                  {
+                    "group": "Documents",
+                    "pages": [
+                      "features/memorylake/api-reference/memories/list-documents",
+                      "features/memorylake/api-reference/memories/get-document",
+                      "features/memorylake/api-reference/memories/add-document",
+                      "features/memorylake/api-reference/memories/remove-documents",
+                      "features/memorylake/api-reference/memories/search-documents",
+                      "features/memorylake/api-reference/memories/download-document"
+                    ]
+                  },
+                  {
+                    "group": "Memories",
+                    "pages": [
+                      "features/memorylake/api-reference/memories/add-memory",
+                      "features/memorylake/api-reference/memories/list-memories",
+                      "features/memorylake/api-reference/memories/get-memory",
+                      "features/memorylake/api-reference/memories/get-memory-trace",
+                      "features/memorylake/api-reference/memories/search-memories",
+                      "features/memorylake/api-reference/memories/forget-memory",
+                      "features/memorylake/api-reference/memories/list-memory-conflicts",
+                      "features/memorylake/api-reference/memories/get-memory-conflict",
+                      "features/memorylake/api-reference/memories/resolve-memory-conflict"
+                    ]
+                  }
                 ]
               },
               "features/memorylake/api-reference/errors",

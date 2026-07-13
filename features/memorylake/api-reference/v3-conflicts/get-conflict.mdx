@@ -1,0 +1,121 @@
+---
+title: "Get Memory Conflict"
+description: "Retrieve the full details of a single memory conflict"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conflicts/{conflictId}
+```
+
+Returns the complete record for a single conflict, including the fact snapshots captured at detection time, any document excerpts involved, and the resolution details if the conflict has been resolved.
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="conflictId" type="string" required>
+Conflict identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/conflicts/conf-abc123' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="MemoryConflictItem">
+  <ResponseField name="id" type="string">Conflict identifier</ResponseField>
+  <ResponseField name="name" type="string">Short title describing the conflict</ResponseField>
+  <ResponseField name="description" type="string">Detailed explanation of the contradiction</ResponseField>
+  <ResponseField name="category" type="string">Conflict category</ResponseField>
+  <ResponseField name="resolved" type="boolean">Whether the conflict has been resolved</ResponseField>
+  <ResponseField name="resolve" type="object">
+  Resolution details. Present only when `resolved` is `true`; `null` otherwise.
+  <Expandable title="Resolution">
+    <ResponseField name="strategy" type="string">Strategy that was applied (e.g. `keep_first`, `keep_second`, `merge`, `dismiss`)</ResponseField>
+    <ResponseField name="keep_source_id" type="string">ID of the fact that was kept, when applicable</ResponseField>
+    <ResponseField name="merged_content" type="string">Merged fact text, when strategy is `merge`</ResponseField>
+    <ResponseField name="resolved_at" type="string">When the conflict was resolved</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="stale" type="boolean">Whether the underlying content has changed since the conflict was detected</ResponseField>
+  <ResponseField name="conflict_type" type="string">Type of inconsistency detected</ResponseField>
+  <ResponseField name="memory_ids" type="array">IDs of the facts involved in the conflict</ResponseField>
+  <ResponseField name="memory_snapshots" type="array">
+  Snapshots of each fact's text at the time the conflict was detected
+  <Expandable title="Memory snapshot">
+    <ResponseField name="memory_id" type="string">Fact identifier</ResponseField>
+    <ResponseField name="memory_history_id" type="string">History revision ID at detection time</ResponseField>
+    <ResponseField name="memory_text" type="string">Fact text at detection time</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="file_chunks" type="array">
+  Document excerpts involved in the conflict
+  <Expandable title="File chunk">
+    <ResponseField name="document_id" type="string">Document identifier</ResponseField>
+    <ResponseField name="document_name" type="string">Display name of the document</ResponseField>
+    <ResponseField name="chunk" type="object">
+    Matched text span from the document
+    <Expandable title="Chunk">
+      <ResponseField name="type" type="string">Content type (e.g. `text`)</ResponseField>
+      <ResponseField name="text" type="string">Plain-text content</ResponseField>
+      <ResponseField name="range" type="string">Location hint (e.g. page or cell range)</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="event_id" type="string">ID of the event that triggered conflict detection</ResponseField>
+  <ResponseField name="created_at" type="string">When the conflict was first detected</ResponseField>
+  <ResponseField name="updated_at" type="string">When the conflict was last updated</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "conf-abc123",
+    "name": "Contradicting project deadline",
+    "description": "One fact states the project deadline is March 2025; another says it was moved to June 2025.",
+    "category": "fact_conflict",
+    "resolved": true,
+    "resolve": {
+      "strategy": "keep_second",
+      "keep_source_id": "fact-002",
+      "merged_content": null,
+      "resolved_at": "2025-01-21T09:15:00Z"
+    },
+    "stale": false,
+    "conflict_type": "logical",
+    "memory_ids": ["fact-001", "fact-002"],
+    "memory_snapshots": [
+      {
+        "memory_id": "fact-001",
+        "memory_history_id": "hist-a1",
+        "memory_text": "Project deadline is March 2025"
+      },
+      {
+        "memory_id": "fact-002",
+        "memory_history_id": "hist-b2",
+        "memory_text": "Project deadline was moved to June 2025"
+      }
+    ],
+    "file_chunks": [],
+    "event_id": "evt-xyz789",
+    "created_at": "2025-01-20T14:30:00Z",
+    "updated_at": "2025-01-21T09:15:00Z"
+  }
+}
+```
+</ResponseExample>
+
+<Tip>
+To resolve this conflict, call [Resolve Memory Conflict](/features/memorylake/api-reference/v3-conflicts/resolve-conflict) with the strategy you want to apply.
+</Tip>

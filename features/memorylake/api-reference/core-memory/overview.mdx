@@ -1,0 +1,47 @@
+---
+title: "Overview"
+description: "The essential APIs for feeding and querying memories in MemoryLake"
+---
+
+MemoryLake turns your documents and conversations into searchable, structured memories. These four APIs are the core of that capability.
+
+## How It Works
+
+<Steps>
+<Step title="Set up your environment">
+Before using the core APIs, create the required resources:
+
+1. [Create a Workspace](/features/memorylake/api-reference/workspaces/create-workspace) — the namespace that isolates your data
+2. [Create an Actor](/features/memorylake/api-reference/actors/create-actor) — the identity representing your end user
+3. [Create a Project](/features/memorylake/api-reference/v3-projects/create-project) — the container for documents, conversations, and facts
+</Step>
+<Step title="Feed memories">
+Import knowledge into a project through two channels:
+
+- **Documents** — upload files to the [Library](/features/memorylake/api-reference/library/overview), then [import them](/features/memorylake/api-reference/v3-documents/import-documents) into a project. MemoryLake indexes the content for semantic search.
+- **Conversations** — [create a conversation](/features/memorylake/api-reference/conversations/create-conversation), then [append messages](/features/memorylake/api-reference/conversations/create-message). MemoryLake automatically extracts structured facts from the exchange.
+</Step>
+<Step title="Query memories">
+[Search](/features/memorylake/api-reference/search/search-memories) across all memory sources in a workspace using natural language. Results include matched document passages and extracted facts.
+</Step>
+</Steps>
+
+## Core APIs
+
+<CardGroup cols={2}>
+<Card title="Import Documents" icon="file-import" href="/features/memorylake/api-reference/v3-documents/import-documents">
+Import files from the Library into a project for indexing.
+</Card>
+
+<Card title="Create Conversation" icon="comments" href="/features/memorylake/api-reference/conversations/create-conversation">
+Start a new conversation in a project to capture interactions.
+</Card>
+
+<Card title="Append Message" icon="message" href="/features/memorylake/api-reference/conversations/create-message">
+Add a message to a conversation. Facts are extracted automatically.
+</Card>
+
+<Card title="Search Memories" icon="magnifying-glass" href="/features/memorylake/api-reference/search/search-memories">
+Query documents and facts across a workspace with natural language.
+</Card>
+</CardGroup>

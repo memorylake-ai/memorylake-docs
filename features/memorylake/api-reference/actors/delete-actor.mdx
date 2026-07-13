@@ -1,0 +1,45 @@
+---
+title: "Delete Actor"
+description: "Permanently delete an actor"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/actors/{id}
+```
+
+Permanently deletes an actor. Any workspace bindings for this actor are also removed.
+
+<Note>
+**Permission required:** `actor:delete`
+</Note>
+
+<Warning>
+This action is irreversible. Memories and conversation history associated with the actor are not deleted, but the actor can no longer be referenced in new conversations.
+</Warning>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Actor ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/act-a1b2c3d4e5f6' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>

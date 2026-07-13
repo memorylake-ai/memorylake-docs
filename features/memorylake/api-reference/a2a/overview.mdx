@@ -1,0 +1,120 @@
+---
+title: "A2A Integration"
+description: "Use the standard A2A protocol to communicate with MemoryLake agents"
+---
+
+MemoryLake implements the [A2A (Agent-to-Agent) protocol](https://a2a-protocol.org/) by Google. If you are already familiar with A2A, you can use any A2A-compatible client to interact with MemoryLake agents.
+
+Refer to the [A2A specification](https://a2a-protocol.org/latest/specification/) for the standard request and response schemas. Official SDKs are available at [github.com/a2aproject](https://github.com/a2aproject).
+
+<Note>
+**Permission required:** `workspace:a2a`
+</Note>
+
+## Base URL
+
+```
+https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspaceId}/agents/{agentId}/a2a
+```
+
+Append standard A2A paths directly — for example `POST {baseUrl}/message:send` or `GET {baseUrl}/tasks/{taskId}`.
+
+## MemoryLake Extension
+
+MemoryLake extends the standard A2A protocol through the `metadata.memorylake` namespace. Pass this object in the request metadata of `message:send` or `message:stream` to control how the agent interacts with MemoryLake's memory layer.
+
+This is the key difference from a vanilla A2A server — these fields connect the agent to workspaces, projects, and actors in MemoryLake.
+
+<ParamField body="metadata.memorylake" type="object" required>
+MemoryLake-specific configuration. Without this, the agent runs without any memory context.
+<Expandable title="Fields" defaultOpen>
+  <ParamField body="actorId" type="string">
+  Actor identifier representing the end user. Facts extracted from the conversation are associated with this actor, enabling per-user memory.
+  </ParamField>
+
+  <ParamField body="readWriteProjectId" type="string">
+  Project the agent can both read from and write to. Extracted facts and conversation history are persisted to this project.
+  </ParamField>
+
+  <ParamField body="readOnlyProjectIds" type="array">
+  Additional projects the agent can search (documents and facts) but not modify. Use this to give the agent access to shared knowledge bases.
+  </ParamField>
+
+  <ParamField body="subagentMapping" type="object">
+  Maps subagent names (defined in the agent configuration) to concrete agent IDs. Allows dynamic routing of subagent calls at request time.
+  </ParamField>
+
+  <ParamField body="overrides" type="object">
+  Runtime overrides for the agent's configuration.
+  <Expandable title="Override fields">
+    <ParamField body="model" type="string">Override the agent's model (e.g. `gpt-4o`, `claude-sonnet-4-20250514`)</ParamField>
+    <ParamField body="systemPromptOverride" type="string">Replace the agent's system prompt for this request</ParamField>
+    <ParamField body="modelParams" type="object">Override model parameters (e.g. `temperature`, `max_tokens`)</ParamField>
+    <ParamField body="reasoning" type="object">
+    Reasoning configuration
+    <Expandable title="Reasoning fields">
+      <ParamField body="type" type="string">Reasoning type</ParamField>
+      <ParamField body="budgetTokens" type="integer">Token budget for reasoning</ParamField>
+    </Expandable>
+    </ParamField>
+    <ParamField body="capabilitiesOverride" type="array">Override the agent's capabilities list</ParamField>
+    <ParamField body="maxTurns" type="integer">Override the maximum number of turns</ParamField>
+  </Expandable>
+  </ParamField>
+</Expandable>
+</ParamField>
+
+## Example
+
+<RequestExample>
+```bash Send message with memory context
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/message:send' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "message": {
+      "role": "user",
+      "content": [
+        { "text": "How do I configure two-factor authentication?" }
+      ],
+      "contextId": "ctx_m4n7p2q9"
+    },
+    "configuration": {
+      "blocking": true,
+      "historyLength": 10
+    },
+    "metadata": {
+      "memorylake": {
+        "actorId": "act_user_jane",
+        "readWriteProjectId": "proj_def456",
+        "readOnlyProjectIds": ["proj_shared_kb"],
+        "overrides": {
+          "model": "gpt-4o",
+          "maxTurns": 5
+        }
+      }
+    }
+  }'
+```
+
+```bash Stream with memory context (SSE)
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/message:stream' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: text/event-stream' \
+  -d '{
+    "message": {
+      "role": "user",
+      "content": [
+        { "text": "Summarize our last meeting notes" }
+      ]
+    },
+    "metadata": {
+      "memorylake": {
+        "actorId": "act_user_jane",
+        "readOnlyProjectIds": ["proj_meetings"]
+      }
+    }
+  }'
+```
+</RequestExample>

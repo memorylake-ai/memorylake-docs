@@ -1,0 +1,81 @@
+---
+title: "Update Workspace"
+description: "Update an existing workspace's name, description, or metadata"
+---
+
+```
+PATCH /openapi/memorylake/api/v3/workspaces/{id}
+```
+
+Updates an existing workspace. Only the fields you include in the request body are updated; omitted fields remain unchanged.
+
+<Note>
+**Permission required:** `workspace:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Workspace ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string">
+Updated workspace name
+</ParamField>
+
+<ParamField body="description" type="string">
+Updated workspace description
+</ParamField>
+
+<ParamField body="metadata" type="object">
+Updated key-value metadata. Replaces the existing metadata object entirely.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "My Updated Workspace",
+    "description": "Updated workspace description"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Workspace object">
+  <ResponseField name="id" type="string">Unique workspace identifier</ResponseField>
+  <ResponseField name="name" type="string">Updated workspace name</ResponseField>
+  <ResponseField name="description" type="string">Updated workspace description</ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the workspace</ResponseField>
+  <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "id": "ws_abc123def456",
+    "name": "My Updated Workspace",
+    "description": "Updated workspace description",
+    "metadata": {
+      "team": "research",
+      "priority": "high"
+    },
+    "custom_id": "research-ws-001",
+    "created_at": "2025-03-10T08:30:00Z",
+    "updated_at": "2025-03-20T09:15:00Z"
+  }
+}
+```
+</ResponseExample>

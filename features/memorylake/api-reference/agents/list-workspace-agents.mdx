@@ -1,0 +1,82 @@
+---
+title: "List Workspace Agents"
+description: "Returns a paginated list of agents bound to a workspace"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents
+```
+
+Returns a paginated list of all agents that are bound to the specified workspace. Bound agents are available for A2A communication and task execution within the workspace.
+
+<Note>
+**Permission required:** `workspace:agent_list`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer">
+Number of agent bindings to return per page
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page of results
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents?page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated agent binding list">
+  <ResponseField name="items" type="array">
+  Array of agent binding objects
+  <Expandable title="Agent binding object">
+    <ResponseField name="name" type="string">Agent name</ResponseField>
+    <ResponseField name="agent_id" type="string">Agent identifier</ResponseField>
+    <ResponseField name="custom_id" type="string">Custom identifier for external system integration</ResponseField>
+    <ResponseField name="latest_version" type="integer">Latest version number of the agent</ResponseField>
+    <ResponseField name="bound_at" type="string">Timestamp when the agent was bound to the workspace</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to retrieve the next page of results. Absent when there are no more pages.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "name": "Support Assistant",
+        "agent_id": "agt_r8k2m1n3",
+        "custom_id": "support-assistant-v1",
+        "latest_version": 3,
+        "bound_at": "2025-04-01T08:00:00Z"
+      },
+      {
+        "name": "Research Agent",
+        "agent_id": "agt_t5v9w3y7",
+        "custom_id": "research-agent-v1",
+        "latest_version": 1,
+        "bound_at": "2025-04-10T15:30:00Z"
+      }
+    ],
+    "continuation_token": null
+  }
+}
+```
+</ResponseExample>

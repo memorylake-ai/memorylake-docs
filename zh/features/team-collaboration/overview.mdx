@@ -1,0 +1,142 @@
+---
+title: "团队协作概览"
+description: "通过团队、角色、邀请和配额管理多用户协作"
+---
+
+## 快速介绍
+
+团队协作功能帮助您管理共享 API 端点、配额和日志，实现多用户协作，同时保持清晰的访问控制。
+
+- 与同事共享 API 端点、配额和日志，同时保持清晰的访问控制
+- 通过链接或邮箱即时邀请成员，支持撤销或重新发送邀请
+- 为成员分配独立配额，查看团队用量和排行
+- 在个人和团队上下文之间切换，确保调用遵循当前上下文
+
+## 快速开始
+
+1) [创建团队](https://app.memorylake.ai/panel/team)：添加名称和描述，确认默认角色分配规则。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/team/create-team.png"
+    alt="创建团队"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+2) 邀请同事：根据场景选择链接邀请或邮箱邀请。未收到可重新发送，误发可撤销。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/team/invite-colleagues.png"
+    alt="邀请同事"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+3) 配额和角色：为关键成员分配所有者或管理员角色，并为成员分配配额。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/team/quota-roles.png"
+    alt="配额和角色"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+4) 开始使用：在个人和团队上下文之间切换，确保配额和权限与当前身份匹配。
+
+<Frame>
+  <img
+    className="rounded-xl"
+    src="/images/team/start-using.png"
+    alt="开始使用"
+    style={{ width: "100%", height: "auto" }}
+  />
+</Frame>
+
+## 文档
+
+<CardGroup cols={2}>
+<Card title="角色与权限" icon="users" href="/features/team-collaboration/roles-permissions">
+了解团队成员角色和权限管理。
+</Card>
+
+<Card title="权限参考" icon="shield-check" href="/features/team-collaboration/permission-reference">
+查阅每项细粒度权限 — 它允许什么操作、缺失时会看到什么提示，以及可分享给管理员的标识符。
+</Card>
+
+<Card title="邀请与访问" icon="user-plus" href="/features/team-collaboration/invitation-and-access">
+了解如何邀请成员和管理访问权限。
+</Card>
+
+<Card title="配额与用量" icon="gauge" href="/features/team-collaboration/quota-and-usage">
+了解配额分配和用量管理。
+</Card>
+
+<Card title="分析与生命周期" icon="bar-chart" href="/features/team-collaboration/analytics-and-lifecycle">
+查看团队统计和生命周期管理。
+</Card>
+</CardGroup>
+
+## 权限目录
+
+每项权限按功能区域分组。点击能力名称可跳转到[权限参考](/features/team-collaboration/permission-reference)中的完整描述。
+
+每行带有一个 **Level** 标签，取自 OpenAPI 授权矩阵：
+
+- `instance` — 可授予特定资源实例（例如某个项目）。管理员可以将其授予项目 A 而不授予项目 B。
+- `service` — 适用于整个资源类型。一旦授予，将覆盖团队中该资源的所有实例。
+
+### 项目
+
+| 能力 | 标识符 | 级别 |
+|---|---|---|
+| [浏览项目列表](/features/team-collaboration/permission-reference#browse-the-project-list) | `project:list` | `service` |
+| [打开项目](/features/team-collaboration/permission-reference#open-a-project) | `project:read` | `instance` |
+| [创建新项目](/features/team-collaboration/permission-reference#create-a-new-project) | `project:create` | `service` |
+| [编辑项目设置](/features/team-collaboration/permission-reference#edit-project-settings) | `project:modify` | `instance` |
+| [删除项目](/features/team-collaboration/permission-reference#delete-a-project) | `project:delete` | `instance` |
+| [综合搜索](/features/team-collaboration/permission-reference#combined-search-across-documents-and-memories-api-only) | `project:search` | `instance` |
+
+### 文档
+
+| 能力 | 标识符 | 级别 |
+|---|---|---|
+| [查看文件标签页](/features/team-collaboration/permission-reference#see-the-files-tab) | `project:doc_list` | `instance` |
+| [读取文档](/features/team-collaboration/permission-reference#read-a-single-document) | `project:doc_read` | `instance` |
+| [添加文档](/features/team-collaboration/permission-reference#add-a-document-to-a-project) | `project:doc_add` | `instance` |
+| [移除文档](/features/team-collaboration/permission-reference#remove-a-document-from-a-project) | `project:doc_delete` | `instance` |
+| [搜索文档](/features/team-collaboration/permission-reference#search-documents-inside-a-project-api-only) | `project:doc_search` | `instance` |
+
+### 记忆
+
+| 能力 | 标识符 | 级别 |
+|---|---|---|
+| [查看记忆标签页](/features/team-collaboration/permission-reference#see-the-memories-tab) | `project:mem_list` | `instance` |
+| [读取记忆](/features/team-collaboration/permission-reference#read-a-memorys-content) | `project:mem_read` | `instance` |
+| [搜索记忆](/features/team-collaboration/permission-reference#search-memories) | `project:mem_search` | `instance` |
+| [遗忘记忆](/features/team-collaboration/permission-reference#forget-delete-a-memory) | `project:mem_delete` | `instance` |
+| [添加记忆](/features/team-collaboration/permission-reference#add-a-memory-via-api-api-only) | `project:mem_add` | `instance` |
+| [解决记忆冲突](/features/team-collaboration/permission-reference#resolve-conflicting-memories) | `project:mem_conflict_resolve` | `instance` |
+
+### MCP
+
+| 能力 | 标识符 | 级别 |
+|---|---|---|
+| [查看集成标签页](/features/team-collaboration/permission-reference#see-the-integrations-tab) | `project:mcp_read` | `instance` |
+| [列出 MCP 服务](/features/team-collaboration/permission-reference#view-existing-mcp-servers) | `project:mcp_list` | `instance` |
+| [创建 MCP 服务](/features/team-collaboration/permission-reference#create-a-new-mcp-server) | `project:mcp_add` | `instance` |
+| [撤销 MCP 服务](/features/team-collaboration/permission-reference#revoke-an-mcp-server) | `project:mcp_delete` | `instance` |
+
+### 文件库
+
+| 能力 | 标识符 | 级别 |
+|---|---|---|
+| [读取文件](/features/team-collaboration/permission-reference#read-your-files) | `drive:item_read` | `service` |
+| [上传文件](/features/team-collaboration/permission-reference#upload-and-create-files) | `drive:item_add` | `service` |
+| [编辑文件](/features/team-collaboration/permission-reference#edit-your-files) | `drive:item_modify` | `service` |
+| [删除文件](/features/team-collaboration/permission-reference#delete-files) | `drive:item_delete` | `service` |

@@ -1,0 +1,148 @@
+---
+title: "Get Agent"
+description: "Retrieve an agent by ID or custom ID"
+---
+
+```
+GET /openapi/memorylake/api/v3/agents/{id}
+```
+
+Retrieves a single agent. By default, the `id` path parameter is matched against the internal agent ID. Set `by_custom_id=true` to look up the agent by its custom identifier instead.
+
+<Note>
+**Permission required:** `agent:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Agent identifier. Interpreted as the internal ID by default, or as the custom ID when `by_custom_id` is `true`.
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="by_custom_id" type="boolean">
+When `true`, the `id` path parameter is matched against the agent's `custom_id` instead of its internal `id`.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents/agt_r8k2m1n3' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Agent object">
+  <ResponseField name="id" type="string">Unique agent identifier</ResponseField>
+  <ResponseField name="name" type="string">Agent name</ResponseField>
+  <ResponseField name="description" type="string">Agent description</ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value pairs for storing additional agent information</ResponseField>
+  <ResponseField name="version" type="integer">Current active version number</ResponseField>
+  <ResponseField name="model" type="string">Model used by the agent</ResponseField>
+  <ResponseField name="capabilities" type="array">List of capability identifiers the agent supports</ResponseField>
+  <ResponseField name="policies" type="object">
+  Execution policies that constrain agent behavior
+  <Expandable title="Policies object">
+    <ResponseField name="max_turns" type="integer">Maximum number of conversation turns per run</ResponseField>
+    <ResponseField name="max_tool_calls" type="integer">Maximum number of tool calls per turn</ResponseField>
+    <ResponseField name="allow_tools" type="array">Allowlist of tool names the agent may invoke</ResponseField>
+    <ResponseField name="deny_tools" type="array">Denylist of tool names the agent must not invoke</ResponseField>
+    <ResponseField name="subagent_timeout" type="integer">Maximum seconds a subagent may run before being cancelled</ResponseField>
+    <ResponseField name="subagent_max_concurrency" type="integer">Maximum number of subagents that may run concurrently</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="output" type="object">
+  Output configuration for the agent
+  <Expandable title="Output object">
+    <ResponseField name="mode" type="string">Output mode</ResponseField>
+    <ResponseField name="json_schema" type="object">JSON Schema for structured output</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="subagents" type="array">
+  Subagent definitions attached to this agent
+  <Expandable title="Subagent object">
+    <ResponseField name="name" type="string">Subagent name</ResponseField>
+    <ResponseField name="mode" type="string">Execution mode for the subagent</ResponseField>
+    <ResponseField name="context" type="string">Context instructions passed to the subagent</ResponseField>
+    <ResponseField name="inherit_tools" type="boolean">Whether the subagent inherits the parent agent's tools</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="skills" type="array">
+  Skills attached to this agent
+  <Expandable title="Skill reference">
+    <ResponseField name="skill_id" type="string">Skill identifier</ResponseField>
+    <ResponseField name="skill_version" type="integer">Skill version number</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="custom_id" type="string">Custom identifier for external system integration</ResponseField>
+  <ResponseField name="actor_id" type="string">Actor identifier associated with this agent</ResponseField>
+  <ResponseField name="latest_version" type="integer">Latest version number available for this agent</ResponseField>
+  <ResponseField name="system_prompt" type="string">System prompt used to instruct the agent</ResponseField>
+  <ResponseField name="model_settings" type="object">Model-specific settings such as temperature and max tokens</ResponseField>
+  <ResponseField name="runtime_bindings" type="object">Runtime binding configuration for tools and data sources</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "agt_r8k2m1n3",
+    "name": "Support Assistant",
+    "description": "Handles customer support inquiries using knowledge base",
+    "metadata": {
+      "team": "customer-success",
+      "tier": "production"
+    },
+    "version": 3,
+    "model": "gpt-4o",
+    "capabilities": ["tool_use", "memory_read", "memory_write"],
+    "policies": {
+      "max_turns": 20,
+      "max_tool_calls": 10,
+      "allow_tools": ["search_kb", "create_ticket"],
+      "deny_tools": [],
+      "subagent_timeout": 300,
+      "subagent_max_concurrency": 3
+    },
+    "output": {
+      "mode": "text",
+      "json_schema": null
+    },
+    "subagents": [
+      {
+        "name": "ticket-creator",
+        "mode": "delegate",
+        "context": "Create support tickets from conversation context",
+        "inherit_tools": false
+      }
+    ],
+    "skills": [
+      {
+        "skill_id": "skl_kb_search",
+        "skill_version": 2
+      }
+    ],
+    "custom_id": "support-assistant-v1",
+    "actor_id": "act_p4q7w2x9",
+    "latest_version": 3,
+    "system_prompt": "You are a helpful support assistant. Use the knowledge base to answer questions accurately.",
+    "model_settings": {
+      "temperature": 0.7,
+      "max_tokens": 4096
+    },
+    "runtime_bindings": {
+      "knowledge_base": "kb_prod_docs"
+    },
+    "created_at": "2025-03-10T09:00:00Z",
+    "updated_at": "2025-04-22T14:30:00Z"
+  }
+}
+```
+</ResponseExample>

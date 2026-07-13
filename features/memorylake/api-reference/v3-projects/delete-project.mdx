@@ -1,0 +1,48 @@
+---
+title: "Delete Project"
+description: "Permanently delete a project and all its associated data"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}
+```
+
+<Warning>
+This is a destructive operation. The project and all its associated documents and conversations are permanently removed.
+</Warning>
+
+Permanently deletes a project from the workspace. This action cannot be undone.
+
+<Note>
+**Permission required:** `project:delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+Returns an empty `data` field on success.
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {}
+}
+```
+</ResponseExample>

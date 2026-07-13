@@ -1,0 +1,43 @@
+---
+title: "Overview"
+description: "Projects are knowledge containers within a workspace that hold documents, conversations, and facts"
+---
+
+A **Project** is a knowledge container within a [workspace](/features/memorylake/api-reference/workspaces/overview). It is where documents are imported, conversations are captured, and facts are extracted and stored. Each project organizes a distinct body of knowledge — a product's documentation, a customer's interaction history, or a research domain.
+
+## What a Project Contains
+
+```
+Project
+├── Documents — files imported from the Library, indexed for semantic search
+├── Conversations — user-assistant message exchanges
+│   └── Messages — individual messages within a conversation
+└── Project Facts — structured knowledge extracted from conversations
+```
+
+## Typical Workflow
+
+<Steps>
+<Step title="Create a project">
+[Create a project](/features/memorylake/api-reference/v3-projects/create-project) within a workspace to start organizing knowledge.
+</Step>
+<Step title="Import documents">
+Upload files to the [Library](/features/memorylake/api-reference/library/overview), then [import them](/features/memorylake/api-reference/v3-documents/import-documents) into the project. MemoryLake indexes the content for semantic search.
+</Step>
+<Step title="Capture conversations">
+[Create conversations](/features/memorylake/api-reference/conversations/create-conversation) and [append messages](/features/memorylake/api-reference/conversations/create-message). MemoryLake automatically extracts structured facts from the exchanges.
+</Step>
+<Step title="Query and manage">
+[Search](/features/memorylake/api-reference/search/search-memories) across all memory sources, or manage [project facts](/features/memorylake/api-reference/facts/list-facts) directly.
+</Step>
+</Steps>
+
+## Endpoints
+
+| Operation | Method | Path |
+|-----------|--------|------|
+| [List Projects](/features/memorylake/api-reference/v3-projects/list-projects) | `GET` | `/api/v3/workspaces/{id}/projects` |
+| [Create Project](/features/memorylake/api-reference/v3-projects/create-project) | `POST` | `/api/v3/workspaces/{id}/projects` |
+| [Get Project](/features/memorylake/api-reference/v3-projects/get-project) | `GET` | `/api/v3/workspaces/{id}/projects/{projectId}` |
+| [Update Project](/features/memorylake/api-reference/v3-projects/update-project) | `PATCH` | `/api/v3/workspaces/{id}/projects/{projectId}` |
+| [Delete Project](/features/memorylake/api-reference/v3-projects/delete-project) | `DELETE` | `/api/v3/workspaces/{id}/projects/{projectId}` |

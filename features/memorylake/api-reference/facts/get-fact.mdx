@@ -1,0 +1,71 @@
+---
+title: "Get Fact"
+description: "Returns the content and metadata of a single fact"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/facts/{factId}
+```
+
+Returns the content and metadata of a single fact in a project.
+
+<Note>
+**Permission required:** `project:mem_read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+<ParamField path="factId" type="string" required>
+Fact ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/projects/proj_a1b2c3d4e5f6/memories/facts/fact_8f3a1b2c4d5e' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Fact object">
+  <ResponseField name="id" type="string">Unique fact identifier</ResponseField>
+  <ResponseField name="fact" type="string">The fact text</ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the fact</ResponseField>
+  <ResponseField name="expired" type="boolean">Whether the fact has been forgotten</ResponseField>
+  <ResponseField name="score" type="number">Relevance score</ResponseField>
+  <ResponseField name="expiration_date" type="string|null">Scheduled expiration date, or `null` if the fact does not expire</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "fact_8f3a1b2c4d5e",
+    "fact": "User prefers dark mode in all applications",
+    "metadata": {
+      "category": "preferences",
+      "confidence": "high"
+    },
+    "expired": false,
+    "score": 0.95,
+    "expiration_date": null,
+    "created_at": "2025-06-10T14:30:00Z",
+    "updated_at": "2025-06-10T14:30:00Z"
+  }
+}
+```
+</ResponseExample>

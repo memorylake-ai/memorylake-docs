@@ -1,0 +1,95 @@
+---
+title: "MCP 服务器"
+description: "为您的项目生成 API 密钥并配置 MCP（模型上下文协议）服务器"
+---
+
+## 概述
+
+MCP（模型上下文协议）服务器为外部应用程序和 AI 模型提供安全访问您项目数据的 API 端点。
+
+## 什么是 MCP 服务器？
+
+MemoryLake 中的 MCP 服务器是：
+- **API 密钥端点**：用于外部访问的认证 URL
+- **项目级别的**：每个 API 密钥提供对一个项目的访问
+- **只读的**：外部访问无法修改您的数据
+- **安全的**：API 密钥仅在创建时显示一次
+
+{/* SCREENSHOT: MCP servers list view */}
+
+## 主要功能
+
+<Card title="API 密钥生成" icon="key" href="/zh/features/memorylake/mcp-servers/creating-api-keys">
+创建安全的项目访问 API 密钥，密钥仅显示一次。
+</Card>
+
+## 用例
+
+<AccordionGroup>
+<Accordion title="AI 模型集成">
+为 AI 助手（Claude、ChatGPT 等）提供对项目文档和记忆的只读访问权限。
+</Accordion>
+
+<Accordion title="外部应用程序">
+构建自定义应用程序，以编程方式查询您的知识库。
+</Accordion>
+
+<Accordion title="团队访问">
+为团队成员生成 API 密钥，以便从他们的工具中访问项目数据。
+</Accordion>
+
+<Accordion title="自动化">
+创建自动化工作流程，读取项目数据进行报告或分析。
+</Accordion>
+</AccordionGroup>
+
+## 工作原理
+
+<Steps>
+<Step title="生成 API 密钥">
+为您的项目创建一个 API 密钥，可附带可选描述。
+</Step>
+
+<Step title="复制密钥">
+**重要提示**：请立即复制 API 密钥 — 它仅显示一次！
+</Step>
+
+<Step title="使用端点">
+使用提供的端点 URL 和您的 API 密钥访问项目数据。
+</Step>
+
+<Step title="安全存储">
+将您的 API 密钥安全存储（切勿提交到版本控制系统）。
+</Step>
+</Steps>
+
+## MCP 服务器提供的访问内容
+
+使用 API 密钥时，外部应用程序可以读取：
+- **关联文档**：文件列表和内容
+- **记忆**：项目中的所有记忆
+- **文档评论**：附加到文件的评论
+
+<Warning>
+MCP 服务器提供只读访问权限。外部应用程序无法修改、删除或上传内容。
+</Warning>
+
+## 开始使用
+
+准备好创建您的第一个 MCP 服务器端点了吗？
+
+<Card title="创建 API 密钥" icon="plus" href="/zh/features/memorylake/mcp-servers/creating-api-keys">
+生成 API 密钥的分步指南
+</Card>
+
+## 后续步骤
+
+<CardGroup cols={2}>
+<Card title="创建 API 密钥" icon="key" href="/zh/features/memorylake/mcp-servers/creating-api-keys">
+生成您的第一个 API 密钥
+</Card>
+
+<Card title="API 参考" icon="code" href="/features/memorylake/api-reference/mcp-servers">
+查看 API 文档
+</Card>
+</CardGroup>

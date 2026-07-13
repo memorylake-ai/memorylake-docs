@@ -1,5 +1,5 @@
 ---
-title: "Library Overview"
+title: "Overview"
 description: "Manage files and folders in the Library — the storage layer behind MemoryLake projects"
 ---
 
@@ -19,7 +19,7 @@ Use the alias `MY_SPACE` to target your workspace root directly, or pass the `it
 Chunked upload: [create an upload session](/features/memorylake/api-reference/library/create-upload), PUT each chunk, then [create the file item](/features/memorylake/api-reference/library/create-item).
 </Step>
 <Step title="Import the file into a project">
-Call [Add Documents](/features/memorylake/api-reference/memories/add-document) with the `item_id` returned from the previous step.
+Call [Import Documents](/features/memorylake/api-reference/v3-documents/import-documents) with the `item_id` returned from the previous step.
 </Step>
 </Steps>
 
@@ -109,7 +109,7 @@ When creating a file or folder, pick a conflict strategy on the request:
 | `replace` | File-only. Delete the existing file and create a new one. | New |
 
 <Warning>
-`overwrite` and `replace` are not aliases. `overwrite` keeps the existing `item_id`; `replace` issues a new one. Neither option re-processes project documents that were already imported from the file — rerun [Add Documents](/features/memorylake/api-reference/memories/add-document) if you need the new content indexed.
+`overwrite` and `replace` are not aliases. `overwrite` keeps the existing `item_id`; `replace` issues a new one. Neither option re-processes project documents that were already imported from the file — rerun [Import Documents](/features/memorylake/api-reference/v3-documents/import-documents) if you need the new content indexed.
 </Warning>
 
 ## Endpoints

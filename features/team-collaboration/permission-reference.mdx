@@ -14,7 +14,7 @@ Permissions reach an individual member through three layers your admin controls:
 
 1. **Role** — the built-in roles (Owner / Admin / Member) come with a default bundle of capabilities. Owners can also create **custom roles** by cloning a parent role or starting blank. See [Roles and Permissions](/features/team-collaboration/roles-permissions).
 2. **Permission policy** — Allow / Deny rules layered on top of the role. Admins use these to override role defaults (e.g. let Members create projects).
-3. **Resource scope** — per-member whitelist of specific projects or databases a member can act on, plus the subset of operations allowed on each. This is how an `instance`-level capability gets narrowed to one or two projects.
+3. **Resource scope** — per-member whitelist of specific workspaces, projects, or other resources a member can act on, plus the subset of operations allowed on each. This is how an `instance`-level capability gets narrowed to one or two workspaces or projects.
 
 API Keys are programmatic identities (**Service Accounts**) — each one inherits the role and resource scope of the member who created it. Removing a member revokes every key they own.
 
@@ -24,7 +24,7 @@ You don't have to memorize anything. MemoryLake makes missing permissions visibl
 
 <CardGroup cols={2}>
   <Card title="In the console" icon="display">
-    - **A tab disappears** from the project's side menu — that tab needs a permission you don't have.
+    - **A tab disappears** from the side menu — that tab needs a permission you don't have.
     - **A button is greyed out** — hover and the tooltip tells you exactly which permission is missing.
     - **A list loads empty** even though you know there should be items in it.
     - **Opening a URL directly** redirects you back, or shows a "no permission" page.
@@ -40,62 +40,72 @@ You don't have to memorize anything. MemoryLake makes missing permissions visibl
 
 ## How permissions are grouped
 
-Permissions live on just two resources. Every capability below belongs to one of them:
+Permissions live on five resources. Every capability below belongs to one of them:
 
-<CardGroup cols={2}>
+<CardGroup cols={3}>
+  <Card title="Workspace" icon="building">
+    Your tenant-level data boundary — conversations, actor and agent bindings, actor facts, A2A operations, and workspace-scoped search. All `workspace:*` capabilities live here.
+  </Card>
+  <Card title="Actor" icon="user">
+    Individual memory carriers — the people and assistants whose facts accumulate across projects. All `actor:*` capabilities live here.
+  </Card>
+  <Card title="Agent" icon="robot">
+    AI agent definitions — model, system prompt, capabilities, and versioned configurations. All `agent:*` capabilities live here.
+  </Card>
   <Card title="Project" icon="folder">
-    Everything you do inside a project — opening it, editing its settings, working with its documents, memories, and MCP servers. All `project:*` capabilities live here.
+    Knowledge domains inside a workspace — documents, project-scoped facts, and MCP servers. All `project:*` capabilities live here.
   </Card>
   <Card title="Library" icon="hard-drive">
-    Your shared file space — the storage that sits underneath every project. All `drive:*` capabilities live here. Every project's "Add document" picker reads from your Library.
+    Your shared file space — the storage that sits underneath every project. All `drive:*` capabilities live here.
   </Card>
 </CardGroup>
 
 ## How permissions are granted
 
-Every capability has a **Level** — `instance` or `service` — that determines whether your admin can narrow it down to specific projects or databases. Each entry below shows the level in its **Level** line.
+Every capability has a **Level** — `instance` or `service` — that determines whether your admin can narrow it down to specific resources. Each entry below shows the level in its **Level** line.
 
 <CardGroup cols={2}>
   <Card title="Instance-level" icon="filter">
-    Acts on a specific resource instance (one project, one database connection). The role's policy makes the action **available**; the member's **resource scope** decides **which instances** they can perform it on — admins can hand out access to project A and withhold it on project B from the same dialog.
+    Acts on a specific resource instance (one workspace, one project, one actor, one agent). The role's policy makes the action **available**; the member's **resource scope** decides **which instances** they can perform it on — admins can hand out access to workspace A and withhold it on workspace B from the same dialog.
 
-    Covers opening, editing, deleting, and searching a project, plus everything you do with its documents, memories, and MCP servers. Marked `instance` in the catalog.
+    Covers opening, editing, deleting, and searching within a specific workspace or project, plus all operations on its contents. Marked `instance` in the catalog.
   </Card>
   <Card title="Service-level" icon="globe">
     Acts on the resource type as a whole — there is no specific instance to narrow to. Once a role's policy grants it, it applies team-wide; **resource scope has no effect** on these capabilities.
 
-    - **Browse the project list** and **Create a new project** — these don't act on a specific project.
+    - **Browse resource lists** and **create new resources** — these don't act on a specific instance.
     - **All Library capabilities** — Library is one shared file space.
 
     Marked `service` in the catalog.
   </Card>
 </CardGroup>
 
-<Note>If something isn't working in a specific project, the first question to ask is usually: **do I have permission to open that project at all?** Instance-level capabilities only do anything inside projects you've been granted access to.</Note>
+<Note>If something isn't working in a specific workspace or project, the first question to ask is usually: **do I have permission to open that workspace or project at all?** Instance-level capabilities only do anything inside resources you've been granted access to.</Note>
 
 ---
 
 ## Common role recipes
 
-These are typical capability bundles to use as **starting points** when you're either building a custom role or adding **permission policies** on top of the built-in Member role. They are not pre-built roles — Owners assemble them via **Team > Permission Settings**, then narrow `instance` capabilities to the right projects via the member's **Resource Scope** when assigning the role.
+These are typical capability bundles to use as **starting points** when you're either building a custom role or adding **permission policies** on top of the built-in Member role. They are not pre-built roles — Owners assemble them via **Team > Permission Settings**, then narrow `instance` capabilities to the right resources via the member's **Resource Scope** when assigning the role.
 
 <AccordionGroup>
   <Accordion title="Read-only project viewer">
-    Can browse and open a project, read its documents and memories, but can't change anything.
+    Can browse and open a project, read its documents and facts, but can't change anything.
 
     | Identifier | Level | Why |
     |---|---|---|
+    | `workspace:read` | `instance` | Open the workspace the project lives in |
     | `project:list` | `service` | See the project in lists and switcher |
     | `project:read` | `instance` | Open the project's home and tabs |
     | `project:doc_list` | `instance` | See the Files tab |
     | `project:doc_read` | `instance` | Read individual documents |
-    | `project:mem_list` | `instance` | See the Memories tab |
-    | `project:mem_read` | `instance` | Read individual memories |
+    | `project:mem_list` | `instance` | See the Facts tab |
+    | `project:mem_read` | `instance` | Read individual facts |
     | `project:mcp_read` | `instance` | See the Integrations tab |
     | `project:mcp_list` | `instance` | See existing MCP servers (read-only) |
     | `drive:item_read` | `service` | Preview and download files in Library |
 
-    Grant the `instance` permissions on **the specific projects** the viewer should see.
+    Grant the `instance` permissions on **the specific workspace and projects** the viewer should see.
   </Accordion>
 
   <Accordion title="Document curator">
@@ -114,7 +124,7 @@ These are typical capability bundles to use as **starting points** when you're e
   </Accordion>
 
   <Accordion title="Full project admin">
-    Curator **plus** the ability to manage the project itself, its memories, conflicts, and MCP integrations.
+    Curator **plus** the ability to manage the project itself, its facts, conflicts, and MCP integrations.
 
     | Identifier | Level | Why |
     |---|---|---|
@@ -122,12 +132,69 @@ These are typical capability bundles to use as **starting points** when you're e
     | `project:create` | `service` | Spin up new projects |
     | `project:modify` | `instance` | Rename / edit / share the project |
     | `project:delete` | `instance` | Delete the project |
-    | `project:mem_add` | `instance` | Add memories via API |
-    | `project:mem_modify` | `instance` | Update memories |
-    | `project:mem_delete` | `instance` | Forget memories |
-    | `project:mem_conflict_resolve` | `instance` | Resolve memory conflicts |
+    | `project:mem_modify` | `instance` | Update facts |
+    | `project:mem_delete` | `instance` | Forget facts |
+    | `project:mem_conflict_resolve` | `instance` | Resolve fact conflicts |
     | `project:mcp_add` | `instance` | Create MCP servers |
     | `project:mcp_delete` | `instance` | Revoke MCP servers |
+  </Accordion>
+
+  <Accordion title="Workspace administrator">
+    Full workspace lifecycle management — create, configure, and delete workspaces, manage conversations, and control which actors and agents operate in each workspace.
+
+    | Identifier | Level | Why |
+    |---|---|---|
+    | `workspace:list` | `service` | Browse available workspaces |
+    | `workspace:create` | `service` | Spin up new workspaces |
+    | `workspace:read` | `instance` | Open the workspace |
+    | `workspace:modify` | `instance` | Edit workspace settings |
+    | `workspace:delete` | `instance` | Delete the workspace |
+    | `workspace:conv_list` | `instance` | List conversations |
+    | `workspace:conv_read` | `instance` | Read conversation history |
+    | `workspace:conv_append` | `instance` | Send messages |
+    | `workspace:conv_delete` | `instance` | Delete conversations |
+    | `workspace:actor_list` | `instance` | See which actors are bound |
+    | `workspace:actor_bind` | `instance` | Add actors to the workspace |
+    | `workspace:actor_unbind` | `instance` | Remove actors from the workspace |
+    | `workspace:agent_list` | `instance` | See which agents are bound |
+    | `workspace:agent_bind` | `instance` | Add agents to the workspace |
+    | `workspace:agent_unbind` | `instance` | Remove agents from the workspace |
+    | `workspace:a2a` | `instance` | Run A2A protocol operations |
+
+    Grant the `instance` permissions on **the specific workspaces** the administrator should manage.
+  </Accordion>
+
+  <Accordion title="Conversation-only integrator">
+    The minimum set for an API credential that reads and writes conversations in a workspace without managing the workspace itself.
+
+    | Identifier | Level | Why |
+    |---|---|---|
+    | `workspace:read` | `instance` | Open the workspace |
+    | `workspace:conv_list` | `instance` | List conversations |
+    | `workspace:conv_read` | `instance` | Read conversation messages |
+    | `workspace:conv_append` | `instance` | Send messages to conversations |
+
+    Add `workspace:conv_delete` if the integration should also clean up old conversations.
+  </Accordion>
+
+  <Accordion title="Agent operator">
+    Can create, configure, and deploy agents across workspaces — but doesn't need project or document access.
+
+    | Identifier | Level | Why |
+    |---|---|---|
+    | `agent:list` | `service` | Browse available agents |
+    | `agent:create` | `service` | Create new agents |
+    | `agent:read` | `instance` | View agent configuration |
+    | `agent:modify` | `instance` | Update agent identity |
+    | `agent:version_list` | `instance` | See version history |
+    | `agent:version_create` | `instance` | Publish new versions |
+    | `agent:version_read` | `instance` | Inspect a specific version |
+    | `workspace:read` | `instance` | Open the workspace |
+    | `workspace:agent_list` | `instance` | See which agents are bound |
+    | `workspace:agent_bind` | `instance` | Bind agents to workspaces |
+    | `workspace:agent_unbind` | `instance` | Remove agents from workspaces |
+
+    Add `actor:*` permissions if the operator also manages the actors that agents interact with.
   </Accordion>
 
   <Accordion title="MCP integrator (API Key for a single project)">
@@ -135,20 +202,455 @@ These are typical capability bundles to use as **starting points** when you're e
 
     | Identifier | Level | Why |
     |---|---|---|
+    | `workspace:read` | `instance` | Open the workspace the project lives in |
     | `project:read` | `instance` | Open the project |
     | `project:doc_list` | `instance` | Enumerate documents |
     | `project:doc_read` | `instance` | Fetch document detail |
     | `project:doc_search` | `instance` | Semantic search over documents |
-    | `project:mem_list` | `instance` | Enumerate memories |
-    | `project:mem_read` | `instance` | Fetch memory detail |
-    | `project:mem_search` | `instance` | Search memories |
-    | `project:search` | `instance` | Combined document + memory search |
+    | `project:mem_list` | `instance` | Enumerate facts |
+    | `project:mem_read` | `instance` | Fetch fact detail |
+    | `project:mem_search` | `instance` | Search facts |
+    | `project:search` | `instance` | Combined document + fact search |
 
-    Add `project:mem_add` if the integration should also write back memories from its conversations.
+    Add `workspace:conv_append` if the integration should write back conversations that produce facts.
 
     <Note>An API Key is a **Service Account** — it inherits the role and resource scope of the member who created it. To restrict this key to a single project, set the **creator's** resource scope to that project; you can't scope the key independently. If the creator's role or scope changes, the key follows.</Note>
   </Accordion>
 </AccordionGroup>
+
+---
+
+## Working with workspaces
+
+### Browse workspaces
+
+Lets you see your team's workspaces in the list page and workspace switcher.
+
+**Without it:** workspace lists load empty even when you have access to specific workspaces.
+
+**Identifier:** `workspace:list`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+<Note>This permission alone doesn't let you open any workspace. Opening a workspace requires the next one.</Note>
+
+---
+
+### Create a new workspace
+
+Lets you start a brand-new workspace from scratch.
+
+**Without it:** "New workspace" buttons are hidden or greyed out.
+
+**Identifier:** `workspace:create`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+---
+
+### Open a workspace
+
+Lets you open a workspace and view its contents. This permission also gates workspace-scoped search — the [Search Memories](/features/memorylake/api-reference/search/search-memories) API requires it.
+
+**Without it:** workspace cards appear faded and clicking does nothing. Typing the workspace URL directly shows a full-page "no permission" message. Workspace-level search calls return 403.
+
+**Identifier:** `workspace:read`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Edit workspace settings
+
+Lets you rename a workspace, edit its description, and change its configuration.
+
+**Without it:** all "Rename" and "Edit" options are greyed out wherever they appear.
+
+**Identifier:** `workspace:modify`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Delete a workspace
+
+Lets you permanently remove a workspace.
+
+<Warning>Deleting a workspace is destructive — its conversations, actor bindings, agent bindings, and all workspace-scoped data are removed along with it.</Warning>
+
+**Without it:** "Delete" options are greyed out on every workspace card and dialog.
+
+**Identifier:** `workspace:delete`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+## Managing conversations in a workspace
+
+Conversations are workspace-scoped — they live in a workspace and are linked to one or more projects where extracted facts are stored.
+
+### List conversations
+
+Lets you see the list of conversations in a workspace.
+
+**Without it:** the conversations area shows an empty state even when conversations exist.
+
+**Identifier:** `workspace:conv_list`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Read a conversation
+
+Lets you open a conversation and read its messages, including batch-fetching multiple messages at once.
+
+**Without it:** conversation rows appear faded; clicking does nothing.
+
+**Identifier:** `workspace:conv_read`
+
+**Level:** `instance` — granted on a specific workspace.
+
+<Note>This permission alone lets you read existing messages but not add new ones. Sending a message requires the next permission.</Note>
+
+---
+
+### Send a message to a conversation
+
+Lets you append a new message to an existing conversation.
+
+**Without it:** the message input area is disabled and explains it needs the conversation-append permission.
+
+**Identifier:** `workspace:conv_append`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Delete a conversation
+
+Lets you permanently remove a conversation from a workspace.
+
+**Without it:** "Delete" actions on conversations are greyed out.
+
+**Identifier:** `workspace:conv_delete`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+## Managing actor bindings in a workspace
+
+Actors are created globally, then **bound** to workspaces to operate within them. These permissions control which actors can participate in a workspace.
+
+### List workspace actors
+
+Lets you see which actors are bound to a workspace.
+
+**Without it:** the bound-actors list loads empty.
+
+**Identifier:** `workspace:actor_list`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Bind an actor to a workspace
+
+Lets you add an existing actor to a workspace so they can participate in conversations and accumulate facts.
+
+**Without it:** the "Add actor" action is greyed out.
+
+**Identifier:** `workspace:actor_bind`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Remove an actor from a workspace
+
+Lets you unbind an actor from a workspace — they stop participating, but their globally-stored identity and facts remain.
+
+**Without it:** the per-actor "Remove" action is greyed out.
+
+**Identifier:** `workspace:actor_unbind`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+## Managing actor facts in a workspace
+
+Actor facts are knowledge about a specific person or agent that accumulates across projects within a workspace. These permissions control access to that per-actor knowledge.
+
+### List an actor's facts
+
+Lets you see the list of facts that have accumulated for an actor in a workspace.
+
+**Without it:** the actor's facts area loads empty.
+
+**Identifier:** `workspace:actor_fact_list`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Read an actor fact
+
+Lets you view the full content of a specific actor fact.
+
+**Without it:** fact rows appear faded; clicking does nothing.
+
+**Identifier:** `workspace:actor_fact_read`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Update an actor fact
+
+Lets you edit the content of an actor fact.
+
+**Without it:** "Edit" actions on actor facts are greyed out.
+
+**Identifier:** `workspace:actor_fact_modify`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Forget an actor fact
+
+Lets you permanently remove an actor fact.
+
+**Without it:** "Forget" actions on actor facts are greyed out.
+
+**Identifier:** `workspace:actor_fact_delete`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+## Managing agent bindings in a workspace
+
+Agents are created globally, then **bound** to workspaces to serve conversations. These permissions control which agents can operate in a workspace.
+
+### List workspace agents
+
+Lets you see which agents are bound to a workspace.
+
+**Without it:** the bound-agents list loads empty.
+
+**Identifier:** `workspace:agent_list`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Bind an agent to a workspace
+
+Lets you add an existing agent to a workspace so it can serve conversations.
+
+**Without it:** the "Add agent" action is greyed out.
+
+**Identifier:** `workspace:agent_bind`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+### Remove an agent from a workspace
+
+Lets you unbind an agent from a workspace — it stops serving conversations, but its global definition and version history remain.
+
+**Without it:** the per-agent "Remove" action is greyed out.
+
+**Identifier:** `workspace:agent_unbind`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+## A2A protocol operations
+
+### Use the A2A protocol
+
+Lets you initiate and participate in Agent-to-Agent (A2A) protocol operations within a workspace.
+
+**Without it:** A2A requests to this workspace return 403.
+
+**Identifier:** `workspace:a2a`
+
+**Level:** `instance` — granted on a specific workspace.
+
+---
+
+## Working with actors
+
+### Browse actors
+
+Lets you see the list of actors available across your team.
+
+**Without it:** actor lists load empty even when actors exist.
+
+**Identifier:** `actor:list`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+<Note>This permission alone doesn't let you view an actor's details. Viewing an actor requires the next permission after creating one.</Note>
+
+---
+
+### Create an actor
+
+Lets you create a new actor — a person or assistant that can accumulate facts across workspaces and projects.
+
+**Without it:** "New actor" buttons are hidden or greyed out.
+
+**Identifier:** `actor:create`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+---
+
+### View an actor
+
+Lets you open an actor and see their configuration and details.
+
+**Without it:** actor rows appear faded; clicking does nothing. Typing the actor URL directly shows a "no permission" message.
+
+**Identifier:** `actor:read`
+
+**Level:** `instance` — granted on a specific actor.
+
+---
+
+### Edit an actor
+
+Lets you update an actor's name, description, and other settings.
+
+**Without it:** all "Edit" options on the actor are greyed out.
+
+**Identifier:** `actor:modify`
+
+**Level:** `instance` — granted on a specific actor.
+
+---
+
+### Delete an actor
+
+Lets you permanently remove an actor.
+
+<Warning>Deleting an actor removes their identity and fact associations. This cannot be undone.</Warning>
+
+**Without it:** "Delete" options on actors are greyed out.
+
+**Identifier:** `actor:delete`
+
+**Level:** `instance` — granted on a specific actor.
+
+---
+
+## Working with agents
+
+### Browse agents
+
+Lets you see the list of agents available across your team.
+
+**Without it:** agent lists load empty even when agents exist.
+
+**Identifier:** `agent:list`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+---
+
+### Create an agent
+
+Lets you define a new agent with its model, system prompt, and capabilities. Creating an agent automatically creates a corresponding actor.
+
+**Without it:** "New agent" buttons are hidden or greyed out.
+
+**Identifier:** `agent:create`
+
+**Level:** `service` — applies team-wide (not tied to a specific resource instance).
+
+---
+
+### View an agent
+
+Lets you open an agent and see its configuration — model, system prompt, capabilities, and policies.
+
+**Without it:** agent rows appear faded; clicking does nothing.
+
+**Identifier:** `agent:read`
+
+**Level:** `instance` — granted on a specific agent.
+
+---
+
+### Edit an agent's identity
+
+Lets you update an agent's identity fields — name, description, and other top-level settings that apply across all versions.
+
+**Without it:** "Edit" options on the agent's identity are greyed out.
+
+**Identifier:** `agent:modify`
+
+**Level:** `instance` — granted on a specific agent.
+
+<Note>Changing an agent's configuration (model, prompt, capabilities) creates a new **version** — that requires the version-create permission below. This permission only covers identity fields that update in place.</Note>
+
+---
+
+### Delete an agent
+
+Lets you permanently remove an agent and all its versions.
+
+<Warning>Deleting an agent also removes its auto-created actor. This cannot be undone.</Warning>
+
+**Without it:** "Delete" options on agents are greyed out.
+
+**Identifier:** `agent:delete`
+
+**Level:** `instance` — granted on a specific agent.
+
+---
+
+### List agent versions
+
+Lets you see the version history of an agent — each past configuration snapshot.
+
+**Without it:** the versions area loads empty.
+
+**Identifier:** `agent:version_list`
+
+**Level:** `instance` — granted on a specific agent.
+
+---
+
+### Create an agent version
+
+Lets you publish a new version of an agent — a snapshot of updated model, prompt, or capability settings.
+
+**Without it:** the "Publish version" action is greyed out.
+
+**Identifier:** `agent:version_create`
+
+**Level:** `instance` — granted on a specific agent.
+
+---
+
+### View an agent version
+
+Lets you inspect the details of a specific agent version — its model, prompt, and capability configuration at that point in time.
+
+**Without it:** version rows appear faded; clicking does nothing.
+
+**Identifier:** `agent:version_read`
+
+**Level:** `instance` — granted on a specific agent.
 
 ---
 
@@ -208,7 +710,7 @@ Lets you rename a project, edit its description, change which industry it belong
 
 Lets you permanently remove a project.
 
-<Warning>Deleting a project is destructive — its documents and memories are removed along with it.</Warning>
+<Warning>Deleting a project is destructive — its documents and facts are removed along with it.</Warning>
 
 **Without it:** "Delete" options are greyed out on every project card and dialog.
 
@@ -218,11 +720,11 @@ Lets you permanently remove a project.
 
 ---
 
-### Combined search across documents and memories (API-only)
+### Search across a project (API-only)
 
-Lets you call the [Search Memories & Documents in Project](/features/memorylake/api-reference/projects/search-project) API to query both at once.
+Lets you call the [Search Memories](/features/memorylake/api-reference/search/search-memories) API to query documents and facts within a project at once.
 
-**Where this matters:** API integrations only. In the console, search inside a project goes through the document-search and memory-search permissions below.
+**Where this matters:** API integrations only. In the console, search inside a project goes through the document-search and fact-search permissions below.
 
 **Identifier:** `project:search`
 
@@ -246,17 +748,15 @@ Lets you open the **Files** tab on a project and browse the documents attached t
 
 ### Read a single document
 
-Lets you fetch full document details and download the file content through the API.
+Lets you fetch full document details through the API.
 
-**Where this matters:** mostly API integrations, plus the console's background poll that refreshes document processing status. (Console downloads themselves go through the **Read your files** permission in the next section.)
+**Where this matters:** mostly API integrations, plus the console's background poll that refreshes document processing status. Console file downloads go through the **Read your files** permission in the Library section.
 
 **Identifier:** `project:doc_read`
 
 **Level:** `instance` — granted on a specific project.
 
-**Covers these APIs:** [Get Document](/features/memorylake/api-reference/memories/get-document), [Download Document](/features/memorylake/api-reference/memories/download-document).
-
-<Note>The [Download Document](/features/memorylake/api-reference/memories/download-document) API endpoint actually checks **two** permissions together: `project:doc_read` (this one) **and** [`drive:item_read`](#read-your-files) — the server resolves the document to its underlying Library file and forwards to the drive download handler. Without `drive:item_read`, the call returns 403 even though `project:doc_read` is granted.</Note>
+**Covers this API:** [Get Document](/features/memorylake/api-reference/v3-documents/get-document).
 
 ---
 
@@ -271,7 +771,7 @@ Lets you bring a file into a project — through the "Add document" button, the 
 **Level:** `instance` — granted on a specific project.
 
 <Note>
-The [Add Documents](/features/memorylake/api-reference/memories/add-document) API endpoint actually checks **two** permissions together: `project:doc_add` (this one) **and** [`drive:item_read`](#read-your-files) — the server has to read each referenced Library file before importing it. Without `drive:item_read`, the call returns 403 even though `project:doc_add` is granted.
+The [Import Documents](/features/memorylake/api-reference/v3-documents/import-documents) API endpoint actually checks **two** permissions together: `project:doc_add` (this one) **and** [`drive:item_read`](#read-your-files) — the server has to read each referenced Library file before importing it. Without `drive:item_read`, the call returns 403 even though `project:doc_add` is granted.
 
 If you're also **uploading a brand-new file** before importing it, you'll additionally need [`drive:item_add`](#upload-and-create-files) for the Library upload step.
 </Note>
@@ -294,7 +794,7 @@ Lets you take a document out of a project, one at a time or in bulk.
 
 ### Search documents inside a project (API-only)
 
-Lets you call the [Search Documents](/features/memorylake/api-reference/memories/search-documents) API.
+Lets you run semantic search queries over the documents in a project.
 
 **Where this matters:** API integrations only. The console's in-document search is wired to its own controls.
 
@@ -304,39 +804,39 @@ Lets you call the [Search Documents](/features/memorylake/api-reference/memories
 
 ---
 
-## Working with memories inside a project
+## Working with facts inside a project
 
-### See the Memories tab
+### See the Facts tab
 
-Lets you open the **Memories** tab and see the list of memories along with the keyword cloud at the top.
+Lets you open the **Facts** tab and see the list of facts along with the keyword cloud at the top.
 
-**Without it:** the entire Memories tab disappears from the project's side menu. The keyword cloud, conflict list, and the raw change history are all unreachable.
+**Without it:** the entire Facts tab disappears from the project's side menu. The keyword cloud, conflict list, and the raw change history are all unreachable.
 
 **Identifier:** `project:mem_list`
 
 **Level:** `instance` — granted on a specific project.
 
-<Note>This permission alone shows you that memories exist, but not what they say. You also need the next permission to read each memory's full content.</Note>
+<Note>This permission alone shows you that facts exist, but not what they say. You also need the next permission to read each fact's full content.</Note>
 
 ---
 
-### Read a memory's content
+### Read a fact's content
 
-Lets you click a memory row to open its detail panel — full content, timestamps, and the trace of how it changed over time.
+Lets you click a fact row to open its detail panel — full content, timestamps, and source information.
 
-**Without it:** memory rows show as faded; clicking does nothing; drilling into a keyword from the cloud also fails.
+**Without it:** fact rows show as faded; clicking does nothing; drilling into a keyword from the cloud also fails.
 
 **Identifier:** `project:mem_read`
 
 **Level:** `instance` — granted on a specific project.
 
-**Covers these APIs:** [Get Memory](/features/memorylake/api-reference/memories/get-memory), [Get Memory Trace](/features/memorylake/api-reference/memories/get-memory-trace), [Get Memory Conflict](/features/memorylake/api-reference/memories/get-memory-conflict).
+**Covers this API:** [Get Fact](/features/memorylake/api-reference/facts/get-fact).
 
 ---
 
-### Search memories
+### Search facts
 
-Lets you find memories by keyword. The search box at the top of the Memories tab depends on this.
+Lets you find facts by keyword. The search box at the top of the Facts tab depends on this.
 
 **Without it:** the search box itself is hidden — you can scroll the list but you can't filter it.
 
@@ -344,11 +844,37 @@ Lets you find memories by keyword. The search box at the top of the Memories tab
 
 **Level:** `instance` — granted on a specific project.
 
+**Covers this API:** [Search Memories](/features/memorylake/api-reference/search/search-memories).
+
 ---
 
-### Forget (delete) a memory
+### Add a fact via API (API-only)
 
-Lets you make MemoryLake forget a memory, one at a time or in bulk.
+Lets you push a fact in directly through the API.
+
+**Where this matters:** API integrations only. Inside the console, facts are produced automatically from conversations and document ingestion — there's no manual "add a fact" button.
+
+**Identifier:** `project:mem_add`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Update a fact
+
+Lets you edit an existing fact's content.
+
+**Without it:** "Edit" actions on facts are greyed out.
+
+**Identifier:** `project:mem_modify`
+
+**Level:** `instance` — granted on a specific project.
+
+---
+
+### Forget (delete) a fact
+
+Lets you make MemoryLake forget a fact, one at a time or in bulk.
 
 **Without it:** the per-row "Forget" action and the batch-forget action are greyed out.
 
@@ -358,19 +884,7 @@ Lets you make MemoryLake forget a memory, one at a time or in bulk.
 
 ---
 
-### Add a memory via API (API-only)
-
-Lets you push a memory in directly through the [Add Memory](/features/memorylake/api-reference/memories/add-memory) API.
-
-**Where this matters:** API integrations only. Inside the console, memories are produced automatically from chat exchanges and document ingestion — there's no manual "add a memory" button.
-
-**Identifier:** `project:mem_add`
-
-**Level:** `instance` — granted on a specific project.
-
----
-
-### Resolve conflicting memories
+### Resolve conflicting facts
 
 Lets you see the **Conflicts** tab inside a project, review each conflict, and pick how to resolve it.
 
@@ -503,43 +1017,59 @@ Lets you permanently delete files and folders, one or in bulk.
 ## Quick troubleshooting
 
 <AccordionGroup>
+  <Accordion title="I can see the workspace list, but I can't open any of them">
+    You have the **Browse workspaces** permission but not the **Open a workspace** one. Ask your admin to grant `workspace:read` on the specific workspace.
+  </Accordion>
+
   <Accordion title="I can see the project list, but I can't open any of them">
-    You have the **Browse the project list** permission but not the **Open a project** one. Ask your admin to grant `project:read`.
+    You have the **Browse the project list** permission but not the **Open a project** one. Ask your admin to grant `project:read` on the specific project. Also check that you have `workspace:read` on the workspace the project lives in.
   </Accordion>
 
   <Accordion title="A project I can open is missing some tabs in the side menu">
     Each tab depends on its own permission:
-    - **Files** tab → **See the Files tab** (`project:doc_list`)
-    - **Memories** tab → **See the Memories tab** (`project:mem_list`)
-    - **Integrations** tab → **See the Integrations tab** (`project:mcp_read`)
-    - **Conflicts** tab → **Resolve conflicting memories** (`project:mem_conflict_resolve`)
+    - **Files** tab needs `project:doc_list`
+    - **Facts** tab needs `project:mem_list`
+    - **Integrations** tab needs `project:mcp_read`
+    - **Conflicts** tab needs `project:mem_conflict_resolve`
   </Accordion>
 
   <Accordion title="A button is greyed out and I don't know why">
     Hover over the button — the tooltip tells you exactly which permission you'd need. Screenshot the tooltip and forward it to your admin.
   </Accordion>
 
-  <Accordion title="I can see the memory list, but clicking a row does nothing">
-    You can **see** memories exist (`mem_list`) but you can't **read** them (`mem_read`). Ask your admin to grant `project:mem_read`.
+  <Accordion title="I can see the fact list, but clicking a row does nothing">
+    You can **see** facts exist (`mem_list`) but you can't **read** them (`mem_read`). Ask your admin to grant `project:mem_read`.
+  </Accordion>
+
+  <Accordion title="I can see conversations listed, but can't read them">
+    You have `workspace:conv_list` but not `workspace:conv_read`. Ask your admin to grant `workspace:conv_read` on this workspace.
+  </Accordion>
+
+  <Accordion title="I can read a conversation but the message box is disabled">
+    You have `workspace:conv_read` but not `workspace:conv_append`. Ask your admin to grant `workspace:conv_append` on this workspace.
+  </Accordion>
+
+  <Accordion title="I can't bind an agent to a workspace">
+    You need both `agent:read` on the agent **and** `workspace:agent_bind` on the workspace. Check that you have both.
   </Accordion>
 
   <Accordion title="My API call came back with 403 INSUFFICIENT_PERMISSION">
-    The error response names which permission your credential is missing. Find it in the table below or in the relevant section above, then ask your admin to grant that permission to the role tied to your MCP server's credential.
+    The error response names which permission your credential is missing. Find it in the relevant section above, then ask your admin to grant that permission to the role tied to your API key.
   </Accordion>
 
   <Accordion title="I asked my admin for a permission — how do they actually grant it?">
     Admins reach into one of three places depending on what's needed:
 
     - **Permission policy** (under **Team > Permission Settings**) — to enable a capability your role doesn't include by default. The admin adds an Allow rule with the identifier you sent.
-    - **Resource scope** (under **Members > [you] > Set resource scope…**) — to extend an `instance`-level capability to a specific project or database, or to narrow it down.
-    - **Role change** (under **Members > [you] > Assign role…**) — if the capability is already in a bigger role and they'd rather hand you that whole role.
+    - **Resource scope** (under **Members > [you] > Set resource scope...**) — to extend an `instance`-level capability to a specific workspace, project, actor, or agent, or to narrow it down.
+    - **Role change** (under **Members > [you] > Assign role...**) — if the capability is already in a bigger role and they'd rather hand you that whole role.
 
     Owners can do all three. Admins can do the first two but **can't promote you** to Admin or to a custom role — that's Owner-only.
   </Accordion>
 
   <Accordion title="Typing a URL I can't access — what happens?">
-    - The **project home page** shows a full-page "no permission" message with a contact-admin link.
-    - **A tab inside a project you can't see** redirects you back to the project's default tab.
+    - The **workspace or project home page** shows a full-page "no permission" message with a contact-admin link.
+    - **A tab inside a resource you can't see** redirects you back to the default tab.
   </Accordion>
 </AccordionGroup>
 

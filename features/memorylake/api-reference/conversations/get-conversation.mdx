@@ -1,0 +1,82 @@
+---
+title: "Get Conversation"
+description: "Retrieve a conversation by ID or custom ID"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conversations/{conversationId}
+```
+
+Retrieves a single conversation by its ID. You can also look up a conversation by its `custom_id` by setting the `by_custom_id` query parameter to `true`.
+
+<Note>
+**Permission required:** `workspace:conv_read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="conversationId" type="string" required>
+Conversation ID, or the `custom_id` value if `by_custom_id` is `true`
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="by_custom_id" type="boolean" default="false">
+When `true`, treat the `conversationId` path parameter as a `custom_id` lookup instead of the internal ID
+</ParamField>
+
+<RequestExample>
+```bash By ID
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/memories/conversations/conv_7d2e3f4a5b6c7d8e' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash By custom_id
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/memories/conversations/session-20250601-042?by_custom_id=true' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Conversation object">
+  <ResponseField name="id" type="string">Unique conversation identifier</ResponseField>
+  <ResponseField name="name" type="string">Display name for the conversation</ResponseField>
+  <ResponseField name="kind" type="string">Conversation kind: `DIRECT` or `GROUP`</ResponseField>
+  <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the conversation</ResponseField>
+  <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
+  <ResponseField name="rw_project_ids" type="array">Read-write project(s) this conversation reads/writes memory to</ResponseField>
+  <ResponseField name="actor_ids" type="array">IDs of actors participating in the conversation</ResponseField>
+  <ResponseField name="current_message_id" type="string">ID of the latest message in the conversation</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "conv_7d2e3f4a5b6c7d8e",
+    "name": "Product Feedback Call",
+    "kind": "DIRECT",
+    "metadata": {
+      "channel": "zoom",
+      "language": "en"
+    },
+    "custom_id": "session-20250601-042",
+    "rw_project_ids": ["proj_def456"],
+    "actor_ids": ["actor_user_jane", "actor_interviewer_alex"],
+    "current_message_id": "msg_9e4b2c3d5f6a7b8c",
+    "created_at": "2025-06-01T14:00:00Z",
+    "updated_at": "2025-06-01T14:32:00Z"
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,224 @@
+---
+title: "WPS 集成"
+description: "连接您的 WPS 账户并将文档库挂载到 MemoryLake"
+---
+
+## 概述
+
+WPS（金山办公）集成允许您直接在 MemoryLake 中访问您的 WPS 文档库。本指南将带您完成整个设置流程。
+
+## 前提条件
+
+- 有效的 WPS 账户
+- WPS 工作空间中有文档库
+
+## 分步设置
+
+<Steps>
+
+<Step title="打开 WPS 连接器">
+在 MemoryLake 中导航到连接器部分，点击 WPS 连接器卡片。
+
+{/* SCREENSHOT: WPS connector card in connectors section */}
+</Step>
+
+<Step title="发起 OAuth 流程">
+点击"使用 WPS 登录"。一个新窗口将打开 WPS 的授权页面。
+
+{/* SCREENSHOT: OAuth window with WPS login screen */}
+
+<Tip>
+请确保您的浏览器允许 MemoryLake 弹出窗口。OAuth 流程使用弹出窗口。
+</Tip>
+</Step>
+
+<Step title="WPS 认证">
+使用您的凭据登录 WPS 账户。
+- 输入您的 WPS 邮箱/用户名
+- 输入您的密码
+- 如已启用双因素认证，请完成验证
+</Step>
+
+<Step title="授予权限">
+查看 MemoryLake 请求的权限：
+- 对您文档库的读取权限
+- 文件元数据的访问权限
+
+点击"授权"或"允许"以授予访问权限。
+
+<Note>
+MemoryLake 仅请求只读访问权限。我们无法修改或删除您的 WPS 文档。
+</Note>
+</Step>
+
+<Step title="选择文档库">
+授权后，会出现一个对话框显示您可用的 WPS 文档库。
+
+{/* SCREENSHOT: Document library selector with checkboxes */}
+
+- **查看所有文档库**：您的个人文档库和共享文档库都会显示
+- **选择文档库**：勾选您要挂载的文档库
+- **多选**：您可以同时选择多个文档库
+</Step>
+
+<Step title="创建挂载点">
+点击"连接"为已选文档库创建挂载点。
+
+MemoryLake 会创建如下文件夹结构：
+```
+Root/
+└── WPS Space/
+    ├── Library 1/
+    ├── Library 2/
+    └── Library 3/
+```
+
+{/* SCREENSHOT: WPS Space folder in tree with mounted libraries */}
+
+<Check>
+"WPS Space" 文件夹出现在您的云盘中，每个选定的文档库作为子文件夹。
+</Check>
+</Step>
+
+<Step title="浏览 WPS 内容">
+导航到 WPS Space 文件夹以浏览您的 WPS 文档。
+
+- 展开文件夹查看内容
+- 下载文件到本地使用
+- 关联到项目以为 AI 提供上下文
+</Step>
+
+</Steps>
+
+## 管理 WPS 连接
+
+### 查看连接状态
+
+连接器卡片显示连接状态：
+- **已连接**：绿色指示灯，文档库已挂载
+- **可用**：可以连接
+- **错误**：红色指示灯，连接出现问题
+
+### 添加更多文档库
+
+要挂载额外的文档库：
+1. 打开 WPS 连接器设置
+2. 点击"管理连接"
+3. 选择额外的文档库
+4. 点击"连接"
+
+### 移除连接
+
+要取消挂载特定文档库：
+1. 前往 WPS 连接器设置
+2. 查看已连接的文档库
+3. 点击文档库旁边的"移除"
+4. 确认移除
+
+该文档库将从 WPS Space 中消失，但您的 WPS 账户连接仍然保持。
+
+### 断开连接
+
+要完全断开 WPS 连接：
+1. 打开 WPS 连接器设置
+2. 点击"断开连接"
+3. 确认断开
+
+所有 WPS 文档库将被取消挂载，MemoryLake 将失去对您 WPS 账户的访问权限。
+
+<Warning>
+撤销授权会移除所有 WPS 挂载点。已关联到项目的文件将变得不可访问。
+</Warning>
+
+## 使用 WPS 文档
+
+### 浏览 WPS 文件
+
+像浏览普通 MemoryLake 文件夹一样导航 WPS 文档库：
+- 点击文件夹展开
+- 查看文件列表
+- 查看文件元数据
+
+{/* SCREENSHOT: WPS document library expanded showing files */}
+
+### 下载 WPS 文件
+
+要下载 WPS 文件：
+1. 在 WPS Space 中导航到该文件
+2. 右键点击文件
+3. 选择"下载"
+4. 文件下载到您的本地计算机
+
+<Note>
+下载的文件是副本。对本地副本的更改不会同步回 WPS。
+</Note>
+
+### 关联到项目
+
+WPS 文件可以关联到项目：
+1. 打开一个项目
+2. 前往文档标签页
+3. 点击"添加文档"
+4. 导航到 WPS Space
+5. 选择 WPS 文件或文件夹
+6. 确认
+
+通过 MCP 服务器访问的 AI 模型现在可以从 WPS 文档中读取上下文。
+
+### 限制
+
+WPS 挂载的内容为**只读**：
+- ✅ 浏览文件夹结构
+- ✅ 下载文件
+- ✅ 关联到项目
+- ❌ 上传新文件
+- ❌ 编辑现有文件
+- ❌ 删除文件
+- ❌ 重命名或移动文件
+
+<Tip>
+要修改 WPS 文档，请直接使用 WPS 应用程序。刷新后更改会出现在 MemoryLake 中。
+</Tip>
+
+
+## 故障排除
+
+<AccordionGroup>
+
+<Accordion title="OAuth 窗口无法打开">
+**解决方案**：
+- 为 MemoryLake 域名启用弹出窗口
+- 检查浏览器的弹出窗口拦截器设置
+- 尝试使用其他浏览器
+- 暂时禁用浏览器扩展
+</Accordion>
+
+<Accordion title="没有显示文档库">
+**解决方案**：
+- 确认您的 WPS 账户中有文档库
+- 检查 WPS 账户权限
+- 尝试注销 WPS 后重新登录
+- 如果文档库仍然缺失，请联系 WPS 支持
+</Accordion>
+
+</AccordionGroup>
+
+## 安全与隐私
+
+- **OAuth 2.0**：行业标准的安全认证
+- **只读**：MemoryLake 无法修改您的 WPS 内容
+- **令牌存储**：加密存储的访问令牌
+- **可撤销**：随时断开连接
+- **不存储密码**：您的 WPS 密码不会离开 WPS
+
+## 后续步骤
+
+<CardGroup cols={2}>
+<Card title="连接器概述" icon="plug" href="/zh/features/memorylake/connectors/overview">
+了解其他可用连接器
+</Card>
+
+<Card title="项目关联" icon="diagram-project" href="/zh/features/memorylake/project-management/document-association">
+将 WPS 文档关联到项目
+</Card>
+</CardGroup>

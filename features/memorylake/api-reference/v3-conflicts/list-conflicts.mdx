@@ -1,0 +1,132 @@
+---
+title: "List Memory Conflicts"
+description: "Returns a paginated list of memory conflicts in a workspace"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conflicts
+```
+
+When MemoryLake extracts facts from conversations, it compares new facts against existing ones. If a contradiction is detected, it is recorded as a **memory conflict**. Use this endpoint to list conflicts in a workspace so you can surface them to users for review.
+
+You can filter by resolution status to show only unresolved conflicts that need attention, or only resolved ones for audit purposes.
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer">
+Number of conflicts to return per page
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page of results
+</ParamField>
+
+<ParamField query="resolved" type="boolean">
+Filter by resolution status. Pass `true` for resolved conflicts only, `false` for unresolved only. Omit to return both.
+</ParamField>
+
+<RequestExample>
+```bash Unresolved conflicts
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/conflicts?resolved=false&page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash All conflicts
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/conflicts?page_size=50' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated conflict list">
+  <ResponseField name="items" type="array">
+  Array of conflict objects
+  <Expandable title="MemoryConflictItem">
+    <ResponseField name="id" type="string">Conflict identifier</ResponseField>
+    <ResponseField name="name" type="string">Short title describing the conflict</ResponseField>
+    <ResponseField name="description" type="string">Detailed explanation of the contradiction</ResponseField>
+    <ResponseField name="category" type="string">Conflict category</ResponseField>
+    <ResponseField name="resolved" type="boolean">Whether the conflict has been resolved</ResponseField>
+    <ResponseField name="resolve" type="object">Resolution details. Present only when `resolved` is `true`; `null` otherwise.</ResponseField>
+    <ResponseField name="stale" type="boolean">Whether the underlying content has changed since the conflict was detected. Stale conflicts may no longer be accurate.</ResponseField>
+    <ResponseField name="conflict_type" type="string">Type of inconsistency detected</ResponseField>
+    <ResponseField name="memory_ids" type="array">IDs of the facts involved in the conflict</ResponseField>
+    <ResponseField name="memory_snapshots" type="array">
+    Snapshots of each fact's text at the time the conflict was detected
+    <Expandable title="Memory snapshot">
+      <ResponseField name="memory_id" type="string">Fact identifier</ResponseField>
+      <ResponseField name="memory_history_id" type="string">History revision ID at detection time</ResponseField>
+      <ResponseField name="memory_text" type="string">Fact text at detection time</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="file_chunks" type="array">
+    Document excerpts involved in the conflict
+    <Expandable title="File chunk">
+      <ResponseField name="document_id" type="string">Document identifier</ResponseField>
+      <ResponseField name="document_name" type="string">Display name of the document</ResponseField>
+      <ResponseField name="chunk" type="object">
+      Matched text span from the document
+      <Expandable title="Chunk">
+        <ResponseField name="type" type="string">Content type (e.g. `text`)</ResponseField>
+        <ResponseField name="text" type="string">Plain-text content</ResponseField>
+        <ResponseField name="range" type="string">Location hint (e.g. page or cell range)</ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="event_id" type="string">ID of the event that triggered conflict detection</ResponseField>
+    <ResponseField name="created_at" type="string">When the conflict was first detected</ResponseField>
+    <ResponseField name="updated_at" type="string">When the conflict was last updated</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to retrieve the next page of results. Absent when there are no more pages.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "conf-abc123",
+        "name": "Contradicting project deadline",
+        "description": "One fact states the project deadline is March 2025; another says it was moved to June 2025.",
+        "category": "fact_conflict",
+        "resolved": false,
+        "resolve": null,
+        "stale": false,
+        "conflict_type": "logical",
+        "memory_ids": ["fact-001", "fact-002"],
+        "memory_snapshots": [
+          {
+            "memory_id": "fact-001",
+            "memory_history_id": "hist-a1",
+            "memory_text": "Project deadline is March 2025"
+          },
+          {
+            "memory_id": "fact-002",
+            "memory_history_id": "hist-b2",
+            "memory_text": "Project deadline was moved to June 2025"
+          }
+        ],
+        "file_chunks": [],
+        "event_id": "evt-xyz789",
+        "created_at": "2025-01-20T14:30:00Z",
+        "updated_at": "2025-01-20T14:30:00Z"
+      }
+    ],
+    "continuation_token": "eyJsYXN0SWQiOiJjb25mLWFiYzEyMyJ9"
+  }
+}
+```
+</ResponseExample>

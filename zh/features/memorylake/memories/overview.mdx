@@ -1,0 +1,233 @@
+---
+title: "记忆"
+description: "在项目中存储和管理知识片段、笔记和上下文信息"
+---
+
+## 概述
+
+记忆是为您的项目提供上下文的知识片段。存储笔记、指南和信息，帮助人类和 AI 理解您的项目。
+
+## 什么是记忆？
+
+记忆是：
+- **基于文本的**知识片段
+- **项目级别的**上下文信息
+- **AI 可访问的**，通过 MCP 服务器
+- **可搜索**且可管理的
+
+{/* SCREENSHOT: Memories list view */}
+
+## 用例
+
+<CardGroup cols={2}>
+<Card title="项目笔记" icon="note-sticky">
+存储关于项目的重要笔记、决策和观察记录。
+</Card>
+
+<Card title="AI 上下文" icon="robot">
+提供 AI 模型在访问项目时应了解的指南和上下文。
+</Card>
+
+<Card title="知识片段" icon="lightbulb">
+记录洞察、经验教训和关键信息。
+</Card>
+
+<Card title="文档资料" icon="book">
+存储项目文档、流程和参考资料。
+</Card>
+</CardGroup>
+
+## 创建记忆
+
+<Steps>
+<Step title="导航到项目">
+打开您要添加记忆的项目。
+</Step>
+
+<Step title="前往记忆标签页">
+在项目仪表板中点击"记忆"标签页。
+</Step>
+
+<Step title="点击添加记忆">
+点击"添加记忆"按钮。
+
+{/* SCREENSHOT: Add memory button */}
+</Step>
+
+<Step title="填写详情">
+出现一个包含两个字段的对话框：
+
+**名称**（必填）：
+- 简短、描述性的标题
+- 示例："Project Guidelines"、"Research Questions"、"Key Findings"
+
+**内容**（必填）：
+- 记忆的完整文本
+- 可以包含多个段落
+- 纯文本（非 Markdown）
+
+{/* SCREENSHOT: Create memory dialog with sample content */}
+</Step>
+
+<Step title="保存记忆">
+点击"保存"或"创建"来保存记忆。
+
+<Check>
+记忆出现在记忆标签页列表中。
+</Check>
+</Step>
+</Steps>
+
+## 记忆内容指南
+
+### 应该包含的内容
+
+**好的记忆内容**：
+- 关于项目的上下文
+- AI 交互的指南
+- 关键决策及其理由
+- 重要事实和数据
+- 经验教训
+- 相关信息的引用
+
+**示例**：
+```
+This project analyzes customer feedback from Q1 2024.
+
+Key objectives:
+- Identify trending pain points
+- Measure sentiment changes over time
+- Recommend product improvements
+
+When analyzing, prioritize recent feedback and cross-reference with NPS scores.
+
+Related projects: Q4 2023 Analysis, Customer Satisfaction Study
+```
+
+### 长度考量
+
+- **简洁**：每条记忆控制在 100-500 字
+- **聚焦**：每条记忆一个主题
+- **易浏览**：使用换行提高可读性
+- **多条记忆**：创建多条聚焦的记忆比一条冗长的记忆更好
+
+<Tip>
+将记忆想象成索引卡 — 每张卡应包含单一且连贯的信息。
+</Tip>
+
+### 结构
+
+在记忆内容中使用清晰的结构：
+
+```
+**Purpose**: What this project is about
+
+**Context**: Background information
+
+**Guidelines**: How to approach the content
+
+**Important Notes**: Key things to remember
+```
+
+### 清晰性
+
+- 使用简单、清晰的语言
+- 除非必要，避免使用行话
+- 定义可能有歧义的术语
+- 尽量具体而非含糊
+
+## 编辑记忆
+
+<Steps>
+<Step title="找到记忆">
+在记忆标签页列表中找到该记忆。
+</Step>
+
+<Step title="打开编辑对话框">
+点击编辑图标或操作菜单中的"编辑"。
+
+{/* SCREENSHOT: Edit memory dialog */}
+</Step>
+
+<Step title="修改内容">
+根据需要更新名称和/或内容。
+</Step>
+
+<Step title="保存更改">
+点击"保存"以保存您的更改。
+
+<Check>
+更新后的记忆会立即显示新内容。
+</Check>
+</Step>
+</Steps>
+
+## 管理记忆
+
+### 删除记忆
+
+<Warning>
+删除记忆是永久性的。记忆将从项目中移除，AI 模型将无法再访问它。
+</Warning>
+
+<Steps>
+<Step title="选择记忆">
+点击要删除的记忆的删除图标。
+
+{/* SCREENSHOT: Delete confirmation dialog */}
+</Step>
+
+<Step title="确认删除">
+核实记忆名称后点击"删除"确认。
+</Step>
+
+<Step title="确认移除">
+记忆立即从列表中消失。
+</Step>
+</Steps>
+
+
+## 记忆组织
+
+### 命名策略
+
+使用一致的命名模式：
+
+**按主题**：
+- "Architecture - Overview"
+- "Architecture - Database Design"
+- "Architecture - API Structure"
+
+**按类型**：
+- "[Guidelines] Code Style"
+- "[Context] Project History"
+- "[Reference] Related Projects"
+
+**按优先级**：
+- "IMPORTANT: Budget Constraints"
+- "Key Finding: Customer Preference"
+- "Note: Technical Limitation"
+
+### 内容组织
+
+在记忆内容中：
+- 将最重要的信息放在开头
+- 使用一致的格式
+- 包含标题或章节
+- 添加换行提高可读性
+
+## 后续步骤
+
+<CardGroup cols={2}>
+<Card title="最佳实践" icon="star" href="/zh/features/memorylake/memories/best-practices">
+编写有效的记忆
+</Card>
+
+<Card title="MCP 服务器" icon="server" href="/zh/features/memorylake/mcp-servers/overview">
+为 AI 提供对记忆的访问权限
+</Card>
+
+<Card title="Memories API" icon="code" href="/features/memorylake/api-reference/memories">
+通过 API 以编程方式管理记忆
+</Card>
+</CardGroup>

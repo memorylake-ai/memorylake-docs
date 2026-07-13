@@ -1,0 +1,82 @@
+---
+title: "List Workspaces"
+description: "Returns a paginated list of workspaces with optional filtering"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces
+```
+
+Returns a paginated list of workspaces accessible to the authenticated user. You can filter results by name using fuzzy search and control pagination with continuation tokens.
+
+<Note>
+**Permission required:** `workspace:list`
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of workspaces to return per page
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page of results
+</ParamField>
+
+<ParamField query="name_fuzzy" type="string">
+Fuzzy filter by workspace name (partial match)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces?page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated workspace list">
+  <ResponseField name="items" type="array">
+  Array of workspace objects
+  <Expandable title="Workspace object">
+    <ResponseField name="id" type="string">Unique workspace identifier</ResponseField>
+    <ResponseField name="name" type="string">Workspace name</ResponseField>
+    <ResponseField name="description" type="string">Workspace description</ResponseField>
+    <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the workspace</ResponseField>
+    <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+    <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string|null">
+  Token to retrieve the next page. `null` when there are no more results.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "ws_abc123def456",
+        "name": "My Research Workspace",
+        "description": "Central workspace for research documents and notes",
+        "metadata": {
+          "team": "research",
+          "priority": "high"
+        },
+        "custom_id": "research-ws-001",
+        "created_at": "2025-03-10T08:30:00Z",
+        "updated_at": "2025-03-15T12:00:00Z"
+      }
+    ],
+    "continuation_token": "eyJsYXN0X2lkIjoid3NfYWJjMTIzZGVmNDU2In0"
+  }
+}
+```
+</ResponseExample>

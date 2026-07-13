@@ -1,0 +1,224 @@
+---
+title: "Memory Pipeline"
+description: "How MemoryLake processes conversations and documents into searchable, structured memories"
+---
+
+## The Core Flow
+
+MemoryLake has two input channels -- documents and conversations -- that feed into a unified search index. Here is how data flows through the system:
+
+```
+Input Channels                    Processing                    Output
+--------------                    ----------                    ------
+
+Documents -----> Indexing ------+
+  (files from                   |
+   the Library)                 +----> Unified Search Index
+                                |
+Conversations -> Fact --------+
+  (messages)     Extraction
+                   |
+                   +-> Project Facts
+                   +-> Actor Facts
+```
+
+Both channels contribute to the same search results. When you query a workspace, MemoryLake searches across document content and extracted facts together, returning the most relevant results regardless of source.
+
+## Document Memory
+
+Document memory comes from files you import into a project from the Library. MemoryLake indexes the content for semantic search, so you can find relevant passages using natural language queries.
+
+### How it works
+
+<Steps>
+<Step title="Upload to the Library">
+Upload files to the MemoryLake Library using the [Library API](/features/memorylake/api-reference/library/overview). The Library is your central file store -- it holds the original files independent of any project.
+</Step>
+
+<Step title="Import into a project">
+Import documents from the Library into a project using the [Import Documents API](/features/memorylake/api-reference/v3-documents/import-documents). This tells MemoryLake to index the file's content for that project.
+</Step>
+
+<Step title="Indexing">
+MemoryLake processes the document asynchronously -- parsing the content, chunking it, and building a semantic index. Once complete, the document's content is searchable.
+</Step>
+</Steps>
+
+### Supported formats
+
+MemoryLake supports common document formats including PDF, Word (`.docx`), Excel (`.xlsx`), PowerPoint (`.pptx`), plain text, Markdown, and images.
+
+<Tip>
+For best results, use well-structured documents with clear headings and sections. MemoryLake uses the document structure to produce better search results.
+</Tip>
+
+## Conversation Memory
+
+Conversation memory comes from user-assistant exchanges that you submit to a project. This is where MemoryLake's automatic fact extraction happens.
+
+### How it works
+
+<Steps>
+<Step title="Create a conversation">
+Create a conversation in a project to group related messages together.
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspace_id}/memories/conversations \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "custom_id": "planning-001",
+    "kind": "DIRECT",
+    "rw_project_ids": ["{project_id}"],
+    "name": "Planning session"
+  }'
+```
+</Step>
+
+<Step title="Append messages">
+Submit messages to the conversation one at a time. Include the `actor_id` so MemoryLake can associate facts with the right participant.
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/{conversation_id}/messages \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "custom_id": "msg-001",
+    "actor_id": "act_jane456",
+    "content": [{"block_type": "TEXT", "text": "We decided to use React for the frontend. Launch target is March."}]
+  }'
+
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/{conversation_id}/messages \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "custom_id": "msg-002",
+    "actor_id": "act_assistant",
+    "content": [{"block_type": "TEXT", "text": "Got it. I will note that the frontend uses React with a March launch target."}]
+      }
+    ]
+  }'
+```
+</Step>
+
+<Step title="Automatic fact extraction">
+MemoryLake analyzes the messages and extracts structured facts:
+
+- **Project Fact:** "The frontend uses React"
+- **Project Fact:** "Launch target is March"
+- **Actor Fact (Jane):** context about Jane's involvement in the decision
+
+Facts are extracted asynchronously, typically within a few seconds of submitting messages.
+</Step>
+</Steps>
+
+### What gets extracted
+
+MemoryLake identifies and extracts several types of knowledge from conversations:
+
+| Category | Examples |
+|---|---|
+| **Preferences** | "I prefer dark mode," "Send me weekly summaries" |
+| **Decisions** | "We chose PostgreSQL," "The deadline is Q3" |
+| **Personal context** | "I manage the billing team," "I work at Acme Corp" |
+| **Goals and plans** | "We are targeting 10K users by launch," "Next sprint focuses on auth" |
+| **Relationships** | "Sarah is the engineering lead," "The billing team reports to me" |
+
+## How Search Unifies Both Channels
+
+When you search a workspace, MemoryLake queries across both document content and extracted facts in a single request:
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspace_id}/memories/search \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "What technology stack are we using?"}'
+```
+
+The response includes results from both channels:
+
+```json
+{
+  "success": true,
+  "data": {
+    "documents": [
+      {
+        "document_id": "doc_xyz",
+        "document_name": "Tech Stack Overview",
+        "items": [
+          {"text": "...our backend runs on Node.js with PostgreSQL..."}
+        ]
+      }
+    ],
+    "facts": [
+      {
+        "id": "fact_001",
+        "fact": "The frontend uses React",
+        "score": 0.95
+      },
+      {
+        "id": "fact_002",
+        "fact": "The team chose PostgreSQL for the database",
+        "score": 0.88
+      }
+    ]
+  }
+}
+```
+
+The result merges facts extracted from conversations with passages found in documents. From the caller's perspective, it is one query, one result set.
+
+See the [Search API reference](/features/memorylake/api-reference/search/search-memories) for the full set of search parameters and options.
+
+## Documents vs. Conversations: When to Use Each
+
+Both channels feed the same search index, but they serve different purposes:
+
+| Use documents when... | Use conversations when... |
+|---|---|
+| You have existing files (PDFs, docs, wikis) | You are capturing real-time interactions |
+| The information is static or changes infrequently | The information evolves through dialogue |
+| You want full-text search over long-form content | You want automatic fact extraction |
+| You are building a knowledge base from existing materials | You are building per-user memory over time |
+
+<Tip>
+Most applications use both channels. Import your existing documentation as documents, and submit ongoing user interactions as conversations. MemoryLake searches across both seamlessly.
+</Tip>
+
+## Structuring Messages for Better Extraction
+
+The quality of extracted facts depends on how messages are written. Here are some best practices:
+
+**Be explicit.** "I prefer email notifications" extracts better than "yeah email is fine I guess."
+
+**State facts directly.** "Our deadline is March 15" produces a clear, useful fact. Vague statements like "we should probably aim for mid-March" produce less precise extractions.
+
+**Include context.** "We chose React for the frontend because of team expertise" gives MemoryLake more to work with than just "React."
+
+**Use the `actor_id` field.** Always include the actor ID on user messages. Without it, MemoryLake cannot associate personal facts with the right actor.
+
+**Send complete exchanges.** Include both user and assistant messages. The full context of the conversation helps MemoryLake extract more accurate and relevant facts.
+
+<Warning>
+Do not include sensitive information (passwords, API keys, secrets) in conversation messages. Facts are extracted and stored persistently. Treat conversation content the same way you would treat data written to a database.
+</Warning>
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Quick Start" icon="rocket" href="/features/memorylake/quickstart">
+See the full end-to-end flow in action
+</Card>
+
+<Card title="Actors & Memory" icon="user" href="/features/memorylake/core-concepts/actors-and-memory">
+Deep dive into per-user memory with actors
+</Card>
+
+<Card title="Conversations API" icon="code" href="/features/memorylake/api-reference/conversations/create-conversation">
+API reference for creating conversations and messages
+</Card>
+
+<Card title="Search API" icon="code" href="/features/memorylake/api-reference/search/search-memories">
+API reference for searching across documents and facts
+</Card>
+</CardGroup>

@@ -1,0 +1,110 @@
+---
+title: "List Facts"
+description: "Returns a paginated list of facts in a project"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/facts
+```
+
+Returns a paginated list of facts stored in a project. Facts are structured pieces of knowledge automatically extracted from conversations. You can filter by actor or include expired facts.
+
+<Note>
+**Permission required:** `project:mem_list`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of facts to return per page
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page of results
+</ParamField>
+
+<ParamField query="actor_id" type="string">
+Filter facts by a specific actor ID
+</ParamField>
+
+<ParamField query="expired" type="boolean">
+Include expired (forgotten) facts in the results
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/projects/proj_a1b2c3d4e5f6/memories/facts?page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated fact list">
+  <ResponseField name="items" type="array">
+  Array of fact objects
+  <Expandable title="Fact object">
+    <ResponseField name="id" type="string">Unique fact identifier</ResponseField>
+    <ResponseField name="fact" type="string">The fact text</ResponseField>
+    <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the fact</ResponseField>
+    <ResponseField name="expired" type="boolean">Whether the fact has been forgotten</ResponseField>
+    <ResponseField name="score" type="number">Relevance score</ResponseField>
+    <ResponseField name="expiration_date" type="string|null">Scheduled expiration date, or `null` if the fact does not expire</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+    <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string|null">
+  Token to retrieve the next page. `null` when there are no more results.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "fact_8f3a1b2c4d5e",
+        "fact": "User prefers dark mode in all applications",
+        "metadata": {
+          "category": "preferences",
+          "confidence": "high"
+        },
+        "expired": false,
+        "score": 0.95,
+        "expiration_date": null,
+        "created_at": "2025-06-10T14:30:00Z",
+        "updated_at": "2025-06-10T14:30:00Z"
+      },
+      {
+        "id": "fact_2d4e6f8a0b1c",
+        "fact": "User is based in San Francisco timezone (PST/PDT)",
+        "metadata": {
+          "category": "location"
+        },
+        "expired": false,
+        "score": 0.88,
+        "expiration_date": "2026-06-10T14:30:00Z",
+        "created_at": "2025-06-12T09:15:00Z",
+        "updated_at": "2025-06-12T09:15:00Z"
+      }
+    ],
+    "continuation_token": "eyJsYXN0X2lkIjoiZmFjdF8yZDRlNmY4YTBiMWMifQ"
+  }
+}
+```
+</ResponseExample>

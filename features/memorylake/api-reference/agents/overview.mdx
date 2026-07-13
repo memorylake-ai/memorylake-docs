@@ -1,0 +1,34 @@
+---
+title: "Overview"
+description: "Agents are AI agent definitions with versioning, workspace binding, and A2A protocol support"
+---
+
+An **Agent** is a configurable AI agent definition in MemoryLake. Each agent has a model, system prompt, capabilities, and execution policies. When you create an agent, MemoryLake automatically generates an [Actor](/features/memorylake/api-reference/actors/overview) identity for it — because actors are the subject of memory, and agents need to accumulate knowledge just like human users do.
+
+## Key Concepts
+
+### Versioning
+
+Agent configuration is versioned. When you change the model, system prompt, or policies, you [create a new version](/features/memorylake/api-reference/agents/create-agent-version) rather than modifying the existing one. This gives you a history of configurations and the ability to roll back.
+
+Identity fields (name, description, metadata) are updated in place via [Update Agent](/features/memorylake/api-reference/agents/update-agent) — they don't create a new version.
+
+### Workspace Binding
+
+Agents are created globally, then [bound](/features/memorylake/api-reference/agents/bind-agent) to specific workspaces. An agent can only operate within workspaces it is bound to.
+
+### A2A Protocol
+
+MemoryLake agents are accessible via the standard [A2A (Agent-to-Agent) protocol](/features/memorylake/api-reference/a2a/overview). Use any A2A-compatible client to send messages to an agent, with MemoryLake's `metadata.memorylake` extension providing memory context (actor identity, project bindings, model overrides).
+
+## Endpoints
+
+| Operation | Method | Path |
+|-----------|--------|------|
+| [List Agents](/features/memorylake/api-reference/agents/list-agents) | `GET` | `/api/v3/agents` |
+| [Create Agent](/features/memorylake/api-reference/agents/create-agent) | `POST` | `/api/v3/agents` |
+| [Get Agent](/features/memorylake/api-reference/agents/get-agent) | `GET` | `/api/v3/agents/{id}` |
+| [Update Agent](/features/memorylake/api-reference/agents/update-agent) | `PATCH` | `/api/v3/agents/{id}` |
+| [Delete Agent](/features/memorylake/api-reference/agents/delete-agent) | `DELETE` | `/api/v3/agents/{id}` |
+| [Create Version](/features/memorylake/api-reference/agents/create-agent-version) | `POST` | `/api/v3/agents/{id}/versions` |
+| [Bind to Workspace](/features/memorylake/api-reference/agents/bind-agent) | `POST` | `/api/v3/workspaces/{id}/agents` |
