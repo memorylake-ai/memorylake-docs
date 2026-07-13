@@ -34,6 +34,7 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
+    "custom_id": "ws-quickstart-001",
     "name": "My First Workspace",
     "description": "Testing MemoryLake memory extraction"
   }'
@@ -41,10 +42,14 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces \
 
 ```json Response
 {
-  "id": "ws_abc123",
-  "name": "My First Workspace",
-  "description": "Testing MemoryLake memory extraction",
-  "created_at": "2026-07-09T10:00:00Z"
+  "success": true,
+  "data": {
+    "id": "ws_abc123",
+    "custom_id": "ws-quickstart-001",
+    "name": "My First Workspace",
+    "description": "Testing MemoryLake memory extraction",
+    "created_at": "2026-07-09T10:00:00Z"
+  }
 }
 ```
 
@@ -59,17 +64,22 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/actors \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "name": "Jane",
-    "type": "HUMAN"
+    "custom_id": "jane-001",
+    "display_name": "Jane",
+    "actor_type": "HUMAN"
   }'
 ```
 
 ```json Response
 {
-  "id": "act_jane456",
-  "name": "Jane",
-  "type": "HUMAN",
-  "created_at": "2026-07-09T10:01:00Z"
+  "success": true,
+  "data": {
+    "id": "act_jane456",
+    "custom_id": "jane-001",
+    "display_name": "Jane",
+    "actor_type": "HUMAN",
+    "created_at": "2026-07-09T10:01:00Z"
+  }
 }
 ```
 
@@ -86,6 +96,7 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
+    "custom_id": "proj-support-001",
     "name": "Customer Support Bot",
     "description": "Knowledge base for our support assistant"
   }'
@@ -93,17 +104,21 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
 
 ```json Response
 {
-  "id": "proj_def789",
-  "name": "Customer Support Bot",
-  "description": "Knowledge base for our support assistant",
-  "workspace_id": "ws_abc123",
-  "created_at": "2026-07-09T10:02:00Z"
+  "success": true,
+  "data": {
+    "id": "proj_def789",
+    "custom_id": "proj-support-001",
+    "name": "Customer Support Bot",
+    "description": "Knowledge base for our support assistant",
+    "workspace_id": "ws_abc123",
+    "created_at": "2026-07-09T10:02:00Z"
+  }
 }
 ```
 </Step>
 
 <Step title="创建会话并追加消息">
-向项目提交一段会话。首先创建会话，然后向其中添加消息。MemoryLake 会自动从消息中提取结构化事实。
+向工作空间提交一段会话。首先创建会话，然后逐条添加消息。MemoryLake 会自动从消息中提取结构化事实。
 
 **创建会话：**
 
@@ -112,44 +127,58 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
+    "custom_id": "conv-onboarding-001",
+    "kind": "DIRECT",
+    "rw_project_ids": ["proj_def789"],
     "name": "Onboarding chat with Jane"
   }'
 ```
 
 ```json Response
 {
-  "id": "conv_ghi012",
-  "name": "Onboarding chat with Jane",
-  "project_id": "proj_def789",
-  "created_at": "2026-07-09T10:03:00Z"
+  "success": true,
+  "data": {
+    "id": "conv_ghi012",
+    "custom_id": "conv-onboarding-001",
+    "kind": "DIRECT",
+    "rw_project_ids": ["proj_def789"],
+    "name": "Onboarding chat with Jane",
+    "created_at": "2026-07-09T10:03:00Z"
+  }
 }
 ```
 
-**向会话追加消息：**
+**追加第一条消息（用户）：**
 
 ```bash
 curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_ghi012/messages \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "messages": [
+    "custom_id": "msg-001",
+    "actor_id": "act_jane456",
+    "content": [
       {
-        "role": "user",
-        "content": "Hi, I am Jane. I work at Acme Corp as a product manager. I prefer concise answers and I use dark mode in all my apps.",
-        "actor_id": "act_jane456"
-      },
+        "block_type": "TEXT",
+        "text": "Hi, I am Jane. I work at Acme Corp as a product manager. I prefer concise answers and I use dark mode in all my apps."
+      }
+    ]
+  }'
+```
+
+**追加第二条消息（助手）：**
+
+```bash
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_ghi012/messages \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "custom_id": "msg-002",
+    "actor_id": "act_jane456",
+    "content": [
       {
-        "role": "assistant",
-        "content": "Welcome Jane! I have noted your preferences. How can I help you today?"
-      },
-      {
-        "role": "user",
-        "content": "Can you help me draft a PRD for our new billing feature? We are targeting Q3 launch.",
-        "actor_id": "act_jane456"
-      },
-      {
-        "role": "assistant",
-        "content": "Sure! I will help you create a PRD for the billing feature with a Q3 timeline. Let me start with the overview section."
+        "block_type": "TEXT",
+        "text": "Welcome Jane! I have noted your preferences. How can I help you today?"
       }
     ]
   }'
@@ -174,29 +203,36 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
 
 ```json Response
 {
-  "results": [
-    {
-      "type": "fact",
-      "content": "Jane prefers concise answers",
-      "actor_id": "act_jane456",
-      "project_id": "proj_def789",
-      "relevance": 0.95
-    },
-    {
-      "type": "fact",
-      "content": "Jane uses dark mode in all her apps",
-      "actor_id": "act_jane456",
-      "project_id": "proj_def789",
-      "relevance": 0.92
-    },
-    {
-      "type": "fact",
-      "content": "Jane works at Acme Corp as a product manager",
-      "actor_id": "act_jane456",
-      "project_id": "proj_def789",
-      "relevance": 0.85
-    }
-  ]
+  "success": true,
+  "data": {
+    "documents": [],
+    "facts": [
+      {
+        "id": "fact_001",
+        "fact": "Jane prefers concise answers",
+        "score": 0.95,
+        "metadata": {},
+        "created_at": "2026-07-09T10:03:05Z",
+        "updated_at": "2026-07-09T10:03:05Z"
+      },
+      {
+        "id": "fact_002",
+        "fact": "Jane uses dark mode in all her apps",
+        "score": 0.92,
+        "metadata": {},
+        "created_at": "2026-07-09T10:03:05Z",
+        "updated_at": "2026-07-09T10:03:05Z"
+      },
+      {
+        "id": "fact_003",
+        "fact": "Jane works at Acme Corp as a product manager",
+        "score": 0.85,
+        "metadata": {},
+        "created_at": "2026-07-09T10:03:05Z",
+        "updated_at": "2026-07-09T10:03:05Z"
+      }
+    ]
+  }
 }
 ```
 
@@ -226,20 +262,25 @@ workspace = requests.post(
     f"{BASE_URL}/workspaces",
     headers=headers,
     json={
+        "custom_id": "ws-quickstart-001",
         "name": "My First Workspace",
         "description": "Testing MemoryLake memory extraction",
     },
 ).json()
-workspace_id = workspace["id"]
+workspace_id = workspace["data"]["id"]
 print(f"Workspace created: {workspace_id}")
 
 # 2. Create an actor
 actor = requests.post(
     f"{BASE_URL}/actors",
     headers=headers,
-    json={"name": "Jane", "type": "HUMAN"},
+    json={
+        "custom_id": "jane-001",
+        "display_name": "Jane",
+        "actor_type": "HUMAN",
+    },
 ).json()
-actor_id = actor["id"]
+actor_id = actor["data"]["id"]
 print(f"Actor created: {actor_id}")
 
 # 3. Create a project
@@ -247,47 +288,56 @@ project = requests.post(
     f"{BASE_URL}/workspaces/{workspace_id}/projects",
     headers=headers,
     json={
+        "custom_id": "proj-support-001",
         "name": "Customer Support Bot",
         "description": "Knowledge base for our support assistant",
     },
 ).json()
-project_id = project["id"]
+project_id = project["data"]["id"]
 print(f"Project created: {project_id}")
 
 # 4. Create a conversation
 conversation = requests.post(
     f"{BASE_URL}/workspaces/{workspace_id}/memories/conversations",
     headers=headers,
-    json={"name": "Onboarding chat with Jane"},
+    json={
+        "custom_id": "conv-onboarding-001",
+        "kind": "DIRECT",
+        "rw_project_ids": [project_id],
+        "name": "Onboarding chat with Jane",
+    },
 ).json()
-conversation_id = conversation["id"]
+conversation_id = conversation["data"]["id"]
 print(f"Conversation created: {conversation_id}")
 
-# 5. Append messages
+# 5. Append messages (one at a time)
 requests.post(
-    f"{BASE_URL}/workspaces/{workspace_id}/memories/conversations/{conversation_id}/messages",
+    f"{BASE_URL}/conversations/{conversation_id}/messages",
     headers=headers,
     json={
-        "messages": [
+        "custom_id": "msg-001",
+        "actor_id": actor_id,
+        "content": [
             {
-                "role": "user",
-                "content": "Hi, I am Jane. I work at Acme Corp as a product manager. I prefer concise answers.",
-                "actor_id": actor_id,
-            },
+                "block_type": "TEXT",
+                "text": "Hi, I am Jane. I work at Acme Corp as a product manager. I prefer concise answers.",
+            }
+        ],
+    },
+)
+
+requests.post(
+    f"{BASE_URL}/conversations/{conversation_id}/messages",
+    headers=headers,
+    json={
+        "custom_id": "msg-002",
+        "actor_id": actor_id,
+        "content": [
             {
-                "role": "assistant",
-                "content": "Welcome Jane! I have noted your preferences. How can I help you today?",
-            },
-            {
-                "role": "user",
-                "content": "Can you help me draft a PRD for our new billing feature? We are targeting Q3 launch.",
-                "actor_id": actor_id,
-            },
-            {
-                "role": "assistant",
-                "content": "Sure! I will help you create a PRD for the billing feature with a Q3 timeline.",
-            },
-        ]
+                "block_type": "TEXT",
+                "text": "Welcome Jane! I have noted your preferences. How can I help you today?",
+            }
+        ],
     },
 )
 print("Messages submitted")
@@ -304,8 +354,8 @@ results = requests.post(
 ).json()
 
 print("\nExtracted memories:")
-for result in results.get("results", []):
-    print(f"  - [{result['type']}] {result['content']}")
+for fact in results.get("data", {}).get("facts", []):
+    print(f"  - {fact['fact']} (score: {fact['score']})")
 ```
 
 ## 完成内容

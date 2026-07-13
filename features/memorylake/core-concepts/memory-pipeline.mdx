@@ -66,27 +66,35 @@ Create a conversation in a project to group related messages together.
 curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspace_id}/memories/conversations \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"name": "Planning session"}'
+  -d '{
+    "custom_id": "planning-001",
+    "kind": "DIRECT",
+    "rw_project_ids": ["{project_id}"],
+    "name": "Planning session"
+  }'
 ```
 </Step>
 
 <Step title="Append messages">
-Submit messages to the conversation. Include the `actor_id` on user messages so MemoryLake can associate facts with the right participant.
+Submit messages to the conversation one at a time. Include the `actor_id` so MemoryLake can associate facts with the right participant.
 
 ```bash
 curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/{conversation_id}/messages \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
-    "messages": [
-      {
-        "role": "user",
-        "content": "We decided to use React for the frontend. Launch target is March.",
-        "actor_id": "act_jane456"
-      },
-      {
-        "role": "assistant",
-        "content": "Got it. I will note that the frontend uses React with a March launch target."
+    "custom_id": "msg-001",
+    "actor_id": "act_jane456",
+    "content": [{"block_type": "TEXT", "text": "We decided to use React for the frontend. Launch target is March."}]
+  }'
+
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/{conversation_id}/messages \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "custom_id": "msg-002",
+    "actor_id": "act_assistant",
+    "content": [{"block_type": "TEXT", "text": "Got it. I will note that the frontend uses React with a March launch target."}]
       }
     ]
   }'
@@ -131,28 +139,34 @@ The response includes results from both channels:
 
 ```json
 {
-  "results": [
-    {
-      "type": "fact",
-      "content": "The frontend uses React",
-      "project_id": "proj_def789"
-    },
-    {
-      "type": "document",
-      "content": "...our backend runs on Node.js with PostgreSQL...",
-      "document_id": "doc_xyz",
-      "project_id": "proj_def789"
-    },
-    {
-      "type": "fact",
-      "content": "The team chose PostgreSQL for the database",
-      "project_id": "proj_def789"
-    }
-  ]
+  "success": true,
+  "data": {
+    "documents": [
+      {
+        "document_id": "doc_xyz",
+        "document_name": "Tech Stack Overview",
+        "items": [
+          {"text": "...our backend runs on Node.js with PostgreSQL..."}
+        ]
+      }
+    ],
+    "facts": [
+      {
+        "id": "fact_001",
+        "fact": "The frontend uses React",
+        "score": 0.95
+      },
+      {
+        "id": "fact_002",
+        "fact": "The team chose PostgreSQL for the database",
+        "score": 0.88
+      }
+    ]
+  }
 }
 ```
 
-The result merges a fact extracted from a conversation with a passage found in a document. From the caller's perspective, it is one query, one result set.
+The result merges facts extracted from conversations with passages found in documents. From the caller's perspective, it is one query, one result set.
 
 See the [Search API reference](/features/memorylake/api-reference/search/search-memories) for the full set of search parameters and options.
 
