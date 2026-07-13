@@ -74,7 +74,58 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
     <ResponseField name="source_type" type="string">文档的来源类型（例如 `upload`、`connector`）</ResponseField>
     <ResponseField name="sheet_name" type="string">工作表名称（当文档为工作簿时）</ResponseField>
     <ResponseField name="items" type="array">
-    文档中匹配的内容项
+    文档中的块级搜索结果。每个项是一个判别联合 — `type` 决定哪些变体字段存在以及 `highlight` 的哪个子字段被填充。
+    <Expandable title="结果项">
+      <ResponseField name="type" type="string" required>
+      判别符。可选值：`paragraph`、`subtable` 或 `figure`。
+      </ResponseField>
+      <ResponseField name="highlight" type="object">
+      匹配内容。对象始终包含以下三个可选字段 — 根据父项的 `type` 仅填充其中一个。
+      <Expandable title="highlight 属性">
+        <ResponseField name="chunks" type="Chunk[]">
+        当 `type=paragraph` 时填充。按文档顺序排列的匹配文本片段。
+        <Expandable title="Chunk 属性">
+          <ResponseField name="text" type="string">匹配的纯文本片段</ResponseField>
+          <ResponseField name="range" type="string">位置提示（例如页码 `p12`，或工作簿段落的单元格范围）</ResponseField>
+        </Expandable>
+        </ResponseField>
+        <ResponseField name="inner_tables" type="InnerTable[]">
+        当 `type=subtable` 时填充。源表区域内匹配的子表。
+        <Expandable title="InnerTable 属性">
+          <ResponseField name="id" type="string">内部表 ID</ResponseField>
+          <ResponseField name="data_range" type="string">覆盖的单元格范围，例如 `A1:D50`</ResponseField>
+          <ResponseField name="num_rows" type="integer">数据行数</ResponseField>
+          <ResponseField name="columns" type="TableColumn[]">
+          列描述符。
+          <Expandable title="TableColumn 属性">
+            <ResponseField name="id" type="string">列 ID</ResponseField>
+            <ResponseField name="name" type="string">列标题名称</ResponseField>
+            <ResponseField name="data_type" type="string">推断的数据类型（例如 `string`、`number`、`date`）</ResponseField>
+            <ResponseField name="count" type="integer">非空值计数</ResponseField>
+            <ResponseField name="examples" type="object[]">列的示例值</ResponseField>
+            <ResponseField name="semantic_comment" type="string">模型推断的列语义注释</ResponseField>
+          </Expandable>
+          </ResponseField>
+        </Expandable>
+        </ResponseField>
+        <ResponseField name="figure" type="object">
+        当 `type=figure` 时填充。匹配的图表描述符。
+        <Expandable title="figure 属性">
+          <ResponseField name="caption" type="string">原始图表标题</ResponseField>
+          <ResponseField name="text" type="string">图表内的 OCR / 提取文本</ResponseField>
+          <ResponseField name="summary_text" type="string">模型生成的图表内容摘要</ResponseField>
+          <ResponseField name="prequestion_list" type="string[]">图表可以回答的预生成问题</ResponseField>
+        </Expandable>
+        </ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="paragraph_block_id" type="string">**仅当 `type=paragraph` 时。** 文档内的段落块 ID。</ResponseField>
+      <ResponseField name="title" type="string">**仅当 `type=subtable` 时。** 表格标题。</ResponseField>
+      <ResponseField name="footnote" type="string">**仅当 `type=subtable` 时。** 表格脚注。</ResponseField>
+      <ResponseField name="sheet_name" type="string">**仅当 `type=subtable` 时。** 工作表名称（工作簿表格）。</ResponseField>
+      <ResponseField name="semantic_comment" type="string">**仅当 `type=subtable` 时。** 模型推断的表格语义注释。</ResponseField>
+      <ResponseField name="figure_id" type="string">**仅当 `type=figure` 时。** 图表标识符。</ResponseField>
+    </Expandable>
     </ResponseField>
   </Expandable>
   </ResponseField>
@@ -107,8 +158,34 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
         "sheet_name": null,
         "items": [
           {
-            "text": "Q1 2024 revenue reached $12.5M, a 15% increase over Q4 2023.",
-            "range": "p8"
+            "type": "paragraph",
+            "paragraph_block_id": "blk-456",
+            "highlight": {
+              "chunks": [
+                {
+                  "text": "Q1 2024 revenue reached $12.5M, a 15% increase over Q4 2023.",
+                  "range": "p8"
+                }
+              ]
+            }
+          },
+          {
+            "type": "subtable",
+            "title": "Quarterly Revenue Summary",
+            "sheet_name": "Financials",
+            "highlight": {
+              "inner_tables": [
+                {
+                  "id": "it-001",
+                  "data_range": "A1:D5",
+                  "num_rows": 4,
+                  "columns": [
+                    {"id": "c1", "name": "Quarter", "data_type": "string"},
+                    {"id": "c2", "name": "Revenue", "data_type": "number"}
+                  ]
+                }
+              ]
+            }
           }
         ]
       }
