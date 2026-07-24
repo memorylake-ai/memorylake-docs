@@ -7,7 +7,7 @@ description: "Returns a paginated list of actors"
 GET /openapi/memorylake/api/v3/actors
 ```
 
-Returns a paginated list of all actors in your account. Use `custom_id` to filter actors by their external identifier.
+Returns a paginated list of all actors in your account. You can filter by actor type or search by display name.
 
 <Note>
 **Permission required:** `actor:list`
@@ -23,8 +23,12 @@ Number of actors per page.
 Token returned by the previous call. Omit on the first request.
 </ParamField>
 
-<ParamField query="custom_id" type="string">
-Filter by custom ID. Returns only actors whose `custom_id` matches exactly.
+<ParamField query="actor_type" type="string">
+Filter by actor type. One of `HUMAN` or `ASSISTANT`.
+</ParamField>
+
+<ParamField query="display_name_fuzzy" type="string">
+Fuzzy search by display name.
 </ParamField>
 
 <RequestExample>
@@ -33,8 +37,13 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_siz
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
-```bash Filter by custom_id
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?custom_id=user-ext-001' \
+```bash Filter by type
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?actor_type=HUMAN' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Search by display name
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?display_name_fuzzy=Alice' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
@@ -87,7 +96,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_siz
       {
         "id": "act-f6e5d4c3b2a1",
         "custom_id": "system-intake",
-        "actor_type": "system",
+        "actor_type": "ASSISTANT",
         "display_name": "Intake Bot",
         "description": "Automated intake system for onboarding flows",
         "metadata": {},

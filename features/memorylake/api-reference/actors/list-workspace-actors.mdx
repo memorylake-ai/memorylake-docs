@@ -29,6 +29,14 @@ Number of bindings per page.
 Token returned by the previous call. Omit on the first request.
 </ParamField>
 
+<ParamField query="actor_type" type="string">
+Filter by actor type. One of `HUMAN` or `ASSISTANT`.
+</ParamField>
+
+<ParamField query="display_name_fuzzy" type="string">
+Fuzzy search by display name.
+</ParamField>
+
 <RequestExample>
 ```bash First page
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7k8m9n0p1q2r/actors?page_size=20' \
@@ -75,7 +83,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7
       {
         "actor_id": "act-f6e5d4c3b2a1",
         "custom_id": "system-intake",
-        "actor_type": "system",
+        "actor_type": "ASSISTANT",
         "display_name": "Intake Bot",
         "bound_at": "2025-03-15T09:05:00Z"
       }

@@ -1,0 +1,133 @@
+---
+title: "List Workspace Facts"
+description: "Returns facts across projects and actors in a workspace"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/facts
+```
+
+Returns facts across the given projects and/or actors in a workspace, newest first. Each fact is annotated with the project or actor it belongs to, so you can query knowledge workspace-wide without calling each project or actor endpoint separately.
+
+At least one `project_ids` or `actor_ids` entry is required, and the two combined must reference at most 50 distinct projects/actors.
+
+<Note>
+**Permission required:** `project:mem_list`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="project_ids" type="array of strings">
+Project IDs to include; comma-separated (e.g. `proj-a,proj-b`)
+</ParamField>
+
+<ParamField query="actor_ids" type="array of strings">
+Actor IDs to include; comma-separated (e.g. `actor-a,actor-b`)
+</ParamField>
+
+<ParamField query="fact_fuzzy" type="string">
+Filter facts by content substring
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="50">
+Number of facts to return per page. Range: 1–200.
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page of results
+</ParamField>
+
+<RequestExample>
+```bash Facts from two projects
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/facts?project_ids=proj_def456,proj_ghi789' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Facts from a project and an actor
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/facts?project_ids=proj_def456&actor_ids=act-a1b2c3d4e5f6' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Filter by content
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/memories/facts?project_ids=proj_def456&fact_fuzzy=deadline' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated fact list">
+  <ResponseField name="items" type="array">
+  Array of fact objects
+  <Expandable title="Fact object">
+    <ResponseField name="id" type="string">Unique fact identifier</ResponseField>
+    <ResponseField name="fact" type="string">The fact text</ResponseField>
+    <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the fact</ResponseField>
+    <ResponseField name="expired" type="boolean">Whether the fact has been forgotten</ResponseField>
+    <ResponseField name="owner" type="object">
+    The project or actor this fact belongs to
+    <Expandable title="Owner object">
+      <ResponseField name="type" type="string">Owner type: `project` or `actor`</ResponseField>
+      <ResponseField name="id" type="string">Owner ID: a project ID when `type` is `project`, an actor ID when `type` is `actor`</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="expiration_date" type="string|null">Scheduled expiration date, or `null` if the fact does not expire</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+    <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string|null">
+  Token to retrieve the next page. `null` when there are no more results.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "fact_8f3a1b2c4d5e",
+        "fact": "Project deadline was moved to June 2025",
+        "metadata": {
+          "category": "planning"
+        },
+        "expired": false,
+        "owner": {
+          "type": "project",
+          "id": "proj_def456"
+        },
+        "expiration_date": null,
+        "created_at": "2025-06-10T14:30:00Z",
+        "updated_at": "2025-06-10T14:30:00Z"
+      },
+      {
+        "id": "fact_2d4e6f8a0b1c",
+        "fact": "User prefers dark mode in all applications",
+        "metadata": {
+          "category": "preferences"
+        },
+        "expired": false,
+        "owner": {
+          "type": "actor",
+          "id": "act-a1b2c3d4e5f6"
+        },
+        "expiration_date": null,
+        "created_at": "2025-06-12T09:15:00Z",
+        "updated_at": "2025-06-12T09:15:00Z"
+      }
+    ],
+    "continuation_token": null
+  }
+}
+```
+</ResponseExample>

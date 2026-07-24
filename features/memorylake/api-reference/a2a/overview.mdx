@@ -19,6 +19,21 @@ https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspaceId}/age
 
 Append standard A2A paths directly — for example `POST {baseUrl}/message:send` or `GET {baseUrl}/tasks/{taskId}`.
 
+## Protocol Versions
+
+MemoryLake exposes two parallel sets of A2A routes, one per protocol version:
+
+| Routes | Protocol version | Message body | Send configuration |
+|---|---|---|---|
+| `{baseUrl}/message:send`, `{baseUrl}/tasks/...` | **A2A v1.0** | `message.parts` | `returnImmediately`, `taskPushNotificationConfig` |
+| `{baseUrl}/v1/message:send`, `{baseUrl}/v1/tasks/...` | **A2A v0.3** | `message.content` | `blocking`, `pushNotificationConfig` |
+
+<Warning>
+The `/v1/` path prefix refers to the older **A2A v0.3** wire format, not to protocol version 1.0. The un-prefixed routes implement the current **A2A v1.0** format. Make sure the request body shape matches the route you call — a v0.3-style body (`content`, `blocking`) is rejected by the v1.0 routes, and vice versa.
+</Warning>
+
+Both route families support the same MemoryLake extension described below.
+
 ## MemoryLake Extension
 
 MemoryLake extends the standard A2A protocol through the `metadata.memorylake` namespace. Pass this object in the request metadata of `message:send` or `message:stream` to control how the agent interacts with MemoryLake's memory layer.
@@ -67,20 +82,20 @@ MemoryLake-specific configuration. Without this, the agent runs without any memo
 ## Example
 
 <RequestExample>
-```bash Send message with memory context
+```bash Send message (A2A v1.0)
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/message:send' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "message": {
-      "role": "user",
-      "content": [
+      "role": "ROLE_USER",
+      "parts": [
         { "text": "How do I configure two-factor authentication?" }
       ],
       "contextId": "ctx_m4n7p2q9"
     },
     "configuration": {
-      "blocking": true,
+      "returnImmediately": false,
       "historyLength": 10
     },
     "metadata": {
@@ -97,15 +112,15 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
   }'
 ```
 
-```bash Stream with memory context (SSE)
+```bash Stream (A2A v1.0, SSE)
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/message:stream' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -H 'Accept: text/event-stream' \
   -d '{
     "message": {
-      "role": "user",
-      "content": [
+      "role": "ROLE_USER",
+      "parts": [
         { "text": "Summarize our last meeting notes" }
       ]
     },
@@ -113,6 +128,30 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
       "memorylake": {
         "actorId": "act_user_jane",
         "readOnlyProjectIds": ["proj_meetings"]
+      }
+    }
+  }'
+```
+
+```bash Send message (A2A v0.3)
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/v1/message:send' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "message": {
+      "role": "ROLE_USER",
+      "content": [
+        { "text": "How do I configure two-factor authentication?" }
+      ]
+    },
+    "configuration": {
+      "blocking": true,
+      "historyLength": 10
+    },
+    "metadata": {
+      "memorylake": {
+        "actorId": "act_user_jane",
+        "readWriteProjectId": "proj_def456"
       }
     }
   }'

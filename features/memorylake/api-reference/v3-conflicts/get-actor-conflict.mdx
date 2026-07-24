@@ -1,16 +1,16 @@
 ---
-title: "Get Memory Conflict"
-description: "Retrieve the full details of a single memory conflict in a project"
+title: "Get Actor Memory Conflict"
+description: "Retrieve the full details of a single memory conflict among an actor's facts"
 ---
 
 ```
-GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/conflicts/{conflictId}
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/memories/conflicts/{conflictId}
 ```
 
 Returns the complete record for a single conflict, including the fact snapshots captured at detection time, any document excerpts involved, and the resolution record if the conflict has been resolved.
 
 <Note>
-**Permission required:** `project:mem_read`
+**Permission required:** `workspace:actor_fact_read`
 </Note>
 
 ### Path Parameters
@@ -19,8 +19,8 @@ Returns the complete record for a single conflict, including the fact snapshots 
 Workspace ID
 </ParamField>
 
-<ParamField path="projectId" type="string" required>
-Project ID
+<ParamField path="actorId" type="string" required>
+Actor ID
 </ParamField>
 
 <ParamField path="conflictId" type="string" required>
@@ -29,7 +29,7 @@ Conflict ID
 
 <RequestExample>
 ```bash cURL
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts/conf-abc123' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/actors/act-a1b2c3d4e5f6/memories/conflicts/conf-def456' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -81,29 +81,29 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
 {
   "success": true,
   "data": {
-    "id": "conf-abc123",
-    "name": "Contradicting project deadline",
-    "description": "One fact states the project deadline is March 2025; another says it was moved to June 2025.",
+    "id": "conf-def456",
+    "name": "Contradicting dietary preference",
+    "description": "One fact states the user is vegetarian; another says their favorite dish is steak.",
     "category": "m2m",
     "resolved": true,
     "resolve": {
-      "id": "res-9f8e7d6c",
+      "id": "res-1a2b3c4d",
       "strategy": "keep_fact",
-      "keep_fact_id": "fact-002",
-      "forgotten_fact_ids": ["fact-001"],
+      "keep_fact_id": "fact-101",
+      "forgotten_fact_ids": ["fact-102"],
       "created_at": "2025-01-21T09:15:00Z"
     },
     "stale": false,
     "conflict_type": "logical",
-    "fact_ids": ["fact-001", "fact-002"],
+    "fact_ids": ["fact-101", "fact-102"],
     "fact_snapshots": [
       {
-        "fact_id": "fact-001",
-        "fact_text": "Project deadline is March 2025"
+        "fact_id": "fact-101",
+        "fact_text": "User is vegetarian"
       },
       {
-        "fact_id": "fact-002",
-        "fact_text": "Project deadline was moved to June 2025"
+        "fact_id": "fact-102",
+        "fact_text": "User's favorite dish is steak"
       }
     ],
     "file_chunks": [],
@@ -115,5 +115,5 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
 </ResponseExample>
 
 <Tip>
-To resolve this conflict, call [Resolve Memory Conflict](/features/memorylake/api-reference/v3-conflicts/resolve-conflict) with the strategy you want to apply.
+To resolve this conflict, call [Resolve Actor Memory Conflict](/features/memorylake/api-reference/v3-conflicts/resolve-actor-conflict) with the strategy you want to apply.
 </Tip>

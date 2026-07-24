@@ -143,6 +143,7 @@
                   "features/memorylake/api-reference/workspaces/get-workspace",
                   "features/memorylake/api-reference/workspaces/update-workspace",
                   "features/memorylake/api-reference/workspaces/delete-workspace",
+                  "features/memorylake/api-reference/facts/list-workspace-facts",
                   {
                     "group": "Conversations",
                     "pages": [
@@ -176,6 +177,14 @@
                       "features/memorylake/api-reference/facts/update-actor-fact",
                       "features/memorylake/api-reference/facts/forget-actor-fact",
                       "features/memorylake/api-reference/facts/batch-forget-actor-facts"
+                    ]
+                  },
+                  {
+                    "group": "Memory Conflicts",
+                    "pages": [
+                      "features/memorylake/api-reference/v3-conflicts/list-actor-conflicts",
+                      "features/memorylake/api-reference/v3-conflicts/get-actor-conflict",
+                      "features/memorylake/api-reference/v3-conflicts/resolve-actor-conflict"
                     ]
                   }
                 ]
@@ -228,6 +237,14 @@
                       "features/memorylake/api-reference/facts/update-fact",
                       "features/memorylake/api-reference/facts/forget-fact",
                       "features/memorylake/api-reference/facts/batch-forget-facts"
+                    ]
+                  },
+                  {
+                    "group": "Memory Conflicts",
+                    "pages": [
+                      "features/memorylake/api-reference/v3-conflicts/list-conflicts",
+                      "features/memorylake/api-reference/v3-conflicts/get-conflict",
+                      "features/memorylake/api-reference/v3-conflicts/resolve-conflict"
                     ]
                   }
                 ]

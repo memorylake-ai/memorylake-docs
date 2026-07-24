@@ -7,7 +7,7 @@ description: "Returns a paginated list of messages in a conversation"
 GET /openapi/memorylake/api/v3/conversations/{conversationId}/messages
 ```
 
-Returns a paginated list of messages within a conversation, ordered by sequence number. You can use `after_message_id` to fetch only messages added after a known point, which is useful for syncing new messages incrementally.
+Returns a paginated list of messages within a conversation, ordered by sequence number. Use `continuation_token` to page through the full history.
 
 <Note>
 **Permission required:** `project:conv_read`
@@ -29,18 +29,9 @@ Number of messages to return per page
 Token from a previous response to fetch the next page of results
 </ParamField>
 
-<ParamField query="after_message_id" type="string">
-Only return messages created after this message ID. Use this for incremental sync.
-</ParamField>
-
 <RequestExample>
 ```bash cURL
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages?page_size=50' \
-  -H 'Authorization: Bearer sk_xxxxxx'
-```
-
-```bash After a specific message
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages?after_message_id=msg_1a2b3c4d5e6f7a8b' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>

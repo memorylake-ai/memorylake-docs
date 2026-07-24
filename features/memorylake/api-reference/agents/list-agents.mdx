@@ -1,13 +1,13 @@
 ---
 title: "List Agents"
-description: "Returns a paginated list of agents with optional filtering by custom ID"
+description: "Returns a paginated list of agents with optional name search"
 ---
 
 ```
 GET /openapi/memorylake/api/v3/agents
 ```
 
-Returns a paginated list of all agents in your account. You can filter by `custom_id` and control pagination with `page_size` and `continuation_token`.
+Returns a paginated list of all agents in your account. You can search by name with `name_fuzzy` and control pagination with `page_size` and `continuation_token`.
 
 <Note>
 **Permission required:** `agent:list`
@@ -23,8 +23,8 @@ Number of agents to return per page
 Token from a previous response to fetch the next page of results
 </ParamField>
 
-<ParamField query="custom_id" type="string">
-Filter agents by custom identifier (exact match)
+<ParamField query="name_fuzzy" type="string">
+Fuzzy match on agent name
 </ParamField>
 
 <RequestExample>
