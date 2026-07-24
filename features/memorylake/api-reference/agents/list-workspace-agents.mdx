@@ -29,6 +29,10 @@ Number of agent bindings to return per page
 Token from a previous response to fetch the next page of results
 </ParamField>
 
+<ParamField query="name_fuzzy" type="string">
+Fuzzy search by agent name
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents?page_size=20' \

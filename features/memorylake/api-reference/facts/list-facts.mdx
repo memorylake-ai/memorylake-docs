@@ -7,7 +7,7 @@ description: "Returns a paginated list of facts in a project"
 GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/facts
 ```
 
-Returns a paginated list of facts stored in a project. Facts are structured pieces of knowledge automatically extracted from conversations. You can filter by actor or include expired facts.
+Returns a paginated list of facts stored in a project. Facts are structured pieces of knowledge automatically extracted from conversations. You can filter facts by content with `fact_fuzzy`.
 
 <Note>
 **Permission required:** `project:mem_list`
@@ -25,20 +25,16 @@ Project ID
 
 ### Query Parameters
 
-<ParamField query="page_size" type="integer" default="20">
-Number of facts to return per page
+<ParamField query="page_size" type="integer" default="50">
+Number of facts to return per page. Range: 1–200.
 </ParamField>
 
 <ParamField query="continuation_token" type="string">
 Token from a previous response to fetch the next page of results
 </ParamField>
 
-<ParamField query="actor_id" type="string">
-Filter facts by a specific actor ID
-</ParamField>
-
-<ParamField query="expired" type="boolean">
-Include expired (forgotten) facts in the results
+<ParamField query="fact_fuzzy" type="string">
+Filter facts by content substring
 </ParamField>
 
 <RequestExample>

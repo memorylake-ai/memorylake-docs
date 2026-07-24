@@ -39,7 +39,12 @@ When a request fails, the API returns a structured error body alongside the HTTP
 | `STATE_NOT_READY` | Resource exists but its current state does not allow the operation |
 | `ACCESS_DENIED` | Caller lacks permission to access the resource |
 | `QUOTA_EXCEEDED` | Quota or usage limit exceeded |
+| `DATASET_TABLE_LIMIT_EXCEEDED` | Number of tables in the NL2SQL dataset exceeds the allowed limit |
 | `DOWNLOAD_NOT_SUPPORTED` | The requested resource does not support download |
+| `UNAUTHORIZE` | Authentication required |
+| `CONNECTOR_UNAUTHORIZE` | Connector unauthorized |
+| `CUSTOM_ID_CONFLICT` | A resource with the given `custom_id` already exists |
+| `BINDING_ALREADY_EXISTS` | The binding relationship already exists |
 | `INTERNAL_ERROR` | Unexpected server-side error |
 
 ## Error Handling Best Practices

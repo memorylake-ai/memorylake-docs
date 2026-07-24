@@ -1,18 +1,18 @@
 ---
-title: "List Memory Conflicts"
-description: "Returns a paginated list of memory conflicts in a project"
+title: "List Actor Memory Conflicts"
+description: "Returns a paginated list of memory conflicts among an actor's facts"
 ---
 
 ```
-GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/conflicts
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/memories/conflicts
 ```
 
-When MemoryLake extracts facts from conversations, it compares new facts against existing knowledge. If a contradiction is detected, it is recorded as a **memory conflict**. Use this endpoint to list a project's conflicts, newest first, so you can surface them to users for review.
+When MemoryLake extracts facts about an actor, it compares new facts against the actor's existing facts. If a contradiction is detected, it is recorded as a **memory conflict**. Use this endpoint to list an actor's conflicts, newest first, so you can surface them to users for review.
 
-You can filter by resolution status to show only unresolved conflicts that need attention, or only resolved ones for audit purposes. For conflicts among an actor's personal facts, use [List Actor Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-actor-conflicts) instead.
+You can filter by resolution status to show only unresolved conflicts that need attention, or only resolved ones for audit purposes. For conflicts within a project's knowledge, use [List Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-conflicts) instead.
 
 <Note>
-**Permission required:** `project:mem_list`
+**Permission required:** `workspace:actor_fact_list`
 </Note>
 
 ### Path Parameters
@@ -21,8 +21,8 @@ You can filter by resolution status to show only unresolved conflicts that need 
 Workspace ID
 </ParamField>
 
-<ParamField path="projectId" type="string" required>
-Project ID
+<ParamField path="actorId" type="string" required>
+Actor ID
 </ParamField>
 
 ### Query Parameters
@@ -41,12 +41,12 @@ Token from a previous response to fetch the next page of results
 
 <RequestExample>
 ```bash Unresolved conflicts
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts?resolved=false&page_size=20' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/actors/act-a1b2c3d4e5f6/memories/conflicts?resolved=false&page_size=20' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
 ```bash All conflicts
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts?page_size=50' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/actors/act-a1b2c3d4e5f6/memories/conflicts?page_size=50' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -63,7 +63,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
     <ResponseField name="description" type="string">Detailed explanation of the contradiction</ResponseField>
     <ResponseField name="category" type="string">Conflict category: `m2m` (fact vs. fact) or `m2d` (fact vs. document)</ResponseField>
     <ResponseField name="resolved" type="boolean">Whether the conflict has been resolved</ResponseField>
-    <ResponseField name="resolve" type="object">Resolution record. Present only when the conflict has been resolved; `null` otherwise. See [Get Memory Conflict](/features/memorylake/api-reference/v3-conflicts/get-conflict) for the full structure.</ResponseField>
+    <ResponseField name="resolve" type="object">Resolution record. Present only when the conflict has been resolved; `null` otherwise. See [Get Actor Memory Conflict](/features/memorylake/api-reference/v3-conflicts/get-actor-conflict) for the full structure.</ResponseField>
     <ResponseField name="stale" type="boolean">Whether an involved fact changed after the conflict was detected. Stale conflicts may no longer be accurate.</ResponseField>
     <ResponseField name="conflict_type" type="string">Conflict type: `logical` or `knowledge`</ResponseField>
     <ResponseField name="fact_ids" type="array">IDs of the facts involved in the conflict</ResponseField>
@@ -97,23 +97,23 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
   "data": {
     "items": [
       {
-        "id": "conf-abc123",
-        "name": "Contradicting project deadline",
-        "description": "One fact states the project deadline is March 2025; another says it was moved to June 2025.",
+        "id": "conf-def456",
+        "name": "Contradicting dietary preference",
+        "description": "One fact states the user is vegetarian; another says their favorite dish is steak.",
         "category": "m2m",
         "resolved": false,
         "resolve": null,
         "stale": false,
         "conflict_type": "logical",
-        "fact_ids": ["fact-001", "fact-002"],
+        "fact_ids": ["fact-101", "fact-102"],
         "fact_snapshots": [
           {
-            "fact_id": "fact-001",
-            "fact_text": "Project deadline is March 2025"
+            "fact_id": "fact-101",
+            "fact_text": "User is vegetarian"
           },
           {
-            "fact_id": "fact-002",
-            "fact_text": "Project deadline was moved to June 2025"
+            "fact_id": "fact-102",
+            "fact_text": "User's favorite dish is steak"
           }
         ],
         "file_chunks": [],

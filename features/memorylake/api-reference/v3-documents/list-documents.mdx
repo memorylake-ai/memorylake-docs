@@ -33,6 +33,10 @@ Number of documents per page. Defaults to 20 when omitted.
 Token returned by the previous call. Omit on the first request.
 </ParamField>
 
+<ParamField query="name_fuzzy" type="string">
+Fuzzy match on document name.
+</ParamField>
+
 <RequestExample>
 ```bash First page
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a1b2c3d4e5f6/projects/proj-7g8h9i0j1k2l/memories/documents?page_size=20' \

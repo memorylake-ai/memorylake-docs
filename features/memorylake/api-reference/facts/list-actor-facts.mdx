@@ -25,16 +25,16 @@ Actor ID
 
 ### Query Parameters
 
-<ParamField query="page_size" type="integer" default="20">
-Number of facts to return per page
+<ParamField query="page_size" type="integer" default="50">
+Number of facts to return per page. Range: 1–200.
 </ParamField>
 
 <ParamField query="continuation_token" type="string">
 Token from a previous response to fetch the next page of results
 </ParamField>
 
-<ParamField query="expired" type="boolean">
-Include expired (forgotten) facts in the results
+<ParamField query="fact_fuzzy" type="string">
+Filter facts by content substring
 </ParamField>
 
 <RequestExample>

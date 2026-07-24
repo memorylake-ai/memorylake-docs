@@ -25,10 +25,6 @@ Workspace identifier
 Natural language search query
 </ParamField>
 
-<ParamField body="threshold" type="number">
-Minimum relevance score between `0.0` and `1.0`. Results below this score are excluded.
-</ParamField>
-
 <ParamField body="project_ids" type="array of strings">
 Limit search to specific projects. When omitted, all projects in the workspace are searched.
 </ParamField>
@@ -52,7 +48,6 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
   -H 'Content-Type: application/json' \
   -d '{
     "query": "What were the quarterly revenue figures?",
-    "threshold": 0.5,
     "project_ids": ["proj_def456"],
     "memory_types": ["document", "fact"],
     "top_k": 10
