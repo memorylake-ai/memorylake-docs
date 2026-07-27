@@ -12,10 +12,10 @@ GET /openapi/memorylake/api/v1/projects/{id}/documents/{documentId}/download
 <Note>
 **所需权限（全部需要）：**
 
-- [`project:doc_read`](/zh/features/team-collaboration/permission-reference#read-a-single-document) · `instance`
-- [`drive:item_read`](/zh/features/team-collaboration/permission-reference#read-your-files) · `service`
+- [`project:doc_read`](/zh/features/team-collaboration/permission-reference#读取单个文档) · `instance`
+- [`drive:item_read`](/zh/features/team-collaboration/permission-reference#读取文件) · `service`
 
-服务器会将文档解析为其底层的资料库文件并转发到云盘下载处理程序 —— 每次调用都会检查这两个权限。
+服务器会将文档解析为其底层的文件库文件并转发到云盘下载处理程序 —— 每次调用都会检查这两个权限。
 </Note>
 
 ### 路径参数

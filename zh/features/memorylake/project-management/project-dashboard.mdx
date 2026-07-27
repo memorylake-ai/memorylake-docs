@@ -1,82 +1,58 @@
 ---
-title: "项目概览仪表板"
-description: "从统一的仪表板监控项目统计数据、文档、记忆和 MCP 服务器"
+title: "项目仪表盘"
+description: "浏览项目的各个标签页——文件、Open Data、记忆、冲突与集成"
 ---
 
-## 仪表板概述
+## 仪表盘概览
 
-项目仪表板为您提供项目的全面视图，包括统计数据、文档、记忆和 MCP 服务器。
+通过**工作空间 → 您的工作空间 → 项目**打开一个项目。项目详情页将所有内容按标签页组织；您能看到哪些标签页取决于您的权限（以及已启用的功能）。
 
-{/* SCREENSHOT: Complete project dashboard */}
+{/* SCREENSHOT: Project detail page with tabs */}
 
-## 统计卡片
+## 文件标签页
 
-一目了然地查看关键指标：
+项目已关联的文档：
 
-**文档数量**：已关联文档的数量
+- **添加内容**：拖放上传、文件夹上传，或关联文件库中已有的文档
+- 每份文档的**处理状态**：`pending` → `running` → `okay`（或 `error` 并附详情）——处理完成后内容即可被搜索
+- **移除**：取消关联某份文档会将其从项目上下文中移出；文件仍保留在您的文件库中
 
-**记忆数量**：记忆的数量
+## Open Data 标签页
 
-**MCP 服务器数量**：活跃 API 密钥的数量
+为项目订阅精选行业数据集——研究/学术、临床、金融、经济、专利等。已订阅的分类会与您自己的内容一起，被 Playground 和已连接的 Agent 搜索到。
 
-{/* SCREENSHOT: Statistics cards section */}
+## 记忆标签页
 
-## 内联编辑
+项目提取出的记忆：
 
-直接从仪表板编辑项目详情：
+- **搜索与筛选**，并实时显示数量；切换到**词频视图**可快速了解该项目掌握了什么
+- **查看**任意记忆——内容、元数据，以及展示其出处的**来源溯源**标签页
+- **编辑**或**遗忘**记忆；支持批量选择以便清理
 
-1. 点击项目名称 — 变为可编辑状态
-2. 输入新名称
-3. 按 Enter 保存
+## 冲突标签页
 
-描述字段同理。
+矛盾的记忆会汇集到这里，而不是默默共存。逐条审核并消解冲突——参见[记忆](/zh/features/memorylake/memories/overview#冲突检测)。（在团队空间中需要冲突消解权限。）
 
-{/* SCREENSHOT: Inline editing interface */}
+## 集成标签页
 
-## 标签页导航
+将这个特定项目连接到您的工具：OpenClaw / QClaw / Hermes 配置（含预填命令），以及 API 访问详情。参见[集成概览](/zh/features/memorylake/mcp-servers/overview)。
 
-仪表板包含三个标签页：
+## 编辑项目详情
 
-### 文档标签页
-- 已关联文档列表
-- 文档状态（pending、running、okay、error）
-- 添加/移除文档
-- 查看处理错误
-
-### 记忆标签页
-- 项目记忆列表
-- 创建/编辑/删除记忆
-- 查看记忆内容
-
-### MCP 服务器标签页
-- API 密钥列表
-- 生成新密钥
-- 查看端点 URL
-- 删除密钥
-
-{/* SCREENSHOT: Tab navigation */}
-
-## 快捷操作
-
-从仪表板您可以：
-- 添加文档
-- 创建记忆
-- 生成 API 密钥
-- 编辑项目详情
-- 返回项目列表
+项目名称和描述可以在项目页面中编辑。删除项目会移除其记忆和文档关联（文件库中的文件保留）。
 
 ## 后续步骤
 
 <CardGroup cols={2}>
 <Card title="文档关联" icon="link" href="/zh/features/memorylake/project-management/document-association">
-将文档添加到项目
+向项目添加文档
 </Card>
 
 <Card title="记忆" icon="brain" href="/zh/features/memorylake/memories/overview">
-了解记忆功能
+提取、溯源与冲突的工作机制
 </Card>
 
-<Card title="MCP 服务器" icon="key" href="/zh/features/memorylake/mcp-servers/overview">
-生成 API 密钥
+<Card title="集成" icon="plug" href="/zh/features/memorylake/mcp-servers/overview">
+连接 Agent 和应用
 </Card>
 </CardGroup>

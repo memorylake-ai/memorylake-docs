@@ -1,22 +1,22 @@
 ---
-title: "获取项目"
-description: "通过 ID 查找资料库中的文件或文件夹"
+title: "获取条目"
+description: "通过 ID 查询文件库中的文件或文件夹"
 ---
 
 ```
 GET /openapi/memorylake/api/v1/drives/items/{item_id}
 ```
 
-返回单个资料库项的元数据。可用于在将文件导入项目之前检查文件信息、将 `MY_SPACE` 解析为具体 ID，或检查某个项目是否存在。
+返回单个文件库条目的元数据。可用于在将文件导入项目前查看其信息、把 `MY_SPACE` 解析为具体 ID，或检查某个条目是否存在。
 
 <Note>
-**所需权限：** [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+**所需权限：** [`drive:item_read`](/zh/features/team-collaboration/permission-reference#读取文件) · `service`
 </Note>
 
 ### 路径参数
 
 <ParamField path="item_id" type="string" required>
-项目 ID。传入 `MY_SPACE` 可直接查找工作空间根目录，无需具体 ID。
+条目 ID。传入 `MY_SPACE` 可直接查询工作空间根目录，无需知道其具体 ID。
 </ParamField>
 
 <RequestExample>
@@ -29,16 +29,16 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/MY
 ### 响应
 
 <ResponseField name="data" type="object">
-<Expandable title="资料库项响应">
+<Expandable title="文件库条目响应">
   <ResponseField name="item" type="object">
-  <Expandable title="资料库项">
+  <Expandable title="文件库条目">
     <ResponseField name="uri" type="string">Drive 资源 URI</ResponseField>
-    <ResponseField name="item_id" type="string">项目 ID</ResponseField>
-    <ResponseField name="name" type="string">项目名称</ResponseField>
-    <ResponseField name="type" type="string">项目类型：`file` 或 `directory`</ResponseField>
+    <ResponseField name="item_id" type="string">条目 ID</ResponseField>
+    <ResponseField name="name" type="string">条目名称</ResponseField>
+    <ResponseField name="type" type="string">条目类型：`file` 或 `directory`</ResponseField>
     <ResponseField name="size" type="integer">文件大小（字节，仅文件类型）</ResponseField>
-    <ResponseField name="etag" type="string">项目的 ETag</ResponseField>
-    <ResponseField name="parent_item_id" type="string">父项目 ID</ResponseField>
+    <ResponseField name="etag" type="string">条目的 ETag</ResponseField>
+    <ResponseField name="parent_item_id" type="string">父条目 ID</ResponseField>
     <ResponseField name="created_at" type="string">创建时间戳</ResponseField>
     <ResponseField name="updated_at" type="string">最后更新时间戳</ResponseField>
     <ResponseField name="x_attrs" type="object">扩展属性（字符串到字符串的映射）</ResponseField>

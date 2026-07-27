@@ -7,7 +7,7 @@ description: "返回分页的 Actor 列表"
 GET /openapi/memorylake/api/v3/actors
 ```
 
-返回账户中所有 Actor 的分页列表。使用 `custom_id` 按外部标识符筛选 Actor。
+返回账户中所有 Actor 的分页列表。您可以按 Actor 类型筛选，或按显示名称搜索。
 
 <Note>
 **所需权限：** `actor:list`
@@ -23,8 +23,12 @@ GET /openapi/memorylake/api/v3/actors
 上一次调用返回的分页令牌。首次请求时省略此参数。
 </ParamField>
 
-<ParamField query="custom_id" type="string">
-按自定义 ID 筛选。仅返回 `custom_id` 完全匹配的 Actor。
+<ParamField query="actor_type" type="string">
+按 Actor 类型筛选。取值为 `HUMAN` 或 `ASSISTANT`。
+</ParamField>
+
+<ParamField query="display_name_fuzzy" type="string">
+按显示名称模糊搜索。
 </ParamField>
 
 <RequestExample>
@@ -33,8 +37,13 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_siz
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
-```bash Filter by custom_id
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?custom_id=user-ext-001' \
+```bash Filter by type
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?actor_type=HUMAN' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Search by display name
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?display_name_fuzzy=Alice' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
@@ -87,7 +96,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_siz
       {
         "id": "act-f6e5d4c3b2a1",
         "custom_id": "system-intake",
-        "actor_type": "system",
+        "actor_type": "ASSISTANT",
         "display_name": "Intake Bot",
         "description": "Automated intake system for onboarding flows",
         "metadata": {},

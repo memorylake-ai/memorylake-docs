@@ -17,16 +17,16 @@ description: "了解常见错误及其排查方法"
 
 **解决方法**：
 1. 检查您的 API Key 是否以 `sk-` 开头
-2. 验证您是否完整复制了整个 API Key
+2. 确认您完整、正确地复制了整个 API Key
 3. 确保在 `Authorization` 请求头中包含了它：`Bearer sk-your-key`
-4. 如果丢失了密钥，请在[控制台](https://app.memorylake.ai/panel/token)中创建一个新的
+4. 如果 Key 丢失，请在[控制台](https://app.memorylake.ai/panel/token)中创建一个新的
 
 #### 错误："API key not found"
 
 **含义**：该 API Key 不存在或已被删除。
 
 **解决方法**：
-1. 在[控制台](https://app.memorylake.ai/panel/token)中验证该 API Key 是否存在
+1. 在[控制台](https://app.memorylake.ai/panel/token)中确认该 API Key 存在
 2. 如有需要，创建一个新的 API Key
 3. 确保您使用的是正确的 API Key
 
@@ -37,48 +37,48 @@ description: "了解常见错误及其排查方法"
 **含义**：您尝试使用的模型对您的 API Key 不可用。
 
 **解决方法**：
-1. 查看[可用模型列表](/zh/features/model-router/list-available-models)了解您可以使用哪些模型
-2. 验证模型名称拼写是否正确（模型名称区分大小写）
-3. 使用模型列表中的精确模型 `id`
-4. 如果需要访问特定模型，请联系管理员
+1. 查看[查看可用模型](/zh/features/model-router/list-available-models)了解您可以使用哪些模型
+2. 确认模型名称拼写正确（模型名称区分大小写）
+3. 使用模型列表中的精确 `id`
+4. 如果您需要访问某个特定模型，请联系管理员
 
 #### 错误："Model is not available"
 
-**含义**：模型存在但未为您的 API Key 分组启用。
+**含义**：该模型存在，但未为您的 API Key 分组启用。
 
 **解决方法**：
-1. 检查您的 API Key 可用的模型
+1. 检查哪些模型对您的 API Key 可用
 2. 联系管理员为您的分组启用该模型
-3. 查看[限制与前置条件](/zh/features/model-router/others/limits-and-prerequisites)了解更多信息
+3. 更多信息请参阅[限制与前提条件](/zh/features/model-router/others/limits-and-prerequisites)
 
 ### 配额错误
 
 #### 错误："Insufficient quota" 或 "Quota exceeded"
 
-**含义**：您没有足够的配额来发起请求。
+**含义**：您的配额不足，无法发起该请求。
 
 **解决方法**：
-1. 在[控制台](https://app.memorylake.ai/panel)侧边栏检查您的配额
-2. [查看您的用量](/zh/features/model-router/view-usage-and-billing)了解已使用的额度
-3. 联系管理员增加配额
-4. 如果配额有定期补充，请等待配额恢复
+1. 在控制台的 **Billing → Overview** 中检查您的余额
+2. [查看您的用量](/zh/features/model-router/view-usage-and-billing)了解已消耗了多少
+3. 充值额度，或请团队管理员提高您的成员配额
+4. 确认您处于预期的空间——个人上下文和团队上下文使用不同的配额池
 
 <Info>
-每次请求前都会检查配额。如果配额不足，请求将被立即拒绝。详情请参阅[查看用量与计费](/zh/features/model-router/view-usage-and-billing)。
+每次请求前都会检查配额。如果配额不足，请求会被立即拒绝。详情请参阅[查看用量与计费](/zh/features/model-router/view-usage-and-billing)。
 </Info>
 
-### 速率限制错误
+### 限流错误
 
 #### 错误：429 "Too Many Requests" 或 "Rate limit exceeded"
 
-**含义**：您发送请求的速度过快。
+**含义**：您的请求发送过于频繁。
 
 **解决方法**：
-1. 稍等片刻再重试
+1. 稍等一会儿再重试
 2. 降低请求频率
-3. 在代码中实现指数退避策略
-4. 如果可能，批量发送请求
-5. 查看[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)了解重试策略
+3. 在代码中实现指数退避
+4. 尽可能合并批量请求
+5. 重试策略请参阅[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)
 
 ### 请求格式错误
 
@@ -87,32 +87,32 @@ description: "了解常见错误及其排查方法"
 **含义**：请求体或参数不正确。
 
 **解决方法**：
-1. 检查请求体是否为有效的 JSON
-2. 验证所有必需字段是否存在
+1. 检查请求体是否为合法 JSON
+2. 确认所有必填字段都已提供
 3. 确保字段名称和类型符合 API 规范
 4. 查看[直接 API 请求](/zh/features/model-router/getting-started/use-api-key/direct-api-requests)指南了解正确格式
 
 #### 错误："Missing required field"
 
-**含义**：请求中缺少必需参数。
+**含义**：您的请求中缺少某个必填参数。
 
 **解决方法**：
-1. 查看 API 文档了解必需字段
-2. 验证所有必需参数是否已包含
+1. 查阅 API 文档确认必填字段
+2. 确认所有必填参数都已包含
 3. 检查字段名称拼写是否正确
 
 ### 网络错误
 
 #### 错误："Connection timeout" 或 "Network error"
 
-**含义**：请求无法到达服务器或耗时过长。
+**含义**：请求无法到达服务器，或耗时过长。
 
 **解决方法**：
 1. 检查您的网络连接
-2. 验证 API 端点 URL 是否正确：`https://app.memorylake.ai`
-3. 稍后再试
-4. 检查是否存在网络问题
-5. 查看[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)了解自动重试机制
+2. 确认 API 端点 URL 正确：`https://app.memorylake.ai`
+3. 稍后重试
+4. 检查是否存在网络故障
+5. 自动重试机制请参阅[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)
 
 ### 流式传输错误
 
@@ -121,14 +121,14 @@ description: "了解常见错误及其排查方法"
 **含义**：流式连接被中断。
 
 **解决方法**：
-1. 这在长时间流式传输中是正常现象——请实现重连逻辑
+1. 长时间的流式传输中这属于正常现象——请实现重连逻辑
 2. 检查您的网络稳定性
 3. 在代码中优雅地处理流中断
-4. 查看[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)了解流式传输最佳实践
+4. 流式最佳实践请参阅[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)
 
 ## 错误响应格式
 
-当发生错误时，API 会返回包含错误详情的 JSON 响应：
+发生错误时，API 会返回包含错误详情的 JSON 响应：
 
 ```json
 {
@@ -142,11 +142,11 @@ description: "了解常见错误及其排查方法"
 
 ## 错误处理最佳实践
 
-1. **始终检查响应状态**：同时处理成功和错误情况
-2. **阅读错误消息**：错误消息通常会告诉您出了什么问题
-3. **实现重试逻辑**：针对速率限制或网络问题等瞬态错误
-4. **记录错误日志**：保留错误记录以便调试
-5. **优雅处理**：不要让 API 错误导致应用崩溃
+1. **始终检查响应状态**：同时处理成功和失败两种情况
+2. **阅读错误信息**：错误信息通常会告诉您问题所在
+3. **实现重试逻辑**：用于限流或网络故障等临时性错误
+4. **记录错误日志**：便于排查问题
+5. **优雅处理**：不要因为 API 错误导致应用崩溃
 
 ## 示例：代码中的错误处理
 
@@ -187,21 +187,22 @@ def make_request(api_key, model, messages):
 
 ## 获取帮助
 
-如果您仍有问题：
+如果问题仍未解决：
 
-1. 查看[限制与前置条件](/zh/features/model-router/others/limits-and-prerequisites)指南
-2. 查阅[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)文档
+1. 查看[限制与前提条件](/zh/features/model-router/others/limits-and-prerequisites)指南
+2. 阅读[可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)文档
 3. 检查您的 API Key 和模型可用性
-4. 联系支持团队并提供：
-   - 确切的错误消息
-   - 您的 API Key（已脱敏）
-   - 您发送的请求
+4. 联系 [support@memorylake.ai](mailto:support@memorylake.ai)，并提供：
+   - 完整的错误信息
+   - 您的 API Key（请脱敏）
+   - 您发起的请求内容
    - 相关日志
 
 ## 相关文档
 
-- [限制与前置条件](/zh/features/model-router/others/limits-and-prerequisites)
+- [限制与前提条件](/zh/features/model-router/others/limits-and-prerequisites)
 - [可靠性与故障转移](/zh/features/model-router/others/reliability-and-failover)
-- [查看可用模型列表](/zh/features/model-router/list-available-models)
+- [查看可用模型](/zh/features/model-router/list-available-models)
 - [查看用量与计费](/zh/features/model-router/view-usage-and-billing)
 - [直接 API 请求](/zh/features/model-router/getting-started/use-api-key/direct-api-requests)
+

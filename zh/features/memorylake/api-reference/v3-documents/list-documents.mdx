@@ -33,6 +33,10 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/mem
 上一次调用返回的 token。首次请求时省略。
 </ParamField>
 
+<ParamField query="name_fuzzy" type="string">
+按文档名称模糊匹配。
+</ParamField>
+
 <RequestExample>
 ```bash First page
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a1b2c3d4e5f6/projects/proj-7g8h9i0j1k2l/memories/documents?page_size=20' \

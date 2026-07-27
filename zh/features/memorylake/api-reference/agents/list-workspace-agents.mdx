@@ -29,6 +29,10 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents
 上一次响应中的 token，用于获取下一页结果
 </ParamField>
 
+<ParamField query="name_fuzzy" type="string">
+按 Agent 名称模糊搜索
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents?page_size=20' \

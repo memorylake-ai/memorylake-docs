@@ -1,24 +1,24 @@
 ---
-title: "删除项目扩展属性"
-description: "从资料库项中移除指定的扩展属性键"
+title: "删除条目扩展属性"
+description: "从文件库条目中移除指定的扩展属性键"
 ---
 
 ```
 DELETE /openapi/memorylake/api/v1/drives/items/{item_id}/xattrs?key={comma-separated-keys}
 ```
 
-从资料库的文件或文件夹中移除一个或多个扩展属性键。仅你列出的键会被移除；项上的其他 xattrs 保持不变。
+从文件库的文件或文件夹中移除一个或多个扩展属性键。仅移除您列出的键；该条目上的其他 xattrs 保持不变。
 
 <Warning>
-此操作不可逆。调用后，列出的 xattr 值将被永久删除。项本身**不受影响** — 仅移除列出的元数据键。
+此操作不可逆。调用后，所列出的 xattr 值即被清除。条目本身**不受影响** — 只移除列出的元数据键。
 </Warning>
 
 <Note>
-系统保留的 xattr 键不能被删除；在 `key` 列表中包含它们将被拒绝。系统根文件夹（`My Space`、`WPS Space`、`Lark Space`）完全拒绝 xattr 删除并返回 `403`。
+系统保留的 xattr 键不能删除；在 `key` 列表中包含它们会被拒绝。系统根文件夹（`My Space`、`WPS Space`、`Lark Space`）完全拒绝 xattr 删除并返回 `403`。
 </Note>
 
 <Note>
-**所需权限：** [`drive:item_modify`](/features/team-collaboration/permission-reference#edit-your-files) · `service`
+**所需权限：** [`drive:item_modify`](/zh/features/team-collaboration/permission-reference#编辑文件) · `service`
 </Note>
 
 ### 路径参数
@@ -30,7 +30,7 @@ DELETE /openapi/memorylake/api/v1/drives/items/{item_id}/xattrs?key={comma-separ
 ### 查询参数
 
 <ParamField query="key" type="string" required>
-要删除的 xattr 键的逗号分隔列表，例如 `key=tenant_id,review_status`。至少需要一个键。
+要删除的 xattr 键列表，以逗号分隔，例如 `key=tenant_id,review_status`。至少需要一个键。
 </ParamField>
 
 <RequestExample>
@@ -43,7 +43,7 @@ curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items
 ### 响应
 
 <ResponseField name="success" type="boolean">表示请求是否成功</ResponseField>
-<ResponseField name="message" type="string">人类可读的状态消息</ResponseField>
+<ResponseField name="message" type="string">可读的状态消息</ResponseField>
 
 <ResponseExample>
 ```json Success (200)
@@ -55,5 +55,5 @@ curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items
 </ResponseExample>
 
 <Tip>
-要验证操作后项上剩余的 xattrs，请调用[获取项目](/zh/features/memorylake/api-reference/library/get-item) — 其响应包含当前的 `x_attrs` 映射。
+要确认操作后条目上还剩哪些 xattrs，请调用[获取条目](/zh/features/memorylake/api-reference/library/get-item) — 其响应包含当前的 `x_attrs` 映射。
 </Tip>

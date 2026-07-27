@@ -1,16 +1,16 @@
 ---
-title: "列出项目"
-description: "列出资料库中某个文件夹下的文件和子文件夹"
+title: "列出条目"
+description: "列出文件库中某个文件夹下的文件和子文件夹"
 ---
 
 ```
 GET /openapi/memorylake/api/v1/drives/items/{item_id}/children
 ```
 
-返回文件夹下的直接子项（文件和文件夹）。使用游标分页：如果响应中返回了 `continuation_token`，将其传回下一次请求以获取下一页。当响应中不包含该令牌时，表示已到达末尾。
+返回文件夹下的直接子条目（文件和文件夹）。使用游标分页：如果响应中返回了 `continuation_token`，将其传回下一次请求以获取下一页。当响应中不包含该令牌时，表示已到达末尾。
 
 <Note>
-**所需权限：** [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+**所需权限：** [`drive:item_read`](/zh/features/team-collaboration/permission-reference#读取文件) · `service`
 </Note>
 
 ### 路径参数
@@ -22,7 +22,7 @@ GET /openapi/memorylake/api/v1/drives/items/{item_id}/children
 ### 查询参数
 
 <ParamField query="page_size" type="integer" default="50">
-每页项目数，范围 1-50。省略时默认为 50。
+每页条目数，范围 1-50。省略时默认为 50。
 </ParamField>
 
 <ParamField query="continuation_token" type="string">
@@ -44,17 +44,17 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/MY
 ### 响应
 
 <ResponseField name="data" type="object">
-<Expandable title="分页资料库项列表">
+<Expandable title="分页文件库条目">
   <ResponseField name="items" type="array">
-  资料库项数组
-  <Expandable title="资料库项">
+  文件库条目数组
+  <Expandable title="文件库条目">
     <ResponseField name="uri" type="string">Drive 资源 URI</ResponseField>
-    <ResponseField name="item_id" type="string">项目 ID</ResponseField>
-    <ResponseField name="name" type="string">项目名称</ResponseField>
-    <ResponseField name="type" type="string">项目类型：`file` 或 `directory`</ResponseField>
+    <ResponseField name="item_id" type="string">条目 ID</ResponseField>
+    <ResponseField name="name" type="string">条目名称</ResponseField>
+    <ResponseField name="type" type="string">条目类型：`file` 或 `directory`</ResponseField>
     <ResponseField name="size" type="integer">文件大小（字节，仅文件类型）</ResponseField>
-    <ResponseField name="etag" type="string">项目的 ETag</ResponseField>
-    <ResponseField name="parent_item_id" type="string">父项目 ID</ResponseField>
+    <ResponseField name="etag" type="string">条目的 ETag</ResponseField>
+    <ResponseField name="parent_item_id" type="string">父条目 ID</ResponseField>
     <ResponseField name="created_at" type="string">创建时间戳</ResponseField>
     <ResponseField name="updated_at" type="string">最后更新时间戳</ResponseField>
     <ResponseField name="x_attrs" type="object">扩展属性（字符串到字符串的映射）</ResponseField>

@@ -1,22 +1,22 @@
 ---
 title: "评论"
-description: "使用实时预览功能为文档添加富文本 Markdown 评论"
+description: "为文档添加富文本 Markdown 评论，支持实时预览"
 ---
 
 ## 概述
 
-使用 Markdown 格式的评论为您的文档添加上下文信息。提供有助于人类和 AI 理解内容的上下文。
+使用 Markdown 格式的评论为文档补充上下文信息，让人类和 AI 都能更好地理解您的内容。
 
 ## Markdown 评论
 
 ### 评论系统概述
 
-MemoryLake 的评论系统使用 Markdown，让您可以为任何文件或文件夹创建富文本格式的笔记。
+MemoryLake 的评论系统基于 Markdown，您可以为任意文件或文件夹撰写带格式的富文本笔记。
 
-**功能特点**：
-- **Markdown 格式化**：标题、列表、粗体、斜体、代码块、链接
-- **实时预览**：输入时即时查看渲染效果
-- **自动保存**：草稿保护，防止数据丢失
+**特性**：
+- **Markdown 格式**：标题、列表、粗体、斜体、代码块、链接
+- **实时预览**：边输入边查看渲染结果
+- **自动保存**：草稿保护，避免内容丢失
 
 {/* SCREENSHOT: Markdown comment editor with split preview */}
 
@@ -24,30 +24,30 @@ MemoryLake 的评论系统使用 Markdown，让您可以为任何文件或文件
 
 <Steps>
 <Step title="打开评论编辑器">
-选择一个文件或文件夹，打开评论面板（通常在右侧）。
+选中一个文件或文件夹，打开评论面板（通常位于右侧）。
 </Step>
 
-<Step title="编写评论">
-使用 Markdown 编辑器撰写您的评论。您可以使用：
-- `# Headers` 用于结构化
+<Step title="撰写评论">
+在 Markdown 编辑器中撰写评论。可用语法包括：
+- `# Headers` 组织结构
 - `**bold**` 和 `*italic*` 用于强调
-- `- Lists` 用于组织内容
-- `` `code` `` 用于技术术语
-- `[links](url)` 用于引用
+- `- Lists` 用于罗列
+- `` `code` `` 标注技术术语
+- `[links](url)` 添加引用
 </Step>
 
 <Step title="预览内容">
-实时预览面板显示您的 Markdown 将如何渲染。
+实时预览面板会显示 Markdown 的渲染效果。
 
 {/* SCREENSHOT: Side-by-side editor and preview */}
 
 <Tip>
-在保存前使用预览功能确认格式，特别是包含表格或代码块等复杂 Markdown 时。
+保存前用预览确认格式，尤其是包含表格或代码块的复杂 Markdown。
 </Tip>
 </Step>
 
 <Step title="保存评论">
-点击"保存"将评论存储到文件中。
+点击「保存」，评论即随文件一起存储。
 </Step>
 </Steps>
 
@@ -86,7 +86,7 @@ Ordered list:
 3. Third item
 ```
 
-#### 链接和图片
+#### 链接与图片
 
 ```markdown
 [Link text](https://example.com)
@@ -103,7 +103,7 @@ function example() {
 ```
 ````
 
-#### 引用
+#### 引用块
 
 ```markdown
 > This is a quoted text
@@ -208,81 +208,81 @@ Use this data for:
 
 ### 编辑评论
 
-要修改已有评论：
-1. 选择文件或文件夹
+修改已有评论：
+1. 选中文件或文件夹
 2. 打开评论面板
 3. 编辑 Markdown 文本
 4. 保存更改
 
 ### 删除评论
 
-要完全删除评论：
+彻底删除评论：
 1. 打开评论编辑器
-2. 删除所有文本
-3. 点击"保存"
+2. 清空全部文本
+3. 点击「保存」
 
 <Warning>
-删除评论是永久性的，无法撤销。如果您以后可能需要这些信息，建议添加"已弃用"标题代替删除。
+删除评论不可撤销。如果日后可能还需要这些信息，建议改为加上「已废弃」标题保留。
 </Warning>
 
 ## 最佳实践
 
 <AccordionGroup>
-<Accordion title="编写有效的评论">
-**应该做的**：
-- 简洁但完整
-- 使用标题组织长评论
-- 包含他人可能不了解的上下文
+<Accordion title="撰写高质量评论">
+**建议**：
+- 简洁而完整
+- 用标题组织较长的评论
+- 补充他人未必知晓的背景
 - 链接到相关文档
-- 当内容变更时更新评论
+- 内容变更时同步更新评论
 
-**不应该做的**：
-- 编写过长的评论（保持易于浏览）
-- 在共享文件的评论中包含敏感信息
+**避免**：
+- 写成长篇大论（保持可快速浏览）
+- 在共享文件的评论中写入敏感信息
 - 重复文件本身已有的信息
-- 保留过时的评论
+- 留下过时的评论
 </Accordion>
 
 
-<Accordion title="Markdown 格式化技巧">
-- 使用 `#` 标题创建结构
-- 列表使内容易于浏览
-- **加粗**关键术语以快速识别
-- 代码块用于技术内容
-- 表格用于结构化数据
-- 链接用于连接相关文档
+<Accordion title="Markdown 格式技巧">
+- 用 `#` 标题构建结构
+- 列表让内容易于浏览
+- 用**加粗**突出关键术语
+- 代码块承载技术内容
+- 表格承载结构化数据
+- 用链接串联相关文档
 </Accordion>
 
-<Accordion title="无障碍访问">
-- 按层级顺序使用标题（先 H1，再 H2，而非直接从 H1 到 H3）
-- 提供描述性的链接文本（而非"点击这里"）
+<Accordion title="无障碍">
+- 标题按层级递进使用（先 H1 再 H2，不要从 H1 直接跳到 H3）
+- 提供描述性链接文本（而非「点击这里」）
 - 为图片添加替代文本
-- 保持语言清晰简洁
-- 使用列表以提升屏幕阅读器支持
+- 语言保持清晰简单
+- 用列表提升屏幕阅读器的可读性
 </Accordion>
 </AccordionGroup>
 
 ## 与项目的集成
 
-评论增强了项目工作流程：
+评论可以增强项目工作流：
 
-- **项目上下文**：当文档关联到项目时，评论提供上下文信息
-- **AI 理解**：通过 MCP 服务器访问的 AI 模型可以阅读评论以理解文档用途
-- **团队协作**：评论帮助团队成员了解文档关系和历史
-- **搜索**：评论可被搜索，使文档更容易被找到
+- **项目上下文**：文档关联到项目后，评论会一并作为上下文提供
+- **AI 理解**：通过 MCP 服务器接入的 AI 模型可以读取评论，理解文档用途
+- **团队协作**：评论帮助团队成员理解文档之间的关系与来龙去脉
+- **搜索**：评论可被搜索，让文档更容易被找到
 
 ## 后续步骤
 
 <CardGroup cols={2}>
 <Card title="文件操作" icon="folder" href="/zh/features/memorylake/document-management/file-folder-operations">
-学习基本的文件和文件夹操作
+了解文件与文件夹的基础操作
 </Card>
 
 <Card title="项目关联" icon="diagram-project" href="/zh/features/memorylake/project-management/document-association">
-将文档链接到项目
+将文档关联到项目
 </Card>
 
-<Card title="Items API" icon="code" href="/features/memorylake/api-reference/items">
+<Card title="文件库 API" icon="code" href="/zh/features/memorylake/api-reference/library/overview">
 通过 API 以编程方式管理文件
 </Card>
 </CardGroup>

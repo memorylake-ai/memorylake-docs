@@ -1,58 +1,77 @@
 ---
-title: "项目管理"
-description: "将文档、记忆和 MCP 服务器组织成统一的项目"
+title: "工作空间与项目"
+description: "将记忆组织进工作空间和项目——它们是限定检索、访问与集成范围的容器"
 ---
 
-## 概述
+## 概览
 
-项目帮助您将相关文档和记忆组织成统一的单元。为 AI 交互和团队协作提供结构化的上下文。
+MemoryLake 用两级层级结构组织知识：**工作空间**包含**项目**。工作空间是顶层容器（您的个人空间自带一个默认工作空间；团队可以创建更多）；项目是其中聚焦的知识体——也就是您让 AI 指向的那个单元。
+
+```text
+工作空间
+├── 项目 A   ← 文档 + 记忆 + Open Data + 集成
+├── 项目 B
+├── Agents   ← 在此工作空间中运行的 AI 助手
+└── 记忆     ← 工作空间范围的记忆视图
+```
 
 ## 什么是项目？
 
-MemoryLake 中的项目是：
-- **容器**：用于存放相关文档
-- **上下文提供者**：通过 MCP 服务器为 AI 模型提供上下文
-- **组织单元**：用于知识管理
-- **协作空间**：用于团队协作
+一个项目是：
+- **一个检索作用域**——搜索、Playground 上下文和 Agent 召回都在项目内进行，因此上下文不会互相渗透
+- **一个容器**，用于存放文档、提取的记忆和 Open Data 订阅
+- **一个集成单元**——Agent 插件和 MCP Key 连接到某一个项目
+- **一个权限边界**——在团队中，可以按项目授予访问权
 
-{/* SCREENSHOT: Project list view */}
+<Note>
+注册时会自动为您预置一个默认工作空间（含第一个项目）——只有当使用量增长后，您才需要显式管理这套层级结构。
+</Note>
 
-## 核心功能
+## 项目仪表盘
+
+打开一个项目（控制台 → **工作空间** → 工作空间 → 项目）即可看到它的各个标签页：
+
+| 标签页 | 内容 |
+|---|---|
+| **文件** | 已关联的文档及其处理状态；可通过上传、拖放或从文件库添加 |
+| **Open Data** | 本项目订阅的精选行业数据集 |
+| **记忆** | 提取的记忆——搜索、编辑、遗忘、词频视图、来源溯源 |
+| **冲突** | 等待消解的矛盾记忆 |
+| **集成** | 连接 Agent，以及限定在本项目范围的 API 访问 |
+
+详见[项目仪表盘](/zh/features/memorylake/project-management/project-dashboard)。
+
+## 核心指南
 
 <CardGroup cols={2}>
-<Card title="项目仪表板" icon="dashboard" href="/zh/features/memorylake/project-management/project-dashboard">
-从统一的仪表板监控统计数据，管理文档、记忆和 MCP 服务器。
+<Card title="项目仪表盘" icon="gauge" href="/zh/features/memorylake/project-management/project-dashboard">
+浏览各标签页、监控处理进度、管理项目。
 </Card>
 
 <Card title="文档关联" icon="link" href="/zh/features/memorylake/project-management/document-association">
-使用树形选择器将云盘中的文档链接到项目。
+将文件库中的文档链接到项目。
 </Card>
 </CardGroup>
 
-## 项目组成
+## 如何划分项目
 
-### 文档
-关联云盘中的文件和文件夹。文档提供 AI 模型可以读取和分析的内容。
-
-### 记忆
-添加知识片段和上下文，引导 AI 对项目的理解。
-
-### MCP 服务器
-生成 API 密钥，供外部应用程序和 AI 模型访问项目数据。
+- **个人**：按生活/工作上下文各建一个——"健康"、"买房"、"业余项目"。问自己：*回答关于 X 的问题时，助手是否应该引用 Y？*如果不该，就分成不同项目。
+- **团队**：按项目、客户或领域各建一个——"Q3 发布"、"客户 X"、"2026 合规"。项目级权限让您可以只给某个外包人员开放一个项目。
+- **开发者**：通常每个终端用户（或租户）一个项目——参见[构建带记忆的应用](/zh/scenarios/ai-apps-with-memory)。
 
 ## 常见用例
 
 <AccordionGroup>
-<Accordion title="研究组织">
-将研究论文、笔记和数据文件归组。添加包含研究问题和方法论的记忆。通过 MCP 服务器提供 AI 访问。
+<Accordion title="研究资料整理">
+把论文、笔记和数据文件放进一个项目；订阅研究类 Open Data；连接您的 Agent。提问将严格基于这一语料库得到回答。
 </Accordion>
 
-<Accordion title="团队知识库">
-集中管理团队文档。关联相关文件，添加包含指南和最佳实践的记忆。
+<Accordion title="客户交付">
+每个客户一个项目。OpenClaw 插件的按目录配置会把每个客户的工作目录固定到其对应项目——记忆绝不会跨客户流动。
 </Accordion>
 
-<Accordion title="AI 上下文管理">
-组织 AI 模型所需的文档。添加引导 AI 行为和理解的记忆。
+<Accordion title="团队知识领域">
+在共享工作空间内按领域建项目（"定价"、"法务"、"入职"），并在需要处设置按项目的权限。
 </Accordion>
 </AccordionGroup>
 
@@ -60,30 +79,18 @@ MemoryLake 中的项目是：
 
 <Steps>
 <Step title="创建项目">
-为您的项目命名并添加描述。
+在您的工作空间中创建项目，起一个清晰的名称并写明用途描述。
 </Step>
 
-<Step title="添加文档">
-从您的云盘中关联相关文件。
+<Step title="添加内容">
+在文件标签页上传文件、关联已有的文件库文档、订阅 Open Data 分类。
 </Step>
 
-<Step title="创建记忆">
-添加上下文知识和指南。
+<Step title="对话并积累记忆">
+使用限定在该项目范围的 Playground——记忆会自动提取。在记忆标签页中查看它们。
 </Step>
 
-<Step title="生成 API 密钥">
-创建 MCP 服务器端点以供外部访问。
+<Step title="连接集成">
+在集成标签页中安装 OpenClaw 插件，或为该项目配置 API 访问。
 </Step>
 </Steps>
-
-## 后续步骤
-
-<CardGroup cols={2}>
-<Card title="仪表板指南" icon="gauge" href="/zh/features/memorylake/project-management/project-dashboard">
-掌握项目仪表板
-</Card>
-
-<Card title="关联文档" icon="paperclip" href="/zh/features/memorylake/project-management/document-association">
-将文档链接到项目
-</Card>
-</CardGroup>

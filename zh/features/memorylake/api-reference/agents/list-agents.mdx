@@ -1,13 +1,13 @@
 ---
 title: "列出 Agent"
-description: "返回 Agent 的分页列表，支持按自定义 ID 筛选"
+description: "返回 Agent 的分页列表，支持按名称搜索"
 ---
 
 ```
 GET /openapi/memorylake/api/v3/agents
 ```
 
-返回你账户中所有 Agent 的分页列表。你可以通过 `custom_id` 进行筛选，并使用 `page_size` 和 `continuation_token` 控制分页。
+返回你账户中所有 Agent 的分页列表。你可以通过 `name_fuzzy` 按名称搜索，并使用 `page_size` 和 `continuation_token` 控制分页。
 
 <Note>
 **所需权限：** `agent:list`
@@ -23,8 +23,8 @@ GET /openapi/memorylake/api/v3/agents
 上一次响应中的 token，用于获取下一页结果
 </ParamField>
 
-<ParamField query="custom_id" type="string">
-按自定义标识符筛选 Agent（精确匹配）
+<ParamField query="name_fuzzy" type="string">
+按 Agent 名称模糊匹配
 </ParamField>
 
 <RequestExample>

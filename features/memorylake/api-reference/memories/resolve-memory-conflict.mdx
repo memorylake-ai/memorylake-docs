@@ -10,7 +10,7 @@ POST /openapi/memorylake/api/v2/projects/{id}/memories/conflicts/{conflictId}/re
 Records the user's decision on a conflict. Depending on the strategy, one or more of the conflicting memories may be forgotten — those IDs come back in `forgotten_memory_ids` so your UI can update the corresponding memory rows.
 
 <Note>
-**Permission required:** [`project:mem_conflict_resolve`](/features/team-collaboration/permission-reference#resolve-conflicting-memories) · `instance`
+**Permission required:** [`project:mem_conflict_resolve`](/features/team-collaboration/permission-reference#resolve-conflicting-facts) · `instance`
 </Note>
 
 ### Path Parameters

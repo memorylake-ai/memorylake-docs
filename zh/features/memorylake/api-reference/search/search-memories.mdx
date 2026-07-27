@@ -25,10 +25,6 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/search
 自然语言搜索查询
 </ParamField>
 
-<ParamField body="threshold" type="number">
-最低相关性分数，取值在 `0.0` 到 `1.0` 之间。低于此分数的结果将被排除。
-</ParamField>
-
 <ParamField body="project_ids" type="array of strings">
 将搜索限定到特定项目。省略时将搜索工作空间中的所有项目。
 </ParamField>
@@ -52,7 +48,6 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
   -H 'Content-Type: application/json' \
   -d '{
     "query": "What were the quarterly revenue figures?",
-    "threshold": 0.5,
     "project_ids": ["proj_def456"],
     "memory_types": ["document", "fact"],
     "top_k": 10

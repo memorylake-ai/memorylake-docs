@@ -1,57 +1,57 @@
 ---
-title: "资料库概览"
-description: "管理资料库中的文件和文件夹 — MemoryLake 项目背后的存储层"
+title: "文件库概述"
+description: "管理文件库中的文件和文件夹 — MemoryLake 项目背后的存储层"
 ---
 
-## 什么是资料库？
+## 什么是文件库？
 
-**资料库（Library）**是一个统一的文件系统，保存 MemoryLake 可以访问的所有文件。项目文档始终通过引用资料库中已有的文件来创建。
+**文件库**是一套统一的文件系统，保存 MemoryLake 能够访问的全部文件。项目文档始终通过引用文件库中已有的文件来创建。
 
-你的顶级可写文件夹是 **`MY_SPACE`** — 将其视为工作空间的根目录。你创建的每个文件或文件夹都放置在 `MY_SPACE` 下（直接放置或嵌套在子文件夹中）。
+您的顶层可写文件夹是 **`MY_SPACE`** — 可将其视为工作空间的根目录。您创建的每个文件或文件夹都放在 `MY_SPACE` 之下（直接放置，或嵌套在子文件夹中）。
 
 典型的集成流程如下：
 
 <Steps>
 <Step title="选择目标文件夹">
-使用别名 `MY_SPACE` 直接定位工作空间根目录，或传入你在其下创建的任何子文件夹的 `item_id`。
+使用别名 `MY_SPACE` 直接指向工作空间根目录，或传入您在其下创建的任意子文件夹的 `item_id`。
 </Step>
-<Step title="将文件上传到资料库">
-分块上传：[创建上传会话](/zh/features/memorylake/api-reference/library/create-upload)，PUT 每个分块，然后[创建文件项](/zh/features/memorylake/api-reference/library/create-item)。
+<Step title="将文件上传到文件库">
+分块上传：[创建上传会话](/zh/features/memorylake/api-reference/library/create-upload)，逐块 PUT，然后[创建文件条目](/zh/features/memorylake/api-reference/library/create-item)。
 </Step>
 <Step title="将文件导入项目">
 使用上一步返回的 `item_id` 调用[导入文档](/zh/features/memorylake/api-reference/v3-documents/import-documents)。
 </Step>
 </Steps>
 
-## 基础 URL
+## Base URL
 
 ```
 https://app.memorylake.ai/openapi/memorylake
 ```
 
-## 项目 ID 别名
+## 条目 ID 别名
 
-在任何接受 `item_id` 的地方，你可以传入别名 `MY_SPACE` 来代替具体的 ID。
+任何接受 `item_id` 的位置，都可以传入别名 `MY_SPACE` 来替代具体 ID。
 
-`MY_SPACE` 始终解析为你的工作空间根目录。当你需要查找根文件夹时，可以直接传入它 — 例如在创建顶级文件或文件夹时作为 `parent_item_id` 使用。
+`MY_SPACE` 始终解析为您的工作空间根目录。凡是原本需要先查询根文件夹的场景，都可以直接传入它 — 例如创建顶层文件或文件夹时的 `parent_item_id`。
 
 <Tip>
-你不需要先调用 [Get Item](/zh/features/memorylake/api-reference/library/get-item) 来获取根文件夹 — 直接使用 `MY_SPACE` 即可。
+您无需先调用[获取条目](/zh/features/memorylake/api-reference/library/get-item)来查找根文件夹 — 直接使用 `MY_SPACE` 即可。
 </Tip>
 
-## 上传文件（端到端流程）
+## 上传文件（端到端）
 
-文件采用分块上传方式。你会收到每个分块对应的一个预签名 PUT URL，逐块上传后，最后通过创建一个引用该上传的 `file` 项来完成。
+文件上传采用分块方式。每个分块对应一个预签名 PUT URL，逐块上传后，再创建一个引用该上传会话的 `file` 条目完成收尾。
 
 <Steps>
 <Step title="创建上传会话">
-`POST /api/v1/drives/items/upload`，传入 `file_size`（字节数）。返回一个 `upload_id` 和一个 `part_items` 列表 — 每个分块对应一个预签名 URL。
+`POST /api/v1/drives/items/upload`，携带以字节为单位的 `file_size`。返回一个 `upload_id` 和 `part_items` 列表 — 每个分块一个预签名 URL。
 </Step>
 <Step title="上传每个分块">
-将每个分块的字节 `PUT` 到其 `upload_url`。保存每次响应中的 `ETag` 头 — 你需要收集所有的 ETag。
+将每个分块的字节 `PUT` 到对应的 `upload_url`。保存每次响应的 `ETag` 头 — 全部都需要用到。
 </Step>
-<Step title="创建文件项">
-`POST /api/v1/drives/items`，传入 `item_type: "file"` 和 `from: { upload_id, part_etags }`。返回新的 `item_id`。
+<Step title="创建文件条目">
+`POST /api/v1/drives/items`，携带 `item_type: "file"` 和 `from: { upload_id, part_etags }`。返回新的 `item_id`。
 </Step>
 </Steps>
 
@@ -99,39 +99,39 @@ def upload_file_to_library(path: str, parent_item_id: str = "MY_SPACE") -> str:
 
 ## 名称冲突
 
-创建文件或文件夹时，可以在请求中选择冲突处理策略：
+创建文件或文件夹时，在请求中指定冲突处理策略：
 
 | 策略 | 行为 | `item_id` |
 |---|---|---|
-| `rename`（默认） | 追加 `_N` 后缀（`report_1.pdf`）。始终成功。 | 新 ID |
-| `deny` | 如果名称已被占用，返回 `409 DRIVE_ITEM_CONFLICT`。 | — |
-| `overwrite` | 仅限文件。就地覆盖现有文件的内容。 | **保留原 ID** |
-| `replace` | 仅限文件。删除现有文件并创建新文件。 | 新 ID |
+| `rename` *（默认）* | 追加 `_N` 后缀（`report_1.pdf`）。始终成功。 | 新建 |
+| `deny` | 名称已被占用时返回 `409 DRIVE_ITEM_CONFLICT`。 | — |
+| `overwrite` | 仅适用于文件。原地覆盖已有文件的内容。 | **保留** |
+| `replace` | 仅适用于文件。删除已有文件并创建新文件。 | 新建 |
 
 <Warning>
-`overwrite` 和 `replace` 并非同义词。`overwrite` 保留现有的 `item_id`；`replace` 会分配一个新的 ID。两个选项都不会重新处理已从该文件导入的项目文档 — 如果你需要索引新内容，请重新调用[导入文档](/zh/features/memorylake/api-reference/v3-documents/import-documents)。
+`overwrite` 和 `replace` 并非同义。`overwrite` 保留原有的 `item_id`；`replace` 会签发一个新的。两者都不会重新处理此前已从该文件导入的项目文档 — 如需索引新内容，请重新调用[导入文档](/zh/features/memorylake/api-reference/v3-documents/import-documents)。
 </Warning>
 
 ## 接口列表
 
 <CardGroup cols={2}>
-<Card title="获取项目" icon="file-magnifying-glass" href="/zh/features/memorylake/api-reference/library/get-item">
-通过 `item_id` 查找文件或文件夹。
+<Card title="获取条目" icon="file-magnifying-glass" href="/zh/features/memorylake/api-reference/library/get-item">
+按 `item_id` 查询文件或文件夹。
 </Card>
 
-<Card title="列出项目" icon="folder-tree" href="/zh/features/memorylake/api-reference/library/list-items">
-分页浏览文件夹的内容。
+<Card title="列出条目" icon="folder-tree" href="/zh/features/memorylake/api-reference/library/list-items">
+分页浏览文件夹内容。
 </Card>
 
-<Card title="创建上传" icon="cloud-arrow-up" href="/zh/features/memorylake/api-reference/library/create-upload">
-启动分块上传会话并获取预签名 URL。
+<Card title="创建上传会话" icon="cloud-arrow-up" href="/zh/features/memorylake/api-reference/library/create-upload">
+开启分块上传会话并获取预签名 URL。
 </Card>
 
-<Card title="创建项目" icon="plus" href="/zh/features/memorylake/api-reference/library/create-item">
-创建文件夹，或将上传完成为文件项。
+<Card title="创建条目" icon="plus" href="/zh/features/memorylake/api-reference/library/create-item">
+创建文件夹，或将上传收尾为文件条目。
 </Card>
 
-<Card title="删除项目" icon="trash" href="/zh/features/memorylake/api-reference/library/delete-item">
-删除文件或文件夹（对文件夹递归删除）。
+<Card title="删除条目" icon="trash" href="/zh/features/memorylake/api-reference/library/delete-item">
+删除文件或文件夹（文件夹为递归删除）。
 </Card>
 </CardGroup>

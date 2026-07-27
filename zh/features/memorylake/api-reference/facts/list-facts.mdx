@@ -7,7 +7,7 @@ description: "返回项目中的事实分页列表"
 GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/facts
 ```
 
-返回项目中存储的事实分页列表。事实是从对话中自动提取的结构化知识片段。您可以按 Actor 筛选或包含已过期的事实。
+返回项目中存储的事实分页列表。事实是从会话中自动提取的结构化知识片段。您可以使用 `fact_fuzzy` 按内容筛选事实。
 
 <Note>
 **所需权限：** `project:mem_list`
@@ -25,20 +25,16 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/mem
 
 ### 查询参数
 
-<ParamField query="page_size" type="integer" default="20">
-每页返回的事实数量
+<ParamField query="page_size" type="integer" default="50">
+每页返回的事实数量。取值范围：1–200。
 </ParamField>
 
 <ParamField query="continuation_token" type="string">
 上一次响应返回的令牌，用于获取下一页结果
 </ParamField>
 
-<ParamField query="actor_id" type="string">
-按指定的 Actor ID 筛选事实
-</ParamField>
-
-<ParamField query="expired" type="boolean">
-在结果中包含已过期（已遗忘）的事实
+<ParamField query="fact_fuzzy" type="string">
+按内容子串筛选事实
 </ParamField>
 
 <RequestExample>

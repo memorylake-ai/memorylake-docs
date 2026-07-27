@@ -25,16 +25,16 @@ Actor ID
 
 ### 查询参数
 
-<ParamField query="page_size" type="integer" default="20">
-每页返回的事实数量
+<ParamField query="page_size" type="integer" default="50">
+每页返回的事实数量。取值范围：1–200。
 </ParamField>
 
 <ParamField query="continuation_token" type="string">
 上一次响应返回的令牌，用于获取下一页结果
 </ParamField>
 
-<ParamField query="expired" type="boolean">
-在结果中包含已过期（已遗忘）的事实
+<ParamField query="fact_fuzzy" type="string">
+按内容子串筛选事实
 </ParamField>
 
 <RequestExample>

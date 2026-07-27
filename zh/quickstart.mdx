@@ -1,87 +1,80 @@
 ---
 title: "快速开始"
-description: "使用统一入口完成首次模型调用，涵盖 OpenAI / Claude / Gemini 示例以及配额和日志要点"
+description: "五分钟体验 AI 记忆——对话、上传、检索，并连接您的工具"
 ---
 
-## 您将获得
+本指南带您在约五分钟内从注册走到一份可用的记忆，然后为您指出最契合您工作方式的集成路径。
 
-- 复用现有的 OpenAI / Claude / Gemini 客户端；只需更改 Base URL 和 Token 即可调用。
-- 平台验证配额并预扣，不足时直接拒绝，防止透支。
-- 调用日志记录模型、Token 名称、渠道、请求延迟和令牌数等字段，便于排查和对账。
+## 第 1 步：注册
 
-## 适用场景
+在 [app.memorylake.ai](https://app.memorylake.ai) 创建账号。MemoryLake 会自动为您开通个人工作空间和助手——首次会话之前无需任何配置。
 
-- 需要快速验证 Token 可用性和配额设置。
-- 想要切换到统一入口而无需修改现有客户端代码。
-- 需要查看请求延迟、令牌数和消费，以支持后续对账或排查。
+## 第 2 步：在 Playground 中体验记忆
 
-## 快速上手
+从侧边栏打开 **Playground**（新账号会直接进入这里，并有一个简短的引导）：
 
-1) **准备**：复制您的 Token 并记下平台 API Base（示例：`https://app.memorylake.ai`）。
-2) **选择模型**：如不确定，先获取模型列表：`GET /v1/models`（OpenAI 兼容端点）。
-3) **发送最简调用**：按照官方格式，仅替换 Base URL 和 Token：
+<Steps>
+<Step title="告诉它一件值得记住的事">
+试试：*"记住我叫小明，我偏好用要点形式回答。"*
 
-<CodeGroup>
-```bash OpenAI 兼容 (chat/completions)
-curl --request POST \
-  --url https://app.memorylake.ai/v1/chat/completions \
-  --header 'Authorization: Bearer sk-your-token' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "model": "gpt-4o-mini",
-    "messages": [{"role": "user", "content": "hi~"}]
-  }'
-```
+在背后，MemoryLake 会从会话中提取一条可长期沉淀的记忆——不是对话记录，而是一条事实。
+</Step>
 
-```bash Claude 兼容 (messages)
-curl --request POST \
-  --url https://app.memorylake.ai/claude/v1/messages \
-  --header 'x-api-key: sk-your-token' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "model": "claude-3-haiku-20240307",
-    "max_tokens": 1024,
-    "messages": [{"role": "user", "content": "hi~"}]
-  }'
-```
+<Step title="添加 Open Data（可选）">
+为您的项目订阅一个精选行业数据集——论文、金融数据、临床试验等——这样助手在检索您自有内容的同时，还能检索权威的外部来源。
+</Step>
 
-```bash Gemini 兼容 (generateContent)
-curl --request POST \
-  --url https://app.memorylake.ai/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
-  --header 'x-goog-api-key: sk-your-token' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "contents": [{
-      "role": "user",
-      "parts": [{"text": "hi~"}]
-    }]
-  }'
-```
-</CodeGroup>
+<Step title="上传文件">
+直接在对话中附加 PDF、Word、Excel 或 Markdown 文件。其内容会被解析、建立索引，并成为可检索的上下文。
+</Step>
 
-<Note>
-路径约定：OpenAI 端点位于 `/v1`，Claude 位于 `/claude/v1`，Gemini 位于 `/gemini/:version`。所有调用示例使用平台实际可用路径。
-</Note>
+<Step title="感受差异">
+开启一个**新**会话并提问：*"我叫什么，我喜欢什么样的回答？"* 助手能回忆起来——这就是跨会话持续存在的记忆。首页的记忆开/关对比会并排展示同样的效果。
+</Step>
+</Steps>
 
-## 关键使用要点
+<Tip>
+在侧边栏访问**记忆**，查看提取出了什么——每条记忆都会显示其内容，以及回到它来源会话或文档的**来源溯源**。
+</Tip>
 
-- **配额规则**：每次调用验证并预扣配额；配额不足时拒绝请求。成功返回确认扣除；失败回滚预扣。
-- **模型选择**：支持 OpenAI / Claude / Gemini 兼容格式。通过 `GET /v1/models` 或对应的模型列表端点查看当前可用模型。
-- **渠道和代理**：可根据需要为渠道配置代理或倍率。最终路由根据模型、渠道配置和可选的指定渠道请求头进行分发。
-- **特殊功能**：支持 o1/o3 ReasoningEffort 选择、Claude thinking、Gemini 搜索和代码执行等能力，通过官方参数透传。
+## 第 3 步：创建 API Key
 
-## 成功调用后您将看到
+任何编程访问——REST API、Model Router 或 Agent 插件——都需要创建一个 API Key：
 
-- **日志记录**：记录模型名称、Token 名称、渠道、请求延迟（`request_time`）、提示和完成令牌数等字段，用于追踪和排查。
-- **聚合统计**：按日期聚合请求次数、消费配额、令牌数和请求延迟，便于看板展示和配额对账。
+1. 在控制台侧边栏打开 **API Keys**
+2. 点击创建，为 Key 命名，并选择有效期（默认 30 天；也可选择"永不过期"）
+3. Key 揭示时立即复制 `sk-…`——它只显示一次
 
-## 常见问题排查
+请参见[认证](/zh/authentication)了解请求头格式和 Key 管理。
 
-- **配额不足**：确认 Token 或账户配额充足；配额不足直接拒绝请求。
-- **无可用路由**：确认目标模型已在当前路由中启用，或调整模型选择。
-- **指定路由**：需要固定路由时，通过 Token 后缀或特定请求头指定；不指定则使用默认自动路由。
+## 第 4 步：把记忆放到您工作的地方
 
-## 您可能还想了解
+选择匹配您工作流的路径：
 
-- 想查看更多示例或特殊参数用法：查看[协议与入口](/features/model-router/protocols-and-entrypoints)文档。
-- 想验证计费：使用日志字段和聚合统计进行对账；如需验证倍率和模型通配符，先使用测试 Token。
+<CardGroup cols={2}>
+<Card title="编程 Agent（OpenClaw）" icon="terminal" href="/zh/features/memorylake/mcp-servers/overview">
+安装 MemoryLake 插件——您的 Agent 会自动召回上下文、捕获新记忆，并上传您分享给它的文件。
+</Card>
+
+<Card title="REST API" icon="code" href="/zh/features/memorylake/api-reference/overview">
+完整的编程控制：项目、文档、记忆的添加/搜索/溯源，以及冲突消解，入口为 `https://app.memorylake.ai/openapi/memorylake`。
+</Card>
+
+<Card title="Memory Router" icon="route" href="/zh/features/memory-router/overview">
+只需更改 Base URL，即可为现有的 OpenAI/Anthropic 调用加上记忆。内测中。
+</Card>
+
+<Card title="Model Router" icon="globe" href="/zh/features/model-router/overview">
+用同一个 API Key，通过一个兼容 OpenAI 的端点调用主流 LLM。
+</Card>
+</CardGroup>
+
+## 刚刚发生了什么？
+
+您的会话和文件被提炼成了**记忆**，存放在您**工作空间**中的一个**项目**里——任何您连接的助手或 API 客户端都可检索，且范围始终限定为您私有。当您准备好与团队共享记忆时，参见[团队协作](/zh/features/team-collaboration/overview)；要理解完整模型，请阅读[核心概念](/zh/concepts)。
+
+## 下一步
+
+- [核心概念](/zh/concepts) —— 工作空间、项目、记忆、Actor、Agent
+- [场景](/zh/scenarios/personal-ai-memory) —— 个人记忆、团队知识库、编程 Agent 和产品集成实操指南
+- [MemoryLake 功能指南](/zh/features/memorylake/overview) —— 文档、记忆、冲突、连接器等
