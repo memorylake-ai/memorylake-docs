@@ -46,7 +46,7 @@ Memory Router collapses all of that into a base-URL change plus one query parame
 | **Minimal integration** | Change the base URL and pass `boundary_id`. Keep your SDK and your code as they are. |
 | **BYOK or hosted** | Bring your own provider key (encrypted in transit, never stored) or use MemoryLake-hosted models with a single key. |
 | **Automatic memory** | Relevant memories are recalled and injected before the call; new memories are extracted asynchronously after it — never delaying the response. |
-| **Scoped by Boundary** | A [Boundary](#boundaries-the-memory-scope) defines exactly which workspace, projects, and actors a conversation's memory belongs to. |
+| **Scoped by Boundary** | A [Boundary](#boundaries:-the-memory-scope) defines exactly which workspace, projects, and actors a conversation's memory belongs to. |
 | **Shared memory pool** | The Router and the MemoryLake API read and write the same memories — one source of truth. |
 | **Traceable** | Every response carries an `X-Trace-ID` header, and each call lands in the console Logs with model, token, and key-source details. |
 
