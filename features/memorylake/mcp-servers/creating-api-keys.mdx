@@ -1,140 +1,109 @@
 ---
-title: "Creating MCP Server API Keys"
-description: "Generate secure API keys for MCP server access to your project data"
+title: "Connect via MCP"
+description: "Connect Claude Code, Codex, Cursor, and other MCP clients to MemoryLake with standard OAuth2"
 ---
 
-## Creating an API Key
+MemoryLake runs a **remote MCP server** that any MCP-capable client can connect to over HTTP. Authorization uses standard **OAuth2** — you never paste a secret into a config file, and you choose which workspace and boundary the client may access on the consent screen.
 
-<Steps>
-<Step title="Open Project">
-Navigate to the project dashboard.
-</Step>
+## Server URL
 
-<Step title="Go to MCP Servers Tab">
-Click the "MCP Servers" tab.
-
-{/* SCREENSHOT: MCP Servers tab */}
-</Step>
-
-<Step title="Click Add MCP Server">
-Click the "Add MCP Server" button.
-
-{/* SCREENSHOT: Create MCP server dialog */}
-</Step>
-
-<Step title="Enter Description">
-Provide a description for this API key (optional but recommended):
-- "Claude AI Integration"
-- "Production API Access"
-- "Team Member - John"
-- "Analytics Dashboard"
-
-This helps you identify keys later.
-</Step>
-
-<Step title="Generate Key">
-Click "Generate" or "Create" to create the API key.
-</Step>
-
-<Step title="Copy Secret Immediately">
-**CRITICAL**: The API secret appears in a dialog. This is the ONLY time you'll see it!
-
-{/* SCREENSHOT: Secret display with copy button and warning */}
-
-- Click "Copy" to copy the secret to clipboard
-- Save it in a secure location (password manager, environment variables)
-- Never commit it to version control
-
-<Warning>
-Once you close this dialog, the full secret cannot be retrieved again. If lost, you must delete and recreate the API key.
-</Warning>
-
-<Check>
-You should have copied and securely stored the API secret.
-</Check>
-</Step>
-
-<Step title="Note the Endpoint URL">
-The dialog also shows the endpoint URL:
-
-```
-https://ai.data.cloud/memorylake/mcp/v1?apikey=...
+```text
+https://app.memorylake.ai/memorylake/mcp/v2
 ```
 
-Copy this URL for use in your applications.
+The console shows this URL with a copy button at **Integrations → MCP**, along with ready-made commands per client.
 
-{/* SCREENSHOT: Endpoint URL display */}
-</Step>
-</Steps>
+<Info>
+The connect page is scope-less: there is no project picker. You pick the workspace and boundary during the OAuth consent step, so one client connection can be re-authorized to a different scope without editing any config.
+</Info>
 
-## Best Practices
+## Connect Your Client
 
-### Descriptive Names
+<Tabs>
+<Tab title="Claude Code">
+```bash
+claude mcp add --transport http --scope user memorylake https://app.memorylake.ai/memorylake/mcp/v2
+```
 
-Use clear descriptions:
-- ✅ "Production - Claude Integration"
-- ✅ "Development - Testing"
-- ✅ "Analytics Dashboard - Read Only"
-- ❌ "Key 1"
-- ❌ "Test"
+Claude Code opens the MemoryLake consent screen on first use. Approve it, choose your workspace and boundary, and the tools appear.
+</Tab>
 
-### Secure Storage
+<Tab title="Codex">
+Add the server to your Codex configuration:
 
-Store API secrets securely:
-- **Password Manager**: 1Password, LastPass, Bitwarden
-- **Environment Variables**: `.env` files (add to `.gitignore`)
-- **Secrets Manager**: AWS Secrets Manager, Azure Key Vault
-- **DO NOT**: Commit to Git, store in code, share in chat/email
+```toml
+[mcp_servers.memorylake]
+url = "https://app.memorylake.ai/memorylake/mcp/v2"
+```
 
-### Multiple Keys
+Then sign in:
 
-Create separate keys for different purposes:
-- One per environment (dev, staging, production)
-- One per team member (for accountability)
-- One per integration (Claude, custom app, analytics)
+```bash
+codex mcp login memorylake
+```
+</Tab>
 
-This allows you to revoke specific access without affecting others.
+<Tab title="Cursor / Claude Desktop">
+```json
+{
+  "mcpServers": {
+    "memorylake": {
+      "url": "https://app.memorylake.ai/memorylake/mcp/v2"
+    }
+  }
+}
+```
 
-### Key Rotation
+Restart the client; it will prompt for OAuth authorization on first connection.
+</Tab>
 
-Rotate keys periodically:
-1. Create new API key
-2. Update applications to use new key
-3. Verify new key works
-4. Delete old API key
+<Tab title="Other clients">
+Any client that supports remote MCP servers over HTTP with OAuth2 works. Point it at the server URL above — no API key, no custom headers. The client performs the standard OAuth2 authorization-code flow and stores the resulting token itself.
+</Tab>
+</Tabs>
 
-## Managing API Keys
+## What Connected Clients Can Do
 
-### Delete API Key
+Once authorized, the client gets tools for searching and analyzing the content in scope:
 
-To revoke access:
-1. Click delete icon for the key
-2. Confirm deletion
+| Tool | What it does |
+|---|---|
+| `search_memory` | Hybrid keyword + semantic search across memories and documents |
+| `fetch_memory` | Fetch detailed metadata and download links for specific results |
+| `get_memorylake_metadata` | Overview — file counts by type, spreadsheet sheet names, document stats |
+| `create_memory_code_runner` / `run_memory_code` | Sandboxed Python (pandas, numpy, …) over the files in scope, with state persisting across calls |
+| `nl_query_database` | Natural-language SQL over a connected database, where one is configured |
 
-{/* SCREENSHOT: Delete confirmation */}
+OpenAI-protocol clients are automatically served simplified `search` / `fetch` variants of the same tools — one endpoint adapts to the client.
 
-Access is revoked immediately.
+These tools read and analyze; they do not modify or delete your documents and memories.
 
-<Warning>
-Deleting an API key immediately revokes access. Applications using that key will receive 401 Unauthorized errors.
-</Warning>
+## Managing Access
+
+- **Re-scope**: re-run the OAuth flow to authorize a different workspace or boundary — no config change needed.
+- **Revoke**: remove the authorization from the console; the client's token stops working immediately.
+- **Token lifetime**: access tokens are short-lived and refreshed automatically by the client.
+
+<Note>
+Earlier versions of MemoryLake used a v1 MCP endpoint with a project-scoped key embedded in the URL (`…/mcp/v1?apikey=…`). That flow has been retired from the console in favor of OAuth2. The v1 endpoint remains available for backward compatibility, but new integrations should use the v2 URL above.
+</Note>
 
 ## Troubleshooting
 
 <AccordionGroup>
-
-<Accordion title="Forgot to copy secret">
-**Solution**: You must delete the API key and create a new one. Secrets cannot be retrieved after creation.
+<Accordion title="Client can't connect">
+Confirm the URL ends in `/mcp/v2` and the client is configured for a **remote HTTP** MCP server (not a local command). Make sure the client supports OAuth2 for MCP — older clients that only accept static tokens cannot use the v2 endpoint.
 </Accordion>
 
-<Accordion title="Want to see full secret again">
-**Not Possible**: Secrets shown only once for security. Delete and recreate if lost.
+<Accordion title="Authorization succeeds but no tools appear">
+Check that you completed workspace and boundary selection on the consent screen. Re-run the client's MCP login to retry.
 </Accordion>
 
+<Accordion title="Tools return nothing">
+The authorized scope may point at an empty project. Confirm in the console that the workspace and project you selected actually contain documents or memories.
+</Accordion>
+
+<Accordion title="I don't see MCP in my console">
+MCP availability depends on your deployment. If **Integrations → MCP** is missing, contact [support@memorylake.ai](mailto:support@memorylake.ai).
+</Accordion>
 </AccordionGroup>
-
-## Next Steps
-
-<Card title="API Reference" icon="code" href="/features/memorylake/api-reference/mcp-servers">
-Complete API documentation
-</Card>

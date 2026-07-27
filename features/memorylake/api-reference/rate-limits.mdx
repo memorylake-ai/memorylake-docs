@@ -11,11 +11,12 @@ API requests are rate limited to ensure fair usage and system stability. Limits 
 
 | Dimension | Limit |
 |-----------|-------|
-| Per IP address | 60 requests / minute |
-| Per user account | 600 requests / minute |
+| Per IP address | Sliding window of several minutes; the exact threshold is set per deployment and is generous for normal integration traffic |
+| Per user account | 600 requests / minute on the default access group |
+| Per IP address, upload endpoints | Separate, tighter per-minute bucket |
 
 <Note>
-When either limit is exceeded, the API returns HTTP status `429 Too Many Requests`. Limits may vary based on your plan — contact support for higher limits.
+When either limit is exceeded, the API returns HTTP status `429 Too Many Requests` with a `Retry-After` header. The per-account limit is set by your access group, so it may differ from the default shown above — contact support for higher limits.
 </Note>
 
 ## Rate Limit Exceeded Response
@@ -61,15 +62,19 @@ async function apiRequestWithBackoff(url, options, maxRetries = 3) {
 - Implement client-side request queuing to smooth out traffic spikes
 - Monitor request volume and log `429` responses for observability
 
-## Storage Quotas
+## Storage and Resource Quotas
 
 | Resource | Limit |
 |----------|-------|
-| Total storage | 100 GB (varies by plan) |
-| Max file size | 500 MB |
 | Projects | Unlimited |
 | Memories per project | Unlimited |
-| API keys per project | 10 |
+| Documents per project | Unlimited |
+| Total storage | Depends on your plan |
+| Max file size | Depends on your plan; large files upload via multipart automatically |
+
+<Note>
+Storage allowances are tied to your subscription. Check **Billing** in the [console](https://app.memorylake.ai/panel/billing) for your current plan, or contact support if you expect unusually large uploads.
+</Note>
 
 ## Requesting Higher Limits
 

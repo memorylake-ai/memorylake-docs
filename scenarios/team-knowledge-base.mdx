@@ -1,0 +1,72 @@
+---
+title: "Team Knowledge Base"
+description: "Turn scattered documents and decisions into governed organizational memory"
+---
+
+## The Problem
+
+Team knowledge lives in fragments: docs in five folders, decisions in chat threads, domain expertise in one senior colleague's head. New members ramp up slowly; when someone leaves, context leaves with them. Classic wikis rot because nobody maintains them.
+
+## What MemoryLake Changes
+
+A team space turns collective activity into **organizational memory** that maintains itself. Documents get parsed and indexed as they're added; conversations with the assistant distill into durable facts; contradictions surface as conflicts to resolve rather than silently coexisting. Every member's AI assistant answers with the team's full accumulated context — governed by roles and permissions.
+
+## Walkthrough
+
+<Steps>
+<Step title="Create the team and invite members">
+Create a team in the console and invite colleagues by email or invite link (both inviter and invitee need verified email addresses). Assign [roles](/features/team-collaboration/roles-permissions): **Owner**, **Admin**, **Member** — or define custom roles for finer control.
+</Step>
+
+<Step title="Structure workspaces around how you work">
+Create a [workspace](/concepts#workspace) per major domain — "Product", "Customer Success", "Legal" — or per client engagement. Members join workspaces automatically; each workspace holds its own projects, memories, and agents.
+</Step>
+
+<Step title="Load the knowledge">
+In each project, upload the documents that matter: specs, contracts, research, meeting notes. Folder uploads preserve structure; PDF, Office, Markdown, and images are all parsed and indexed. Existing knowledge in personal notes? The migration tooling in the agent plugin can import prior conversations and memories.
+</Step>
+
+<Step title="Govern access with roles and resource scopes">
+Beyond the three base roles, MemoryLake supports **per-resource scopes**: grant a contractor access to workspace A's "Vendor audit" project and nothing else. The [Permission Reference](/features/team-collaboration/permission-reference) lists every fine-grained capability — from `project:doc_read` to `project:mem_conflict_resolve`.
+</Step>
+
+<Step title="Let organizational memory accumulate">
+As members chat with the assistant and agents work in project context, MemoryLake extracts shared facts: *"We committed to SOC 2 by Q2"*, *"Customer X's contract renews March 15"*, *"The refund window is 30 days."* Everything carries a **source trace** — click any memory to see the conversation or document it came from.
+</Step>
+
+<Step title="Resolve conflicts, keep truth current">
+When the pricing changes and someone tells the assistant the new numbers, the old memory doesn't linger silently — a **conflict** is raised. Whoever holds the `mem_conflict_resolve` permission reviews and resolves it. Organizational memory stays trustworthy because disagreement is visible.
+</Step>
+
+<Step title="Manage quotas and watch usage">
+Allocate per-member quotas so costs stay predictable, and use the team statistics page (member rankings, consumption trends, model usage) to see how the team actually uses AI.
+</Step>
+</Steps>
+
+## What This Feels Like Day to Day
+
+- A new hire asks the assistant *"How do we handle enterprise refunds?"* and gets the current policy with a citation — no scavenger hunt, no bothering the one person who knows.
+- An account manager preps for a renewal call: *"Summarize everything about Customer X"* pulls contract terms, past escalations, and the promise made in last quarter's QBR.
+- The senior engineer leaves; their design rationale — extracted from months of project conversations — stays searchable.
+
+## Governance Highlights
+
+| Need | Mechanism |
+|---|---|
+| "Only leads can delete memories" | Role or custom role without `project:mem_delete` for others |
+| "Contractor sees one project only" | Per-resource scope on that project |
+| "Finance data stays in Finance" | Separate workspace; membership controls access |
+| "Track who spends what" | Per-member quotas + team usage statistics |
+| "Keys must not outlive employment" | API key permissions track their creator; disable on departure |
+
+## Go Deeper
+
+<CardGroup cols={2}>
+<Card title="Team Collaboration" icon="users" href="/features/team-collaboration/overview">
+Roles, invitations, quotas, and analytics in detail.
+</Card>
+
+<Card title="Permission Reference" icon="shield-check" href="/features/team-collaboration/permission-reference">
+Every fine-grained permission, explained.
+</Card>
+</CardGroup>

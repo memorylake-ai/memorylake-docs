@@ -1,38 +1,42 @@
 ---
 title: "FAQ"
-description: "Common questions about Memory Router — code changes, providers, security, fallback, and pricing"
+description: "Common questions about Memory Router — code changes, Boundaries, providers, security, and availability"
 ---
 
 <AccordionGroup>
 <Accordion title="Do I need to change my code?">
-Only the base URL and one header. Your prompts, streaming, tool calls, and response handling stay identical — Memory Router speaks the same API as your provider.
+Only the base URL, a `boundary_id` query parameter, and — in BYOK mode — one header. Your prompts, streaming, tool calls, and response handling stay identical, because Memory Router speaks the same API as your provider.
 </Accordion>
 
-<Accordion title="Which providers are supported?">
-OpenAI, Anthropic, Google Gemini, Groq, DeepSeek, OpenRouter, and any OpenAI-compatible endpoint. The OpenAI Assistants API is not yet supported. See [Deployment Modes](/features/memory-router/deployment-modes#supported-providers) for the full list.
+<Accordion title="What is a Boundary and do I always need one?">
+A Boundary is the memory scope for a conversation — it binds requests to a workspace, project(s), and actors so the Router knows whose memory to read and write. You create it once in the console and pass its id as `?boundary_id=` on each call. Requests without a `boundary_id` still work, but pass through with memory disabled.
+</Accordion>
+
+<Accordion title="Which providers and models are supported?">
+OpenAI (Chat Completions, Responses, Embeddings) and Anthropic (Messages) protocols. In hosted mode, GPT, Claude, and Qwen model families are built in and callable by their native names. See [Deployment Modes](/features/memory-router/deployment-modes#supported-providers) for the current matrix.
 </Accordion>
 
 <Accordion title="What is the difference between BYOK and MemoryLake-hosted?">
-BYOK (Bring Your Own Key) means you supply your own provider key plus a MemoryLake key — billing and rate limits stay with your provider account. MemoryLake-hosted needs only a MemoryLake key: we run the major models for you, so you skip provider sign-up entirely.
+BYOK (Bring Your Own Key) means you supply your own provider key plus a MemoryLake key — billing and rate limits stay with your provider account. MemoryLake-hosted needs only a MemoryLake key: we run the major models for you, so you skip provider sign-up entirely. Both modes use the same endpoints; the difference is which keys you send.
 </Accordion>
 
 <Accordion title="In BYOK mode, is my provider key safe?">
-Yes. Your provider key is encrypted in transit and forwarded to the provider on each call. MemoryLake never stores, logs, or reuses it — it is passthrough only.
+Yes. Your provider key is encrypted in transit and forwarded to the provider on each call. MemoryLake never stores, logs, or reuses it — the design is stateless, per-request passthrough with zero server-side key storage.
 </Accordion>
 
-<Accordion title="What happens if MemoryLake is down?">
-In BYOK mode Memory Router fails open: the request passes straight through to your provider so your application keeps working with zero downtime. See [Observability](/features/memory-router/observability#graceful-fallback).
+<Accordion title="What happens if the memory service is unavailable?">
+The gateway returns `502 Bad Gateway` for that call — retry with backoff, and keep a fallback to a direct provider call if your application requires strict availability. Memory *writes* are asynchronous, so a slow memory store never delays a successful response. See [Observability](/features/memory-router/observability#error-contract) for the full error contract.
 </Accordion>
 
-<Accordion title="How does it reduce tokens?">
-Instead of replaying the entire history each turn, the Router removes redundant context and injects only the relevant memories — fewer tokens per call as conversations grow.
+<Accordion title="Does memory add latency to my calls?">
+Memory recall happens before the model call and is optimized for low overhead; memory extraction and storage happen asynchronously after the response is returned, so writing memories never adds latency.
 </Accordion>
 
 <Accordion title="Is the memory shared with the MemoryLake API?">
-Yes. The Router and the [MemoryLake API](/features/memorylake/overview) operate on the same memory pool, so anything stored one way is retrievable the other.
+Yes. The Router and the [MemoryLake API](/features/memorylake/overview) operate on the same memory pool, so anything stored one way is retrievable the other — and visible in the console.
 </Accordion>
 
-<Accordion title="Is there a free plan?">
-Yes. Memory Router is available on the Free tier so you can integrate and test before scaling up.
+<Accordion title="How do I get access?">
+Memory Router is in private preview. If the Memory Router card is not yet visible under **Integrations** in your console, contact [support@memorylake.ai](mailto:support@memorylake.ai) to request access.
 </Accordion>
 </AccordionGroup>

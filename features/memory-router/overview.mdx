@@ -1,18 +1,22 @@
 ---
 title: "Overview"
-description: "A drop-in memory proxy that adds persistent memory to any LLM with a single base-URL change"
+description: "A drop-in memory gateway that adds persistent memory to your LLM calls with a base-URL change"
 ---
 
 ## Quick Introduction
 
-Memory Router is a transparent proxy that sits between your app and the model. Point your existing SDK at MemoryLake and every conversation gains long-term memory and an optimized context window — no new SDK, no retrieval pipeline to build.
+Memory Router is a transparent gateway that sits between your app and the model. Point your existing SDK at MemoryLake, attach a memory Boundary, and every conversation gains long-term memory — no new SDK, no retrieval pipeline to build.
 
-- **One-line integration** — change the base URL, keep your SDK and code exactly as they are
-- **BYOK or hosted** — bring your own provider key (encrypted, never stored), or use MemoryLake-hosted models with a single key
+- **Minimal integration** — change the base URL and pass a `boundary_id`; keep your SDK and code as they are
+- **BYOK or hosted** — bring your own provider key (encrypted in transit, never stored), or use MemoryLake-hosted models with a single key
 - **Shared memory pool** — the Router and the [MemoryLake API](/features/memorylake/overview) read and write the same memories, so there is one source of truth
 
+<Note>
+Memory Router is currently in **private preview**. If the Memory Router card is not yet visible under **Integrations** in your console, contact [support@memorylake.ai](mailto:support@memorylake.ai) to request access.
+</Note>
+
 <Info>
-Memory Router is OpenAI-protocol compatible and speaks the same API as your provider. Your prompts, streaming, and tool calls stay identical.
+Memory Router speaks the OpenAI and Anthropic protocols natively. Your prompts, streaming, and tool calls stay identical.
 </Info>
 
 ## The Problem It Solves
@@ -33,34 +37,46 @@ Every LLM call is stateless. To fake continuity you re-send the entire history o
 </Card>
 </CardGroup>
 
-Memory Router collapses all of that into one base-URL change. **The memory layer is the proxy.**
+Memory Router collapses all of that into a base-URL change plus one query parameter. **The memory layer is the gateway.**
 
 ## What You Get
 
 | Capability | What it means |
 | --- | --- |
-| **One-line integration** | Change the base URL. Keep your SDK and your code exactly as they are. |
-| **BYOK or hosted** | Bring your own provider key (encrypted, never stored) or use MemoryLake-hosted models with a single key. |
-| **Automatic context optimization** | Redundant history is removed and only relevant memory is injected, shrinking tokens per call. |
+| **Minimal integration** | Change the base URL and pass `boundary_id`. Keep your SDK and your code as they are. |
+| **BYOK or hosted** | Bring your own provider key (encrypted in transit, never stored) or use MemoryLake-hosted models with a single key. |
+| **Automatic memory** | Relevant memories are recalled and injected before the call; new memories are extracted asynchronously after it — never delaying the response. |
+| **Scoped by Boundary** | A [Boundary](#boundaries-the-memory-scope) defines exactly which workspace, projects, and actors a conversation's memory belongs to. |
 | **Shared memory pool** | The Router and the MemoryLake API read and write the same memories — one source of truth. |
-| **Graceful fallback** | If MemoryLake is ever unavailable, the request passes straight through to your provider. Zero downtime. |
-| **Full observability** | Response headers report conversation IDs, context changes, token counts, and memories created or retrieved. |
+| **Traceable** | Every response carries an `X-Trace-ID` header, and each call lands in the console Logs with model, token, and key-source details. |
+
+## Boundaries: The Memory Scope
+
+Memory on the Router is **opt-in per request**. A **Boundary** binds a conversation to its memory scope — a workspace, one or more projects, a human actor, and an assistant actor. You create a Boundary once in the console, then pass its id on each call:
+
+```text
+POST /openai/v1/chat/completions?boundary_id=<your-boundary-id>
+```
+
+- **With `boundary_id`** — memories in that scope are recalled and injected, and new memories from the conversation are stored back into it.
+- **Without `boundary_id`** — the request passes through to the model unchanged, with memory disabled.
+
+This makes memory explicit and controllable: the same endpoint can serve memory-enabled product traffic and plain passthrough traffic side by side.
 
 ## Direct API Call vs. Memory Router
 
 |  | Direct provider call | With Memory Router |
 | --- | --- | --- |
 | Long-term memory | You build and host it | Built in, automatic |
-| Context window | Re-send everything, then truncate | Optimized — only what matters |
 | Keys & accounts | A provider account is required | BYOK or use just a MemoryLake key |
-| Code changes | New SDK + retrieval pipeline | One base-URL change |
+| Code changes | New SDK + retrieval pipeline | Base-URL change + `boundary_id` |
 | Across sessions & models | Memory is siloed per app | Shared memory pool |
-| Provider outage of memory layer | Your problem to handle | Graceful passthrough |
-| Visibility | None by default | Diagnostic response headers |
+| Memory scoping | Ad-hoc, per app | Explicit Boundaries per workspace/project/actor |
+| Visibility | None by default | `X-Trace-ID` + console call logs |
 
 ## Quick Start
 
-1. **[Get a MemoryLake key](/features/memory-router/quickstart#step-1-get-a-memorylake-key)**: Sign up and create an API key in the console.
+1. **[Get a MemoryLake key and a Boundary](/features/memory-router/quickstart#step-1-get-a-key-and-a-boundary)**: Create an API key and a Boundary in the console.
 2. **[Pick a mode and swap the base URL](/features/memory-router/deployment-modes)**: Choose BYOK or MemoryLake-hosted and point your SDK at the Router.
 3. **[Call as normal](/features/memory-router/quickstart#step-3-call-as-normal)**: Send requests exactly as you do today — memory is recalled and stored automatically.
 
@@ -68,7 +84,7 @@ Memory Router collapses all of that into one base-URL change. **The memory layer
 
 <CardGroup cols={2}>
 <Card title="How It Works" icon="route" href="/features/memory-router/how-it-works">
-Understand the transparent proxy and what happens on each request.
+Understand the transparent gateway and what happens on each request.
 </Card>
 
 <Card title="Quickstart" icon="rocket" href="/features/memory-router/quickstart">
@@ -76,14 +92,14 @@ Go live in three steps with copy-paste code for BYOK and hosted modes.
 </Card>
 
 <Card title="Deployment Modes" icon="key" href="/features/memory-router/deployment-modes">
-Compare BYOK and MemoryLake-hosted, base URLs, supported providers, and key safety.
+Compare BYOK and MemoryLake-hosted, endpoints, supported providers, and key safety.
 </Card>
 
 <Card title="Observability" icon="activity" href="/features/memory-router/observability">
-Read the diagnostic response headers and understand graceful fallback.
+Trace requests, read the console call logs, and understand the error contract.
 </Card>
 
 <Card title="FAQ" icon="circle-help" href="/features/memory-router/faq">
-Common questions about code changes, providers, security, and pricing.
+Common questions about code changes, providers, security, and availability.
 </Card>
 </CardGroup>

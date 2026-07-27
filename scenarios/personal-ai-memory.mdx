@@ -1,0 +1,69 @@
+---
+title: "Personal AI Memory"
+description: "Give every AI tool you use one consistent, private memory of you"
+---
+
+## The Problem
+
+You use several AI tools a day — a chat assistant, a coding agent, maybe a research tool. Each one starts from zero: it doesn't know your preferences, your ongoing projects, or the file you uploaded yesterday *to a different tool*. You spend the first five minutes of every session re-explaining yourself.
+
+## What MemoryLake Changes
+
+Your personal workspace becomes the single memory all your AI tools share. Tell one assistant you prefer concise answers with code examples — every connected tool knows it. Upload your apartment lease once — any assistant can cite it later.
+
+```text
+You ──┬── Playground chat ─────────┐
+      ├── OpenClaw coding agent ───┼──►  Your workspace's memory pool
+      ├── File uploads & library ──┤        (extracted facts + indexed documents)
+      └── WPS / Lark connectors ───┘                    │
+                                                        ▼
+                                    Recalled by every tool you connect
+```
+
+## Walkthrough
+
+<Steps>
+<Step title="Seed your memory in the Playground">
+Start chatting at [app.memorylake.ai](https://app.memorylake.ai). Mention things worth keeping: *"I'm preparing for a marathon in November"*, *"My daughter is allergic to peanuts"*, *"I write Python, not JavaScript"*. MemoryLake extracts each durable fact as a [memory](/concepts#memory) — check the **Memories** page to see them, each with a source trace.
+</Step>
+
+<Step title="Organize life contexts as projects">
+Create separate [projects](/concepts#project) for contexts that shouldn't blend: "Health", "Home purchase", "Side project". Retrieval is project-scoped, so your mortgage documents never surface in a fitness conversation.
+</Step>
+
+<Step title="Bring in your documents">
+Upload files to your **Library** (drag-and-drop, folder structures preserved) or mount [WPS / Lark](/features/memorylake/connectors/overview) to browse existing cloud documents. Associate them with the right project — content becomes searchable context.
+</Step>
+
+<Step title="Connect the tools you already use">
+Install the [OpenClaw plugin](/features/memorylake/mcp-servers/overview) so your coding agent recalls your context automatically and captures new memories as you work. Files you hand the agent are auto-uploaded into your project.
+</Step>
+
+<Step title="Keep your memory honest">
+When a new fact contradicts an old one ("I moved to Berlin" vs. "lives in Munich"), MemoryLake raises a **conflict** instead of guessing. Review conflicts in the project's Conflicts tab and pick what's true — your memory stays current, not cluttered.
+</Step>
+</Steps>
+
+## What This Feels Like Day to Day
+
+- *"Plan my meals for next week"* → the assistant already knows the marathon training and the peanut allergy.
+- *"Continue where we left off on the crawler"* → the coding agent recalls last week's design decision and the library you chose.
+- *"What does my lease say about subletting?"* → answered with a citation to the document you uploaded months ago.
+
+## Privacy Notes
+
+- Your personal workspace is yours alone — nothing is shared unless you join a team space.
+- Memories are inspectable and deletable: view any memory's source trace, edit it, or **forget** it permanently.
+- API keys you create can be scoped with model restrictions and IP allowlists, and revoked anytime.
+
+## Go Deeper
+
+<CardGroup cols={2}>
+<Card title="Memories Guide" icon="brain" href="/features/memorylake/memories/overview">
+How extraction, search, traces, and conflicts work.
+</Card>
+
+<Card title="Coding Agent Setup" icon="terminal" href="/scenarios/coding-agents">
+The full OpenClaw walkthrough.
+</Card>
+</CardGroup>

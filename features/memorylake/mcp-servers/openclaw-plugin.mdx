@@ -1,0 +1,129 @@
+---
+title: "OpenClaw Plugin Reference"
+description: "memorylake-openclaw — configuration, automatic behaviors, tools, CLI, and skills"
+---
+
+The `memorylake-openclaw` plugin connects OpenClaw (and QClaw) agents to MemoryLake. This page is the configuration and capability reference; for a narrative walkthrough see the [Coding Agents scenario](/scenarios/coding-agents).
+
+## Installation
+
+<Tabs>
+<Tab title="One-line installer (recommended)">
+The console's **Integrations → OpenClaw** card generates this pre-filled:
+
+```bash
+curl -fsSL https://app.memorylake.ai/memorylake-openclaw/install.sh | bash -s -- \
+  --project-id <project-id> --api-key sk-... --host https://app.memorylake.ai
+```
+
+Windows PowerShell: use `install.ps1` from the same host. The script writes the plugin config, sets `tools.profile` to `"full"` (required; it asks first if you've customized it), and restarts the gateway. Environment variables `MEMORYLAKE_API_KEY` / `MEMORYLAKE_PROJECT_ID` / `MEMORYLAKE_HOST` can replace the flags.
+</Tab>
+<Tab title="Manual">
+```bash
+openclaw plugins install memorylake-openclaw
+openclaw gateway restart
+```
+
+Then add to `~/.openclaw/openclaw.json` (QClaw: `~/.qclaw/openclaw.json`):
+
+```json5
+{
+  "plugins": {
+    "entries": {
+      "memorylake-openclaw": {
+        "enabled": true,
+        "config": {
+          "apiKey": "${MEMORYLAKE_API_KEY}",   // env interpolation supported
+          "projectId": "proj-...",
+          "host": "https://app.memorylake.ai"
+        }
+      }
+    }
+  }
+}
+```
+</Tab>
+</Tabs>
+
+## Configuration Reference
+
+| Key | Default | Notes |
+|---|---|---|
+| `apiKey` | — | **Required.** MemoryLake API key (`sk-…`); supports `${ENV_VAR}` interpolation |
+| `projectId` | — | **Required.** Project the agent reads/writes |
+| `host` | `https://app.memorylake.ai` | Your MemoryLake host |
+| `autoRecall` | `true` | Inject recall instructions each user turn |
+| `autoCapture` | `true` | Report conversation turns for server-side extraction |
+| `autoUpload` | `true` | Upload files shared in chat to the project |
+| `topK` | `5` | Results per retrieval |
+| `searchThreshold` | `0.3` | Minimum relevance score |
+| `rerank` | `true` | Rerank retrieval results |
+| `webSearchIncludeDomains` / `webSearchExcludeDomains` / `webSearchCountry` / `webSearchTimezone` | — | Constraints for `advanced_web_search` |
+
+<Warning>
+Unknown config keys are rejected with an error — don't add custom fields. Config **hot-reloads**: changes to key, project, host, or retrieval settings take effect without a gateway restart.
+</Warning>
+
+### Per-agent / per-directory override
+
+`{workspace}/.memorylake/config.json` overrides the global config for sessions in that directory — typically a different `projectId` per client or codebase. The bundled `agent-memorylake-config` skill sets this up conversationally.
+
+## Automatic Behaviors
+
+- **Auto-Recall** — injects instructions (plus a per-turn reminder) directing the agent to call `retrieve_context` before answering each user message, and announces the project's subscribed Open Data categories at session start. Model-driven recall keeps latency low while ensuring fresh context.
+- **Auto-Capture** — after each successful user turn, new conversation messages (deduplicated via a per-session watermark) are sent to MemoryLake, where extraction decides what to store, update, or merge. Tool outputs are not captured.
+- **Auto-Upload** — files you share in chat are detected and uploaded to the project asynchronously (deduplicated against prior uploads); the agent is never blocked waiting.
+
+## Agent Tools
+
+| Tool | Purpose |
+|---|---|
+| `retrieve_context` | One call searches **memories and documents** in parallel and returns user context, preferences, history, and document excerpts — plus any unresolved memory conflicts |
+| `memory_store` | Explicitly store a fact (text, optional user id and metadata) |
+| `memory_list` | List a user's memories |
+| `memory_forget` | Delete a memory by id |
+| `document_download` | Download a project document to the workspace (`.memorylake/downloads/`) |
+| `advanced_web_search` | Web search under the configured domain/country constraints — registered as **optional**, off unless the agent explicitly allows it |
+| `open_data_search` | Search curated datasets by category: research/academic (arXiv, PubMed…), clinical trials, drug databases, financial markets, company fundamentals (SEC), economic data (FRED, World Bank), patents (USPTO) |
+
+## CLI
+
+```bash
+openclaw memorylake search "<query>" [--limit n]     # search memories from the terminal
+openclaw memorylake upload <path> [--project-id id]  # file, directory, or archive
+openclaw memorylake stats                            # project stats
+```
+
+`upload` accepts single files, directories (500-file guardrail against accidental `node_modules` uploads), and archives — zip/tar/tgz/7z/bz2/rar/xz are auto-extracted and uploaded with concurrency, skipping `.DS_Store`-style junk.
+
+## Bundled Skills
+
+| Skill | Purpose |
+|---|---|
+| `memorylake-upload` | Upload files/archives/directories and associate them with the project |
+| `memorylake-api` | Fallback: discover and call any MemoryLake REST endpoint from the live OpenAPI spec |
+| `migrate-memories-to-memorylake` | Import memories and conversation history from existing agent session files |
+| `agent-memorylake-config` | Write per-directory config overrides |
+
+## Companion: Models Plugin
+
+`memorylake-models-openclaw` (separate plugin) registers MemoryLake [Model Router](/features/model-router/overview) as an OpenClaw **model provider** — one `sk-…` key for all supported LLMs:
+
+```bash
+openclaw plugins install memorylake-models-openclaw
+openclaw memorylake setup        # interactive: validates key, lists models, sets default
+# or: choose "Memorylake AI" in `openclaw onboard`
+# or headless: export MEMORYLAKE_API_KEY=sk-...
+```
+
+Models are fetched live from `GET /v1/models`; the plugin writes an OpenAI-compatible provider entry (`https://app.memorylake.ai/v1`) into your OpenClaw config.
+
+## Privacy & Telemetry
+
+The plugin talks only to your configured `host`. Usage telemetry is **opt-in** — nothing is reported unless you explicitly configure a telemetry key.
+
+## Troubleshooting
+
+- **Tools missing** → ensure `tools.profile` is `"full"` and the gateway was restarted after install.
+- **401 errors** → key invalid/expired; update `apiKey` (hot-reloads, no restart needed).
+- **Wrong project receiving memories** → check for a per-directory `.memorylake/config.json` overriding your global `projectId`.

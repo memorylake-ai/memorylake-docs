@@ -1,6 +1,6 @@
 ---
 title: "Roles and Permissions"
-description: "Grant the right permissions to the right people in your team, and get started quickly"
+description: "Grant the right access to the right people — base roles, custom roles, and per-resource scopes"
 ---
 
 <Frame>
@@ -12,10 +12,11 @@ description: "Grant the right permissions to the right people in your team, and 
   />
 </Frame>
 
-## Role Types
-- **Owner**: The creator or transferred responsible person who can delete teams, transfer ownership, allocate quotas, adjust roles, and remove members.  
-- **Administrator**: Daily operations assistant who can invite/remove members and adjust quotas and roles, but cannot delete teams or take ownership.  
-- **Member**: Normal users who can use team quotas and make calls, view information related to themselves, and voluntarily exit the team.  
+## Base Roles
+
+- **Owner**: the creator (or a transferred successor). Can dissolve the team, transfer ownership, allocate quotas, adjust roles, and remove members.
+- **Admin**: day-to-day operations. Can invite and remove members, adjust quotas and roles, and manage team resources — but cannot dissolve the team or take ownership.
+- **Member**: uses team resources — shared workspaces, memory, and quota — and views information relevant to them. Can leave voluntarily.
 
 <Frame>
   <img
@@ -26,31 +27,55 @@ description: "Grant the right permissions to the right people in your team, and 
   />
 </Frame>
 
+## Custom Roles
+
+When the three base roles are too coarse, define **custom roles** with exactly the capabilities you need — for example a "Knowledge Curator" who can resolve memory conflicts and manage documents but cannot invite members, or a "Read-only Auditor" for compliance review.
+
+Every grantable capability is listed in the [Permission Reference](/features/team-collaboration/permission-reference), with identifiers (`project:doc_read`, `project:mem_conflict_resolve`, `drive:item_add`, …) and what a member sees when a permission is missing.
+
+## Per-Resource Scopes
+
+Beyond roles, permissions can be scoped to **specific resource instances** — a member can hold `project:read` on one project and not another. Scopable resource types are **workspaces**, **projects**, and **database connections**; granting a workspace-level scope cascades to the projects inside it.
+
+> *Typical use*: a contractor gets access to exactly the "Vendor audit" project in the Operations workspace — everything else stays invisible.
+
 ## Available Operations
-- Team Management: Create, update information, close, or delete. Only owners can transfer ownership.  
-- Members and Invitations: Email or link invitations; can resend or revoke; invitees accept after logging in; members can voluntarily exit.  
-- Quota Allocation: Allocate or adjust quotas for teams or individual members; insufficient quotas will directly intercept calls.  
-- Role Adjustment: Elevate or restrict member permissions to ensure sensitive operations are only in the hands of authorized personnel.  
-- Statistics Viewing: Team statistics and member rankings; members can view their own usage.  
-- Identity Switching: Switch to the correct personal/team context before making calls. Permissions and quotas take effect according to the current context.  
 
-## Setting Up a New Team (From Scratch)
-1) Create a team and complete information in [Teams > My Teams](https://app.memorylake.ai/panel/team).  
-2) Set core colleagues as administrators and others as members.  
-3) Go to "Invitations" to send emails or generate links. Mistakenly sent invitations can be revoked, and unaccepted ones can be resent.  
-4) Allocate quotas to members in the "Members" page, then switch calls to the team context.  
+| Area | What's possible |
+|---|---|
+| Team management | Create, update details, transfer ownership (Owner only), dissolve |
+| Members & invitations | Email or link invitations, resend/revoke, role assignment, removal; members may leave |
+| Quota allocation | Team totals and per-member allocations; insufficient quota blocks calls immediately |
+| Roles & scopes | Base roles, custom roles, and per-resource scopes |
+| Statistics | Team-wide usage, member rankings, model usage; members always see their own |
+| Space switching | Switch between personal and team context — quota and permissions follow the active space |
 
-## Secure Handover (Changing Responsibility)
-1) In the "Members" page, confirm that the successor is already in the team and has an appropriate role.  
-2) The owner executes "Transfer Ownership". After completion, the original owner is automatically downgraded.  
-3) If you need to tighten permissions, adjust administrator/member roles or quotas.  
+## Setting Up a New Team
+
+1. Create the team and complete its details in the console (**Teams → My Teams**).
+2. Invite colleagues from the team's **Invites** tab, assigning roles as you go — both inviter and invitee need verified email addresses.
+3. Promote core colleagues to Admin; leave others as Member, or define custom roles for finer control.
+4. Allocate per-member quotas on the **Members** tab, then have members switch to the team context for their calls.
+
+## Secure Handover
+
+1. Confirm the successor is already a member with an appropriate role.
+2. The Owner performs **Transfer Ownership** — the previous Owner is automatically downgraded.
+3. Tighten remaining permissions: adjust roles, revoke resource scopes, and disable API keys belonging to departing members.
+
+<Warning>
+An API key inherits the permissions of the member who created it. When someone leaves or is downgraded, review and disable their keys — otherwise automation may keep running with their old access.
+</Warning>
 
 ## Tips
-- Check the current context before each call to avoid consuming personal quotas in the team context or vice versa.  
-- High-risk operations such as deleting teams, transferring ownership, adjusting others' quotas, and removing members are limited to authorized roles.  
-- Quota/status validation takes effect in real time: tokens with insufficient quotas, disabled status, or expired status will be rejected.  
-- Statistics are based on actual call accumulation. Empty statistics initially are normal; they will reflect real consumption after sustained usage.  
+
+- Check your active space before making calls, so quota is drawn from the intended pool.
+- High-risk actions (dissolving the team, transferring ownership, editing others' quotas, removing members) are restricted to authorized roles.
+- Prefer removing a permission over relying on convention — see the [Permission Reference](/features/team-collaboration/permission-reference).
+- Statistics accumulate from real usage; empty charts on a new team are normal.
 
 ## Next Steps
-- For more detailed invitation and access strategies, quotas and usage, analytics and lifecycle, refer to the corresponding sections.  
-- Before migrating to production, use test tokens to verify that roles, quotas, and context switching meet expectations.
+
+- [Permission Reference](/features/team-collaboration/permission-reference) — every capability, explained
+- [Invitations and Access](/features/team-collaboration/invitation-and-access) — the invitation flow in detail
+- [Quotas and Usage](/features/team-collaboration/quota-and-usage) — allocation and monitoring

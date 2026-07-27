@@ -1,82 +1,58 @@
 ---
-title: "Project Overview Dashboard"
-description: "Monitor project statistics, documents, memories, and MCP servers from unified dashboard"
+title: "Project Dashboard"
+description: "Navigate a project's tabs — files, open data, memories, conflicts, and integrations"
 ---
 
 ## Dashboard Overview
 
-The project dashboard provides a comprehensive view of your project with statistics, documents, memories, and MCP servers.
+Open a project via **Workspaces → your workspace → project**. The project detail page organizes everything into tabs; which tabs you see depends on your permissions (and enabled features).
 
-{/* SCREENSHOT: Complete project dashboard */}
+{/* SCREENSHOT: Project detail page with tabs */}
 
-## Statistics Cards
+## Files Tab
 
-View key metrics at a glance:
+The project's associated documents:
 
-**Document Count**: Number of associated documents
+- **Add content**: drag-and-drop upload, folder upload, or associate existing documents from your Library
+- **Processing status** per document: `pending` → `running` → `okay` (or `error` with details) — content becomes searchable once processing completes
+- **Remove**: disassociating a document removes it from the project's context; the file stays in your Library
 
-**Memory Count**: Number of memories
+## Open Data Tab
 
-**MCP Server Count**: Number of active API keys
+Subscribe the project to curated industry datasets — research/academic, clinical, financial, economic, patents, and more. Subscribed categories become searchable by the Playground and connected agents alongside your own content.
 
-{/* SCREENSHOT: Statistics cards section */}
+## Memories Tab
 
-## Inline Editing
+The project's extracted memories:
 
-Edit project details directly from dashboard:
+- **Search and filter** with live counts; switch to the **word-frequency view** for a quick sense of what the project knows
+- **Inspect** any memory — content, metadata, and the **Source Trace** tab showing where it came from
+- **Edit** or **forget** memories; bulk-select for cleanup
 
-1. Click project name - becomes editable
-2. Type new name
-3. Press Enter to save
+## Conflicts Tab
 
-Same for description field.
+Contradictory memories land here instead of silently coexisting. Review each conflict and resolve it — see [Memories](/features/memorylake/memories/overview#conflict-detection). (Requires the conflict-resolve permission in team spaces.)
 
-{/* SCREENSHOT: Inline editing interface */}
+## Integrations Tab
 
-## Tab Navigation
+Connect this specific project to your tools: OpenClaw / QClaw / Hermes setup with pre-filled commands, and API access details. See the [Integrations Overview](/features/memorylake/mcp-servers/overview).
 
-Dashboard has three tabs:
+## Editing Project Details
 
-### Documents Tab
-- List of associated documents
-- Document status (pending, running, okay, error)
-- Add/remove documents
-- View processing errors
-
-### Memories Tab
-- List of project memories
-- Create/edit/delete memories
-- View memory content
-
-### MCP Servers Tab
-- List of API keys
-- Generate new keys
-- View endpoint URLs
-- Delete keys
-
-{/* SCREENSHOT: Tab navigation */}
-
-## Quick Actions
-
-From dashboard you can:
-- Add documents
-- Create memories
-- Generate API keys
-- Edit project details
-- Return to project list
+Project name and description can be edited from the project page. Deleting a project removes its memories and document associations (library files remain).
 
 ## Next Steps
 
 <CardGroup cols={2}>
 <Card title="Document Association" icon="link" href="/features/memorylake/project-management/document-association">
-Add documents to project
+Add documents to the project
 </Card>
 
 <Card title="Memories" icon="brain" href="/features/memorylake/memories/overview">
-Learn about memories
+How extraction, traces, and conflicts work
 </Card>
 
-<Card title="MCP Servers" icon="key" href="/features/memorylake/mcp-servers/overview">
-Generate API keys
+<Card title="Integrations" icon="plug" href="/features/memorylake/mcp-servers/overview">
+Connect agents and apps
 </Card>
 </CardGroup>

@@ -1,49 +1,73 @@
 ---
 title: "Overview"
-description: "Unified AI model routing platform compatible with mainstream protocols, supporting team collaboration"
+description: "MemoryLake is an AI memory platform — store, compute, and retrieve long-term memory for people, teams, and AI agents"
 ---
 
-## Platform Overview
+## What is MemoryLake?
 
-MemoryLake AI provides a unified model routing and multimodal task entry point, compatible with mainstream protocols and channels, helping you efficiently and securely integrate AI capabilities in production environments.
+MemoryLake gives AI a memory that lasts. Upload documents, hold conversations, and connect your AI tools — MemoryLake extracts durable memories from all of it, keeps them consistent, and serves them back to any model or agent that needs context.
 
-<Frame>
-  <img
-    className="rounded-xl bg-white"
-    src="/images/overview/core-features.png"
-    alt="Core features illustration showing unified entry point, intelligent routing, fine-grained control, and team collaboration"
-    style={{ width: "100%", height: "auto" }}
-  />
-</Frame>
+Every LLM call is stateless by default. MemoryLake adds the missing layer: a shared, queryable memory pool that persists across sessions, apps, models, and teammates.
+
+## The Platform at a Glance
+
+<CardGroup cols={2}>
+<Card title="MemoryLake Memory" icon="brain" href="/features/memorylake/overview">
+The core product: workspaces, projects, documents, and extracted memories — with a Playground to experience memory-augmented chat and integrations to bring memory into your tools.
+</Card>
+
+<Card title="Memory Router" icon="route" href="/features/memory-router/overview">
+A drop-in gateway that adds persistent memory to your existing OpenAI / Anthropic API calls with a base-URL change. Private preview.
+</Card>
+
+<Card title="Model Router" icon="globe" href="/features/model-router/overview">
+A unified, OpenAI-compatible entry point to mainstream models — one API key, one endpoint, native paths preserved for Claude and Gemini.
+</Card>
+
+<Card title="Team Collaboration" icon="users" href="/features/team-collaboration/overview">
+Shared workspaces with roles, fine-grained permissions, member quotas, and usage analytics — memory that belongs to the organization, not just one person.
+</Card>
+</CardGroup>
 
 ## Core Capabilities
 
-- **Unified Entry Point**: Compatible with mainstream protocols like OpenAI, Claude, and Gemini, requiring no modifications to existing client code
-- **Intelligent Routing**: Automatically selects optimal channels with retry and fault tolerance support, ensuring service stability
-- **Fine-grained Control**: Token quota management, quota allocation, and usage statistics to meet enterprise-level requirements
-- **Team Collaboration**: Supports multi-user collaboration, role-based permissions, and invitation management, ideal for team use
+- **Memory extraction**: Conversations and documents are distilled into structured, deduplicated memories — not just stored as raw text
+- **Memory retrieval**: Hybrid semantic + keyword search across memories and document content, scoped by workspace and project
+- **Memory hygiene**: Source traces show where each memory came from; conflict detection surfaces contradictory memories for you to resolve
+- **Multimodal documents**: PDF, Word, Excel, PowerPoint, Markdown, text, and images are parsed and indexed for retrieval
+- **Open Data**: Subscribe projects to curated industry datasets (research, clinical, financial, patents, and more) that agents can search alongside your own content
+- **Integrations**: OpenClaw / QClaw / Hermes agent plugins, a REST API, and an MCP server — memory follows your agents wherever they run
 
-## Quick Start
+## Individual Memory and Organizational Memory
 
-### Model Router
+MemoryLake is built around a simple idea: memory has an owner and a scope.
 
-A unified model routing and multimodal task entry point, compatible with mainstream protocols and channels.
+- **Personal**: your own workspace remembers your preferences, decisions, and files — every AI tool you connect gets the same context about you.
+- **Organizational**: team workspaces accumulate shared knowledge — project documents, decisions, and domain facts — governed by roles and per-resource permissions, so institutional memory survives personnel changes.
 
-<Card title="Model Router" icon="globe" href="/features/model-router/overview">
-A single entry point covers mainstream models and tasks, compatible with OpenAI-style calls without SDK changes.
+Learn how the pieces fit together in [Core Concepts](/concepts), or jump straight into a scenario:
+
+<CardGroup cols={2}>
+<Card title="Personal AI Memory" icon="user" href="/scenarios/personal-ai-memory">
+Give every AI tool you use one consistent, private memory of you.
 </Card>
 
-### Team Collaboration
-
-Manage multi-user collaboration entry points with teams, roles, invitations, and quotas.
-
-<Card title="Team Collaboration" icon="users" href="/features/team-collaboration/overview">
-Share call entry points, quotas, and logs with colleagues while maintaining clear separation of permissions.
+<Card title="Team Knowledge Base" icon="building" href="/scenarios/team-knowledge-base">
+Turn scattered documents and decisions into governed organizational memory.
 </Card>
+
+<Card title="Memory for Coding Agents" icon="terminal" href="/scenarios/coding-agents">
+Make OpenClaw and other coding agents remember context across sessions.
+</Card>
+
+<Card title="Build Apps with Memory" icon="code" href="/scenarios/ai-apps-with-memory">
+Add per-user long-term memory to your own product via API or Memory Router.
+</Card>
+</CardGroup>
 
 ## Getting Started
 
-1) **Obtain a Token**: Generate an API Key in the [console](https://app.memorylake.ai/panel), set quota and expiration time.  
-2) **Browse Documentation**: Choose Model Router or Team Collaboration to start exploring.  
-3) **First API Call**: Refer to the [Model Router documentation](/features/model-router/overview) to complete your first API call.  
-4) **Dive Deeper**: Review detailed documentation for each feature module to learn more advanced capabilities.
+1. **[Sign up](https://app.memorylake.ai)** — a default workspace is provisioned for you automatically.
+2. **[Try the Playground](/quickstart)** — tell it something to remember, add Open Data, upload a file, and watch memory work.
+3. **[Create an API key](/authentication)** — one key authenticates the REST API, Model Router, and agent plugins.
+4. **[Connect your tools](/features/memorylake/mcp-servers/overview)** — install the OpenClaw plugin or integrate via API so memory follows you everywhere.

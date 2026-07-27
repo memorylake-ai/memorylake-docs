@@ -108,7 +108,7 @@ await fetch("https://app.memorylake.ai/claude/v1/messages", {
     "Content-Type": "application/json"
   },
   body: JSON.stringify({
-    model: "claude-3-opus-20240229",
+    model: "claude-sonnet-5",
     max_tokens: 200,
     messages: [{ role: "user", content: "Summarize this in one sentence" }]
   })
@@ -124,7 +124,7 @@ resp = requests.post(
         "Content-Type": "application/json",
     },
     json={
-        "model": "claude-3-opus-20240229",
+        "model": "claude-sonnet-5",
         "max_tokens": 200,
         "messages": [{"role": "user", "content": "Summarize this in one sentence"}],
     },
@@ -135,7 +135,7 @@ curl https://app.memorylake.ai/claude/v1/messages \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{
-    "model": "claude-3-opus-20240229",
+    "model": "claude-sonnet-5",
     "max_tokens": 200,
     "messages": [{"role": "user", "content": "Summarize this in one sentence"}]
   }'
@@ -148,7 +148,7 @@ For Gemini models, use the native Gemini endpoint:
 
 <CodeGroup>
 ```ts TypeScript
-await fetch("https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent", {
+await fetch("https://app.memorylake.ai/gemini/v1beta/models/gemini-2.5-pro:generateContent", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-demo123",
@@ -163,7 +163,7 @@ await fetch("https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:gener
 import requests
 
 resp = requests.post(
-    "https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent",
+    "https://app.memorylake.ai/gemini/v1beta/models/gemini-2.5-pro:generateContent",
     headers={
         "Authorization": "Bearer sk-demo123",
         "Content-Type": "application/json",
@@ -174,7 +174,7 @@ resp = requests.post(
 )
 ```
 ```bash cURL
-curl https://app.memorylake.ai/gemini/v1beta/models/gemini-1.5-pro:generateContent \
+curl https://app.memorylake.ai/gemini/v1beta/models/gemini-2.5-pro:generateContent \
   -H "Authorization: Bearer sk-demo123" \
   -H "Content-Type: application/json" \
   -d '{

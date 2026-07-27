@@ -1,89 +1,96 @@
 ---
-title: "Project Management"
-description: "Organize documents, memories, and MCP servers into cohesive projects"
+title: "Workspaces & Projects"
+description: "Organize memory into workspaces and projects — the containers that scope retrieval, access, and integrations"
 ---
 
 ## Overview
 
-Projects help you organize related documents and memories into cohesive units. Provide structured context for AI interactions and team collaboration.
+MemoryLake organizes knowledge in a two-level hierarchy: **workspaces** contain **projects**. Workspaces are the top-level container (your personal space has a default one; teams create more); projects are focused bodies of knowledge inside them — the unit you point an AI at.
+
+```text
+Workspace
+├── Project A   ← documents + memories + open data + integrations
+├── Project B
+├── Agents      ← AI assistants operating in this workspace
+└── Memory      ← workspace-wide memory view
+```
 
 ## What is a Project?
 
-A project in MemoryLake is:
-- **Container** for related documents
-- **Context provider** for AI models via MCP servers
-- **Organization unit** for knowledge management
-- **Collaboration space** for teams
+A project is:
+- **A retrieval scope** — searches, Playground context, and agent recall operate within a project, so contexts don't bleed into each other
+- **A container** for documents, extracted memories, and Open Data subscriptions
+- **An integration unit** — agent plugins and MCP keys connect to one project
+- **A permission boundary** — in teams, access can be granted per project
 
-{/* SCREENSHOT: Project list view */}
+<Note>
+A default workspace (with a first project) is provisioned automatically when you sign up — you only manage this hierarchy explicitly when your usage grows.
+</Note>
 
-## Core Features
+## The Project Dashboard
+
+Open a project (console → **Workspaces** → workspace → project) to find its tabs:
+
+| Tab | What's there |
+|---|---|
+| **Files** | Associated documents with processing status; add by upload, drag-and-drop, or from your Library |
+| **Open Data** | Curated industry datasets this project subscribes to |
+| **Memories** | Extracted memories — search, edit, forget, word-frequency view, source traces |
+| **Conflicts** | Contradictory memories awaiting resolution |
+| **Integrations** | Connect agents and API access scoped to this project |
+
+See [Project Dashboard](/features/memorylake/project-management/project-dashboard) for details.
+
+## Core Guides
 
 <CardGroup cols={2}>
-<Card title="Project Dashboard" icon="dashboard" href="/features/memorylake/project-management/project-dashboard">
-Monitor statistics, manage documents, memories, and MCP servers from unified dashboard.
+<Card title="Project Dashboard" icon="gauge" href="/features/memorylake/project-management/project-dashboard">
+Navigate tabs, monitor processing, manage the project.
 </Card>
 
 <Card title="Document Association" icon="link" href="/features/memorylake/project-management/document-association">
-Link documents from your drive to projects using tree-based selector.
+Link documents from your library into projects.
 </Card>
 </CardGroup>
 
-## Project Components
+## How to Slice Projects
 
-### Documents
-Associate files and folders from your drive. Documents provide content that AI models can read and analyze.
-
-### Memories
-Add knowledge snippets and context that guide AI understanding of your project.
-
-### MCP Servers
-Generate API keys for external applications and AI models to access project data.
+- **Personal**: one per life/work context — "Health", "Home purchase", "Side project". Ask: *should an assistant answering about X ever cite Y?* If no, separate projects.
+- **Team**: one per initiative, client, or domain — "Q3 launch", "Customer X", "Compliance 2026". Project-level permissions let you grant a contractor exactly one project.
+- **Builders**: commonly one project per end user (or tenant) — see [Build Apps with Memory](/scenarios/ai-apps-with-memory).
 
 ## Common Use Cases
 
 <AccordionGroup>
 <Accordion title="Research Organization">
-Group research papers, notes, and data files. Add memories with research questions and methodologies. Provide AI access via MCP servers.
+Group papers, notes, and data files in one project; subscribe research Open Data; connect your agent. Questions get answered from exactly this corpus.
 </Accordion>
 
-<Accordion title="Team Knowledge Base">
-Centralize team documentation. Associate relevant files, add memories with guidelines and best practices.
+<Accordion title="Client Engagements">
+One project per client. The OpenClaw plugin's per-directory config pins each client's working folder to its project — memories never cross clients.
 </Accordion>
 
-<Accordion title="AI Context Management">
-Organize documents AI models need. Add memories that guide AI behavior and understanding.
+<Accordion title="Team Knowledge Domains">
+Projects per domain ("Pricing", "Legal", "Onboarding") inside a shared workspace, with per-project permissions where needed.
 </Accordion>
 </AccordionGroup>
 
 ## Getting Started
 
 <Steps>
-<Step title="Create Project">
-Give your project a name and description.
+<Step title="Create a project">
+In your workspace, create a project with a clear name and purpose description.
 </Step>
 
-<Step title="Add Documents">
-Associate relevant files from your drive.
+<Step title="Add content">
+Upload files in the Files tab, associate existing Library documents, subscribe Open Data categories.
 </Step>
 
-<Step title="Create Memories">
-Add contextual knowledge and guidelines.
+<Step title="Chat and accumulate memory">
+Use the Playground scoped to this project — memories extract automatically. Review them in the Memories tab.
 </Step>
 
-<Step title="Generate API Keys">
-Create MCP server endpoints for external access.
+<Step title="Connect integrations">
+From the Integrations tab, install the OpenClaw plugin or set up API access for this project.
 </Step>
 </Steps>
-
-## Next Steps
-
-<CardGroup cols={2}>
-<Card title="Dashboard Guide" icon="gauge" href="/features/memorylake/project-management/project-dashboard">
-Master the project dashboard
-</Card>
-
-<Card title="Associate Documents" icon="paperclip" href="/features/memorylake/project-management/document-association">
-Link documents to projects
-</Card>
-</CardGroup>

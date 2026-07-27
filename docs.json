@@ -17,9 +17,18 @@
             "group": "Getting started",
             "pages": [
               "overview",
-              "principles",
+              "concepts",
               "quickstart",
               "authentication"
+            ]
+          },
+          {
+            "group": "Scenarios",
+            "pages": [
+              "scenarios/personal-ai-memory",
+              "scenarios/team-knowledge-base",
+              "scenarios/coding-agents",
+              "scenarios/ai-apps-with-memory"
             ]
           },
           {
@@ -79,10 +88,41 @@
                 ]
               },
               {
-                "group": "MCP Integration",
+                "group": "Document Management",
+                "pages": [
+                  "features/memorylake/document-management/overview",
+                  "features/memorylake/document-management/file-folder-operations",
+                  "features/memorylake/document-management/metadata-comments"
+                ]
+              },
+              {
+                "group": "Connectors",
+                "pages": [
+                  "features/memorylake/connectors/overview",
+                  "features/memorylake/connectors/wps-integration"
+                ]
+              },
+              {
+                "group": "Project Management",
+                "pages": [
+                  "features/memorylake/project-management/overview",
+                  "features/memorylake/project-management/project-dashboard",
+                  "features/memorylake/project-management/document-association"
+                ]
+              },
+              {
+                "group": "Memories",
+                "pages": [
+                  "features/memorylake/memories/overview",
+                  "features/memorylake/memories/best-practices"
+                ]
+              },
+              {
+                "group": "Integrations",
                 "pages": [
                   "features/memorylake/mcp-servers/overview",
-                  "features/memorylake/mcp-servers/creating-api-keys"
+                  "features/memorylake/mcp-servers/creating-api-keys",
+                  "features/memorylake/mcp-servers/openclaw-plugin"
                 ]
               }
             ]

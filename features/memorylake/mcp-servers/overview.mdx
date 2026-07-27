@@ -1,95 +1,84 @@
 ---
-title: "MCP Servers"
-description: "Generate API keys and configure MCP (Model Context Protocol) servers for your projects"
+title: "Integrations Overview"
+description: "Bring MemoryLake memory into your agents and apps — OpenClaw plugins, REST API, and the MCP server"
 ---
 
 ## Overview
 
-MCP (Model Context Protocol) Servers provide API endpoints for external applications and AI models to access your project data securely.
+Memory is only useful where you work. MemoryLake offers several integration paths, all reading and writing the same memory pool:
 
-## What Are MCP Servers?
+| Integration | Status | Best for |
+|---|---|---|
+| **OpenClaw plugin** | ✅ Available | Coding agents with automatic recall, capture, and file upload |
+| **QClaw plugin** | ✅ Available | Same plugin, QClaw runtime (`~/.qclaw/openclaw.json`) |
+| **Hermes Agent** | ✅ Available | One-line install of a memory-connected agent (macOS) |
+| **REST API** | ✅ Available | Full programmatic control from any language |
+| **MCP server (OAuth2)** | ✅ Available | Claude Code, Codex, Cursor, Claude Desktop, and any OAuth2-capable MCP client |
+| **Chrome extension, chat-history import** | 🔜 Coming soon | Guided setup per client |
 
-MCP Servers in MemoryLake are:
-- **API Key Endpoints**: Authenticated URLs for external access
-- **Project-Scoped**: Each API key provides access to one project
-- **Read-Only**: External access cannot modify your data
-- **Secure**: API secrets shown only once upon creation
+Open **Integrations** in the [console](https://app.memorylake.ai) sidebar to see what's enabled for your account — each available card generates setup commands pre-filled with your project id and API key.
 
-{/* SCREENSHOT: MCP servers list view */}
+## OpenClaw / QClaw Plugin
 
-## Key Features
+The richest integration: install once and your agent gains **Auto-Recall** (retrieves relevant memories and document context before answering), **Auto-Capture** (durable facts from each conversation are stored and merged in the background), and **Auto-Upload** (files you share in chat land in your project automatically) — plus explicit memory tools and a CLI.
 
-<Card title="API Key Generation" icon="key" href="/features/memorylake/mcp-servers/creating-api-keys">
-Create secure API keys for project access with one-time secret display.
+<CardGroup cols={2}>
+<Card title="Plugin Reference" icon="puzzle-piece" href="/features/memorylake/mcp-servers/openclaw-plugin">
+Configuration, tools, CLI, skills, and per-agent scoping.
 </Card>
 
-## Use Cases
-
-<AccordionGroup>
-<Accordion title="AI Model Integration">
-Provide AI assistants (Claude, ChatGPT, etc.) with read access to your project's documents and memories.
-</Accordion>
-
-<Accordion title="External Applications">
-Build custom applications that query your knowledge base programmatically.
-</Accordion>
-
-<Accordion title="Team Access">
-Generate API keys for team members to access project data from their tools.
-</Accordion>
-
-<Accordion title="Automation">
-Create automated workflows that read project data for reporting or analysis.
-</Accordion>
-</AccordionGroup>
-
-## How It Works
-
-<Steps>
-<Step title="Generate API Key">
-Create an API key for your project with optional description.
-</Step>
-
-<Step title="Copy Secret">
-**Important**: Copy the API secret immediately - it's shown only once!
-</Step>
-
-<Step title="Use Endpoint">
-Use the provided endpoint URL with your API key to access project data.
-</Step>
-
-<Step title="Secure Storage">
-Store your API secret securely (never commit to version control).
-</Step>
-</Steps>
-
-## What MCP Servers Provide Access To
-
-When you use an API key, external applications can read:
-- **Associated documents**: File list and contents
-- **Memories**: All memories in the project
-- **Document comments**: Comments attached to files
-
-<Warning>
-MCP servers provide read-only access. External applications cannot modify, delete, or upload content.
-</Warning>
-
-## Getting Started
-
-Ready to create your first MCP server endpoint?
-
-<Card title="Create API Keys" icon="plus" href="/features/memorylake/mcp-servers/creating-api-keys">
-Step-by-step guide to generating API keys
+<Card title="Coding Agents Scenario" icon="terminal" href="/scenarios/coding-agents">
+The end-to-end walkthrough with day-to-day examples.
 </Card>
+</CardGroup>
+
+## REST API
+
+Everything the console does, programmatically: projects, document upload/search, memory add/search/trace/forget, and conflict resolution.
+
+- **Base URL**: `https://app.memorylake.ai/openapi/memorylake`
+- **Auth**: `Authorization: Bearer sk-…` ([create a key](/authentication))
+- **Live spec**: `https://app.memorylake.ai/openapi/memorylake/api-docs/open-api`
+
+The console's **Integrations → API** card also generates an AI-ready prompt describing the endpoints, so you can hand your agent the API surface directly. Full documentation in the [API Reference](/features/memorylake/api-reference/overview).
+
+## MCP Server
+
+MemoryLake runs a **remote MCP server** (Model Context Protocol over HTTP, authorized with standard OAuth2) at:
+
+```text
+https://app.memorylake.ai/memorylake/mcp/v2
+```
+
+Connect Claude Code with one command — `claude mcp add --transport http --scope user memorylake <url>` — or point Codex, Cursor, or Claude Desktop at the same URL. You pick the workspace and boundary on the OAuth consent screen, so no secret ever lands in a config file. See [Connect via MCP](/features/memorylake/mcp-servers/creating-api-keys) for per-client setup.
+
+Connected clients get search and analysis tools over the memories and documents in scope:
+
+| Tool | What it does |
+|---|---|
+| `search_memory` | Hybrid keyword + semantic search across the project's memories and documents |
+| `fetch_memory` | Fetch detailed metadata and download links for specific results |
+| `get_memorylake_metadata` | Project overview — file counts by type, spreadsheet sheet names, document stats |
+| `create_memory_code_runner` / `run_memory_code` | Sandboxed Python (pandas, numpy, …) for analyzing project files, with state persisting across calls |
+| `nl_query_database` | Natural-language SQL over connected databases (where configured) |
+
+OpenAI-protocol clients (like ChatGPT) are automatically served simplified `search` / `fetch` variants of the same tools — one endpoint adapts to the client.
+
+## Which Integration Should I Use?
+
+- **You use an MCP-capable client** (Claude Code, Codex, Cursor, Claude Desktop) → MCP. One command, OAuth2, nothing to store.
+- **You want automatic memory in a coding agent** → OpenClaw/QClaw plugin. Auto-recall, auto-capture, and auto-upload beat manual tool calls.
+- **You're building a product** → REST API (generally available) or [Memory Router](/features/memory-router/overview) (private preview) for call-level memory.
+- **You want MemoryLake's models too** → add the [Model Router](/features/model-router/overview) — same key, OpenAI-compatible endpoint, plus the `memorylake-models-openclaw` plugin for OpenClaw.
 
 ## Next Steps
 
 <CardGroup cols={2}>
-<Card title="Creating API Keys" icon="key" href="/features/memorylake/mcp-servers/creating-api-keys">
-Generate your first API key
+<Card title="OpenClaw Plugin Reference" icon="puzzle-piece" href="/features/memorylake/mcp-servers/openclaw-plugin">
+Install, configure, and master the agent plugin
 </Card>
 
-<Card title="API Reference" icon="code" href="/features/memorylake/api-reference/mcp-servers">
-See API documentation
+<Card title="Connect via MCP" icon="plug" href="/features/memorylake/mcp-servers/creating-api-keys">
+Per-client setup for Claude Code, Codex, Cursor, and Desktop
 </Card>
 </CardGroup>

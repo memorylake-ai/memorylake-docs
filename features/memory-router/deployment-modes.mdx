@@ -3,24 +3,59 @@ title: "Deployment Modes"
 description: "Connect with your own provider key (BYOK) or with MemoryLake-hosted models — same memory layer either way"
 ---
 
-Memory Router works two ways. Unlike proxies that force you to bring your own key, you can keep your provider account **or** let MemoryLake run the models for you. Either change is just the base URL; everything else — prompts, streaming, tool calls — stays the same.
+Memory Router works two ways. Unlike proxies that force you to bring your own key, you can keep your provider account **or** let MemoryLake run the models for you. Both modes share the same endpoints — the difference is which keys you send. Everything else — prompts, streaming, tool calls — stays the same.
 
-## BYOK — Bring Your Own Key
+## Endpoints
 
-Use your own provider account. Your provider key is encrypted in transit, forwarded to the provider per call, and never stored on our servers.
+| Protocol | Endpoint |
+| --- | --- |
+| OpenAI · Chat Completions | `POST https://app.memorylake.ai/openai/v1/chat/completions` |
+| OpenAI · Responses | `POST https://app.memorylake.ai/openai/v1/responses` |
+| OpenAI · Embeddings | `POST https://app.memorylake.ai/openai/v1/embeddings` |
+| Anthropic · Messages | `POST https://app.memorylake.ai/anthropic/v1/messages` |
 
-- Keep your existing OpenAI / Anthropic / Google account.
-- Your key, your billing, your rate limits.
-- Key is encrypted + passthrough only — never persisted or logged.
+Append `?boundary_id=<id>` to enable memory on a request — see [How It Works](/features/memory-router/how-it-works#boundaries-define-the-scope).
 
-**Base URL:** `https://router.memorylake.ai/v1/openai`
-**Keys:** your provider key (as the SDK API key) + MemoryLake key (as the `x-memorylake-api-key` header)
+<Note>
+With the Anthropic SDK, set `base_url` to `https://app.memorylake.ai/anthropic` (without `/v1`) — the SDK appends `/v1/messages` itself.
+</Note>
+
+## MemoryLake-hosted
+
+No provider account required. MemoryLake runs the major models for you, so a single MemoryLake API key is all you need to start.
+
+- One key for everything — nothing else to sign up for.
+- GPT, Claude, and Qwen model families built in and ready to call by their native names.
+- The simplest possible way to ship with memory.
+
+**Keys:** MemoryLake key only, in the native auth header (`Authorization: Bearer` for OpenAI-style calls, `x-api-key` for Anthropic)
 
 ```ts TypeScript
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  baseURL: "https://router.memorylake.ai/v1/openai",
+  baseURL: "https://app.memorylake.ai/openai/v1",
+  apiKey: process.env.MEMORYLAKE_API_KEY,
+});
+
+// Pick any built-in model by its native name, e.g. "gpt-4o-mini" or "qwen-plus".
+```
+
+## BYOK — Bring Your Own Key
+
+Use your own provider account. Your provider key is encrypted in transit, forwarded to the provider per call, and never stored on our servers.
+
+- Keep your existing OpenAI / Anthropic account.
+- Your key, your billing, your rate limits.
+- Key is encrypted + passthrough only — never persisted or logged.
+
+**Keys:** your provider key in the provider's **native** auth header + MemoryLake key in the `x-memorylake-api-key` header
+
+```ts TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/openai/v1",
   apiKey: process.env.OPENAI_API_KEY,        // your provider key
   defaultHeaders: {
     "x-memorylake-api-key": process.env.MEMORYLAKE_API_KEY,
@@ -28,56 +63,34 @@ const client = new OpenAI({
 });
 ```
 
-## MemoryLake-hosted
-
-No provider account required. MemoryLake runs the major models for you, so a single MemoryLake API key is all you need to start.
-
-- One key for everything — nothing else to sign up for.
-- Mainstream models built in and ready to call.
-- The simplest possible way to ship with memory.
-
-**Base URL:** `https://router.memorylake.ai/v1`
-**Keys:** MemoryLake key only
-
-```ts TypeScript
-import OpenAI from "openai";
-
-const client = new OpenAI({
-  baseURL: "https://router.memorylake.ai/v1",
-  apiKey: process.env.MEMORYLAKE_API_KEY,
-});
-
-// Pick any built-in model, e.g. "claude-opus-4-8" or "gpt-5".
-```
+<Info>
+The native auth header differs by protocol: OpenAI-style calls use `Authorization: Bearer <key>`; Anthropic calls use `x-api-key: <key>`. In BYOK mode your provider key goes there, and the MemoryLake key always rides in `x-memorylake-api-key`.
+</Info>
 
 ## Choosing a Mode
 
-| | BYOK | MemoryLake-hosted |
+| | MemoryLake-hosted | BYOK |
 | --- | --- | --- |
-| Provider account | Required (yours) | Not required |
-| Keys | Provider key + MemoryLake key | MemoryLake key only |
-| Billing & rate limits | Stay with your provider account | Handled by MemoryLake |
-| Base URL | `…/v1/openai` | `…/v1` |
-| Best for | Teams with existing provider contracts and quotas | Fastest path to ship with memory |
+| Provider account | Not required | Required (yours) |
+| Keys | MemoryLake key only | Provider key + MemoryLake key |
+| Billing & rate limits | Handled by MemoryLake | Stay with your provider account |
+| Best for | Fastest path to ship with memory | Teams with existing provider contracts and quotas |
 
 ## Key Safety, by Design
 
 <Warning>
-In BYOK mode your provider key is encrypted in transit and passed straight through to the provider on every call. MemoryLake never stores, logs, or reuses it.
+In BYOK mode your provider key is encrypted in transit and passed straight through to the provider on every call. MemoryLake never stores, logs, or reuses it — the design is stateless, per-request passthrough with zero server-side key storage.
 </Warning>
 
 ## Supported Providers
 
-In BYOK mode, keep your provider account and key. In hosted mode, MemoryLake runs these models for you — the same memory layer either way.
+| Provider | BYOK | Hosted |
+| --- | --- | --- |
+| OpenAI / GPT (Chat Completions & Responses) | ✅ | ✅ |
+| Anthropic / Claude (Messages) | ✅ | ✅ |
+| Alibaba Qwen (OpenAI-compatible, via `/openai/v1`) | — | ✅ |
 
-| Provider | Status |
-| --- | --- |
-| OpenAI / GPT | Fully supported |
-| Anthropic / Claude | Fully supported |
-| Google Gemini | Fully supported |
-| Groq, DeepSeek, OpenRouter | Fully supported |
-| Any OpenAI-compatible endpoint | Supported |
-| OpenAI Assistants API | Not yet supported |
+Additional providers and protocols are added over time; the console's **Integrations → Memory Router API** page always reflects the current catalog.
 
 ## Next Steps
 
@@ -87,6 +100,6 @@ Copy-paste setup for both modes.
 </Card>
 
 <Card title="Observability" icon="activity" href="/features/memory-router/observability">
-Confirm behavior with diagnostic response headers.
+Trace requests and understand the error contract.
 </Card>
 </CardGroup>

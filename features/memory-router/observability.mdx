@@ -1,41 +1,53 @@
 ---
 title: "Observability"
-description: "Read the diagnostic response headers and understand graceful fallback — no black box"
+description: "Trace every request, read the console call logs, and understand the error contract"
 ---
 
-Memory Router returns diagnostic headers so you can see exactly how each request was handled. Every response tells you what the Router did — what context it changed, how many tokens it saved, and which memories it touched.
+Every request through Memory Router is traceable end to end — from your client, through the gateway, to the memory layer and the model.
 
-## Diagnostic Response Headers
+## Request Tracing
 
-Each response carries the following diagnostics:
+Each response carries an **`X-Trace-ID`** header — a W3C-compatible trace id that spans the whole call chain. Log it alongside your own request ids; when something looks off, it is the fastest way for support to locate the exact call.
 
-| Signal | What it tells you |
+Memory Router also honors inbound **W3C Trace Context** (`traceparent` / `tracestate`) headers, so if your application already propagates distributed traces, the Router's spans join your existing trace.
+
+## Console Call Logs
+
+Every call lands in the console **Logs** page with per-call details:
+
+| Field | What it tells you |
 | --- | --- |
-| **Conversation ID** | The thread the request was attributed to, so you can group and inspect turns. |
-| **Context modified** | Whether memory was injected or history was trimmed for this call. |
-| **Token counts** | How many tokens were sent after optimization versus a raw replay. |
-| **Memories touched** | How many memory chunks were retrieved and how many were created. |
+| **Model** | The canonical model that served the request. |
+| **Tokens** | Prompt, completion, and total token counts as metered by the model. |
+| **Finish reason** | Why generation stopped (`stop`, `length`, tool call, …). |
+| **Key source** | `byok` (your provider key) or `platform` (MemoryLake-hosted). |
+| **Trace ID** | Matches the `X-Trace-ID` response header for cross-referencing. |
 
 <Tip>
-Use **Token counts** to verify savings as conversations grow, and **Context modified** to confirm that memory injection is happening on the turns you expect.
+Use **Key source** to verify BYOK is actually in effect, and compare token counts across turns to see the effect of memory injection versus replaying full history.
 </Tip>
 
-## Graceful Fallback
+## Error Contract
 
-In BYOK mode, Memory Router **fails open**: if MemoryLake is ever unavailable, the request passes straight through to your provider so your application keeps working with zero downtime.
+| Status | Meaning | What to do |
+| --- | --- | --- |
+| `401 Unauthorized` | Missing or invalid MemoryLake key. | Check the key in the native auth header (hosted) or `x-memorylake-api-key` (BYOK). |
+| `402 Payment Required` | Account balance below the minimum required to forward the call. | Top up your balance in the console, then retry. |
+| `502 Bad Gateway` | The memory gateway could not reach its upstream service. | Retry with backoff; if it persists, contact support with your `X-Trace-ID`. |
+| Provider errors (`4xx`/`5xx`) | Returned by the model provider itself, in the provider's own format. | Handle exactly as you would on a direct provider call. |
 
-<Info>
-Because the Router speaks your provider's protocol, a passthrough request returns the same response shape as a direct call — your application keeps working without code changes.
-</Info>
+<Note>
+Requests **without** a `boundary_id` skip the memory layer but still authenticate and meter through the gateway. If you want to isolate whether an issue is memory-related, retry the same call without `boundary_id` and compare.
+</Note>
 
 ## Next Steps
 
 <CardGroup cols={2}>
 <Card title="Deployment Modes" icon="key" href="/features/memory-router/deployment-modes">
-BYOK vs. hosted, base URLs, and supported providers.
+BYOK vs. hosted, endpoints, and supported providers.
 </Card>
 
 <Card title="FAQ" icon="circle-help" href="/features/memory-router/faq">
-Common questions about code, providers, security, and pricing.
+Common questions about code, providers, security, and availability.
 </Card>
 </CardGroup>

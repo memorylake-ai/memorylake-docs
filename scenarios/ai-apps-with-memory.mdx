@@ -1,0 +1,105 @@
+---
+title: "Build Apps with Memory"
+description: "Add per-user long-term memory to your own product via the REST API or Memory Router"
+---
+
+## The Problem
+
+You're building an AI product — a copilot, a support bot, a companion app. Users expect it to remember them, but building a memory layer means vector databases, extraction pipelines, deduplication, and conflict handling: months of infrastructure that isn't your product.
+
+## What MemoryLake Changes
+
+MemoryLake is your memory backend. Two integration styles, one shared memory pool:
+
+| Style | How | Best for |
+|---|---|---|
+| **Memory Router** (private preview) | Point your existing OpenAI/Anthropic SDK at the gateway, pass a `boundary_id` per user | Fastest path — memory without changing your call sites |
+| **REST API** | Explicit `add` / `search` / `trace` / `forget` calls against `https://app.memorylake.ai/openapi/memorylake` | Full control over what is stored and when it's recalled |
+
+Both write to the same pool: memory captured through the Router is searchable through the API, and vice versa.
+
+## Path A: Memory Router — memory as a base-URL change
+
+Create one [Boundary](/concepts#boundary-memory-router) per user (it binds workspace + project + actors into a single scope id), then route calls through the gateway:
+
+```python
+from openai import OpenAI
+import os
+
+client = OpenAI(
+    base_url="https://app.memorylake.ai/openai/v1",
+    api_key=os.environ["MEMORYLAKE_API_KEY"],
+)
+
+def chat(user, message):
+    return client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[{"role": "user", "content": message}],
+        extra_query={"boundary_id": user.boundary_id},   # per-user memory scope
+    )
+```
+
+Each user's conversations read and write only their own memory — no retrieval code, no extraction pipeline, no schema. BYOK mode lets you keep your existing provider account and billing. See the [Memory Router quickstart](/features/memory-router/quickstart).
+
+<Note>
+Memory Router is in private preview — contact [support@memorylake.ai](mailto:support@memorylake.ai) for access. The REST API path below is generally available.
+</Note>
+
+## Path B: REST API — explicit memory operations
+
+Model your tenancy — a workspace per tenant, an [actor](/features/memorylake/core-concepts/actors-and-memory) per end user, and a project per knowledge domain — then feed and query memory where it fits your flow:
+
+```bash
+BASE="https://app.memorylake.ai/openapi/memorylake"
+
+# Feed: open a conversation for the user, then append their messages.
+# Facts are extracted from the exchange automatically.
+curl -X POST "$BASE/api/v3/workspaces/$WORKSPACE_ID/memories/conversations" \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d "{\"project_id\": \"$PROJECT_ID\", \"actor_id\": \"$ACTOR_ID\"}"
+
+curl -X POST "$BASE/api/v3/conversations/$CONVERSATION_ID/messages" \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"role": "user", "content": "I am vegetarian and lactose intolerant"}'
+
+# Recall: one search spans document passages and extracted facts
+curl -X POST "$BASE/api/v3/workspaces/$WORKSPACE_ID/memories/search" \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"query": "dietary restrictions"}'
+```
+
+The API also gives you what DIY memory stacks usually lack:
+
+- **Documents**: upload files to the Library, import them into a project, and search their content alongside facts
+- **Per-user memory**: actor facts follow a user across projects, so you don't rebuild identity plumbing
+- **Traces**: see exactly where a memory came from — auditability for user-facing "why do you know this?"
+- **Conflicts**: list and resolve contradictory memories programmatically instead of serving stale facts
+- **Forget**: hard-delete a fact — straightforward GDPR "right to be forgotten" handling
+
+Start with [Core Memory Operations](/features/memorylake/api-reference/core-memory/overview), which walks the whole flow end to end.
+
+## Add Models, Skip Provider Accounts
+
+Pair either path with [Model Router](/features/model-router/overview): one OpenAI-compatible endpoint (`https://app.memorylake.ai/v1`) covering mainstream models, with quota control, logs, and failover — the same `sk-…` key you already hold.
+
+## Design Notes for Production
+
+- **Scope per user, always**: one boundary (Router) or one project (API) per user prevents cross-user memory leakage by construction.
+- **Recall selectively**: retrieval is scoped and ranked, but your prompt budget is yours — take the top results, not everything.
+- **Surface memory to users**: expose "what I know about you" (list + trace) and "forget this" (delete). It builds trust and simplifies compliance.
+- **Handle conflicts**: poll or review conflicting memories so your app never asserts two contradictory facts about a user.
+
+## Go Deeper
+
+<CardGroup cols={2}>
+<Card title="Memory Router" icon="route" href="/features/memory-router/overview">
+Gateway architecture, BYOK, boundaries, observability.
+</Card>
+
+<Card title="API Reference" icon="code" href="/features/memorylake/api-reference/overview">
+Every endpoint: projects, documents, memories, search, conflicts.
+</Card>
+</CardGroup>

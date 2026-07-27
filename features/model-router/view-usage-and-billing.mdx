@@ -5,18 +5,18 @@ description: "Learn how to check your API usage and understand billing details"
 
 ## What is Usage and Billing?
 
-Every time you make an API call, it consumes quota and generates a billing record. This guide shows you how to view your usage statistics and understand how you're being charged.
+Every API call consumes quota and generates a billing record. This guide shows where to see your usage and how charges are calculated.
 
 <Info>
-Quota is checked before each request. If you don't have enough quota, the request will be rejected. See [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites) for more details.
+Quota is checked before each request. If your balance is insufficient, the request is rejected. See [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites) for more details.
 </Info>
 
 ## How Quota Works
 
 Model Router uses a two-phase quota system:
 
-1. **Pre-deduction**: Before your request is processed, the system checks if you have enough quota
-2. **Settlement**: After the request completes, you're charged based on actual usage
+1. **Pre-deduction**: before your request is processed, the system checks and reserves quota
+2. **Settlement**: after the request completes, you're charged based on actual usage; failed requests roll back the reservation
 
 <Frame>
   <img
@@ -28,51 +28,37 @@ Model Router uses a two-phase quota system:
 </Frame>
 
 <Info>
-Failed requests don't consume additional quota beyond the initial pre-deduction check. You're only charged for successful requests based on actual usage.
+You're only charged for successful requests based on actual token usage.
 </Info>
 
-## Viewing Your Total Quota and Usage
+## Where to Look in the Console
 
-### In the Console Sidebar
+All usage and billing views live under **Billing** in the [console](https://app.memorylake.ai/panel/billing) sidebar:
 
-1. Log in to the [Memorylake Console](https://app.memorylake.ai/panel)
-2. Look at the quota card in the sidebar
-3. You'll see:
-   - **Available quota**: How much you have left
-   - **Used quota**: How much you've consumed
-   - **Context**: Whether you're using personal or team quota
+| Tab | What you'll find |
+|---|---|
+| **Overview** | Current balance, credits, and recent consumption at a glance |
+| **Credits** | Balance management and top-ups |
+| **Usage** | Aggregated product usage — separate views for MemoryLake Memory and MemoryLake Router |
+| **Logs** | Per-request records: model, tokens, latency, and cost details |
+| **Payments** | Payment history and invoices |
 
-### On the Team Quota Page
-
-1. Navigate to the team quota page in the console
-2. View detailed quota information for your team
-3. See breakdown by different quota sources (personal/team/mixed)
-
-<Info>
-For more details about team quotas and collaboration, see the [Team Collaboration documentation](/features/team-collaboration/quota-and-usage).
-</Info>
+In team spaces, team-wide statistics (member rankings, consumption trends, model usage) are on the team's **Stats** tab — see [Team Collaboration](/features/team-collaboration/quota-and-usage).
 
 ## Viewing Individual Call Billing
 
-### Step 1: Open the Logs Page
-
-1. Go to the [Logs page](https://app.memorylake.ai/panel/log) in the console
-2. You'll see a list of all your API calls
-
-### Step 2: View Call Details
-
-1. Click on any call in the list
-2. A details popup will open showing:
-   - **Input/Output pricing**: Cost per token
-   - **Conversion process**: How the billing was calculated
-   - **Actual deducted quota**: How much quota was used
-   - **Quota source**: Whether it came from personal, team, or mixed quota
+1. Open **Billing → Logs**
+2. Click any call to see its details:
+   - **Input/Output pricing**: cost per token
+   - **Conversion process**: how the charge was calculated
+   - **Actual deducted quota**: what was consumed
+   - **Quota source**: personal, team, or mixed
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/model-router/billing-list.png"
-    alt="Pricing and billing details in call log details"
+    alt="Billing list in call logs"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
@@ -81,70 +67,45 @@ For more details about team quotas and collaboration, see the [Team Collaboratio
   <img
     className="rounded-xl"
     src="/images/model-router/billing-detail.png"
-    alt="Pricing and billing details in call log details"
+    alt="Billing details in call log details"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
 ## Understanding Billing Details
 
-### Pricing Information
-
-- **Input tokens**: The cost for tokens you send to the model
-- **Output tokens**: The cost for tokens the model generates
-- **Total cost**: The sum of input and output costs
-
-### Quota Sources
-
-Your quota can come from:
-- **Personal quota**: Your individual quota
-- **Team quota**: Shared team quota
-- **Mixed**: Combination of personal and team quota
-
-### Settlement
-
-- Billing is based on **actual usage**, not estimates
-- Failed requests don't consume additional quota
-- You're only charged for what you actually use
+- **Input tokens**: cost for tokens you send to the model
+- **Output tokens**: cost for tokens the model generates
+- **Total cost**: input + output
+- **Quota sources**: personal quota, shared team quota, or a mix — validated according to your current space context
 
 ## Model Pricing
 
-You can also view model pricing information on the [Available Models List page](https://app.memorylake.ai/panel/available_model) in the console. This shows pricing metadata for reference, but actual billing is based on settlement results.
-
-<Info>
-Pricing shown in the model list is for reference only. Your actual charges are calculated based on real usage during the settlement phase.
-</Info>
+View per-model pricing on the [Available Models page](https://app.memorylake.ai/panel/models/available) in the console. Pricing shown there is reference metadata; actual charges are calculated at settlement from real usage.
 
 ## Important Notes
 
-1. **Quota Limits**: If you run out of quota, requests will be rejected. Make sure you have enough quota before making calls.
-
-2. **Independent Quotas**: Different API keys and groups have independent quotas. Using one API key doesn't affect another.
-
-3. **Real-time Updates**: Usage statistics update in real-time. You can monitor your usage as you make calls.
-
-4. **Billing Accuracy**: You're only charged for successful requests based on actual token usage.
+1. **Quota limits**: requests are rejected when balance is insufficient — top up in **Billing → Credits** before sustained workloads.
+2. **Context matters**: personal and team contexts draw on different quota pools; check your current space before automating.
+3. **Real-time updates**: usage statistics update as you make calls.
 
 ## Troubleshooting
 
 ### "Insufficient Quota" Error
 
-If you get this error:
-1. Check your quota in the console sidebar
-2. Make sure you have enough quota for the model you're using
-3. Contact your administrator if you need more quota
+1. Check your balance in **Billing → Overview**
+2. Top up credits, or ask your team admin for a larger member quota
+3. Verify you're in the intended space (personal vs. team)
 
 ### Unexpected Charges
 
-If you see unexpected charges:
-1. Check the call details in the logs
-2. Review the input/output token counts
-3. Verify the model pricing matches your expectations
+1. Open the call in **Billing → Logs**
+2. Review input/output token counts and the conversion detail
+3. Compare against the model's pricing on the Available Models page
 
 ## Related Documentation
 
 - [List Available Models](/features/model-router/list-available-models)
 - [Limits and Prerequisites](/features/model-router/others/limits-and-prerequisites)
 - [Error Handling](/features/model-router/others/error-handling)
-- [Team Collaboration - Quotas and Usage](/features/team-collaboration/quota-and-usage)
-
+- [Team Collaboration — Quotas and Usage](/features/team-collaboration/quota-and-usage)

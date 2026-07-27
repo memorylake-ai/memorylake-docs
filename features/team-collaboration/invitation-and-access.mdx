@@ -1,17 +1,22 @@
 ---
 title: "Invitations and Access"
-description: "Invite colleagues via link or email, and control joining and revocation"
+description: "Invite colleagues via email or link, and control joining, roles, and revocation"
 ---
 
 ## Use Cases
-- Quickly invite colleagues to share team quotas and API calls.
-- Resend or revoke invitations in a controlled manner to avoid mistakes or expiration.
-- Invitees need to accept after logging in, or register directly through the invitation.
+- Bring colleagues into a shared workspace so team memory and quotas are collective.
+- Resend or revoke invitations in a controlled way to avoid mistakes or stale links.
+- Assign the right role at invitation time rather than fixing permissions afterwards.
+
+<Note>
+All new members join through **invitation and acceptance** — there is no direct add-member action. Both sides need a **verified email address**: if yours isn't verified yet, the console prompts you to add and verify it before sending invitations, and invitees must have a verified address to accept.
+</Note>
 
 ## How to Invite
-- **Email Invitation**: Enter an email address to send an invitation. Supports resending and revocation, and remains controllable before acceptance.
-- **Invitation Link**: Generate a link with one click. After sharing, invitees can accept after logging in. If sent by mistake, the link can be revoked and invalidated.
-- **Invitee Experience**: Supports accepting invitations after logging in, or completing registration through the invitation. After joining, members enter the team according to their assigned role.
+
+- **Email invitation**: enter one or more email addresses on the team's **Invites** tab. You can paste a batch — one address per line — and specify a role per line. Invitations can be resent or revoked while pending.
+- **Invitation link**: generate a shareable link. Anyone opening it can accept after signing in (or after completing registration). Revoke the link to invalidate it.
+- **Invitee experience**: accepting after sign-in adds them to the team with the role you assigned. If they open an invite while logged out, they're returned to it automatically after signing in or registering.
 
 <Frame>
   <img
@@ -30,33 +35,36 @@ description: "Invite colleagues via link or email, and control joining and revoc
   />
 </Frame>
 
-
 ## Joining and Access Control
-- **Pre-acceptance Control**: Unaccepted invitations can be revoked at any time. If the email is incorrect, revoke and resend directly.
-- **Post-acceptance Control**: After members join, you can adjust their roles and quotas, or remove members if necessary. Members can also voluntarily exit.
-- **Context and Permissions**: After joining the team, API calls will take effect according to the team context and role permissions.
 
+- **Before acceptance**: pending invitations can be revoked at any time. Wrong address? Revoke and resend — email matching is case- and whitespace-insensitive, so duplicates are caught.
+- **After acceptance**: adjust roles and quotas from the **Members** tab, grant per-resource scopes, or remove members. Members can also leave voluntarily.
+- **Workspace access**: new members are added to the team's workspaces automatically, so shared memory is immediately available (deployment-configurable).
+- **Context and permissions**: once in the team, calls made in the team context draw on team quota and follow the member's role permissions.
 
 <Frame>
   <img
     className="rounded-xl"
     src="/images/team/invite-control.png"
-    alt="Joining and Access Control"
+    alt="Joining and access control"
     style={{ width: "100%", height: "auto" }}
   />
 </Frame>
 
-
 ## Quick Start
-1) In the "Invitations" page of team details, choose email or link to send an invitation.  
-2) If you need to correct or remind, revoke or resend unaccepted invitations.  
-3) Invitees accept the invitation after logging in. If registering through the invitation, they join the team upon completing registration.  
-4) After joining, adjust roles and quotas in the "Members" page, then start switching calls to the team context.  
+
+1. Open team details → **Invites**, and send an email invitation (or generate a link).
+2. Assign each invitee's role as you invite — Owner, Admin, Member, or a custom role.
+3. Revoke or resend anything still pending as needed.
+4. After they join, fine-tune quotas and per-resource scopes on the **Members** tab.
 
 ## Tips
-- Once an invitation is revoked, it becomes invalid. If you need to continue, resend or generate a new link.
-- For sensitive teams, prioritize email invitations and verify email addresses. Links should be revoked after short-term use.
-- Confirm the current context before making calls to avoid consuming personal quotas in the team context or vice versa.  
+
+- Revoked invitations and links are permanently invalid — generate a new one to continue.
+- For sensitive teams, prefer email invitations (identity is verified) and revoke links after short-term use.
+- Confirm your current space before making calls, so you don't consume personal quota in a team context or vice versa.
 
 ## Next Steps
-- Continue configuring roles and permissions, quotas and usage, analytics and lifecycle to ensure team collaboration and usage are controlled.
+
+- [Roles and Permissions](/features/team-collaboration/roles-permissions) — what each role can do, plus custom roles and resource scopes
+- [Quotas and Usage](/features/team-collaboration/quota-and-usage) — allocate and monitor consumption

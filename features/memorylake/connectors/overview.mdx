@@ -1,78 +1,92 @@
 ---
 title: "External Connectors"
-description: "Integrate external document services like WPS, Dropbox, and Feishu into your MemoryLake workspace"
+description: "Mount external document services like WPS and Lark into your MemoryLake library"
 ---
 
 ## Overview
 
-MemoryLake Connectors enable you to integrate external document services directly into your workspace. Access files from WPS, Dropbox, Feishu, and other services without leaving MemoryLake.
+MemoryLake Connectors let you mount external document services directly into your library. Browse files from WPS and Lark without leaving MemoryLake, and associate them with projects so your AI assistants can use them as context.
 
 ## What Are Connectors?
 
 Connectors are integrations that:
-- **Mount external document libraries** into your drive
-- **Use OAuth authentication** for secure access
-- **Provide read-only access** to external content
-- **Preserve folder structure** from external services
-- **Support multiple services** through extensible framework
+- **Mount external document libraries** into your personal library as a dedicated space (e.g. "WPS Space", "Lark Space")
+- **Use OAuth authentication** for secure access — your password never leaves the external service
+- **Provide read-only access** to external content (browse, download, associate with projects)
+- **Load content lazily** — folders fetch their contents from the external service as you expand them
 
 {/* SCREENSHOT: Connector section showing available connectors */}
+
+<Warning>
+Connectors are available in your **personal space only**. In team and organization workspaces, external connectors are disabled by policy — the cards appear but cannot be connected.
+</Warning>
 
 ## Available Connectors
 
 <CardGroup cols={2}>
 <Card title="WPS (Kingsoft Office)" icon="file-word" href="/features/memorylake/connectors/wps-integration">
   **Status**: Available
-  Connect your WPS account and access document libraries. Full OAuth integration with multi-library support.
+  Connect your WPS account and browse your document libraries as "WPS Space".
+</Card>
+
+<Card title="Lark (Feishu)" icon="comments" href="/features/memorylake/connectors/wps-integration#lark-feishu-works-the-same-way">
+  **Status**: Available
+  Connect your Lark account and browse your documents as "Lark Space". Same flow as WPS.
 </Card>
 
 <Card title="Dropbox" icon="dropbox">
   **Status**: Coming Soon
-  Access your Dropbox files directly in MemoryLake.
 </Card>
 
-<Card title="Feishu" icon="comments">
+<Card title="OneDrive" icon="microsoft">
   **Status**: Coming Soon
-  Integrate Feishu document collaboration platform.
+</Card>
+
+<Card title="Google Drive" icon="google-drive">
+  **Status**: Coming Soon
+</Card>
+
+<Card title="SharePoint / DingTalk / Baidu Pan" icon="plug">
+  **Status**: Coming Soon
 </Card>
 </CardGroup>
 
+<Note>
+Connector availability can vary by deployment. The Connectors section in your console always shows what is enabled for your environment.
+</Note>
+
 ## How Connectors Work
 
-### Authentication Flow
+<Steps>
+<Step title="Initiate Connection">
+Click a connector card in the Connectors section.
+</Step>
 
-1. **Initiate Connection**: Click on a connector card
-2. **OAuth Authentication**: Redirected to service's login page
-3. **Grant Permissions**: Approve MemoryLake access
-4. **Select Resources**: Choose which libraries/folders to mount
-5. **Create Mount Points**: External content appears in your drive
+<Step title="OAuth Authentication">
+A popup window opens the service's login page. Sign in and approve MemoryLake's read-only access.
+</Step>
 
-### Mount Points
+<Step title="Browse the Mounted Space">
+Once connected, a dedicated space (e.g. "WPS Space") appears in your library tree. Expand folders to browse — contents are fetched from the external service on demand.
+</Step>
+</Steps>
 
-Connected services appear as special folders in your drive:
-- Located in dedicated connector folder (e.g., "WPS Space")
-- Marked with connector icon
-- Read-only access (download only)
-- Respect external service permissions
-
-{/* SCREENSHOT: WPS Space folder showing mounted document libraries */}
+If the external service's authorization expires, expanding the space prompts you to re-authorize — reconnecting takes one OAuth round trip.
 
 ## Connector Capabilities
 
 ### What You Can Do
 
-- **Browse** external document structures
+- **Browse** external document structures in your library tree
 - **Download** files from external services
-- **Associate** with projects (for AI context)
-- **Search** within mounted content
-- **View** metadata from external service
+- **Associate** external documents with projects (so AI assistants get their content as context)
 
 ### Limitations
 
-- **Read-Only**: Cannot upload, edit, or delete through MemoryLake
-- **Sync Direction**: One-way (external → MemoryLake)
-- **Real-Time**: Changes in external service require refresh
-- **File Types**: Limited to MemoryLake-supported formats
+- **Read-Only**: You cannot upload, edit, or delete external content through MemoryLake
+- **Personal space only**: Connectors are disabled in team and organization workspaces
+- **Freshness**: Changes in the external service appear when you re-expand or refresh the folder
+- **File Types**: Project processing covers MemoryLake-supported formats
 
 <Note>
 To modify files in external services, use the native application. MemoryLake provides convenient read access and integration with your projects.
@@ -82,44 +96,20 @@ To modify files in external services, use the native application. MemoryLake pro
 
 <AccordionGroup>
 <Accordion title="Unified Document Access">
-Access all your documents from multiple services in one place. Browse WPS libraries alongside your MemoryLake files without switching applications.
+Access documents from multiple services in one place. Browse WPS and Lark libraries alongside your MemoryLake files without switching applications.
 </Accordion>
 
-<Accordion title="Project Integration">
-Include external documents in your MemoryLake projects. Provide AI models with context from both local and external sources.
-</Accordion>
-
-<Accordion title="Team Collaboration">
-Team members with WPS/Dropbox accounts can access shared content through MemoryLake, centralizing document discovery.
+<Accordion title="AI Context from External Documents">
+Associate external documents with a MemoryLake project. AI assistants connected via MCP or the OpenClaw plugin can then search and read that content — without you re-uploading anything.
 </Accordion>
 
 <Accordion title="Migration Planning">
-Preview and download external content before migrating to MemoryLake. Test workflows before full migration.
+Preview and download external content before migrating it into MemoryLake. Test project workflows against mounted content before committing to a full import.
 </Accordion>
 </AccordionGroup>
 
-## Getting Started
-
-<Steps>
-<Step title="Choose a Connector">
-Navigate to the Connectors section and select a service you use.
-</Step>
-
-<Step title="Authenticate">
-Log in to the external service and grant MemoryLake access.
-</Step>
-
-<Step title="Select Resources">
-Choose which document libraries or folders to mount.
-</Step>
-
-<Step title="Access Content">
-Browse the mounted content in your drive under the connector folder.
-</Step>
-</Steps>
-
 ## Next Steps
 
-<Card title="WPS Integration" icon="file" href="/features/memorylake/connectors/wps-integration">
-Step-by-step guide to connecting your WPS account
+<Card title="WPS & Lark Integration" icon="file" href="/features/memorylake/connectors/wps-integration">
+Step-by-step guide to connecting your WPS or Lark account
 </Card>

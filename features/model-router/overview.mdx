@@ -11,6 +11,12 @@ Model Router provides a unified model routing and multimodal task entry point, c
 - Preserves native paths for Claude, Gemini, and others to reduce migration and switching costs
 - Built-in stability, quota settlement, notifications, and security policies to help you confidently integrate in production
 
+**Base URL**: `https://app.memorylake.ai` — OpenAI-compatible at `/v1`, Claude-native at `/claude/v1`, Gemini-native at `/gemini/:version`. Authenticate with the same `sk-…` key you use elsewhere on the platform ([details](/authentication)).
+
+<Note>
+Looking to add **memory** to your LLM calls rather than just route them? See [Memory Router](/features/memory-router/overview), which layers persistent memory on top of the same protocols.
+</Note>
+
 ## Quick Start
 
 1. **[Create an API Key](/features/model-router/getting-started/create-api-key)**: Generate an API key in the console

@@ -1,27 +1,27 @@
 ---
 title: "How It Works"
-description: "A transparent proxy that intercepts, optimizes, forwards, and remembers — in four steps"
+description: "A transparent gateway that intercepts, recalls, forwards, and remembers — scoped by Boundaries"
 ---
 
-## A Transparent Proxy
+## A Transparent Gateway
 
 Memory Router sits between your application and the model provider. Your app talks to the Router exactly as it would talk to the provider — same payload, same SDK, same response shape — and the Router adds a memory layer transparently on the way through.
 
-Because the Router speaks your provider's protocol, integrating it is a **base-URL change**. Nothing else in your code needs to move.
+Because the Router speaks your provider's protocol, integrating it is a **base-URL change plus a `boundary_id` query parameter**. Nothing else in your code needs to move.
 
 ## The Four Steps
 
 <Steps>
 <Step title="Intercept">
-Your app sends the request to Memory Router instead of the provider — same payload, same SDK, same response shape.
+Your app sends the request to Memory Router instead of the provider — same payload, same SDK, same response shape. The `boundary_id` on the URL tells the Router which memory scope this conversation belongs to.
 </Step>
 
-<Step title="Optimize context">
-The Router trims redundant history, searches prior memories, and injects only the relevant context into the prompt.
+<Step title="Recall">
+The Router searches prior memories within the Boundary's scope and injects only the relevant context into the prompt.
 </Step>
 
 <Step title="Forward">
-The enhanced request goes to the model — your own provider (BYOK) or a MemoryLake-hosted model. Tokens in are lower than a raw replay.
+The enhanced request goes to the model — your own provider (BYOK) or a MemoryLake-hosted model.
 </Step>
 
 <Step title="Remember">
@@ -29,9 +29,13 @@ New memories are extracted and stored asynchronously in the background — the r
 </Step>
 </Steps>
 
-## Why It Saves Tokens
+## Boundaries Define the Scope
 
-Instead of replaying the entire conversation each turn, the Router removes redundant context and injects only the relevant memories. As conversations grow, fewer tokens are sent per call — and you never hit the context-window ceiling that forces mid-task truncation.
+Every memory-enabled request carries a `boundary_id`. A **Boundary** binds the conversation to a workspace, one or more projects, a human actor, and an assistant actor — so the Router knows exactly whose memory to read and where to write new memories.
+
+- One user talking to one assistant? One Boundary.
+- The same product serving many users? One Boundary per user (or per user–assistant pair), so memories never leak across users.
+- A request **without** `boundary_id` skips the memory layer entirely and passes straight through to the model.
 
 <Info>
 Memory extraction and storage happen **asynchronously**. The model's response is returned as soon as it is ready; writing new memories never adds latency to the call.
@@ -39,7 +43,7 @@ Memory extraction and storage happen **asynchronously**. The model's response is
 
 ## Shared Memory Pool
 
-The Router and the [MemoryLake API](/features/memorylake/overview) operate on the same memory pool. Anything stored through the Router is retrievable through the API, and vice versa — one source of truth across sessions, apps, and models.
+The Router and the [MemoryLake API](/features/memorylake/overview) operate on the same memory pool. Anything stored through the Router is retrievable through the API (and visible in the console), and vice versa — one source of truth across sessions, apps, and models.
 
 ## Next Steps
 
@@ -49,6 +53,6 @@ Go live in three steps.
 </Card>
 
 <Card title="Deployment Modes" icon="key" href="/features/memory-router/deployment-modes">
-BYOK vs. MemoryLake-hosted, base URLs, and supported providers.
+BYOK vs. MemoryLake-hosted, endpoints, and supported providers.
 </Card>
 </CardGroup>

@@ -1,0 +1,133 @@
+---
+title: "Memory for Coding Agents"
+description: "Make OpenClaw and other coding agents remember context, decisions, and files across sessions"
+---
+
+## The Problem
+
+Your coding agent forgets everything between sessions. Yesterday's architecture discussion, the library you agreed on, the CSV you analyzed together — gone. Every session restarts from zero, and long-lived projects suffer most.
+
+## What MemoryLake Changes
+
+The **memorylake-openclaw** plugin gives your agent three automatic behaviors, plus explicit tools:
+
+| Behavior | What happens |
+|---|---|
+| **Auto-Recall** | The agent is instructed to retrieve relevant memories and document context before answering each of your messages. |
+| **Auto-Capture** | After each turn, the conversation is analyzed server-side — durable facts are stored, updated, or merged (deduplicated, incremental). |
+| **Auto-Upload** | Files you share in chat are uploaded to your project in the background, becoming searchable documents. |
+
+The agent also gets explicit tools: `retrieve_context` (one call searches memories *and* documents, and surfaces memory conflicts), `memory_store`, `memory_list`, `memory_forget`, `document_download`, plus optional `advanced_web_search` and `open_data_search` for curated external datasets (arXiv, PubMed, SEC, FRED, USPTO, and more).
+
+## Setup
+
+<Steps>
+<Step title="Get your key and project id">
+In the [console](https://app.memorylake.ai), create an API key (**API Keys** in the sidebar) and note the project you want the agent to use. The console's **Integrations → OpenClaw** page generates the exact commands below pre-filled.
+</Step>
+
+<Step title="Install the plugin">
+One-liner from the console (recommended — it configures everything):
+
+```bash
+curl -fsSL https://app.memorylake.ai/memorylake-openclaw/install.sh | bash -s -- \
+  --project-id <your-project-id> --api-key sk-... --host https://app.memorylake.ai
+```
+
+Or manually:
+
+```bash
+openclaw plugins install memorylake-openclaw
+openclaw gateway restart
+```
+
+then add to `~/.openclaw/openclaw.json`:
+
+```json5
+{
+  "plugins": {
+    "entries": {
+      "memorylake-openclaw": {
+        "enabled": true,
+        "config": {
+          "apiKey": "sk-...",          // or "${MEMORYLAKE_API_KEY}"
+          "projectId": "<project-id>",
+          "host": "https://app.memorylake.ai"
+        }
+      }
+    }
+  }
+}
+```
+
+<Note>
+The install script sets `tools.profile` to `"full"` — the plugin's tools need it. A Windows PowerShell installer (`install.ps1`) and QClaw (`~/.qclaw/openclaw.json`) are supported the same way. Configuration hot-reloads: changing the key, project, or host takes effect without restarting the gateway.
+</Note>
+</Step>
+
+<Step title="Verify">
+Start a session and tell the agent something memorable, e.g. *"Remember: we deploy on Fridays only."* End the session, start a new one, and ask *"When do we deploy?"* — the agent recalls it via `retrieve_context`.
+</Step>
+</Steps>
+
+## Power Moves
+
+### One agent, many clients — without memory bleed
+
+Create a project per client, then drop a per-directory override in each working folder:
+
+```json
+// {workspace}/.memorylake/config.json
+{ "projectId": "<client-a-project-id>" }
+```
+
+Sessions in that directory read and write only that client's memory. The bundled `agent-memorylake-config` skill sets this up conversationally.
+
+### Bulk-load context
+
+Feed the agent's memory directly from the command line — single files, directories, or archives (zip/tar/7z/rar auto-extracted):
+
+```bash
+openclaw memorylake upload ./docs-archive.zip
+openclaw memorylake search "authentication flow" --limit 10
+openclaw memorylake stats
+```
+
+### Migrate existing history
+
+The bundled `migrate-memories-to-memorylake` skill imports memories and conversation history from your agent's existing session files, so you don't start from zero.
+
+### Controlled web access
+
+`advanced_web_search` is registered as an **optional** tool (off unless you allow it) and respects plugin-level domain allowlists/blocklists — useful for enterprise environments that restrict agent browsing.
+
+### Use MemoryLake models too
+
+The separate **memorylake-models-openclaw** plugin registers MemoryLake's [Model Router](/features/model-router/overview) as a model provider — one `sk-…` key for both memory and models:
+
+```bash
+openclaw plugins install memorylake-models-openclaw
+openclaw memorylake setup   # interactive: validates key, picks default model
+```
+
+## What This Feels Like Day to Day
+
+- *"Continue the refactor"* — the agent recalls the module layout you agreed on two sessions ago.
+- You drag a stack trace file into chat — it's auto-uploaded; next week the agent can still cite it.
+- *"Why did we pick Postgres over MySQL?"* — answered from the decision memory captured when you made the call, with its source trace.
+
+## Privacy & Telemetry
+
+The plugin sends data only to your configured MemoryLake host. Usage telemetry is **opt-in** (disabled unless you explicitly set a telemetry key).
+
+## Go Deeper
+
+<CardGroup cols={2}>
+<Card title="Integrations Overview" icon="plug" href="/features/memorylake/mcp-servers/overview">
+All ways to connect agents and apps, including MCP.
+</Card>
+
+<Card title="Memories Guide" icon="brain" href="/features/memorylake/memories/overview">
+How extraction, conflicts, and traces work.
+</Card>
+</CardGroup>

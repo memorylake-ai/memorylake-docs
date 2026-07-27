@@ -1,233 +1,129 @@
 ---
 title: "Memories"
-description: "Store and manage knowledge snippets, notes, and contextual information within projects"
+description: "How MemoryLake extracts, stores, retrieves, and maintains long-term memories — traces, conflicts, and management"
 ---
 
 ## Overview
 
-Memories are knowledge snippets that provide context for your projects. Store notes, guidelines, and information that helps both humans and AI understand your project.
+Memories are the heart of MemoryLake: structured, durable facts distilled from your conversations and documents. Unlike a chat log (noisy, unbounded) or a document chunk (raw text), a memory is an *extracted* statement worth keeping — deduplicated, searchable, traceable to its source, and checked for consistency.
 
-## What Are Memories?
-
-Memories are:
-- **Text-based** knowledge snippets
-- **Project-scoped** contextual information
-- **AI-accessible** via MCP servers
-- **Searchable** and manageable
-
-{/* SCREENSHOT: Memories list view */}
-
-## Use Cases
+## Where Memories Come From
 
 <CardGroup cols={2}>
-<Card title="Project Notes" icon="note-sticky">
-Store important notes, decisions, and observations about your project.
+<Card title="Conversations" icon="message">
+Playground chats and agent sessions are analyzed automatically — durable facts are extracted, merged with what's already known, and stored. Transcripts stay transcripts; facts become memories.
 </Card>
 
-<Card title="AI Context" icon="robot">
-Provide guidelines and context that AI models should know when accessing your project.
+<Card title="Documents" icon="file">
+Uploaded files are parsed and indexed; key content becomes retrievable memory alongside conversational facts.
 </Card>
 
-<Card title="Knowledge Snippets" icon="lightbulb">
-Capture insights, lessons learned, and key information.
+<Card title="Explicit capture" icon="pen">
+Store a memory deliberately — via the API (`add memory`), agent tools (`memory_store`), or by telling the assistant "remember this".
 </Card>
 
-<Card title="Documentation" icon="book">
-Store project documentation, procedures, and references.
+<Card title="Agent auto-capture" icon="robot">
+Connected agents (OpenClaw and friends) report conversation turns in the background; the server decides what to store, update, or merge.
 </Card>
 </CardGroup>
 
-## Creating Memories
+## What Makes a Memory Trustworthy
 
-<Steps>
-<Step title="Navigate to Project">
-Open the project where you want to add a memory.
-</Step>
+### Source Traces
 
-<Step title="Go to Memories Tab">
-Click the "Memories" tab in the project dashboard.
-</Step>
+Every memory keeps a trace back to its origin — the conversation turn or document it was extracted from. Open any memory in the console and check its **Source Trace** tab, or fetch it via the [trace API](/features/memorylake/api-reference/memories/get-memory-trace). When an assistant asserts something, you can always answer *"how do you know that?"*
 
-<Step title="Click Add Memory">
-Click the "Add Memory" button.
+### Conflict Detection
 
-{/* SCREENSHOT: Add memory button */}
-</Step>
+When a new memory contradicts an existing one — a moved deadline, a changed policy, a corrected fact — MemoryLake doesn't silently keep both or overwrite blindly. It raises a **conflict**:
 
-<Step title="Fill in Details">
-A dialog appears with two fields:
+1. The conflicting pair appears in the project's **Conflicts** tab
+2. A reviewer (anyone with the resolve permission) picks what's true
+3. Memory stays current, and the resolution is deliberate rather than accidental
 
-**Name** (required):
-- Short, descriptive title
-- Example: "Project Guidelines", "Research Questions", "Key Findings"
+Conflicts are also exposed via [API](/features/memorylake/api-reference/memories/list-memory-conflicts), and agent tools surface unresolved conflicts alongside retrieval results so assistants can flag uncertainty instead of asserting stale facts.
 
-**Content** (required):
-- Full text of the memory
-- Can be multiple paragraphs
-- Plain text (not Markdown)
+### Deduplication & Merging
 
-{/* SCREENSHOT: Create memory dialog with sample content */}
-</Step>
+Repeating yourself doesn't create ten copies of the same fact — extraction merges new information into existing memories where they overlap, and updates them when details change.
 
-<Step title="Save Memory">
-Click "Save" or "Create" to save the memory.
+## Retrieving Memories
 
-<Check>
-Memory appears in the Memories tab list.
-</Check>
-</Step>
-</Steps>
-
-## Memory Content Guidelines
-
-### What to Include
-
-**Good Memory Content**:
-- Context about the project
-- Guidelines for AI interactions
-- Key decisions and rationale
-- Important facts and figures
-- Lessons learned
-- References to related information
-
-**Example**:
-```
-This project analyzes customer feedback from Q1 2024.
-
-Key objectives:
-- Identify trending pain points
-- Measure sentiment changes over time
-- Recommend product improvements
-
-When analyzing, prioritize recent feedback and cross-reference with NPS scores.
-
-Related projects: Q4 2023 Analysis, Customer Satisfaction Study
-```
-
-### Length Considerations
-
-- **Concise**: Aim for 100-500 words per memory
-- **Focused**: One topic or theme per memory
-- **Scannable**: Use line breaks for readability
-- **Multiple Memories**: Better to create several focused memories than one long one
-
-<Tip>
-Think of memories as index cards - each should contain a single coherent piece of information.
-</Tip>
-
-### Structure
-
-Use clear structure in your memory content:
-
-```
-**Purpose**: What this project is about
-
-**Context**: Background information
-
-**Guidelines**: How to approach the content
-
-**Important Notes**: Key things to remember
-```
-
-### Clarity
-
-- Use simple, clear language
-- Avoid jargon unless necessary
-- Define terms that might be ambiguous
-- Be specific rather than vague
-
-## Editing Memories
-
-<Steps>
-<Step title="Locate Memory">
-Find the memory in the Memories tab list.
-</Step>
-
-<Step title="Open Edit Dialog">
-Click the edit icon or "Edit" in the actions menu.
-
-{/* SCREENSHOT: Edit memory dialog */}
-</Step>
-
-<Step title="Modify Content">
-Update the name and/or content as needed.
-</Step>
-
-<Step title="Save Changes">
-Click "Save" to persist your changes.
-
-<Check>
-Updated memory shows new content immediately.
-</Check>
-</Step>
-</Steps>
+- **Console**: browse and search in the **Memories** page (workspace-wide) or a project's Memories tab — including a word-frequency visualization for a quick sense of what a project knows
+- **Semantic search**: hybrid keyword + embedding retrieval, scoped to a project or workspace — the same engine behind the Playground, agent tools, and the [search API](/features/memorylake/api-reference/memories/search-memories)
+- **Automatic recall**: connected assistants retrieve relevant memories before answering — you don't query anything by hand
 
 ## Managing Memories
 
-### Delete Memory
+### Browse & Inspect
+
+The Memories views support search, filtering, pagination, and bulk selection. Click any memory for details: full content, metadata, and source trace.
+
+### Edit
+
+Open a memory and edit its content when a fact needs refinement. Edits take effect immediately in future retrieval.
+
+### Forget (Delete)
 
 <Warning>
-Deleting a memory is permanent. The memory is removed from the project and AI models will no longer have access to it.
+Forgetting a memory is permanent — it is removed from all future retrieval for every connected assistant and API client.
 </Warning>
 
-<Steps>
-<Step title="Select Memory">
-Click delete icon for the memory to remove.
+Delete from the memory's action menu (or the [forget API](/features/memorylake/api-reference/memories/forget-memory)). This is also your "right to be forgotten" mechanism when building user-facing products.
 
-{/* SCREENSHOT: Delete confirmation dialog */}
-</Step>
+## Individual and Organizational Memory
 
-<Step title="Confirm Deletion">
-Review memory name and click "Delete" to confirm.
-</Step>
+The same machinery serves two different kinds of knowledge:
 
-<Step title="Verify Removal">
-Memory disappears from list immediately.
-</Step>
-</Steps>
+| | Individual memory | Organizational memory |
+|---|---|---|
+| Belongs to | A person (across all their tools) | A team workspace |
+| Examples | Preferences, personal facts, working style | Policies, decisions, domain facts, client history |
+| Governance | Private to you | Roles + fine-grained permissions per action |
+| Typical worry | "Will my tools remember me?" | "Will knowledge survive people leaving?" |
 
+Both flow through extraction → trace → conflict-checking → retrieval; the difference is scope and governance. See the [Personal AI Memory](/scenarios/personal-ai-memory) and [Team Knowledge Base](/scenarios/team-knowledge-base) scenarios.
 
-## Memory Organization
+## Working with Memories Programmatically
 
-### Naming Strategy
+```bash
+# Feed a conversation — facts are extracted from the messages you append
+POST /api/v3/workspaces/{workspaceId}/memories/conversations
+POST /api/v3/conversations/{conversationId}/messages
 
-Use consistent naming patterns:
+# Import documents into a project
+POST /api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/documents
 
-**By Topic**:
-- "Architecture - Overview"
-- "Architecture - Database Design"
-- "Architecture - API Structure"
+# Search across documents and facts in one call
+POST /api/v3/workspaces/{workspaceId}/memories/search
 
-**By Type**:
-- "[Guidelines] Code Style"
-- "[Context] Project History"
-- "[Reference] Related Projects"
+# Browse and manage extracted facts
+GET  /api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/facts
+POST /api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/facts/{factId}/forget
 
-**By Priority**:
-- "IMPORTANT: Budget Constraints"
-- "Key Finding: Customer Preference"
-- "Note: Technical Limitation"
+# List / resolve conflicts
+GET  /api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/conflicts
+POST /api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/conflicts/{conflictId}/resolve
+```
 
-### Content Organization
+All paths are relative to `https://app.memorylake.ai/openapi/memorylake`. Start with [Core Memory Operations](/features/memorylake/api-reference/core-memory/overview) for the end-to-end flow.
 
-Within memory content:
-- Start with most important information
-- Use consistent formatting
-- Include headers or sections
-- Add line breaks for readability
+<Note>
+Earlier project-scoped `api/v1` and `api/v2` memory endpoints remain available for existing integrations and are documented under **Deprecated** in the API reference. New integrations should use the v3 paths above.
+</Note>
 
 ## Next Steps
 
 <CardGroup cols={2}>
 <Card title="Best Practices" icon="star" href="/features/memorylake/memories/best-practices">
-Write effective memories
+Get better memories out of conversations, documents, and agents
 </Card>
 
-<Card title="MCP Servers" icon="server" href="/features/memorylake/mcp-servers/overview">
-Provide AI access to your memories
+<Card title="Integrations" icon="plug" href="/features/memorylake/mcp-servers/overview">
+Bring memory recall into your agents and apps
 </Card>
 
-<Card title="Memories API" icon="code" href="/features/memorylake/api-reference/memories">
+<Card title="Memories API" icon="code" href="/features/memorylake/api-reference/memories/add-memory">
 Manage memories programmatically
 </Card>
 </CardGroup>

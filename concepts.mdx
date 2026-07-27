@@ -1,0 +1,94 @@
+---
+title: "Core Concepts"
+description: "The vocabulary of MemoryLake — and how individual and organizational memory fit together"
+---
+
+MemoryLake models memory the way organizations actually work: knowledge has an **owner**, a **scope**, and a **source**. This page is the short orientation; each concept links to its deep dive.
+
+<Info>
+You don't need to set any of this up by hand. When you sign up, MemoryLake automatically provisions a workspace and assistant for you — these concepts become useful as your usage grows from "my personal memory" to "my team's memory" to "memory inside my product."
+</Info>
+
+## The Hierarchy
+
+```text
+Workspace                    ← top-level container and isolation boundary
+├── Project                  ← a focused body of knowledge
+│   ├── Documents            ← files whose content is parsed and indexed
+│   ├── Conversations        ← message exchanges memory is extracted from
+│   ├── Project Facts        ← knowledge scoped to this project
+│   └── Open Data            ← subscribed external datasets
+├── Actors                   ← who memories belong to (people and assistants)
+│   └── Actor Facts          ← per-person memory, follows them across projects
+└── Agents                   ← AI assistants operating in this workspace
+```
+
+<CardGroup cols={3}>
+<Card title="Workspaces & Projects" icon="folder-tree" href="/features/memorylake/core-concepts/workspaces-and-projects">
+Isolation boundaries, knowledge containers, and multi-tenant patterns.
+</Card>
+
+<Card title="Actors & Memory" icon="user" href="/features/memorylake/core-concepts/actors-and-memory">
+Identities, project facts vs. actor facts, and per-user memory.
+</Card>
+
+<Card title="Memory Pipeline" icon="arrows-spin" href="/features/memorylake/core-concepts/memory-pipeline">
+How documents and conversations become searchable memory.
+</Card>
+</CardGroup>
+
+## Individual Memory and Organizational Memory
+
+The same machinery serves two different kinds of knowledge, and knowing which you're building matters more than any API detail.
+
+| | Individual memory | Organizational memory |
+|---|---|---|
+| Belongs to | A person, across every tool they use | A team, in a shared workspace |
+| Examples | "Prefers TypeScript", "allergic to shellfish", "working on the marathon plan" | "Refund window is 30 days", "Customer X renews in March", "we chose Postgres because…" |
+| Lives as | Actor facts (follow the person across projects) | Project facts (scoped to the shared body of knowledge) |
+| Governed by | The person's own workspace — private | Roles, fine-grained permissions, and per-resource scopes |
+| The worry it solves | "Will my tools remember me?" | "Will knowledge survive people leaving?" |
+
+Both flow through the same pipeline — extraction, source traces, conflict checking, retrieval. The difference is scope and governance. See the [Personal AI Memory](/scenarios/personal-ai-memory) and [Team Knowledge Base](/scenarios/team-knowledge-base) scenarios.
+
+## Memory Hygiene: Traces and Conflicts
+
+Two properties make memory trustworthy enough to build on:
+
+- **Source traces** — every memory links back to the conversation or document it came from. When an assistant asserts something, you can always answer *"how do you know that?"* Available in the console and via the trace API.
+- **Conflict detection** — when a new memory contradicts an existing one (a moved deadline, a changed policy), MemoryLake flags a **conflict** for review instead of silently keeping both. In teams, whoever holds the resolve permission decides what's true.
+
+See [Memories](/features/memorylake/memories/overview) for how both work in practice.
+
+## Open Data
+
+**Open Data** is curated external knowledge you subscribe a project to — research and academic sources, clinical trials, drug databases, financial markets, company fundamentals, economic indicators, patents, and more. Subscribed categories become searchable by agents alongside your own content, so a biotech project can cite PubMed while a fintech project cites SEC filings.
+
+## Boundary (Memory Router & MCP)
+
+A **boundary** is the memory scope used by API traffic and MCP clients. It binds a workspace, project(s), and actors into a single reference:
+
+- With [Memory Router](/features/memory-router/overview), you pass it as `?boundary_id=` on LLM calls — commonly one boundary per end user, so each user's conversations read and write only their own memory.
+- With [MCP](/features/memorylake/mcp-servers/creating-api-keys), you select the workspace and boundary on the OAuth consent screen when a client connects.
+
+## API Key
+
+An **API key** (`sk-…`) is your credential for everything programmatic: the REST API, Model Router, and agent plugins. Create keys in the console under **API Keys** — each has a name and an expiry, and its permissions mirror those of the member who created it. Rotate or revoke anytime. See [Authentication](/authentication).
+
+## How the Concepts Map to You
+
+| You are… | Workspace | Projects | Memory flows |
+|---|---|---|---|
+| An individual | Your default personal workspace | One per life/work context | Your chats & files → your memories → every tool you connect |
+| A team | Shared team workspaces | One per initiative or client | Everyone's contributions → governed shared memory → every member's assistant |
+| A product builder | One workspace, or one per tenant | Per product domain or per end user | Your users' sessions → per-user memory via boundaries → your app's LLM calls |
+
+<CardGroup cols={2}>
+<Card title="Quick Start" icon="rocket" href="/quickstart">
+Experience memory in the console in five minutes.
+</Card>
+
+<Card title="Scenarios" icon="map" href="/scenarios/personal-ai-memory">
+Deep-dive walkthroughs for personal, team, agent, and product use cases.
+</Card>
+</CardGroup>

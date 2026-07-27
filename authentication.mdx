@@ -1,40 +1,97 @@
 ---
-title: "Authentication and Tokens"
-description: "Call rules using API Key as the sole credential, quota validation, and common issues"
+title: "Authentication and API Keys"
+description: "One API key authenticates the REST API, Model Router, and agent plugins — how to create, use, and manage keys"
 ---
 
-## Background and Value
-- The platform uses API Key as the sole call credential. All requests first validate quota, expiration, and status to prevent overdrafts or abuse.
-- Compatible with OpenAI / Claude / Gemini call formats, allowing you to reuse existing clients by only replacing the Base URL and token.
+## One Key, Every Surface
 
-## Use Cases
-- First-time integration, wanting to confirm how to carry tokens and call paths.
-- Teams or multiple clients sharing a unified entry point, requiring controlled quotas.
-- Want clear feedback when quota is insufficient or routes are unavailable, facilitating self-diagnosis.
+MemoryLake uses API keys (`sk-…`) as the credential for all programmatic access. The same key authenticates:
 
-## Core Capabilities
-- **Token Management**: Generate API Keys in the [console](https://app.memorylake.ai/panel/token), where you can set quota, expiration time, and enabled status. Requests first validate these conditions; unmet conditions result in direct rejection.
-- **Quota and Pre-deduction**: Each request pre-deducts quota; successful returns confirm deduction, failures roll back pre-deduction, ensuring quota accuracy.
-- **Multi-model Compatibility**: Supports path and parameter formats for OpenAI `/v1`, Claude `/claude/v1`, and Gemini `/gemini/:version`.
-- **Common Header Rules**: Carry tokens according to compatible endpoints:
-  - OpenAI compatible: `Authorization: Bearer sk-xxx`
-  - Claude compatible: `x-api-key: sk-xxx`
-  - Gemini compatible: `x-goog-api-key: sk-xxx`
-- **Log Visible Fields**: Calls record models, token names, channels, request latency (`request_time`), prompt/completion tokens, etc., facilitating troubleshooting and reconciliation.
+| Surface | Base URL | Auth header |
+|---|---|---|
+| MemoryLake REST API | `https://app.memorylake.ai/openapi/memorylake` | `Authorization: Bearer sk-…` |
+| Model Router (OpenAI-compatible) | `https://app.memorylake.ai/v1` | `Authorization: Bearer sk-…` |
+| Model Router (Claude-native) | `https://app.memorylake.ai/claude/v1` | `x-api-key: sk-…` |
+| Model Router (Gemini-native) | `https://app.memorylake.ai/gemini/:version` | `x-goog-api-key: sk-…` |
+| Memory Router (private preview) | `https://app.memorylake.ai/openai/v1` · `…/anthropic/v1` | native header, see [Memory Router](/features/memory-router/quickstart) |
+| Agent plugins (OpenClaw / QClaw / Hermes) | configured once during install | plugin config `apiKey` |
+| MCP clients | `https://app.memorylake.ai/memorylake/mcp/v2` | OAuth2 — no key needed |
 
-## Key Usage Points
-1) **Obtain Token**: Create an API Key in the [console](https://app.memorylake.ai/panel/token), set quota and expiration; ensure status is enabled.  
-2) **Choose Endpoint and Base**: Replace the client's API Base with the platform address, e.g., `https://app.memorylake.ai`, following the corresponding compatible endpoint paths.  
-3) **Include Header**: Fill in the token header according to the common rules above; keep other parameters in official format.  
-4) **Send Request**: You can first call `GET /v1/models` or corresponding model list endpoints to confirm currently available models.  
-5) **View Results**: After successful requests, view models, channels, latency, and tokens in the [logs](https://app.memorylake.ai/panel/log); aggregated statistics summarize usage and quota consumption by date.
+<Note>
+MCP clients don't use API keys at all — they authorize with OAuth2 and pick their scope on the consent screen. See [Connect via MCP](/features/memorylake/mcp-servers/creating-api-keys).
+</Note>
 
-## Common Authentication and Quota Notes
-- **Insufficient Quota**: Token quota insufficiency results in direct rejection; check quota or adjust multiplier and retry.
-- **Token Invalid**: Expired or disabled tokens reject requests; update token status or regenerate.
-- **No Available Route**: When target models are unavailable in the current route, a prompt is shown; switch models or adjust route configuration.
-- **Specify Route**: If a fixed route is needed, specify via token suffix or specific header convention (if configured); if not specified, default routing applies.
+## Creating an API Key
+
+1. Open **API Keys** in the [console](https://app.memorylake.ai) sidebar
+2. Click create and fill in:
+   - **Name** — for your own reference, changeable later
+   - **Expiry** — Never / 7 days / 30 days (default) / 90 days / 1 year / custom date
+   - **Advanced → Group** — optional model-access group, when your account has more than one
+3. Copy the revealed `sk-…` key immediately — it is shown in full **only once**
+
+<Warning>
+Store keys in a password manager or environment variables. Never commit them to version control or share them in chat. If a key leaks, **rotate** it from the key's detail panel — rotation issues a new secret without recreating your configuration.
+</Warning>
+
+## What a Key Can Do
+
+An API key inherits the permissions of the member who created it. In your personal space that means full access to your own resources; in a team space, a key can do exactly what its creator's role and [resource scopes](/features/team-collaboration/permission-reference) allow — no more.
+
+Per-key controls available from the key detail panel:
+
+- **Enable / disable** — suspend a key without deleting it
+- **Rotate** — replace the secret, keep the key's identity
+- **Model restrictions** — limit which models the key may call
+- **IP allowlist** — restrict usage to known addresses
+- **Heartbeat** — optionally require periodic liveness signals for long-running automation
+
+Key states: **enabled**, **disabled**, **expired**, and **exhausted** (quota depleted). Requests with a key in any non-enabled state are rejected.
+
+## Using Your Key
+
+<CodeGroup>
+```bash MemoryLake REST API
+curl https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces \
+  -H "Authorization: Bearer sk-your-key"
+```
+
+```bash Model Router (OpenAI-compatible)
+curl https://app.memorylake.ai/v1/chat/completions \
+  -H "Authorization: Bearer sk-your-key" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-4o-mini",
+    "messages": [{"role": "user", "content": "hi"}]
+  }'
+```
+
+```bash Model Router (Claude-native)
+curl https://app.memorylake.ai/claude/v1/messages \
+  -H "x-api-key: sk-your-key" \
+  -H "anthropic-version: 2023-06-01" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-5",
+    "max_tokens": 1024,
+    "messages": [{"role": "user", "content": "hi"}]
+  }'
+```
+</CodeGroup>
+
+The console's API Keys page always shows your current **API base address** with a copy button, plus setup guides for common integrations.
+
+## Personal vs. Team Context
+
+Keys are created within a space — personal or team. A key created in a team space operates in that team's context: its calls draw on team quota and see team resources (per the creator's permissions). Check which space you are in (sidebar space switcher) before creating keys for automation.
+
+## Troubleshooting
+
+- **`401 Unauthorized`** — key missing, mistyped, disabled, or expired. Verify the exact header format for the surface you're calling (table above).
+- **Quota errors** — the account or team balance is insufficient; check **Billing** in the console.
+- **Model not available** — the key's group or model restrictions exclude that model; list available models first (see [Model Router](/features/model-router/list-available-models)).
 
 ## Limitations and Notes
-- Only API Key is supported as call credential; does not involve account login methods.
-- Quota validation covers quota, expiration, and status; pre-deduction rolls back on failure.
+
+- API keys are the only programmatic credential — console login sessions cannot call the APIs.
+- A key's permissions track its creator: if the creator's role is downgraded or they leave the team, the key's access changes accordingly.

@@ -1,80 +1,80 @@
 ---
 title: "Quick Start"
-description: "Complete your first model call using a unified entry point, covering OpenAI / Claude / Gemini examples and key points about quotas and logs"
+description: "Experience AI memory in five minutes — chat, upload, retrieve, and connect your tools"
 ---
 
-## What You'll Get
-- Reuse existing OpenAI / Claude / Gemini clients; you only need to change the Base URL and token to make calls.
-- The platform validates quotas, pre-deducts, and directly rejects when insufficient, preventing overdrafts.
-- Call logs record fields such as models, token names, channels, request latency, and tokens, facilitating troubleshooting and reconciliation.
+This guide takes you from sign-up to a working memory in about five minutes, then points you at the integration path that fits how you work.
 
-## Use Cases
-- Need to quickly verify token availability and quota settings.
-- Want to switch to a unified entry point without modifying existing client code.
-- Need to view request latency, tokens, and consumption to support subsequent reconciliation or troubleshooting.
+## Step 1: Sign Up
 
-## Quick Path: Get It Working
-1) **Prepare**: Copy your token and note the platform API Base (example: `https://app.memorylake.ai`).  
-2) **Choose a Model**: If unsure, first retrieve the model list: `GET /v1/models` (OpenAI-compatible endpoint).  
-3) **Send a Minimal Call**: Follow the official format, only replace the Base URL and token:
+Create an account at [app.memorylake.ai](https://app.memorylake.ai). MemoryLake automatically provisions your personal workspace and assistant — there is nothing to configure before your first conversation.
 
-<CodeGroup>
-```bash OpenAI Compatible (chat/completions)
-curl --request POST \
-  --url https://app.memorylake.ai/v1/chat/completions \
-  --header 'Authorization: Bearer sk-your-token' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "model": "gpt-4o-mini",
-    "messages": [{"role": "user", "content": "hi~"}]
-  }'
-```
+## Step 2: Experience Memory in the Playground
 
-```bash Claude Compatible (messages)
-curl --request POST \
-  --url https://app.memorylake.ai/claude/v1/messages \
-  --header 'x-api-key: sk-your-token' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "model": "claude-3-haiku-20240307",
-    "max_tokens": 1024,
-    "messages": [{"role": "user", "content": "hi~"}]
-  }'
-```
+Open the **Playground** from the sidebar (new accounts land there with a short guided tour):
 
-```bash Gemini Compatible (generateContent)
-curl --request POST \
-  --url https://app.memorylake.ai/gemini/v1alpha/models/gemini-2.0-pro-exp:generateContent \
-  --header 'x-goog-api-key: sk-your-token' \
-  --header 'Content-Type: application/json' \
-  --data '{
-    "contents": [{
-      "role": "user",
-      "parts": [{"text": "hi~"}]
-    }]
-  }'
-```
-</CodeGroup>
+<Steps>
+<Step title="Tell it something worth remembering">
+Try: *"Remember that my name is Ming and I prefer answers in bullet points."*
 
-<Note>
-Path conventions: OpenAI endpoint at `/v1`, Claude at `/claude/v1`, Gemini at `/gemini/:version`. All call examples use actual available platform paths.
-</Note>
+Behind the scenes, MemoryLake extracts a durable memory from the conversation — not a transcript, a fact.
+</Step>
 
-## Key Usage Points
-- **Quota Rules**: Each call validates and pre-deducts quota; requests are rejected when quota is insufficient. Successful returns confirm deduction; failures roll back pre-deduction.
-- **Model Selection**: Supports OpenAI / Claude / Gemini compatible formats. View currently available models via `GET /v1/models` or corresponding model list endpoints.
-- **Channels and Proxies**: Channels can be configured with proxies or multipliers as needed. Final routing distributes based on model, channel configuration, and optional specified channel headers.
-- **Special Features**: Supports capabilities like o1/o3 ReasoningEffort selection, Claude thinking, Gemini search and code execution, passed through via official parameters.
+<Step title="Add Open Data (optional)">
+Subscribe your project to a curated industry dataset — research papers, financial data, clinical trials, and more — so the assistant can search authoritative external sources alongside your own content.
+</Step>
 
-## What You'll See After a Successful Call
-- **Log Records**: Fields such as model name, token name, channel, request latency (`request_time`), prompt and completion tokens are recorded for tracking and troubleshooting.
-- **Aggregated Statistics**: Request counts, consumed quotas, tokens, and request latency are aggregated by date, facilitating dashboard display and quota reconciliation.
+<Step title="Upload a file">
+Attach a PDF, Word, Excel, or Markdown file directly in the chat. Its content is parsed, indexed, and becomes retrievable context.
+</Step>
 
-## Common Troubleshooting
-- **Insufficient Quota**: Verify that token or account quota is sufficient; insufficient quota directly rejects requests.
-- **No Available Route**: Confirm that the target model is enabled in the current route, or adjust model selection.
-- **Specify Route**: When a fixed route is needed, specify via token suffix or specific header; if not specified, default automatic routing applies.
+<Step title="See the difference">
+Start a **new** conversation and ask: *"What's my name and how do I like my answers?"* The assistant recalls it — that's memory persisting across sessions. The Home page's Memory On/Off comparison shows the same effect side by side.
+</Step>
+</Steps>
 
-## You Might Also Want to Know
-- Want to see more examples or special parameter usage: Check the [Protocols and Entry Points](/features/model-router/protocols-and-entrypoints) documentation.
-- Want to verify billing: Reconcile using log fields and aggregated statistics; use a test token first to verify multipliers and model wildcards if needed.
+<Tip>
+Visit **Memories** in the sidebar to see what was extracted — each memory shows its content and a **source trace** back to the conversation or document it came from.
+</Tip>
+
+## Step 3: Create an API Key
+
+For anything programmatic — the REST API, Model Router, or agent plugins — create an API key:
+
+1. Open **API Keys** in the console sidebar
+2. Click create, give the key a name, and pick an expiry (defaults to 30 days; "Never" is available)
+3. Copy the `sk-…` key when it is revealed — it is shown only once
+
+See [Authentication](/authentication) for header formats and key management.
+
+## Step 4: Put Memory Where You Work
+
+Pick the path that matches your workflow:
+
+<CardGroup cols={2}>
+<Card title="Coding agents (OpenClaw)" icon="terminal" href="/features/memorylake/mcp-servers/overview">
+Install the MemoryLake plugin — your agent automatically recalls context, captures new memories, and uploads files you share with it.
+</Card>
+
+<Card title="REST API" icon="code" href="/features/memorylake/api-reference/overview">
+Full programmatic control: projects, documents, memory add/search/trace, and conflict resolution at `https://app.memorylake.ai/openapi/memorylake`.
+</Card>
+
+<Card title="Memory Router" icon="route" href="/features/memory-router/overview">
+Add memory to your existing OpenAI/Anthropic calls with a base-URL change. Private preview.
+</Card>
+
+<Card title="Model Router" icon="globe" href="/features/model-router/overview">
+Call mainstream LLMs through one OpenAI-compatible endpoint with the same API key.
+</Card>
+</CardGroup>
+
+## What Just Happened?
+
+Your conversation and file were distilled into **memories** inside a **project** in your **workspace** — retrievable by any assistant or API client you connect, forever scoped and private to you. When you're ready to share memory with a team, see [Team Collaboration](/features/team-collaboration/overview); to understand the full model, read [Core Concepts](/concepts).
+
+## Next Steps
+
+- [Core Concepts](/concepts) — workspaces, projects, memories, actors, agents
+- [Scenarios](/scenarios/personal-ai-memory) — personal memory, team knowledge bases, coding agents, and product integration walkthroughs
+- [MemoryLake feature guide](/features/memorylake/overview) — documents, memories, conflicts, connectors, and more

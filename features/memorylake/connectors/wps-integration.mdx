@@ -1,185 +1,74 @@
 ---
 title: "WPS Integration"
-description: "Connect your WPS account and mount document libraries into MemoryLake"
+description: "Connect your WPS account and browse your document libraries inside MemoryLake"
 ---
 
 ## Overview
 
-WPS (Kingsoft Office) integration allows you to access your WPS document libraries directly within MemoryLake. This guide walks through the complete setup process.
+WPS (Kingsoft Office) integration lets you browse your WPS documents directly within MemoryLake. This guide walks through the setup — Lark (Feishu) works [the same way](#lark-feishu-works-the-same-way).
 
 ## Prerequisites
 
-- Active WPS account
-- Document libraries in your WPS workspace
+- An active WPS account
+- You are working in your **personal space** — connectors are disabled in team and organization workspaces
 
 ## Step-by-Step Setup
 
 <Steps>
 
-<Step title="Open WPS Connector">
-Navigate to the Connectors section in MemoryLake and click on the WPS connector card.
+<Step title="Open the WPS Connector">
+Navigate to the Connectors section in MemoryLake and click the WPS connector card.
 
 {/* SCREENSHOT: WPS connector card in connectors section */}
 </Step>
 
-<Step title="Initiate OAuth Flow">
-Click "Login with WPS". A new window opens to WPS's authorization page.
-
-{/* SCREENSHOT: OAuth window with WPS login screen */}
+<Step title="Authorize in the Popup">
+A popup window opens WPS's authorization page. Sign in with your WPS credentials and approve the access request.
 
 <Tip>
-Ensure pop-ups are enabled for MemoryLake. The OAuth flow uses a popup window.
+Ensure pop-ups are enabled for MemoryLake. The OAuth flow uses a popup window; the result is passed back to the console automatically when you finish.
 </Tip>
-</Step>
-
-<Step title="Authenticate with WPS">
-Log in to your WPS account using your credentials.
-- Enter your WPS email/username
-- Enter your password
-- Complete any two-factor authentication if enabled
-</Step>
-
-<Step title="Grant Permissions">
-Review the permissions MemoryLake is requesting:
-- Read access to your document libraries
-- Access to file metadata
-
-Click "Authorize" or "Allow" to grant access.
 
 <Note>
-MemoryLake requests read-only access. We cannot modify or delete your WPS documents.
+MemoryLake requests read-only access. We cannot modify or delete your WPS documents, and your WPS password never leaves WPS.
 </Note>
 </Step>
 
-<Step title="Select Document Libraries">
-After authorization, a dialog shows your available WPS document libraries.
+<Step title="Browse WPS Space">
+Once connected, a **WPS Space** node appears in your library tree. Expand it to browse your WPS documents — folder contents are fetched from WPS on demand as you expand them.
 
-{/* SCREENSHOT: Document library selector with checkboxes */}
-
-- **View all libraries**: Your personal and shared libraries appear
-- **Select libraries**: Check the boxes for libraries you want to mount
-- **Multi-select**: You can select multiple libraries at once
-</Step>
-
-<Step title="Create Mount Points">
-Click "Connect" to create mount points for selected libraries.
-
-MemoryLake creates a folder structure:
-```
-Root/
-└── WPS Space/
-    ├── Library 1/
-    ├── Library 2/
-    └── Library 3/
-```
-
-{/* SCREENSHOT: WPS Space folder in tree with mounted libraries */}
+{/* SCREENSHOT: WPS Space folder in the library tree */}
 
 <Check>
-The "WPS Space" folder appears in your drive with each selected library as a subfolder.
+The "WPS Space" folder appears in your library and expands to show your WPS content.
 </Check>
-</Step>
-
-<Step title="Browse WPS Content">
-Navigate into the WPS Space folders to browse your WPS documents.
-
-- Expand folders to see contents
-- Download files for local use
-- Associate with projects for AI context
 </Step>
 
 </Steps>
 
-## Managing WPS Connections
-
-### View Connection Status
-
-The connector card shows connection status:
-- **Connected**: Green indicator, libraries mounted
-- **Available**: Ready to connect
-- **Error**: Red indicator, connection issue
-
-### Add More Libraries
-
-To mount additional libraries:
-1. Open WPS connector settings
-2. Click "Manage Connections"
-3. Select additional libraries
-4. Click "Connect"
-
-### Remove Connections
-
-To unmount specific libraries:
-1. Go to WPS connector settings
-2. View connected libraries
-3. Click "Remove" next to the library
-4. Confirm removal
-
-The library disappears from WPS Space but your WPS account remains connected.
-
-### Disconnect
-
-To completely disconnect WPS:
-1. Open WPS connector settings
-2. Click "Disconnect"
-3. Confirm disconnection
-
-All WPS libraries are unmounted and MemoryLake loses access to your WPS account.
-
-<Warning>
-Revoking authorization removes all WPS mount points. Files associated with projects will become inaccessible.
-</Warning>
-
 ## Working with WPS Documents
 
-### Browsing WPS Files
+- **Browse**: navigate WPS folders like regular MemoryLake folders.
+- **Download**: download copies of WPS files for local use (changes to local copies don't sync back).
+- **Associate with projects**: open a project → Files → add documents → navigate into WPS Space and select files or folders. AI assistants connected to the project can then read that content.
 
-Navigate WPS libraries like regular MemoryLake folders:
-- Click folders to expand
-- View file lists
-- See file metadata
-
-{/* SCREENSHOT: WPS document library expanded showing files */}
-
-### Downloading WPS Files
-
-To download a WPS file:
-1. Navigate to the file in WPS Space
-2. Right-click the file
-3. Select "Download"
-4. File downloads to your local machine
-
-<Note>
-Downloaded files are copies. Changes to local copies don't sync back to WPS.
-</Note>
-
-### Associating with Projects
-
-WPS files can be associated with projects:
-1. Open a project
-2. Go to Documents tab
-3. Click "Add Documents"
-4. Navigate into WPS Space
-5. Select WPS files or folders
-6. Confirm
-
-AI models accessing via MCP servers can now read context from WPS documents.
-
-### Limitations
-
-WPS-mounted content is **read-only**:
-- ✅ Browse folder structure
-- ✅ Download files
-- ✅ Associate with projects
-- ❌ Upload new files
-- ❌ Edit existing files
-- ❌ Delete files
-- ❌ Rename or move files
+WPS-mounted content is **read-only** — you can browse, download, and associate it with projects, but not upload, edit, rename, move, or delete through MemoryLake.
 
 <Tip>
-To modify WPS documents, use the WPS application directly. Changes appear in MemoryLake after refreshing.
+To modify WPS documents, use the WPS application directly. Changes appear in MemoryLake when you re-expand or refresh the folder.
 </Tip>
 
+## Reconnecting
+
+If your WPS authorization expires, expanding WPS Space prompts you to re-authorize — one OAuth round trip and you're back. To disconnect entirely, use the connector card's disconnect action; this unmounts WPS Space and revokes MemoryLake's access.
+
+<Warning>
+Disconnecting removes the WPS mount. WPS files associated with projects will become inaccessible to those projects until you reconnect.
+</Warning>
+
+## Lark (Feishu) Works the Same Way
+
+The Lark connector follows exactly the same flow: click the **Lark** connector card, sign in through the popup, and a **Lark Space** node appears in your library tree with the same read-only browsing, download, and project-association capabilities.
 
 ## Troubleshooting
 
@@ -187,29 +76,27 @@ To modify WPS documents, use the WPS application directly. Changes appear in Mem
 
 <Accordion title="OAuth window doesn't open">
 **Solutions**:
-- Enable pop-ups for MemoryLake domain
+- Enable pop-ups for the MemoryLake domain
 - Check browser popup blocker settings
-- Try different browser
-- Disable browser extensions temporarily
+- Try a different browser, or temporarily disable extensions
 </Accordion>
 
-<Accordion title="No document libraries appear">
-**Solutions**:
-- Verify you have libraries in your WPS account
-- Check WPS account permissions
-- Try logging out of WPS and back in
-- Contact WPS support if libraries are missing
+<Accordion title="Connector card is grayed out">
+Connectors are only available in your personal space. If you are in a team or organization workspace, switch to your personal space. If it is still unavailable, the connector may not be enabled for your deployment.
+</Accordion>
+
+<Accordion title="Space shows stale content">
+Contents are fetched when folders expand. Collapse and re-expand the folder, or refresh the page, to pick up changes made in the external service.
 </Accordion>
 
 </AccordionGroup>
 
 ## Security & Privacy
 
-- **OAuth 2.0**: Industry-standard secure authentication
+- **OAuth 2.0**: industry-standard secure authorization
 - **Read-Only**: MemoryLake cannot modify your WPS content
-- **Token Storage**: Encrypted access tokens stored securely
-- **Revocable**: Disconnect anytime
-- **No Password Storage**: Your WPS password never leaves WPS
+- **Revocable**: disconnect anytime from the connector card
+- **No Password Storage**: your WPS password never leaves WPS
 
 ## Next Steps
 
@@ -219,6 +106,6 @@ Learn about other available connectors
 </Card>
 
 <Card title="Project Association" icon="diagram-project" href="/features/memorylake/project-management/document-association">
-Associate WPS documents with projects
+Associate external documents with projects
 </Card>
 </CardGroup>
