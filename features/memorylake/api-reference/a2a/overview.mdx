@@ -21,18 +21,27 @@ Append standard A2A paths directly — for example `POST {baseUrl}/message:send`
 
 ## Protocol Versions
 
-MemoryLake exposes two parallel sets of A2A routes, one per protocol version:
+MemoryLake exposes two parallel sets of A2A routes, one per protocol version, and each version is reachable over **two transports**: REST and JSON-RPC 2.0.
 
-| Routes | Protocol version | Message body | Send configuration |
+| Protocol version | REST routes | Message body | `role` value |
 |---|---|---|---|
-| `{baseUrl}/message:send`, `{baseUrl}/tasks/...` | **A2A v1.0** | `message.parts` | `returnImmediately`, `taskPushNotificationConfig` |
-| `{baseUrl}/v1/message:send`, `{baseUrl}/v1/tasks/...` | **A2A v0.3** | `message.content` | `blocking`, `pushNotificationConfig` |
+| **A2A v1.0** | `{baseUrl}/message:send`, `{baseUrl}/tasks/...` | `message.parts` (proto-JSON, no `kind` discriminator) | `ROLE_USER` |
+| **A2A v0.3** | `{baseUrl}/v1/message:send`, `{baseUrl}/v1/tasks/...` | REST: `message.content` · JSON-RPC: `message.parts` with a `kind` discriminator | REST: `ROLE_USER` · JSON-RPC: `user` |
 
 <Warning>
-The `/v1/` path prefix refers to the older **A2A v0.3** wire format, not to protocol version 1.0. The un-prefixed routes implement the current **A2A v1.0** format. Make sure the request body shape matches the route you call — a v0.3-style body (`content`, `blocking`) is rejected by the v1.0 routes, and vice versa.
+The `/v1/` path prefix refers to the older **A2A v0.3** wire format, not to protocol version 1.0. The un-prefixed routes implement the current **A2A v1.0** format. Make sure the request body shape matches the route you call — a v0.3-style REST body (`message.content`) is rejected by the v1.0 REST routes, and vice versa.
 </Warning>
 
-Both route families support the same MemoryLake extension described below.
+Over JSON-RPC, both versions post to the bare `{baseUrl}` and pick the operation with `method`: v1.0 uses `SendMessage`, `SendStreamingMessage`, `GetTask`, `CancelTask`, `SubscribeToTask`; v0.3 uses `message/send`, `message/stream`, `tasks/get`, `tasks/cancel`, `tasks/resubscribe`. The protocol version is negotiated from the method name, and v1.0 clients should also send `A2A-Version: 1.0`.
+
+All four route families accept the same `configuration` object and the same MemoryLake extension described below:
+
+| `configuration` field | Type | Description |
+|---|---|---|
+| `blocking` | boolean | Wait for the task to complete before responding. Applies to both v1.0 and v0.3. |
+| `historyLength` | integer | Number of most recent messages from the task history to include in the response. |
+| `acceptedOutputModes` | array | Output MIME types the client can handle. |
+| `pushNotificationConfig` | object | Callback URL (plus optional auth) for task update notifications. |
 
 ## MemoryLake Extension
 
@@ -79,10 +88,33 @@ MemoryLake-specific configuration. Without this, the agent runs without any memo
 </Expandable>
 </ParamField>
 
-## Example
+## Examples
 
-<RequestExample>
-```bash Send message (A2A v1.0)
+Sending a message spans three independent choices — **protocol version** (v1.0 / v0.3) × **method** (send / stream) × **transport** (REST / JSON-RPC) — so there are eight valid combinations. All eight are shown below.
+
+Paths below are relative to the base URL; JSON-RPC always posts to the bare base URL and selects the operation with `method`.
+
+| # | Combination | Request | Headers |
+|---|---|---|---|
+| 1 | v1.0 · send · REST | `POST /message:send` | — |
+| 2 | v1.0 · stream · REST | `POST /message:stream` | SSE |
+| 3 | v0.3 · send · REST | `POST /v1/message:send` | — |
+| 4 | v0.3 · stream · REST | `POST /v1/message:stream` | SSE |
+| 5 | v1.0 · send · JSON-RPC | `SendMessage` | v1.0 |
+| 6 | v1.0 · stream · JSON-RPC | `SendStreamingMessage` | v1.0 + SSE |
+| 7 | v0.3 · send · JSON-RPC | `message/send` | — |
+| 8 | v0.3 · stream · JSON-RPC | `message/stream` | SSE |
+
+In the **Headers** column, **SSE** means `Accept: text/event-stream` and **v1.0** means `A2A-Version: 1.0`. All eight take the same `configuration` object and the same `metadata.memorylake` extension. The four streaming variants respond with `text/event-stream`; the four send variants respond with a single JSON body.
+
+<Note>
+Watch the three shape differences between versions and transports: v1.0 uses `parts` with `role: "ROLE_USER"`; v0.3 **REST** uses `content` with `role: "ROLE_USER"`; v0.3 **JSON-RPC** uses `parts` where every part carries a `kind` discriminator, with `role: "user"` in lowercase.
+</Note>
+
+### REST transport
+
+<CodeGroup>
+```bash 1 · v1.0 send
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/message:send' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
@@ -95,7 +127,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
       "contextId": "ctx_m4n7p2q9"
     },
     "configuration": {
-      "returnImmediately": false,
+      "blocking": true,
       "historyLength": 10
     },
     "metadata": {
@@ -112,7 +144,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
   }'
 ```
 
-```bash Stream (A2A v1.0, SSE)
+```bash 2 · v1.0 stream
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/message:stream' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
@@ -133,7 +165,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
   }'
 ```
 
-```bash Send message (A2A v0.3)
+```bash 3 · v0.3 send
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/v1/message:send' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
@@ -156,4 +188,154 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
     }
   }'
 ```
-</RequestExample>
+
+```bash 4 · v0.3 stream
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a/v1/message:stream' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: text/event-stream' \
+  -d '{
+    "message": {
+      "role": "ROLE_USER",
+      "content": [
+        { "text": "Summarize our last meeting notes" }
+      ]
+    },
+    "metadata": {
+      "memorylake": {
+        "actorId": "act_user_jane",
+        "readOnlyProjectIds": ["proj_meetings"]
+      }
+    }
+  }'
+```
+</CodeGroup>
+
+### JSON-RPC transport
+
+Both versions share the same path — `POST {baseUrl}` with no suffix. The version comes from the method name; v1.0 clients should also send `A2A-Version: 1.0`.
+
+<CodeGroup>
+```bash 5 · v1.0 send
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -H 'A2A-Version: 1.0' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "req-1",
+    "method": "SendMessage",
+    "params": {
+      "message": {
+        "messageId": "msg-1",
+        "role": "ROLE_USER",
+        "parts": [
+          { "text": "How do I configure two-factor authentication?" }
+        ],
+        "contextId": "ctx_m4n7p2q9"
+      },
+      "configuration": {
+        "blocking": true,
+        "historyLength": 10
+      },
+      "metadata": {
+        "memorylake": {
+          "actorId": "act_user_jane",
+          "readWriteProjectId": "proj_def456",
+          "readOnlyProjectIds": ["proj_shared_kb"],
+          "overrides": {
+            "model": "gpt-4o",
+            "maxTurns": 5
+          }
+        }
+      }
+    }
+  }'
+```
+
+```bash 6 · v1.0 stream
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -H 'A2A-Version: 1.0' \
+  -H 'Accept: text/event-stream' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "req-2",
+    "method": "SendStreamingMessage",
+    "params": {
+      "message": {
+        "messageId": "msg-2",
+        "role": "ROLE_USER",
+        "parts": [
+          { "text": "Summarize our last meeting notes" }
+        ]
+      },
+      "metadata": {
+        "memorylake": {
+          "actorId": "act_user_jane",
+          "readOnlyProjectIds": ["proj_meetings"]
+        }
+      }
+    }
+  }'
+```
+
+```bash 7 · v0.3 send
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "req-3",
+    "method": "message/send",
+    "params": {
+      "message": {
+        "messageId": "msg-3",
+        "role": "user",
+        "parts": [
+          { "kind": "text", "text": "How do I configure two-factor authentication?" }
+        ],
+        "contextId": "ctx_m4n7p2q9"
+      },
+      "configuration": {
+        "blocking": true,
+        "historyLength": 10
+      },
+      "metadata": {
+        "memorylake": {
+          "actorId": "act_user_jane",
+          "readWriteProjectId": "proj_def456"
+        }
+      }
+    }
+  }'
+```
+
+```bash 8 · v0.3 stream
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents/agt_r8k2m1n3/a2a' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: text/event-stream' \
+  -d '{
+    "jsonrpc": "2.0",
+    "id": "req-4",
+    "method": "message/stream",
+    "params": {
+      "message": {
+        "messageId": "msg-4",
+        "role": "user",
+        "parts": [
+          { "kind": "text", "text": "Summarize our last meeting notes" }
+        ]
+      },
+      "metadata": {
+        "memorylake": {
+          "actorId": "act_user_jane",
+          "readOnlyProjectIds": ["proj_meetings"]
+        }
+      }
+    }
+  }'
+```
+</CodeGroup>
