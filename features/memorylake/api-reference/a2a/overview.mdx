@@ -57,7 +57,7 @@ MemoryLake-specific configuration. Without this, the agent runs without any memo
   </ParamField>
 
   <ParamField body="readWriteProjectId" type="string">
-  Project the agent can both read from and write to. Extracted facts and conversation history are persisted to this project.
+  Project the agent can both read from and write to. Extracted facts are persisted to this project; conversation history is stored at the workspace level, not in the project.
   </ParamField>
 
   <ParamField body="readOnlyProjectIds" type="array">
