@@ -1,0 +1,299 @@
+---
+title: "DingTalk integration"
+description: "Connect a workspace's memory to DingTalk: add the bot to a group and members can @-mention it to reach the team's knowledge"
+noindex: true
+---
+
+## Overview
+
+The DingTalk integration connects an agent from one **workspace** to your own DingTalk bot. Once it is set up, your team never has to open the console to ask a question:
+
+- @-mention the bot in a DingTalk group and get answers grounded in your team's knowledge base
+- Attach an error screenshot to your @-mention — the bot reads the image and answers from it
+- Every exchange becomes memory, so nobody has to explain the same thing twice
+
+Answers come from the memory of the projects you select — not from a general-purpose model guessing.
+
+## Before you start
+
+<CardGroup cols={2}>
+
+<Card title="On the MemoryLake side" icon="database">
+- The **owner** or **admin** role in your team (members can neither see nor change integrations)
+- A workspace with at least one project in it
+- At least one agent **associated with that workspace** (associate one on the workspace's Agents tab)
+</Card>
+
+<Card title="On the DingTalk side" icon="comments">
+- DingTalk **administrator** rights: you need to create an app, request permissions, and publish it
+- A DingTalk group for testing (optional, but strongly recommended)
+</Card>
+
+</CardGroup>
+
+Budget about 10 minutes.
+
+<Warning>
+If the workspace page has no **Integrations** tab, either IM channels are not enabled on this deployment or your role is member. Check with your team administrator.
+</Warning>
+
+## Part 1: Create a bot on the DingTalk open platform
+
+Everything in this part happens on the DingTalk side. You are collecting three things: a **Client ID**, a **Client Secret**, and (optionally) an **AI card template ID**.
+
+<Steps>
+
+<Step title="Create an internal app">
+Sign in to the [DingTalk open platform](https://open-dev.dingtalk.com/) with an administrator account, then go to **App development → DingTalk apps → Create app** and choose **internal app**.
+
+The app name and icon are what your colleagues will see, so use something recognizable — "Knowledge assistant", for example.
+</Step>
+
+<Step title="Add the Bot capability and set message delivery to Stream">
+Open the app you just created, go to **App capabilities**, and add the **Bot** capability. Fill in the bot's name and description, then set **message delivery mode** to **Stream**.
+
+<Warning>
+This is the step people get wrong most often, and the default is not the value you need. With HTTP callback mode the bot receives nothing at all — while the console still shows **Connected**, because the connection genuinely is established. DingTalk simply never delivers messages over it.
+</Warning>
+
+For the DingTalk side in more detail, see their official documentation:
+
+- [Create and install an app bot](https://open.dingtalk.com/document/orgapp/the-creation-and-installation-of-the-application-robot-in-the)
+- [Introduction to Stream mode](https://open.dingtalk.com/document/development/introduction-to-stream-mode)
+</Step>
+
+<Step title="Copy the Client ID and Client Secret">
+On the app's **Credentials and basic info** page, copy the **Client ID** (called AppKey in the older UI) and the **Client Secret** (AppSecret).
+
+You can return to this page and copy both values again at any time, so there is no need to memorize them.
+
+<Warning>
+Do **not** casually hit "reset", though. Resetting the secret **immediately breaks every integration still using the old one**, and recovering means entering the new secret in the console.
+</Warning>
+</Step>
+
+<Step title="Optional: two extra steps for character-by-character streaming">
+By default the bot waits until an answer is **fully generated** and sends it as one message. To have answers stream in like a typewriter:
+
+1. On the app's **Permissions** page, request both `Card.Instance.Write` and `Card.Streaming.Write`.
+2. Open the [DingTalk card platform](https://open-dev.dingtalk.com/fe/card), create a template in the **AI card** scenario, and note its template ID.
+
+For how to build the template — and how DingTalk itself uses this scenario — see their official documentation:
+
+- [AI card templates](https://open.dingtalk.com/document/development/ai-card-template) — creating and publishing a template
+- [Typewriter-effect streaming AI cards](https://open.dingtalk.com/document/development/typewriter-effect-streaming-ai-card) — DingTalk's own end-to-end walkthrough of this scenario (an AI bot wired to an LLM)
+
+Skipping this step is fine — the integration works either way, just without streaming.
+
+<Warning>
+Miss either permission and DingTalk rejects the card outright. What you see is "I set a template ID but replies still arrive all at once", with no error anywhere in DingTalk or the console. This one has bitten us in production.
+</Warning>
+</Step>
+
+<Step title="Set the visibility scope, then publish">
+Go to **Version management and release**, set the app's **visibility scope** (which colleagues the app is visible to), and then **publish** it.
+</Step>
+
+</Steps>
+
+## Part 2: Create the integration in the console
+
+<Steps>
+
+<Step title="Open the workspace's Integrations tab">
+In the [MemoryLake console](https://app.memorylake.ai), go to **MemoryLake → Workspaces**, open the target workspace, and switch to the **Integrations** tab.
+
+The first time through you get an empty state — click **Connect DingTalk** to open the setup wizard.
+</Step>
+
+<Step title="Step 1: enter the DingTalk app details">
+All three fields in the wizard's first step come from Part 1:
+
+| Field | What to enter |
+| --- | --- |
+| **Client ID** | Your DingTalk app's Client ID |
+| **Client Secret** | Your DingTalk app's Client Secret |
+| **AI card template ID** | Optional. Empty means one message per answer; set it for character-by-character streaming |
+
+Then click **Next: agent and memory**.
+
+<Note>
+A DingTalk bot can only be connected in one place. If this Client ID is already taken by another integration, the field tells you right there — and offers a link straight to that integration.
+</Note>
+</Step>
+
+<Step title="Step 2: choose the agent and the memory scope">
+| Field | What it does |
+| --- | --- |
+| **Name** | Only used to identify the integration in the console. Pre-filled and editable |
+| **Agent** | Answers messages from DingTalk. Only agents **associated with this workspace** can be selected |
+| **Read-write project** (required) | The project the bot searches and writes memory into |
+| **Additional read-only projects** (optional) | Projects the bot can search but never writes to |
+
+<Warning>
+**The read-write project is an authorization decision.** Everyone who can use this bot is writing memory into that project and can read what is already in it. Pick a project you intend to share with the team — not the one holding sensitive material.
+</Warning>
+
+<Note>
+If the agent dropdown is empty, no agent is associated with this workspace yet. Associate one on the workspace's **Agents** tab, then come back.
+</Note>
+</Step>
+
+<Step title="Create and connect">
+Click **Create and connect**. The integration is **enabled as soon as it is created**, and the server immediately dials DingTalk.
+
+The status on the card moves from **Connecting** to **Connected** — usually within seconds, at most about a minute. The page refreshes the status on its own.
+
+<Check>
+The status badge on the integration card reads **Connected**.
+</Check>
+
+If it turns to **Error** with "Invalid credentials — check the Client ID / Client Secret", reopen the edit dialog and verify both values.
+</Step>
+
+</Steps>
+
+## Part 3: Verify and start using it
+
+### Group chat
+
+Add the bot to a group via **Group settings → Bots → Add bot**, and pick the app you created. From then on, **@-mention the bot** with your question. The bot @-mentions you back in its reply.
+
+The first time the bot is @-mentioned in a given group, it appends a short note about what it can and cannot do there. It says this once per group.
+
+### Asking with a screenshot
+
+You **can attach a screenshot** when you @-mention the bot in a group: "@bot + a sentence + an image" arrives as a single rich-text message, and the bot reads what is in the image. Handy for pasting an error screenshot and asking about it directly.
+
+### Conversations and context
+
+- Consecutive questions from the same person continue the same context. After **8 minutes** of silence, the next question starts a new topic (that window stretches to 30 minutes right after a screenshot, so you can keep asking about the same image)
+- In a group, **each person's context is independent** — several people can ask at once without bleeding into each other
+- Send `/new` to start a fresh conversation manually (this also clears any screenshot you sent earlier)
+
+### Who is who
+
+Each DingTalk user maps to a distinct **memory identity** in MemoryLake, so personal memories are attributed to that person, while team knowledge in the read-write project is shared by everyone.
+
+The bot only handles messages from **members of your own organization**. Messages from external contacts are ignored with no reply at all.
+
+## Managing an existing integration
+
+| Action | Where and what to know |
+| --- | --- |
+| **Disable / enable** | The switch on the integration card. Takes effect **immediately** — no polling delay |
+| **Rotate the Client Secret** | Edit → **Replace** next to Client Secret → enter the new value and save. Not clicking Replace leaves the current secret untouched |
+| **Change the agent** | Edit → Agent. **Resets every in-flight conversation for this integration**; members lose the context of any ongoing chat |
+| **Adjust the memory scope** | Edit → read-write / read-only projects. Effective immediately |
+| **Delete the integration** | Card menu → Delete. Also clears conversation records, identity mappings, and conversation attachments. **Not recoverable** |
+
+<Note>
+**The Client ID cannot be changed after creation** — it is the integration's identity. To point at a different DingTalk bot, delete the integration and create a new one.
+</Note>
+
+## FAQ
+
+<AccordionGroup>
+
+<Accordion title="There is no Integrations tab on my workspace">
+Two possibilities:
+
+1. **IM channels are not enabled on this deployment.** The switch is off by default and has to be turned on by a platform administrator.
+2. **Your role is member.** Configuring an integration means writing third-party credentials — a sensitive write operation restricted to team owners and admins.
+
+Also note the entry point lives on the **workspace** detail page, not on the agent detail page. If you remember it being under an agent, it moved.
+</Accordion>
+
+<Accordion title="The console says Connected but the bot does nothing in DingTalk">
+The usual cause is that **message delivery is not set to Stream**.
+
+"Connected" means the long-lived connection to DingTalk is up — which is equally true in HTTP callback mode. DingTalk just never delivers messages over it. Go back to the open platform and check that the Bot capability's message delivery mode is **Stream**.
+
+Other things to check:
+
+- Is the app **published**?
+- In a group, did you actually **@-mention** the bot? Only messages that mention it are delivered
+- Is the integration switched off? (When disabled, the bot replies "The bot is currently unavailable. Please contact your administrator.")
+</Accordion>
+
+<Accordion title="The bot replies that it has not been published yet">
+The DingTalk app is still unpublished. Until it is published, DingTalk withholds the sender's identity from callbacks, so we cannot tell who is talking to us and can only return that one message.
+
+Publish the app under **Version management and release** on the DingTalk open platform, then send another message.
+</Accordion>
+
+<Accordion title="Status shows 'Invalid credentials — check the Client ID / Client Secret'">
+DingTalk refused our connection attempt. Nearly always one of three things:
+
+- A stray space or a truncated character when copying the Client ID or Client Secret
+- The secret was **reset** on the DingTalk side and the console still holds the old one
+- The credentials belong to a different app
+
+Fix: edit the integration, verify the Client ID, and if the secret changed, click **Replace** next to Client Secret and enter the new value. Saving reconnects immediately.
+</Accordion>
+
+<Accordion title="I set an AI card template ID but replies still arrive all at once">
+Check the permissions first: both `Card.Instance.Write` and `Card.Streaming.Write` must be granted on the DingTalk app. With either one missing, DingTalk rejects the card and we silently fall back to a plain message — which looks exactly like "streaming doesn't work", with no error shown.
+
+Then check the template: it must be an **AI card** scenario template created on the **DingTalk card platform**, and the ID must match it.
+
+Streaming is an enhancement, not the carrier. If any part of the card path fails, the full answer is still delivered as a plain message — nothing is lost.
+</Accordion>
+
+<Accordion title="The bot ignores documents posted in a group">
+That is a DingTalk platform limitation, not an integration problem: when a group member @-mentions a bot, DingTalk **does not deliver file messages**. We receive no callback at all, so we cannot even reply "unsupported".
+
+**Screenshots in groups are fine** — @bot + text + image is a single rich-text message — so use a screenshot wherever the content can be shown as an image.
+
+The bot explains this itself the first time it is @-mentioned in each group.
+</Accordion>
+
+<Accordion title="The bot says 'account quota exhausted' or 'lots of requests right now'">
+Two different things:
+
+- **"Your account quota is exhausted. Please contact your administrator to upgrade the plan."** The team's plan quota is gone, so the bot cannot call the agent. This does **not** recover on its own — the plan needs topping up or upgrading.
+- **"Lots of requests right now, queuing — please send again shortly."** That is congestion on our side, not you sending too fast. Just resend shortly.
+</Accordion>
+
+<Accordion title="Can one DingTalk bot serve two workspaces?">
+No. A Client ID can be claimed by exactly one integration platform-wide — otherwise DingTalk would deliver each message to a random one of the connections and answers would leak into another team.
+
+If you are told the Client ID is already claimed:
+
+- The claimant is in the **same workspace**: edit that integration instead (the message links straight to it)
+- The claimant is in **another workspace of the same team**: delete it there first, then connect here
+- The claimant is in **another team**: for security we will not say who. Create a new bot app on the DingTalk open platform
+
+If what you actually want is one bot answering from several workspaces' knowledge, add those projects as **read-only projects** on a single integration.
+</Accordion>
+
+<Accordion title="Who can use the bot? Can I configure an allowlist?">
+Access is governed entirely on the **DingTalk side**. We deliberately do not maintain a second allowlist — two configurations that can drift apart are more dangerous than one.
+
+Concretely:
+
+- **Group chats**: controlled by **group membership** — if the bot is in the group, members can @-mention it
+- **App visibility scope**: controls which colleagues the app is visible to
+- In every case, the bot only handles messages from **members of your own organization**
+
+So "who can use this bot" is answered mostly by which groups you add it to.
+</Accordion>
+
+<Accordion title="Can members see each other's conversations?">
+Two separate layers:
+
+- **Conversation context is isolated per person.** Each participant in a group has their own context; A's questions never appear in B's conversation.
+- **Project memory is shared.** Knowledge that settles into the read-write project is searchable by everyone who can use the bot — that is the point of the feature, and it is why choosing the read-write project is an authorization decision.
+
+Personal memories are attributed to each person's own memory identity and do not go into the shared pool.
+</Accordion>
+
+<Accordion title="What happens when I delete an integration?">
+Deleting also clears that integration's conversation records, the mapping between DingTalk users and memory identities, and the attachment references held by its conversations. None of it is recoverable.
+
+**Memory already settled into the project and files already imported are not deleted** — they belong to the project, not to the integration.
+
+If you only want to pause the bot, use the switch on the card instead of deleting.
+</Accordion>
+
+</AccordionGroup>
