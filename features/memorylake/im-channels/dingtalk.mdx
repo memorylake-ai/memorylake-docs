@@ -1,6 +1,6 @@
 ---
 title: "DingTalk integration"
-description: "Connect a workspace's memory to DingTalk: add the bot to a group and members can @-mention it to reach the team's knowledge"
+description: "Connect a workspace's memory to DingTalk: add the bot to a group and members can @-mention it to get answers"
 noindex: true
 ---
 
@@ -8,7 +8,7 @@ noindex: true
 
 The DingTalk integration connects an agent from one **workspace** to your own DingTalk bot. Once it is set up, your team never has to open the console to ask a question:
 
-- @-mention the bot in a DingTalk group and get answers grounded in your team's knowledge base
+- @-mention the bot in a DingTalk group and get answers grounded in your team's memory
 - Attach an error screenshot to your @-mention — the bot reads the image and answers from it
 - Every exchange becomes memory, so nobody has to explain the same thing twice
 
@@ -46,7 +46,7 @@ Everything in this part happens on the DingTalk side. You are collecting three t
 <Step title="Create an internal app">
 Sign in to the [DingTalk open platform](https://open-dev.dingtalk.com/) with an administrator account, then go to **App development → DingTalk apps → Create app** and choose **internal app**.
 
-The app name and icon are what your colleagues will see, so use something recognizable — "Knowledge assistant", for example.
+The app name and icon are what your colleagues will see, so use something recognizable — "Memory assistant", for example.
 </Step>
 
 <Step title="Add the Bot capability and set message delivery to Stream">
@@ -173,7 +173,7 @@ You **can attach a screenshot** when you @-mention the bot in a group: "@bot + a
 
 ### Who is who
 
-Each DingTalk user maps to a distinct **memory identity** in MemoryLake, so personal memories are attributed to that person, while team knowledge in the read-write project is shared by everyone.
+Each DingTalk user maps to a distinct **memory identity** in MemoryLake, so personal memories are attributed to that person, while team memory in the read-write project is shared by everyone.
 
 The bot only handles messages from **members of your own organization**. Messages from external contacts are ignored with no reply at all.
 
@@ -264,7 +264,7 @@ If you are told the Client ID is already claimed:
 - The claimant is in **another workspace of the same team**: delete it there first, then connect here
 - The claimant is in **another team**: for security we will not say who. Create a new bot app on the DingTalk open platform
 
-If what you actually want is one bot answering from several workspaces' knowledge, add those projects as **read-only projects** on a single integration.
+If what you actually want is one bot answering from several workspaces' memory, add those projects as **read-only projects** on a single integration.
 </Accordion>
 
 <Accordion title="Who can use the bot? Can I configure an allowlist?">
@@ -283,7 +283,7 @@ So "who can use this bot" is answered mostly by which groups you add it to.
 Two separate layers:
 
 - **Conversation context is isolated per person.** Each participant in a group has their own context; A's questions never appear in B's conversation.
-- **Project memory is shared.** Knowledge that settles into the read-write project is searchable by everyone who can use the bot — that is the point of the feature, and it is why choosing the read-write project is an authorization decision.
+- **Project memory is shared.** Memory that settles into the read-write project is searchable by everyone who can use the bot — that is the point of the feature, and it is why choosing the read-write project is an authorization decision.
 
 Personal memories are attributed to each person's own memory identity and do not go into the shared pool.
 </Accordion>
