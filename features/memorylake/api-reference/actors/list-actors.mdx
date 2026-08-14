@@ -31,6 +31,10 @@ Filter by actor type. One of `HUMAN` or `ASSISTANT`.
 Fuzzy search by display name.
 </ParamField>
 
+<ParamField query="tags" type="string[]">
+Filter by tag. Repeat the parameter (`?tags=vip&tags=cn`) or comma-separate the values (`?tags=vip,cn`) to require several tags at once -- only actors carrying every listed tag are returned. Matching is exact and case-sensitive.
+</ParamField>
+
 <RequestExample>
 ```bash First page
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_size=20' \
@@ -44,6 +48,11 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?actor_ty
 
 ```bash Search by display name
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?display_name_fuzzy=Alice' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Filter by tag
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?tags=vip&tags=cn' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
@@ -65,6 +74,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_siz
     <ResponseField name="actor_type" type="string">Actor type: `HUMAN` or `ASSISTANT`</ResponseField>
     <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
     <ResponseField name="description" type="string">Actor description</ResponseField>
+    <ResponseField name="tags" type="string[]">Labels attached to the actor. Empty when the actor has none</ResponseField>
     <ResponseField name="metadata" type="object">Caller-defined metadata (key-value pairs)</ResponseField>
     <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
     <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
@@ -86,6 +96,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_siz
         "actor_type": "HUMAN",
         "display_name": "Alice Chen",
         "description": "Primary end user for the mobile app",
+        "tags": ["vip", "cn"],
         "metadata": {
           "tier": "premium",
           "region": "us-west"
@@ -99,6 +110,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors?page_siz
         "actor_type": "ASSISTANT",
         "display_name": "Intake Bot",
         "description": "Automated intake system for onboarding flows",
+        "tags": [],
         "metadata": {},
         "created_at": "2025-03-12T14:30:00Z",
         "updated_at": "2025-03-12T14:30:00Z"

@@ -31,8 +31,12 @@ Human-readable name shown in the console and returned in API responses.
 Free-text description of the actor's role or purpose.
 </ParamField>
 
+<ParamField body="tags" type="string[]">
+Labels used to group and filter actors, for example `vip` or `cn`. Duplicates are removed and surrounding whitespace is trimmed. Matching is exact and case-sensitive, so `VIP` and `vip` are two different tags. Up to 20 tags per actor, each at most 64 characters, and a tag may not contain a comma.
+</ParamField>
+
 <ParamField body="metadata" type="object">
-Arbitrary key-value pairs for caller-defined metadata. Useful for tagging actors with attributes such as tier, region, or department.
+Arbitrary key-value pairs for caller-defined metadata, such as tier, region, or department. Metadata cannot be filtered on -- use `tags` for attributes you want to search by.
 </ParamField>
 
 <RequestExample>
@@ -45,6 +49,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors' \
     "actor_type": "HUMAN",
     "display_name": "Alice Chen",
     "description": "Primary end user for the mobile app",
+    "tags": ["vip", "cn"],
     "metadata": {
       "tier": "premium",
       "region": "us-west"
@@ -62,6 +67,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors' \
   <ResponseField name="actor_type" type="string">Actor type: `HUMAN` or `ASSISTANT`</ResponseField>
   <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
   <ResponseField name="description" type="string">Actor description</ResponseField>
+  <ResponseField name="tags" type="string[]">Labels attached to the actor. Empty when the actor has none</ResponseField>
   <ResponseField name="metadata" type="object">Caller-defined metadata</ResponseField>
   <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
   <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
@@ -78,6 +84,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors' \
     "actor_type": "HUMAN",
     "display_name": "Alice Chen",
     "description": "Primary end user for the mobile app",
+    "tags": ["vip", "cn"],
     "metadata": {
       "tier": "premium",
       "region": "us-west"

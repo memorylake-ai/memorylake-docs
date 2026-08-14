@@ -29,6 +29,10 @@ Updated display name.
 Updated description.
 </ParamField>
 
+<ParamField body="tags" type="string[]">
+Replaces the actor's tags outright -- the list you send becomes the complete set. Send `[]` to remove every tag, or omit the field to leave the current tags untouched.
+</ParamField>
+
 <ParamField body="metadata" type="object">
 Updated metadata. Replaces the entire metadata object -- merge locally before sending if you want to preserve existing keys.
 </ParamField>
@@ -40,6 +44,7 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/act-a1
   -H 'Content-Type: application/json' \
   -d '{
     "display_name": "Alice Chen (VIP)",
+    "tags": ["vip", "enterprise"],
     "metadata": {
       "tier": "enterprise",
       "region": "us-west",
@@ -58,6 +63,7 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/act-a1
   <ResponseField name="actor_type" type="string">Actor type: `HUMAN` or `ASSISTANT`</ResponseField>
   <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
   <ResponseField name="description" type="string">Actor description</ResponseField>
+  <ResponseField name="tags" type="string[]">Labels attached to the actor. Empty when the actor has none</ResponseField>
   <ResponseField name="metadata" type="object">Caller-defined metadata</ResponseField>
   <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
   <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
@@ -73,6 +79,7 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/act-a1
     "custom_id": "user-ext-001",
     "actor_type": "HUMAN",
     "display_name": "Alice Chen (VIP)",
+    "tags": ["vip", "enterprise"],
     "description": "Primary end user for the mobile app",
     "metadata": {
       "tier": "enterprise",
