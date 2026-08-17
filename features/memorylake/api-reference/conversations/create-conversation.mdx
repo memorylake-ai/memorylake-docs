@@ -33,16 +33,16 @@ Conversation kind: `DIRECT` (one-on-one) or `GROUP` (multi-participant).
 Read-write project(s) the conversation reads context from and writes facts to. Exactly one project ID is required.
 </ParamField>
 
+<ParamField body="actor_ids" type="array" required>
+IDs of the actors taking part in the conversation. At least one is required: every message is attributed to an actor, and each actor's memory is built from what they say, so a conversation with no actor can neither tell its participants apart nor build anyone's memory. Each ID must reference an actor you have already created and bound to this workspace.
+</ParamField>
+
 <ParamField body="name" type="string">
 Display name for the conversation
 </ParamField>
 
 <ParamField body="metadata" type="object">
 Arbitrary key-value metadata to attach to the conversation
-</ParamField>
-
-<ParamField body="actor_ids" type="array">
-IDs of actors participating in the conversation. Each ID should reference an actor you have previously created.
 </ParamField>
 
 <RequestExample>
