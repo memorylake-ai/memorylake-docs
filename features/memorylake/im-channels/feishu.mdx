@@ -1,0 +1,359 @@
+---
+title: "Feishu integration"
+description: "Connect a workspace's memory to Feishu: DM the bot, or add it to a group and @-mention it"
+noindex: true
+---
+
+## Overview
+
+The Feishu integration connects an agent from one **workspace** to your own Feishu bot. Once it is set up, your team never has to open the console to ask a question:
+
+- DM the bot, or @-mention it in a Feishu group, and get answers grounded in your team's memory
+- Answers stream in **word by word**, so nobody waits on a blank screen
+- Send it a document or a screenshot and ask follow-up questions about the contents
+- Every exchange becomes memory, so nobody has to explain the same thing twice
+
+Answers come from the memory of the projects you select — not from a general-purpose model guessing.
+
+<Note>
+**Feishu and Lark are two separate platforms.** Feishu is the China edition (`open.feishu.cn`); Lark is the international one (`open.larksuite.com`). Accounts and apps do not carry across. Which one a deployment talks to is a deployment-level setting, not something you pick per integration — talk to us if you need Lark.
+</Note>
+
+## Before you start
+
+<CardGroup cols={2}>
+
+<Card title="On the MemoryLake side" icon="database">
+- The **owner** or **admin** role in your team (members can neither see nor change integrations)
+- A workspace with at least one project in it
+- At least one agent **associated with that workspace** (associate one on the workspace's Agents tab)
+</Card>
+
+<Card title="On the Feishu side" icon="comments">
+- Feishu **administrator** rights: you need to create an app, request permissions, and **publishing a version requires admin review**
+- A Feishu group for testing (optional, but strongly recommended)
+</Card>
+
+</CardGroup>
+
+The Feishu-side setup takes about 10 minutes, **but publishing a version has to clear admin review** — that part is outside our control, so give your administrator a heads-up early.
+
+<Warning>
+If the workspace page has no **Integrations** tab, either IM channels are not enabled on this deployment or your role is member. Check with your team administrator.
+</Warning>
+
+## Part 1: Create a bot on the Feishu open platform
+
+Everything in this part happens on the Feishu side. You are collecting two things: an **App ID** and an **App Secret**.
+
+<Steps>
+
+<Step title="Create a custom app for your organization">
+Sign in to the [Feishu open platform](https://open.feishu.cn/app) with an administrator account and create a **custom app** (an app built by and for your own organization).
+
+The app name and icon are what your colleagues will see, so use something recognizable — "Memory assistant", for example.
+
+<Warning>
+**It has to be a custom app, not a marketplace app.** The long-connection transport we use only supports custom apps. If you pick the wrong type, you will discover it later: the event subscription page simply will not offer a long-connection option.
+</Warning>
+</Step>
+
+<Step title="Add the Bot capability">
+Open the app, go to **Add app capability**, and add **Bot**.
+
+Without this step, none of the message-related permissions are searchable or selectable at all.
+</Step>
+
+<Step title="Copy the App ID and App Secret">
+On the **Credentials & basic info** page, copy the **App ID** (it looks like `cli_xxxxxxxxxxxxxxxx`) and the **App Secret**.
+
+You can come back to this page and read both values again at any time.
+
+<Warning>
+Do not casually hit **Reset**. Resetting the secret breaks every integration still using the old one **immediately**; you then have to come back to the console and enter the new secret to recover.
+</Warning>
+</Step>
+
+<Step title="Grant permissions">
+Go to **Permissions & scopes** and add each of these. The Feishu console also accepts a pasted JSON list for bulk import.
+
+| Scope | What it is for | Required |
+| --- | --- | --- |
+| `im:message.p2p_msg` | Receive direct messages | ✅ |
+| `im:message.group_at_msg` | Receive group messages that @-mention the bot | ✅ |
+| `im:message:send_as_bot` | Send messages as the bot | ✅ |
+| `cardkit:card:write` | Stream answers word by word | ✅ |
+| `im:message:readonly` | Read files and images inside messages | ✅ required for document Q&A |
+| `contact:contact.base:readonly` | Look up a user's name | ⭕ optional, see below |
+| `contact:user.base:readonly` | Same | ⭕ optional, see below |
+
+Add `cardkit:card:write` **now, in the same pass**. Every new scope in Feishu means another version, another review round — one extra checkbox today is much cheaper than a second approval cycle in two weeks.
+
+<Note>
+**Streaming needs no card template at all.** That scope is the only requirement; there are no further steps.
+</Note>
+
+**About `im:message:readonly`:** the three `im:message.*_msg` scopes above only cover "receive the message event"; they do not cover "read the resources inside the message". Without it the bot cannot even download a file someone DMs it directly. It is a broad read scope — your administrator will see that range at review time, so it is worth explaining up front.
+
+**About the two `contact:*` scopes (optional, but add them together):** Feishu message events **do not carry the sender's name**, only an `ou_`-prefixed id. Without these, every person in the console's **Memory identities** view shows up as `ou_c36c976b…` and you cannot tell who is who. Everything still works; it is just hard to audit.
+
+<Warning>
+These two **have to be added together**: the first one decides whether the API call is allowed at all, the second decides whether the response actually contains the name field. With only the first, the call "succeeds" but returns no name — indistinguishable from not configuring anything, **with no error anywhere**. It is very hard to self-diagnose.
+</Warning>
+</Step>
+
+<Step title="Configure the event subscription">
+Go to **Events & callbacks**, set the delivery method to **"Receive events via long connection"**, and add the event **`im.message.receive_v1`** (receive messages).
+
+<Note>
+If this page refuses to save, skip it: finish the permissions and the release, wait until the integration shows as connected in the console, then come back (which means publishing one more version). This is a validation-ordering quirk on the Feishu side, not a failure.
+</Note>
+</Step>
+
+<Step title="Publish a version and get it reviewed">
+Go to **App release → Version management & release**, create a version, fill in the version number and release notes, then **submit for release**.
+
+Your administrator then approves it in the **Feishu admin console → Workplace → App review**.
+
+<Warning>
+**Permissions only take effect once a version has been published and approved.** While the app shows "pending release" or "unpublished changes", none of the scopes you ticked count for anything.
+
+And this is not one-time: **every later scope or event you add needs another version and another review round.**
+</Warning>
+</Step>
+
+</Steps>
+
+## Part 2: Create the integration in the console
+
+<Steps>
+
+<Step title="Open the workspace's Integrations tab">
+In the MemoryLake console, go to **MemoryLake → Workspaces**, open the target workspace, switch to the **Integrations** tab, and click **Get started**.
+
+Pick **Feishu** under "Choose a platform to connect".
+</Step>
+
+<Step title="Step 1: Enter the Feishu app details">
+| Field | What to enter |
+| --- | --- |
+| **App ID** | The app's App ID (starts with `cli_`) |
+| **App Secret** | The app's App Secret |
+
+Then click **Next: agent and memory**.
+
+<Note>
+A Feishu bot can only be connected in one place. If this App ID is already taken by another integration, the field says so right away and offers a link to edit that one instead.
+</Note>
+</Step>
+
+<Step title="Step 2: Choose the agent and the memory scope">
+| Field | Notes |
+| --- | --- |
+| **Name** | Only used to recognize this integration in the console; prefilled and editable |
+| **Agent** | Answers messages from Feishu. Only agents **associated with the current workspace** can be selected |
+| **Read-write project** (required) | The project the bot retrieves from and writes memory into |
+| **Additional read-only projects** (optional) | Projects the bot may retrieve from but will never write to |
+
+<Warning>
+**The read-write project is an authorization decision.** Everyone who can use this bot is writing memory into that project and can read everything already in it. Pick a project you intended to share with the team — not the one holding sensitive material.
+</Warning>
+
+<Note>
+If the agent dropdown is empty, this workspace has no associated agents yet. Associate one on the workspace's Agents tab first, then come back.
+</Note>
+</Step>
+
+<Step title="Create and connect">
+Click **Create and connect**. The integration is **enabled by default**, and the server immediately opens a connection to Feishu.
+
+The status badge goes from **Connecting** to **Connected** — usually within seconds, at most about a minute.
+
+<Check>
+The status badge on the integration card reads **Connected**.
+</Check>
+
+If it turns to **Error** with "invalid credentials, check App ID / App Secret", reopen the edit dialog and verify both values.
+</Step>
+
+</Steps>
+
+## Part 3: Verify and start using it
+
+### Direct messages
+
+Anyone in your organization can open the app from the Feishu **Workplace** and start talking to it. No @-mention needed — just ask.
+
+### Group chats
+
+**Add the bot to a group**, then **@-mention it with your question**. The bot **replies to your message as a quote** and @-mentions you back — in a busy group, those two things are what keep you from missing the answer.
+
+The first time the bot is @-mentioned in a given group, it appends a short note about what it can do. It does not repeat that afterwards.
+
+<Note>
+Only messages that @-mention the bot are delivered to us. That is how the Feishu platform works, and it also means the bot cannot see the rest of the group's conversation.
+</Note>
+
+### Sending documents and screenshots
+
+- **In a DM**: send the file or image straight to the bot, then ask about it
+- **In a group**: you can attach an image to the same message that @-mentions the bot
+
+<Note>
+**To have it read a document in a group, use the "reply" action:** post the file to the group, then **reply to that message** and @-mention the bot.
+
+Sending a file directly to a bot in a group does **not** reach us — Feishu file messages cannot carry an @-mention, so the platform never delivers them. When you reply, we can look the file up from your reply.
+</Note>
+
+### Sessions and context
+
+- **DMs are one continuous conversation**: context does not expire, so picking it up the next morning still works. Send `/new` to start fresh
+- **Group chats are topic-scoped**: consecutive questions from the same person continue the thread; after **8 minutes** of silence the next question starts a new topic (that window stretches to 30 minutes if a file was just shared, so you can keep asking about it)
+- **Each person in a group has independent context** — several people asking at once never cross-contaminate
+- Files sent in a DM **do not expire**; they stay with the conversation. At most the **5 most recent** ride along with each question, so a 6th one pushes the oldest out. `/new` clears them all
+
+### Who is who
+
+Each Feishu user maps to a separate **memory identity** in MemoryLake. Personal memory is attributed to that identity; team memory written into the project is shared by everyone.
+
+With both `contact:*` scopes in place, memory identities show real names and the bot can answer "who am I".
+
+### What it cannot handle yet
+
+Send it a voice message, a video, or a sticker and you get an explicit reply ("I can't listen to voice messages yet — please use text"), never silence.
+
+## Managing an existing integration
+
+| Action | Where and what to expect |
+| --- | --- |
+| **Disable / enable** | The toggle on the integration card. Takes effect **immediately**, no polling delay |
+| **Rotate the App Secret** | Edit → the **Replace** button next to App Secret → enter the new value and save. Not clicking Replace leaves the current secret untouched |
+| **Change the agent** | Edit → Agent. **Resets every in-flight session** on this integration; conversations your team is in the middle of start over |
+| **Adjust memory scope** | Edit → read-write / read-only projects. Effective immediately |
+| **Delete the integration** | Card menu → Delete. Also clears session records, identity mappings, and session attachments. **Not recoverable** |
+
+<Note>
+**The App ID cannot be changed after creation** — it is this integration's identity. To point at a different Feishu bot, delete this integration and create a new one.
+</Note>
+
+## FAQ
+
+<AccordionGroup>
+
+<Accordion title="I can't find the Integrations tab in my workspace">
+Two possibilities:
+
+1. **IM channels are not enabled on this deployment.** The switch is off by default and a platform administrator has to turn it on.
+2. **Your role is member.** Configuring an integration means writing third-party credentials, which is a sensitive write — only team owners and admins can do it.
+</Accordion>
+
+<Accordion title="The only delivery option is 'send to developer server' — there is no long-connection choice">
+The app was almost certainly created as a **marketplace app** rather than a **custom app**. Long connections only work for custom apps.
+
+If you are on a custom app and still don't see it, check that the **Bot** capability from step 2 has been added.
+</Accordion>
+
+<Accordion title="I granted the scopes but nothing changed / the bot says it can't read files">
+Feishu scopes **only take effect after a version is published and approved**. While the app shows "pending release" or "unpublished changes", the scopes you ticked count for nothing.
+
+Go to **App release → Version management & release**, create a version, submit it, and have an administrator approve it in the admin console.
+
+Note that this is not one-time: every later scope you add needs another round.
+</Accordion>
+
+<Accordion title="The console says Connected but the bot does nothing in Feishu">
+Check in this order:
+
+- **Is the event subscription configured?** You need `im.message.receive_v1` with the delivery method set to "receive events via long connection"
+- **Has the app been published and approved?** Scopes are inert until then
+- **Did you actually @-mention the bot in the group?** Only @-mentions are delivered
+- **App availability scope** — if you restricted it, the people trying to use the bot have to be inside that scope or they cannot see it at all
+- **Is the integration toggled off?** While disabled the bot replies "the bot is currently unavailable, please contact an administrator."
+</Accordion>
+
+<Accordion title="Status reads 'invalid credentials, check App ID / App Secret'">
+Feishu rejected our connection attempt. It is almost always one of three things:
+
+- The App ID or App Secret picked up a stray space or lost a character when copied
+- The secret was **reset** on the Feishu side and the console still has the old value
+- The credentials belong to a different app
+
+To fix: edit the integration and verify the App ID; to change the secret, click **Replace** next to App Secret and enter the new value. Saving reconnects immediately.
+</Accordion>
+
+<Accordion title="Answers arrive as one block, with no typewriter effect">
+Check that `cardkit:card:write` is granted **and** live via a published version.
+
+Streaming on Feishu needs no template — that scope is the only requirement. When it is missing we fall back to a plain message automatically: the answer arrives complete, just not word by word.
+</Accordion>
+
+<Accordion title="Memory identities show ou_xxx instead of names">
+You need **both** `contact:contact.base:readonly` **and** `contact:user.base:readonly` granted and live via a published version. With only the first one the call "succeeds" but carries no name, which looks exactly like having configured nothing.
+
+<Warning>
+**Existing memory identities are not renamed retroactively.** The name is written once, when that person first talks to the bot and their memory identity is created. So adding the scopes only affects **new** users; earlier ones keep showing `ou_xxx`. To fix one person, delete their entry under Memory identities — it is recreated on their next message.
+</Warning>
+</Accordion>
+
+<Accordion title="I sent a file to the bot in a group and it ignored me">
+Feishu file messages **cannot carry an @-mention**, so the platform never delivers that message to us. We receive nothing at all.
+
+**The right move: post the file to the group, then "reply" to that message and @-mention the bot.** We can look the file up from your reply.
+
+In a DM you can send files directly; this limitation does not apply there.
+</Accordion>
+
+<Accordion title="In a DM it can't answer 'who am I', or the answer makes no sense">
+**Can't answer:** you need both `contact:*` scopes (see above). Once they are live, newly created memory identities carry the person's name.
+
+**Answer makes no sense:** a DM is one continuous conversation and context never expires. If you send a sticker or a bare "ok" — something carrying no new information — the bot may pick up a topic from much earlier. Send `/new` to start a fresh conversation.
+</Accordion>
+
+<Accordion title="Can one Feishu bot serve two workspaces?">
+No. An App ID can only be claimed by one integration platform-wide — otherwise Feishu would deliver messages to whichever connection it feels like, and answers would land in the wrong team.
+
+If you are told the App ID is already in use:
+
+- The holder is in **the same workspace**: edit that one instead (the message links to it)
+- The holder is in **another workspace on your team**: delete that one first, then connect here
+- The holder is in **another team**: for privacy reasons we will not say who. Create a new app on the Feishu open platform
+
+If you want one bot with access to memory across several workspaces, add those projects as **read-only projects** on a single integration.
+</Accordion>
+
+<Accordion title="Who can use this bot? Can I configure an allowlist?">
+Access is decided entirely **on the Feishu side**. We deliberately do not maintain a second allowlist — two sources of truth drifting apart is worse than one.
+
+Concretely:
+
+- **DMs**: governed by the app's **availability scope** (set on the Feishu open platform)
+- **Group chats**: governed by **group membership** — if the bot is in the group, members can @-mention it
+
+So "who can use the bot" comes down to the app's availability scope plus which groups you put it in.
+</Accordion>
+
+<Accordion title="Can team members see each other's conversations?">
+Two separate layers:
+
+- **Conversation context is per-person.** Everyone in a group has independent context; A's questions never show up in B's conversation.
+- **Project memory is shared.** Memory written into the read-write project is retrievable by everyone who can use the bot — that is the point of the feature, and it is why the read-write project is an authorization decision at creation time.
+
+Personal memory is attributed to each person's memory identity and does not enter the shared pool.
+</Accordion>
+
+<Accordion title="The bot says the account is out of quota, or that requests are queued">
+Two different things:
+
+- **"Your account is out of quota. Ask an administrator to upgrade the plan and try again."** Your team's plan quota is exhausted. **It does not recover on its own** — an administrator has to top up or upgrade.
+- **"A lot of requests right now — you're in the queue. Please send again shortly."** We are busy on our side. It is not about how fast you typed; just resend in a moment.
+</Accordion>
+
+<Accordion title="What does deleting an integration affect?">
+It clears this integration's session records, the mapping between Feishu users and memory identities, and the attachment references held by those sessions. None of that is recoverable.
+
+**Memory already written into the project and files already stored are not deleted** — they belong to the project, not the integration.
+
+If you only want to pause the bot, use the toggle on the card instead.
+</Accordion>
+
+</AccordionGroup>
