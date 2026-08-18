@@ -46,6 +46,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/user-ext
   <ResponseField name="actor_type" type="string">Actor type: `HUMAN` or `ASSISTANT`</ResponseField>
   <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
   <ResponseField name="description" type="string">Actor description</ResponseField>
+  <ResponseField name="tags" type="string[]">Labels attached to the actor. Empty when the actor has none</ResponseField>
   <ResponseField name="metadata" type="object">Caller-defined metadata</ResponseField>
   <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
   <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
@@ -62,6 +63,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors/user-ext
     "actor_type": "HUMAN",
     "display_name": "Alice Chen",
     "description": "Primary end user for the mobile app",
+    "tags": ["vip", "cn"],
     "metadata": {
       "tier": "premium",
       "region": "us-west"

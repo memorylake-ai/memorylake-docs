@@ -37,6 +37,10 @@ Filter by actor type. One of `HUMAN` or `ASSISTANT`.
 Fuzzy search by display name.
 </ParamField>
 
+<ParamField query="tags" type="string[]">
+Filter by tag. Repeat the parameter (`?tags=vip&tags=cn`) or comma-separate the values (`?tags=vip,cn`) to require several tags at once -- only actors carrying every listed tag are returned. Matching is exact and case-sensitive.
+</ParamField>
+
 <RequestExample>
 ```bash First page
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7k8m9n0p1q2r/actors?page_size=20' \
@@ -60,6 +64,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7
     <ResponseField name="custom_id" type="string">Caller-defined external identifier</ResponseField>
     <ResponseField name="actor_type" type="string">Actor type: `HUMAN` or `ASSISTANT`</ResponseField>
     <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
+    <ResponseField name="tags" type="string[]">Labels attached to the actor. Empty when the actor has none</ResponseField>
     <ResponseField name="bound_at" type="string">Timestamp when the actor was bound to this workspace</ResponseField>
   </Expandable>
   </ResponseField>
@@ -78,6 +83,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7
         "custom_id": "user-ext-001",
         "actor_type": "HUMAN",
         "display_name": "Alice Chen",
+        "tags": ["vip", "cn"],
         "bound_at": "2025-03-15T09:00:00Z"
       },
       {
@@ -85,6 +91,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-7
         "custom_id": "system-intake",
         "actor_type": "ASSISTANT",
         "display_name": "Intake Bot",
+        "tags": [],
         "bound_at": "2025-03-15T09:05:00Z"
       }
     ],
