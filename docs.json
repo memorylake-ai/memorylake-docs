@@ -126,7 +126,8 @@
                     "pages": [
                       "features/memorylake/mcp-servers/overview",
                       "features/memorylake/mcp-servers/creating-api-keys",
-                      "features/memorylake/mcp-servers/openclaw-plugin"
+                      "features/memorylake/mcp-servers/openclaw-plugin",
+                      "features/memorylake/im-channels/slack"
                     ]
                   }
                 ]
@@ -457,7 +458,8 @@
                     "pages": [
                       "zh/features/memorylake/mcp-servers/overview",
                       "zh/features/memorylake/mcp-servers/creating-api-keys",
-                      "zh/features/memorylake/mcp-servers/openclaw-plugin"
+                      "zh/features/memorylake/mcp-servers/openclaw-plugin",
+                      "zh/features/memorylake/im-channels/slack"
                     ]
                   }
                 ]

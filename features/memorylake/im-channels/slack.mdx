@@ -1,0 +1,341 @@
+---
+title: "Slack integration"
+description: "Connect a workspace's memory to Slack: DM the bot, or add it to a channel and @-mention it"
+---
+
+## Overview
+
+The Slack integration connects an agent from one **workspace** to your own Slack app. Once it is set up, your team never has to open the console to ask a question:
+
+- DM the bot, or @-mention it in a channel, and get answers grounded in your team's memory
+- Answers **stream in segments** — a "thinking…" placeholder appears immediately, then the content refreshes piece by piece
+- Send it a document or a screenshot, then ask follow-up questions about the content
+- Every exchange becomes memory, so nobody has to explain the same thing twice
+
+The bot answers from the project memory you designate — not from a general-purpose model's generic knowledge.
+
+<Note>
+Nothing on the Slack side requires a review cycle — one person can finish the setup in about ten minutes. Just remember to **Reinstall** the app whenever you change scopes or event subscriptions.
+</Note>
+
+## Before you start
+
+<CardGroup cols={2}>
+
+<Card title="On the MemoryLake side" icon="database">
+- The **owner** or **admin** role in your team (members can neither see nor edit integrations)
+- A workspace with at least one project
+- At least one agent **linked to that workspace** (done on the workspace's Agents tab)
+</Card>
+
+<Card title="On the Slack side" icon="slack">
+- An account that can create apps in the target workspace (most workspaces allow everyone; if app installs require admin approval in your company, the install step will need an admin)
+- A test channel (optional but recommended)
+</Card>
+
+</CardGroup>
+
+<Warning>
+If the workspace page has **no IM tab**, either this deployment has not enabled IM channels, or your role is member. Check with your team admin.
+</Warning>
+
+## Part 1: create the app in Slack
+
+Everything in this part happens at [api.slack.com/apps](https://api.slack.com/apps). The goal is to obtain two values: the **Bot User OAuth Token** (starts with `xoxb-`) and an **App-Level Token** (starts with `xapp-`).
+
+The recommended path is creating the app **from a manifest**: paste one JSON blob and the scopes, event subscriptions, DM entrance and Socket Mode are all configured at once — nothing to forget.
+
+<Steps>
+
+<Step title="Create the app from a manifest">
+Open [api.slack.com/apps](https://api.slack.com/apps) → **Create New App** → select **From a manifest** → **Continue** → pick the workspace to install into → paste the JSON below into the config box → review the scopes and events → **Create**.
+
+```json
+{
+  "display_information": {
+    "name": "MemoryLake Assistant"
+  },
+  "features": {
+    "bot_user": {
+      "display_name": "memorylake",
+      "always_online": true
+    },
+    "app_home": {
+      "home_tab_enabled": false,
+      "messages_tab_enabled": true,
+      "messages_tab_read_only_enabled": false
+    }
+  },
+  "oauth_config": {
+    "scopes": {
+      "bot": [
+        "app_mentions:read",
+        "im:history",
+        "chat:write",
+        "files:read",
+        "users:read"
+      ]
+    }
+  },
+  "settings": {
+    "event_subscriptions": {
+      "bot_events": [
+        "app_mention",
+        "message.im",
+        "tokens_revoked",
+        "app_uninstalled"
+      ]
+    },
+    "org_deploy_enabled": false,
+    "socket_mode_enabled": true,
+    "token_rotation_enabled": false
+  }
+}
+```
+
+The two names follow different rules: `display_information.name` is the **display name** your colleagues see — change it to something the team will recognize; `features.bot_user.display_name` becomes the bot's **username** for @-mentions and only accepts lowercase letters, digits, hyphens and underscores — anything else fails with "The display_name cannot be converted to a username".
+
+**Manifest-to-settings mapping** (for review, or for manual setup):
+
+| Manifest field | Manual location | Purpose |
+| --- | --- | --- |
+| `oauth_config.scopes.bot` | OAuth & Permissions → Bot Token Scopes | The 5 permissions for messaging, file reading and name lookup |
+| `settings.event_subscriptions.bot_events` | Event Subscriptions → Subscribe to bot events | 4 events; the last two (`tokens_revoked`, `app_uninstalled`) keep the connection status in sync when credentials are revoked — **do not drop them** |
+| `features.app_home.messages_tab_*` | App Home → Show Tabs → Messages Tab | The DM entrance; `read_only_enabled: false` means "allow sending messages" — missing it leaves the DM input box disabled |
+| `settings.socket_mode_enabled` | Socket Mode → Enable Socket Mode | Receive events over a long-lived connection, no public callback URL needed |
+| `settings.token_rotation_enabled: false` | — | Rotating tokens (`xoxe`-prefixed) are incompatible with the integration's static-credential model; creation would be rejected |
+
+<Note>
+`users:read` is strictly optional: without it, every person in the console's Actors list shows as a `U08J5K7UXH6`-style id and the bot cannot answer "who am I" — everything else works. It is included in the manifest; keep it.
+</Note>
+</Step>
+
+<Step title="Generate an App-Level Token">
+The manifest cannot cover App-Level Tokens — this step is manual: after the app is created, go to **Basic Information** → scroll to **App-Level Tokens** → **Generate Token and Scopes** → name it, select the **`connections:write`** scope, and copy the generated `xapp-` value.
+
+You can view this token again in the same place at any time.
+</Step>
+
+<Step title="Install to the workspace and copy the Bot User OAuth Token">
+**OAuth & Permissions** (or **Install your app** on Basic Information) → **Install to Workspace** → authorize.
+
+After installing, the **Bot User OAuth Token** (`xoxb-`) appears at the top of the OAuth & Permissions page. Copy it.
+
+<Warning>
+**Every time you later change scopes or event subscriptions (via manifest or manually), come back here and click Reinstall to Workspace** — changes do not take effect otherwise. There is no review step; it is effective immediately.
+</Warning>
+</Step>
+
+</Steps>
+
+## Part 2: create the integration in the console
+
+<Steps>
+
+<Step title="Open the workspace's IM tab">
+In the [MemoryLake console](https://app.memorylake.ai), go to **MemoryLake → Workspaces**, open the target workspace, switch to the **IM** tab, and click **Get started**.
+
+Pick **Slack** as the platform.
+</Step>
+
+<Step title="Step 1: paste the Slack app credentials">
+| Field | What to paste |
+| --- | --- |
+| **Bot User OAuth Token** | Starts with `xoxb-`, from the OAuth & Permissions page |
+| **App-Level Token** | Starts with `xapp-`, from Socket Mode / Basic Information |
+
+Then click **Next: agent & memory**.
+
+<Note>
+No app ID is needed — the identity (workspace + bot) is derived automatically when the server validates the token, and shows up on the integration card afterwards.
+
+One Slack app installed in **one Slack workspace** can back only one integration; installing the same app into **another workspace** creates a distinct identity, which can back another integration. Conflicts are shown as a banner at the top of the form.
+</Note>
+</Step>
+
+<Step title="Step 2: pick the agent and memory scope">
+| Field | Notes |
+| --- | --- |
+| **Name** | Only for telling integrations apart in the console; pre-filled, editable |
+| **Agent** | Answers Slack-side messages. Only agents **linked to the current workspace** are listed |
+| **Read-write project** (required) | The project the bot reads from and writes memory into |
+| **Extra read-only projects** (optional) | Projects the bot may search but never writes to |
+
+<Warning>
+**The read-write project is an authorization decision.** Everyone who can reach this bot writes memory into that project and can read what is already there. Pick a project meant for team sharing — not the one holding sensitive material.
+</Warning>
+</Step>
+
+<Step title="Create and connect">
+Click **Create & connect**. The integration is enabled by default; the server validates the Bot User OAuth Token first, then opens the long-lived connection to Slack.
+
+<Check>
+The status badge on the integration card reads **Connected**, and the app identity shows a `T…:U…` composite value.
+</Check>
+
+If creation is rejected with "Bot User OAuth Token validation failed", the token was mispasted or revoked. If the status later reads "Invalid credentials — check the Bot User OAuth Token / App-Level Token", re-check both values in the edit dialog.
+</Step>
+
+</Steps>
+
+## Part 3: verify and start using it
+
+### Direct messages
+
+Members find the app under **Apps** in Slack's sidebar and just ask — no @ needed.
+
+A "thinking…" placeholder appears first, then the answer refreshes in segments. The **(edited) marker** on the message is normal — streaming works by editing the same message in place.
+
+### Channels
+
+First **add the bot to the channel** (`/invite @botname`, or follow the prompt when you mention it), then **@-mention it with your question**.
+
+The answer lands **in a thread under your question**, keeping the channel itself uncluttered. The first time the bot is mentioned in a channel it appends a one-line capability note; it never repeats it.
+
+<Warning>
+**Follow-ups inside a thread must also @-mention the bot.** This is how Slack works: messages that do not mention the bot are never delivered to it. It also means the bot cannot see any other conversation in the channel.
+</Warning>
+
+### Sending documents and screenshots
+
+- **DM**: just send the file or image, then ask about it
+- **Channel**: **put the file and the @-mention in the same message** (attach the file, type "@bot + your question", send together)
+
+<Note>
+A file posted to a channel **on its own (without a mention) never reaches the bot** — Slack does not deliver it. File and mention must share one message.
+</Note>
+
+### Sessions and context
+
+- **DMs are continuous**: context never expires, even overnight. To start fresh, send **`new`** (just that word, no slash)
+- **Channels are per-thread**: one thread is one topic, follow-ups inside it keep full context with **no expiry** — coming back to the same thread a day later still works. For a new topic, start a new thread (mention the bot at the channel level again)
+- Inside a thread, **each person's context is isolated** — several people mentioning the bot in one thread do not bleed into each other
+- Files sent in a DM **never expire** and stay attached to the session; `new` clears them. Files sent in a channel stay usable in that thread for about 30 minutes
+
+<Note>
+**Why `new` and not `/new`?** The Slack client intercepts anything starting with `/` as a slash command — the message is never sent. So the reset word in Slack has no slash: send `new` in a DM (any capitalization, as the entire message), or `@bot new` inside a thread.
+</Note>
+
+### Who is who
+
+Each Slack user maps to a distinct **actor** in MemoryLake; personal memory attaches to the right person, while memory written into the project is shared.
+
+With the `users:read` scope in place, actors show real names and the bot can answer "who am I".
+
+### What the bot cannot handle yet
+
+Voice and video messages get an explicit "can't process this yet" reply rather than silence. Users from **Slack Connect shared channels who belong to external organizations** are silently ignored — they consume none of your quota and write nothing into your memory.
+
+## Managing an existing integration
+
+| Action | Where & notes |
+| --- | --- |
+| **Disable / enable** | The switch on the integration card; takes effect immediately |
+| **Rotate a token** | Edit → the "Replace" button next to the field → paste the new value and save. Fields without "Replace" clicked are left untouched — you can rotate just one of the two |
+| **Change the agent** | Edit → Agent. **Resets all in-flight sessions** under this integration |
+| **Adjust memory scope** | Edit → read-write / read-only projects. Effective immediately |
+| **Delete** | Card menu → Delete. Also removes session records, actor mappings and session attachments. **Irreversible** |
+
+<Note>
+**The integration's identity (installed workspace + bot) cannot be changed after creation.** Pasting a token from a different workspace during editing is rejected. To switch workspaces, delete and recreate.
+</Note>
+
+## FAQ
+
+<AccordionGroup>
+
+<Accordion title="The DM input box is grayed out: Sending messages to this app has been turned off">
+The **App Home Messages Tab is not fully enabled**. In the app config, go to **App Home → Show Tabs**, enable the **Messages Tab** and check "Allow users to send Slash commands and messages from the messages tab" — both. No reinstall needed; refresh the Slack client.
+</Accordion>
+
+<Accordion title="Mentioning it in a channel gets no reaction">
+Check in order:
+
+- **Is the bot in the channel?** `/invite @botname`
+- **Is `app_mention` subscribed**, and did you **Reinstall** after adding it?
+- **Was it a thread reply without a mention?** Thread follow-ups must mention the bot — unmentioned messages are never delivered
+- **Is the integration disabled?** (a disabled integration replies "the bot is currently unavailable")
+</Accordion>
+
+<Accordion title="Sending /new pops up “not a valid command”">
+The Slack client intercepted the `/` prefix as a slash command — the message never left your input box.
+
+The reset word in Slack has **no slash**: send `new` in a DM, or `@bot new` inside a thread.
+</Accordion>
+
+<Accordion title="Changed scopes or events, nothing happens">
+Slack scope and event changes only take effect after **Reinstall to Workspace**: app config → OAuth & Permissions → Reinstall to Workspace. No review step; effective immediately.
+</Accordion>
+
+<Accordion title="Actors show a U-prefixed id instead of a name">
+Add the `users:read` scope, then **Reinstall**.
+
+<Warning>
+**Existing actors do not rename themselves.** The name is written once, when a person first talks to the bot — adding the scope only affects **new** users. To fix an existing one, delete their actor entry; it is recreated on their next message.
+</Warning>
+</Accordion>
+
+<Accordion title="What happens when the token is revoked or the app uninstalled">
+With `tokens_revoked` and `app_uninstalled` subscribed, the integration turns red **within seconds**, with the reason spelled out. Without them, the status may stay green for hours (until the connection happens to rebuild) — which is why the setup insists on all four events.
+
+Note that revoking the Bot User OAuth Token **uninstalls the app** — the bot disappears from the workspace. To recover: app config → OAuth & Permissions → **Reinstall to Workspace** (this issues a **new** token), then edit the integration and replace just the Bot User OAuth Token (the App-Level Token is unaffected).
+</Accordion>
+
+<Accordion title="Status reads “Invalid credentials — check the Bot User OAuth Token / App-Level Token”">
+Slack rejected our connection. Almost always one of:
+
+- A token was mispasted (extra whitespace, missing characters)
+- The Bot User OAuth Token was revoked, or the app was reinstalled (reinstalling issues a **new** token while the console still holds the old one)
+- The App-Level Token was deleted
+
+Edit the integration, click "Replace" next to the affected field, paste the new value, save — it reconnects immediately.
+</Accordion>
+
+<Accordion title="Answers refresh in chunks rather than word by word">
+This is a Slack-side boundary: we stream by editing the same message in place (hence the (edited) marker), Slack has no typewriter animation for edits, and it rate-limits message updates. The first ~12 seconds refresh every 0.5s, then it slows down — content completeness is unaffected.
+</Accordion>
+
+<Accordion title="Creation rejected: token rotation or Enterprise install unsupported">
+Two app shapes are currently unsupported:
+
+- **Token rotation** (`xoxe`-prefixed tokens): they expire every 12 hours, incompatible with the static-credential model. Disable rotation and take a fresh token.
+- **Enterprise Grid org-wide installs**: install per workspace (Install to Workspace, not org-wide) and create one integration per workspace.
+</Accordion>
+
+<Accordion title="Can one Slack app back two workspaces?">
+Count by **installation**: one app installed in one Slack workspace backs exactly one integration. Installing the same app into another Slack workspace creates a distinct identity, which can back another integration.
+
+If you want one bot to reach several projects' memory, add those projects as **read-only projects** on the same integration instead.
+</Accordion>
+
+<Accordion title="Who can use the bot? Is there an allowlist?">
+Access is decided entirely on the **Slack side** — we deliberately do not add a second allowlist:
+
+- **DMs**: anyone in the workspace where the app is installed
+- **Channels**: whoever is in a channel the bot has been added to
+- **Slack Connect external users**: always ignored — no quota use, no memory writes
+</Accordion>
+
+<Accordion title="Can members see each other's conversations?">
+Two layers:
+
+- **Conversation context is per-person.** In the same thread, A's exchange never appears in B's context.
+- **Project memory is shared.** Whatever lands in the read-write project is searchable by everyone who can reach the bot — that is the point of the feature, and why the read-write project is an authorization decision.
+</Accordion>
+
+<Accordion title="The bot says the quota is exhausted, or asks me to retry later">
+Two different situations:
+
+- **"Your account quota is exhausted…"** — the team's plan quota ran out. It does **not** recover on its own; contact the admin to top up or upgrade.
+- **"We're handling many requests, please retry shortly."** — momentary load on our side, not you sending too fast. Just retry.
+</Accordion>
+
+<Accordion title="What does deleting the integration remove?">
+Session records, the Slack-user-to-actor mappings, and session attachment references — irreversibly.
+
+**Memory already written into projects and ingested files are not deleted** — they belong to the project, not the integration.
+
+For a temporary pause, use the switch on the card instead of deleting.
+</Accordion>
+
+</AccordionGroup>
