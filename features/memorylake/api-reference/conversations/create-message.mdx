@@ -47,8 +47,12 @@ Arbitrary key-value metadata to attach to the message
 Caller-defined unique identifier for the message within the conversation
 </ParamField>
 
-<ParamField body="parent_message_id" type="string">
-ID of the parent message, for threaded conversations. When set, this message is treated as a reply to the specified parent.
+<ParamField body="parent_message_id" type="string|null" required>
+ID of the message that comes immediately before this one in the conversation — its predecessor. This is an ordering pointer, not a reply pointer: pass the previous message's ID even when the new message is not a reply to it. Order is declared by you, never guessed by the server.
+
+Send `null` for the first message of a conversation, which has no predecessor. Every message after that must carry a real ID — the `id` returned when you appended the previous message, or the conversation's `current_message_id` when you resume an existing conversation.
+
+That ID must still be the conversation's latest message when the request arrives. If it is not — a stale ID, or `null` on a conversation that already has messages — the append fails with `409` and nothing is written. Re-read `current_message_id` and retry with that value.
 </ParamField>
 
 <RequestExample>
@@ -63,7 +67,9 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
         "text": "Can you summarize last quarter'\''s revenue numbers?"
       }
     ],
+    "custom_id": "msg-001",
     "actor_id": "actor_user_jane",
+    "parent_message_id": null,
     "timestamp": "2025-06-01T14:10:00Z",
     "metadata": {
       "source": "web-app"
@@ -87,12 +93,14 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
         "mime_type": "image/png"
       }
     ],
+    "custom_id": "msg-002",
     "actor_id": "actor_assistant_v2",
+    "parent_message_id": "msg_3f4a5b6c7d8e9f0a",
     "timestamp": "2025-06-01T14:10:30Z"
   }'
 ```
 
-```bash Threaded reply
+```bash Follow-up message
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
@@ -103,6 +111,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
         "text": "Good point — I'\''ve updated the figures in the attached version."
       }
     ],
+    "custom_id": "msg-003",
     "actor_id": "actor_user_jane",
     "parent_message_id": "msg_9e4b2c3d5f6a7b8c"
   }'
@@ -150,7 +159,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/
     },
     "timestamp": "2025-06-01T14:10:00Z",
     "conversation_id": "conv_7d2e3f4a5b6c7d8e",
-    "sequence_no": 3,
+    "sequence_no": 1,
     "actor_id": "actor_user_jane",
     "created_at": "2025-06-01T14:10:05Z"
   }

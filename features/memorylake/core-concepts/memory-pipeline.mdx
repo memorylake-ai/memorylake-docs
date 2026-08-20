@@ -76,7 +76,7 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{wor
 </Step>
 
 <Step title="Append messages">
-Submit messages to the conversation one at a time. Include the `actor_id` so MemoryLake can associate facts with the right participant.
+Submit messages to the conversation one at a time. Include the `actor_id` so MemoryLake can associate facts with the right participant, and name each message's predecessor with `parent_message_id` — `null` for the first message, the `id` returned by the previous append for every message after it.
 
 ```bash
 curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/{conversation_id}/messages \
@@ -85,6 +85,7 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/{
   -d '{
     "custom_id": "msg-001",
     "actor_id": "act_jane456",
+    "parent_message_id": null,
     "content": [{"block_type": "TEXT", "text": "We decided to use React for the frontend. Launch target is March."}]
   }'
 
@@ -94,9 +95,8 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/{
   -d '{
     "custom_id": "msg-002",
     "actor_id": "act_assistant",
+    "parent_message_id": "{id_returned_for_msg_001}",
     "content": [{"block_type": "TEXT", "text": "Got it. I will note that the frontend uses React with a March launch target."}]
-      }
-    ]
   }'
 ```
 </Step>
