@@ -120,6 +120,8 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
 <Step title="Create a conversation and append messages">
 Submit a conversation to the workspace. First, create the conversation, then add messages one at a time. MemoryLake automatically extracts structured facts from the messages.
 
+Every message names its predecessor with `parent_message_id`: `null` for the first message, and the `id` the previous append returned for every message after it. That is how you declare the order of a conversation.
+
 **Create the conversation:**
 
 ```bash
@@ -157,6 +159,7 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
   -d '{
     "custom_id": "msg-001",
     "actor_id": "act_jane456",
+    "parent_message_id": null,
     "content": [
       {
         "block_type": "TEXT",
@@ -166,7 +169,7 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
   }'
 ```
 
-**Append the second message (assistant):**
+**Append the second message (assistant).** Its `parent_message_id` is the `id` that the first append returned:
 
 ```bash
 curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_ghi012/messages \
@@ -175,6 +178,7 @@ curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/c
   -d '{
     "custom_id": "msg-002",
     "actor_id": "act_jane456",
+    "parent_message_id": "msg_jkl345",
     "content": [
       {
         "block_type": "TEXT",
@@ -310,13 +314,15 @@ conversation = requests.post(
 conversation_id = conversation["data"]["id"]
 print(f"Conversation created: {conversation_id}")
 
-# 5. Append messages (one at a time)
-requests.post(
+# 5. Append messages (one at a time). Every message names its predecessor via
+#    parent_message_id; the first one has none, so it sends null.
+first = requests.post(
     f"{BASE_URL}/conversations/{conversation_id}/messages",
     headers=headers,
     json={
         "custom_id": "msg-001",
         "actor_id": actor_id,
+        "parent_message_id": None,
         "content": [
             {
                 "block_type": "TEXT",
@@ -324,7 +330,7 @@ requests.post(
             }
         ],
     },
-)
+).json()
 
 requests.post(
     f"{BASE_URL}/conversations/{conversation_id}/messages",
@@ -332,6 +338,7 @@ requests.post(
     json={
         "custom_id": "msg-002",
         "actor_id": actor_id,
+        "parent_message_id": first["data"]["id"],
         "content": [
             {
                 "block_type": "TEXT",

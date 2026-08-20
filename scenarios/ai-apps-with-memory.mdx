@@ -59,10 +59,11 @@ curl -X POST "$BASE/api/v3/workspaces/$WORKSPACE_ID/memories/conversations" \
   -H "Content-Type: application/json" \
   -d "{\"project_id\": \"$PROJECT_ID\", \"actor_id\": \"$ACTOR_ID\"}"
 
+# parent_message_id is null for the first message, then the id the previous append returned
 curl -X POST "$BASE/api/v3/conversations/$CONVERSATION_ID/messages" \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
-  -d '{"role": "user", "content": "I am vegetarian and lactose intolerant"}'
+  -d "{\"custom_id\": \"msg-001\", \"actor_id\": \"$ACTOR_ID\", \"parent_message_id\": null, \"content\": [{\"block_type\": \"TEXT\", \"text\": \"I am vegetarian and lactose intolerant\"}]}"
 
 # Recall: one search spans document passages and extracted facts
 curl -X POST "$BASE/api/v3/workspaces/$WORKSPACE_ID/memories/search" \
