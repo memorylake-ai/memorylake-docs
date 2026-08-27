@@ -1,0 +1,65 @@
+---
+title: "Management API Reference"
+description: "Govern your team programmatically — members, invitations, API keys, team info and usage"
+---
+
+## API Overview
+
+The Management API lets you automate the operations you would otherwise perform in the console's team pages — inviting members, changing roles, issuing and rotating API keys, and reading usage — without a browser session. Use it for onboarding/offboarding automation, key-rotation pipelines, and usage reporting.
+
+## API Sections
+
+<CardGroup cols={2}>
+<Card title="Team" icon="building" href="/features/management-api/team/get-team">
+Read team info and rename the team (owner only).
+</Card>
+
+<Card title="API Keys" icon="key" href="/features/management-api/api-keys/list-api-keys">
+List, create, rotate and revoke API keys — read endpoints never return the key value.
+</Card>
+
+<Card title="Members" icon="users" href="/features/management-api/members/list-members">
+Read the roster, change roles, remove members.
+</Card>
+
+<Card title="Invitations" icon="envelope" href="/features/management-api/invitations/create-invitation">
+Invite by email, list invitations, revoke pending ones.
+</Card>
+
+<Card title="Usage" icon="chart-line" href="/features/management-api/usage/get-usage">
+Quota snapshot and per-model consumption over a period.
+</Card>
+</CardGroup>
+
+**Deliberately not available:** creating or deleting teams, transferring ownership, and changing billing — these remain console-only, human-confirmed operations.
+
+## Usage Notes
+
+Response format, pagination and error codes are covered in [Overview](/features/memorylake/api-reference/overview) and [Errors](/features/memorylake/api-reference/errors). Three things are worth knowing about these endpoints:
+
+### Permissions
+
+Endpoints document their required permission as `resource:action` (for example `member:invite`). The key acts with its creator's role — a key created by a team admin can do what that admin can do. If the creator loses a permission (or leaves the team), their keys lose it too. A key that authenticates but lacks the permission gets `403` with `ACCESS_DENIED`.
+
+### Idempotency
+
+Write endpoints accept an optional `Idempotency-Key` header (any unique string, e.g. a UUID). Retrying with the same value replays the first result instead of repeating the side effect — for key rotation this is the difference between "got the same new key again" and "invalidated the key I just saved". Replays carry an `Idempotency-Replayed: true` response header. Rate-limit rejections (429) are never replayed, so a backoff-and-retry loop works with a stable key.
+
+### Rate Limits
+
+| Limit | Scope | On exceed |
+|---|---|---|
+| 60 requests / minute | per key | `429` with `Retry-After` |
+| 50 invitations / day (UTC) | per team, counting created invitations | `429` with `Retry-After` |
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Team" icon="building" href="/features/management-api/team/get-team">
+Start with GET /team — read your team and your key's role
+</Card>
+
+<Card title="Authentication" icon="key" href="/features/memorylake/api-reference/authentication">
+Obtain an API key and make your first request
+</Card>
+</CardGroup>

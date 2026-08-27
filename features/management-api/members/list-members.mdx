@@ -1,0 +1,78 @@
+---
+title: "List Members"
+description: "Returns the team roster"
+---
+
+```
+GET /openapi/memorylake/admin/v1/members
+```
+
+Lists the team's members. Any member's key may read the roster; contact details (`email`, `username`) are returned only when the key's creator is a team owner or admin.
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page
+</ParamField>
+
+<ParamField query="name_fuzzy" type="string">
+Case-insensitive substring match on the display name. For owners and admins it also matches email and username.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated member list">
+  <ResponseField name="items" type="array">
+  <Expandable title="Member object">
+    <ResponseField name="principal_id" type="string">Stable member identifier — used in member write endpoints and matching the team's `owner_principal_id`</ResponseField>
+    <ResponseField name="display_name" type="string">Display name</ResponseField>
+    <ResponseField name="member_type" type="string">`human` (joined via invitation) or `virtual` (managed identity created by an owner/admin — see [Create Virtual Member](/features/management-api/members/create-member))</ResponseField>
+    <ResponseField name="role" type="string">`tenant_owner`, `tenant_admin`, `tenant_member`, or a custom role key</ResponseField>
+    <ResponseField name="email" type="string">Only returned to owners and admins</ResponseField>
+    <ResponseField name="username" type="string">Only returned to owners and admins</ResponseField>
+    <ResponseField name="joined_at" type="integer">Join time, Unix seconds</ResponseField>
+    <ResponseField name="status" type="string">`active` or `inactive`</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Tokens consumed by this member</ResponseField>
+    <ResponseField name="max_tokens" type="integer">Per-member cap in tokens. Omitted when uncapped.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="total" type="integer">Total members</ResponseField>
+  <ResponseField name="continuation_token" type="string">Present when there is a next page</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "principal_id": "32bc58d62b5c4a05a069d5d083f4dd72",
+        "display_name": "Alice",
+        "role": "tenant_owner",
+        "email": "alice@example.com",
+        "username": "alice",
+        "joined_at": 1750000000,
+        "status": "active",
+        "used_tokens": 1284000
+      }
+    ],
+    "total": 1
+  }
+}
+```
+</ResponseExample>

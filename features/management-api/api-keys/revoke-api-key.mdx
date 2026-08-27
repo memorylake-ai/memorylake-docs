@@ -1,0 +1,55 @@
+---
+title: "Revoke API Key"
+description: "Deletes an API key permanently"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/api-keys/{id}
+```
+
+Deletes a key. It stops authenticating immediately and cannot be recovered.
+
+The key used to make the request cannot revoke itself — an automation that cut off its own credential mid-run would have no way back in. Revoking the calling key returns `409 STATE_NOT_READY`.
+
+<Note>
+**Permission required:** `service_account:delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Key identifier
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/312' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+
+```json Revoking the calling key (409)
+{
+  "success": false,
+  "message": "cannot revoke the key used for this request",
+  "error_code": "STATE_NOT_READY"
+}
+```
+</ResponseExample>

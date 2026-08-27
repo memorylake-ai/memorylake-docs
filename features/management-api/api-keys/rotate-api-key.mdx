@@ -1,0 +1,55 @@
+---
+title: "Rotate API Key"
+description: "Replaces the key material and returns the new value once"
+---
+
+```
+POST /openapi/memorylake/admin/v1/api-keys/{id}/rotate
+```
+
+Replaces the key material. The previous value stops working immediately; the new value is returned once.
+
+<Warning>
+Rotation is not naturally idempotent: every call mints a new key and kills the previous one. When retrying over an unreliable network, always send an `Idempotency-Key` — a blind retry would invalidate the key you just received.
+</Warning>
+
+<Note>
+**Permission required:** `service_account:update`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Key identifier
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional but recommended. Retrying with the same value replays the first result — it does not mint a second key.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/312/rotate' \
+  -H 'Authorization: Bearer sk-xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "id": "312",
+    "name": "ci-pipeline",
+    "key_prefix": "f6e5d4c3",
+    "key": "sk-f6e5d4c3...redacted...b2a1"
+  }
+}
+```
+</ResponseExample>

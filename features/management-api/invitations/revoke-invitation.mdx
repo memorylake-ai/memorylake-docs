@@ -1,0 +1,55 @@
+---
+title: "Revoke Invitation"
+description: "Revokes a pending invitation — its email link stops working"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/invitations/{id}
+```
+
+Revokes a **pending** invitation; the accept link in the email stops working immediately. The invitation stays in the list as history with status `revoked`, and the same email can be re-invited afterwards.
+
+Accepted invitations cannot be revoked — the member already exists; [remove the member](/features/management-api/members/remove-member) instead. Expired and rejected ones are already inert. All of these return `409`.
+
+<Note>
+**Permission required:** `member:invite`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Invitation identifier
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/invitations/88' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+
+```json Not pending (409)
+{
+  "success": false,
+  "message": "only a pending invitation can be revoked",
+  "error_code": "STATE_NOT_READY"
+}
+```
+</ResponseExample>

@@ -1,0 +1,77 @@
+---
+title: "List API Keys"
+description: "Returns the team's API keys — metadata only, never the key value"
+---
+
+```
+GET /openapi/memorylake/admin/v1/api-keys
+```
+
+Lists the team's API keys. Callers holding only own-scope read permission see just the keys they created. Read endpoints never return the key value — only a display prefix.
+
+<Note>
+**Permission required:** `service_account:read`
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page. Opaque — do not construct or parse it.
+</ParamField>
+
+<ParamField query="name_fuzzy" type="string">
+Case-insensitive substring match on the key name
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys?page_size=20' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated key list">
+  <ResponseField name="items" type="array">
+  <Expandable title="API key object">
+    <ResponseField name="id" type="string">Stable key identifier</ResponseField>
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="key_prefix" type="string">First characters of the key body — the full key is never returned by read endpoints</ResponseField>
+    <ResponseField name="status" type="string">`enabled`, `disabled`, or `expired`</ResponseField>
+    <ResponseField name="created_at" type="integer">Creation time, Unix seconds</ResponseField>
+    <ResponseField name="expires_at" type="integer">Expiry time, Unix seconds. Omitted when the key never expires.</ResponseField>
+    <ResponseField name="last_used_at" type="integer">Last use, Unix seconds. Approximate — may lag by up to one hour. Omitted when never used.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="total" type="integer">Total matching keys</ResponseField>
+  <ResponseField name="continuation_token" type="string">Present when there is a next page</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "id": "312",
+        "name": "ci-pipeline",
+        "key_prefix": "a1b2c3d4",
+        "status": "enabled",
+        "created_at": 1755000000,
+        "last_used_at": 1755600000
+      }
+    ],
+    "total": 1
+  }
+}
+```
+</ResponseExample>

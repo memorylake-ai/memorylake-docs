@@ -1,0 +1,55 @@
+---
+title: "Get API Key"
+description: "Returns one API key's metadata"
+---
+
+```
+GET /openapi/memorylake/admin/v1/api-keys/{id}
+```
+
+Returns one key's metadata. Keys belonging to other teams — and identifiers that do not exist — are both reported as the same `404`.
+
+<Note>
+**Permission required:** `service_account:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Key identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/312' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+Returns an [API key object](/features/management-api/api-keys/list-api-keys) — metadata only, never the key value.
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "id": "312",
+    "name": "ci-pipeline",
+    "key_prefix": "a1b2c3d4",
+    "status": "enabled",
+    "created_at": 1755000000
+  }
+}
+```
+
+```json Not found (404)
+{
+  "success": false,
+  "message": "api key not found",
+  "error_code": "NOT_FOUND"
+}
+```
+</ResponseExample>
