@@ -1,0 +1,74 @@
+---
+title: "Create Virtual Member"
+description: "Creates a virtual member — a login-less managed identity"
+---
+
+```
+POST /openapi/memorylake/admin/v1/members
+```
+
+Creates a **virtual member**: a managed identity with no email and no console access. It appears in the roster, holds a role, and acts only through API keys issued for it ([Create API Key](/features/management-api/api-keys/create-api-key) with `member_principal_id`). Memories and conversations produced through those keys are attributed to the virtual member.
+
+Human members cannot be created here — they join through [invitations](/features/management-api/invitations/create-invitation) only.
+
+<Note>
+**Permission required:** `member:manage_virtual` (team owners and admins by default)
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+### Request Body
+
+<ParamField body="display_name" type="string" required>
+Display name (1–20 characters)
+</ParamField>
+
+<ParamField body="role" type="string" required>
+Role: `tenant_admin`, `tenant_member`, or a custom role key of this team. The owner role cannot be assigned.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members' \
+  -H 'Authorization: Bearer sk-xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"display_name": "Support Bot", "role": "tenant_member"}'
+```
+</RequestExample>
+
+### Response
+
+Returns a [Member object](/features/management-api/members/list-members) with `member_type: "virtual"`.
+
+<ResponseExample>
+```json Success (201)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "principal_id": "9f2c1a7b3d5e4f60a1b2c3d4e5f60718",
+    "display_name": "Support Bot",
+    "member_type": "virtual",
+    "role": "tenant_member",
+    "joined_at": 1756300000,
+    "status": "active",
+    "used_tokens": 0
+  }
+}
+```
+</ResponseExample>
+
+### Issuing a key for a virtual member
+
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys' \
+  -H 'Authorization: Bearer sk-xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "support-bot-key", "member_principal_id": "9f2c1a7b3d5e4f60a1b2c3d4e5f60718"}'
+```
+
+The key acts **as the virtual member** — with its role, and with attribution to its identity. Only virtual members can be targeted; requesting a human member's `principal_id` returns the same `404` as an unknown one, so keys can never impersonate a colleague. Removing a virtual member disables its keys.

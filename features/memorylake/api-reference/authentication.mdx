@@ -18,6 +18,16 @@ All API requests require an API key passed via the `Authorization` header.
 The API key secret is shown only once at creation. Store it securely — it cannot be retrieved again.
 </Warning>
 
+### What a Key Can Do
+
+A key is bound to exactly one team — the team it was created under. Nothing in a request can change that: there is no team parameter, and no header overrides it. If you belong to several teams, you hold one key per team, and you govern a team with that team's key.
+
+Within its team, a key acts with its creator's role. This matters most on the [Management API](/features/management-api/overview), whose endpoints are authorized against what that person may do in the console — a member's key reads the team roster, an owner's key can also change it. If the creator loses a permission or leaves the team, their keys lose it too. A key that authenticates but lacks the required permission gets `403` with `ACCESS_DENIED`.
+
+<Note>
+For automation that only needs to read, prefer a key created by a low-privilege member — or one issued for a [virtual member](/features/management-api/members/create-member). That is the cleanest way to limit what a leaked key can do.
+</Note>
+
 ### Using API Keys
 
 Include the API key in the `Authorization` header:

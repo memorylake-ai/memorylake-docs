@@ -338,6 +338,52 @@
                   "features/memorylake/api-reference/errors",
                   "features/memorylake/api-reference/rate-limits"
                 ]
+              },
+              {
+                "group": "Management API",
+                "pages": [
+                  "features/management-api/overview",
+                  {
+                    "group": "Team",
+                    "pages": [
+                      "features/management-api/team/get-team",
+                      "features/management-api/team/update-team"
+                    ]
+                  },
+                  {
+                    "group": "API Keys",
+                    "pages": [
+                      "features/management-api/api-keys/list-api-keys",
+                      "features/management-api/api-keys/create-api-key",
+                      "features/management-api/api-keys/get-api-key",
+                      "features/management-api/api-keys/rotate-api-key",
+                      "features/management-api/api-keys/revoke-api-key"
+                    ]
+                  },
+                  {
+                    "group": "Members",
+                    "pages": [
+                      "features/management-api/members/list-members",
+                      "features/management-api/members/create-member",
+                      "features/management-api/members/update-member",
+                      "features/management-api/members/remove-member"
+                    ]
+                  },
+                  {
+                    "group": "Invitations",
+                    "pages": [
+                      "features/management-api/invitations/create-invitation",
+                      "features/management-api/invitations/list-invitations",
+                      "features/management-api/invitations/revoke-invitation"
+                    ]
+                  },
+                  {
+                    "group": "Usage",
+                    "pages": [
+                      "features/management-api/usage/get-usage"
+                    ]
+                  }
+                ]
               }
             ]
           }
@@ -669,6 +715,52 @@
                   },
                   "zh/features/memorylake/api-reference/errors",
                   "zh/features/memorylake/api-reference/rate-limits"
+                ]
+              },
+              {
+                "group": "管理 API",
+                "pages": [
+                  "zh/features/management-api/overview",
+                  {
+                    "group": "团队",
+                    "pages": [
+                      "zh/features/management-api/team/get-team",
+                      "zh/features/management-api/team/update-team"
+                    ]
+                  },
+                  {
+                    "group": "API 密钥",
+                    "pages": [
+                      "zh/features/management-api/api-keys/list-api-keys",
+                      "zh/features/management-api/api-keys/create-api-key",
+                      "zh/features/management-api/api-keys/get-api-key",
+                      "zh/features/management-api/api-keys/rotate-api-key",
+                      "zh/features/management-api/api-keys/revoke-api-key"
+                    ]
+                  },
+                  {
+                    "group": "成员",
+                    "pages": [
+                      "zh/features/management-api/members/list-members",
+                      "zh/features/management-api/members/create-member",
+                      "zh/features/management-api/members/update-member",
+                      "zh/features/management-api/members/remove-member"
+                    ]
+                  },
+                  {
+                    "group": "邀请",
+                    "pages": [
+                      "zh/features/management-api/invitations/create-invitation",
+                      "zh/features/management-api/invitations/list-invitations",
+                      "zh/features/management-api/invitations/revoke-invitation"
+                    ]
+                  },
+                  {
+                    "group": "用量",
+                    "pages": [
+                      "zh/features/management-api/usage/get-usage"
+                    ]
+                  }
                 ]
               }
             ]

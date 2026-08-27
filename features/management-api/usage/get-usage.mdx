@@ -1,0 +1,70 @@
+---
+title: "Get Usage"
+description: "Quota snapshot and per-model consumption over a period"
+---
+
+```
+GET /openapi/memorylake/admin/v1/usage
+```
+
+Returns the team's quota and consumption. Two different time semantics in one response:
+
+- `quota` is an **account-level snapshot taken now** — what the team can still spend
+- `totals` and `by_model` are **aggregates over the requested period**
+
+<Note>
+**Permission required:** `usage:view_all`
+</Note>
+
+### Query Parameters
+
+<ParamField query="start_date" type="string">
+First day included, `YYYY-MM-DD`. Defaults to 6 days before `end_date`.
+</ParamField>
+
+<ParamField query="end_date" type="string">
+Last day included, `YYYY-MM-DD`. Defaults to today. The window may span at most 92 days.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl 'https://app.memorylake.ai/openapi/memorylake/admin/v1/usage?start_date=2026-08-01&end_date=2026-08-26' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Usage object">
+  <ResponseField name="period" type="object">The period the totals cover (`start_date`, `end_date`)</ResponseField>
+  <ResponseField name="quota" type="object">
+  <Expandable title="Quota snapshot">
+    <ResponseField name="available_tokens" type="integer">Currently available tokens. Account-level snapshot, not scoped to the period.</ResponseField>
+    <ResponseField name="unlimited" type="boolean">When true, `available_tokens` is not meaningful</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="totals" type="object">Aggregate `requests`, `prompt_tokens`, `completion_tokens` over the period</ResponseField>
+  <ResponseField name="by_model" type="array">
+  Per-model breakdown. Entries may name a platform metering operation (`files_process`, `memory_input`, `retrieval_call`, `search_call`) rather than an LLM — those are real billable operations.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "period": { "start_date": "2026-08-01", "end_date": "2026-08-26" },
+    "quota": { "available_tokens": 8421000, "unlimited": false },
+    "totals": { "requests": 1204, "prompt_tokens": 3210000, "completion_tokens": 1150000 },
+    "by_model": [
+      { "model": "claude-sonnet-5", "requests": 800, "prompt_tokens": 2400000, "completion_tokens": 900000 },
+      { "model": "memory_input", "requests": 404, "prompt_tokens": 810000, "completion_tokens": 250000 }
+    ]
+  }
+}
+```
+</ResponseExample>

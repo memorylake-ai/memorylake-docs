@@ -1,0 +1,47 @@
+---
+title: "Get Team"
+description: "Returns the team this key belongs to"
+---
+
+```
+GET /openapi/memorylake/admin/v1/team
+```
+
+Returns the team the calling key is bound to. There is no team parameter — the key determines the team. Any member's key may read this.
+
+<RequestExample>
+```bash cURL
+curl 'https://app.memorylake.ai/openapi/memorylake/admin/v1/team' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Team object">
+  <ResponseField name="id" type="string">Stable team identifier</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="type" type="string">`personal` (single-user space) or `org` (team with members)</ResponseField>
+  <ResponseField name="owner_principal_id" type="string">`principal_id` of the team owner — joins to the members list</ResponseField>
+  <ResponseField name="created_at" type="integer">Creation time, Unix seconds</ResponseField>
+  <ResponseField name="caller_role" type="string">The calling key's role: `tenant_owner`, `tenant_admin`, `tenant_member`, or a custom role key</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "id": "74be678f61e34ace95530080a6562bfa",
+    "name": "Acme Research",
+    "type": "org",
+    "owner_principal_id": "32bc58d62b5c4a05a069d5d083f4dd72",
+    "created_at": 1755000000,
+    "caller_role": "tenant_owner"
+  }
+}
+```
+</ResponseExample>

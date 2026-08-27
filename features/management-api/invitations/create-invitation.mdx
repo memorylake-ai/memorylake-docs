@@ -1,0 +1,85 @@
+---
+title: "Invite Someone"
+description: "Creates an invitation and emails the invitee"
+---
+
+```
+POST /openapi/memorylake/admin/v1/invitations
+```
+
+Creates an invitation and sends the invitee an email with an accept link. The link expires after 7 days.
+
+One live invitation per email per team: if a pending one already exists, this returns `409` — revoke it first to re-invite. There is no resend endpoint; **re-invite = revoke + create** (the same email reactivates the same invitation with a fresh link).
+
+Invitation creation is capped per team per UTC day (default 50, counting created invitations). On exceed you get `429` with a `Retry-After` header.
+
+<Note>
+**Permission required:** `member:invite`
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result instead of sending a second email.
+</ParamField>
+
+### Request Body
+
+<ParamField body="email" type="string" required>
+Invitee email — a bare address, no display name
+</ParamField>
+
+<ParamField body="role" type="string" required>
+Role on acceptance: `tenant_admin`, `tenant_member`, or a custom role key. The owner role cannot be invited.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/invitations' \
+  -H 'Authorization: Bearer sk-xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "bob@example.com", "role": "tenant_member"}'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Invitation object">
+  <ResponseField name="id" type="string">Stable invitation identifier</ResponseField>
+  <ResponseField name="email" type="string">Invitee email (normalised to lowercase)</ResponseField>
+  <ResponseField name="role" type="string">Role the invitee will hold on acceptance</ResponseField>
+  <ResponseField name="status" type="string">`pending`, `accepted`, `rejected`, `expired`, or `revoked`</ResponseField>
+  <ResponseField name="created_at" type="integer">First invitation time, Unix seconds. Re-inviting reactivates the same invitation, so this does not reset.</ResponseField>
+  <ResponseField name="expires_at" type="integer">Expiry of the current email link, Unix seconds</ResponseField>
+  <ResponseField name="last_invited_at" type="integer">Most recent invitation email time, Unix seconds</ResponseField>
+  <ResponseField name="accepted_at" type="integer">Acceptance time — present only when accepted</ResponseField>
+  <ResponseField name="accepted_principal_id" type="string">The member this invitation produced — present only when accepted</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (201)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "id": "88",
+    "email": "bob@example.com",
+    "role": "tenant_member",
+    "status": "pending",
+    "created_at": 1756300000,
+    "expires_at": 1756904800,
+    "last_invited_at": 1756300000
+  }
+}
+```
+
+```json Already invited or already a member (409)
+{
+  "success": false,
+  "message": "a pending invitation for this email already exists; revoke it to re-invite",
+  "error_code": "CUSTOM_ID_CONFLICT"
+}
+```
+</ResponseExample>
