@@ -1,0 +1,56 @@
+---
+title: "Download Document"
+description: "Download the original file behind a project document"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/documents/{documentId}/download
+```
+
+Downloads the original file that a document was imported from. Use it to hand the source file back to a user, or to re-process it outside MemoryLake — the bytes are the ones you uploaded, not the extracted memories. To read a document's metadata instead, use [Get Document](/features/memorylake/api-reference/v3-documents/get-document).
+
+The response is normally a `303` redirect to a pre-signed storage URL rather than the file itself, so **follow redirects** — `curl -L`, or the equivalent in your HTTP client. A client that does not follow redirects gets an empty body and no error.
+
+<Note>
+**Permissions required (all of):**
+
+- [`project:doc_read`](/features/team-collaboration/permission-reference#read-a-single-document) · `instance`
+- [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+
+The server resolves the document to its underlying Library file and forwards to the Library download handler — both permissions are checked on every call.
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID that owns the project.
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project the document belongs to.
+</ParamField>
+
+<ParamField path="documentId" type="string" required>
+Document to download.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -L -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a1b2c3d4e5f6/projects/proj-7g8h9i0j1k2l/memories/documents/doc-3m4n5o6p7q8r/download' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -o downloaded_file.pdf
+```
+</RequestExample>
+
+### Response
+
+Returns `303` with the storage download URL in the `Location` header, or `200` with streamed binary content (`application/octet-stream`) when the download needs extra headers that only the server can supply.
+
+The pre-signed URL a `303` points at is short-lived — download it right away rather than storing it.
+
+<ResponseExample>
+```
+HTTP/1.1 303 See Other
+Location: https://storage.example.com/download/document.pdf?signature=...
+```
+</ResponseExample>
