@@ -28,6 +28,53 @@ When a request fails, the API returns a structured error body alongside the HTTP
 }
 ```
 
+## What a 403 tells you
+
+A permission refusal carries more than the code. Alongside `error_code: ACCESS_DENIED`, the `data`
+object names the permission that was missing and what would have satisfied it, so you can act on the
+response without guessing:
+
+```json
+{
+  "success": false,
+  "message": "You don't have the \"Modify Library Item\" permission. Ask a team owner or admin to grant it.",
+  "error_code": "ACCESS_DENIED",
+  "data": {
+    "denied": [
+      {
+        "permission": "drive:item_modify",
+        "permission_level": "service",
+        "resource_type": "drive"
+      }
+    ],
+    "stage": "capability",
+    "required_any_of": [
+      { "key": "pkg:library:write", "resource_type": "library" }
+    ]
+  }
+}
+```
+
+<ResponseField name="data.denied" type="array">
+  The permissions that were checked and not held. `permission` is the identifier to grant,
+  `permission_level` says whether it is granted once for the whole service or per resource instance.
+</ResponseField>
+
+<ResponseField name="data.stage" type="string">
+  `capability` — the caller does not hold this permission anywhere, so granting it on one resource
+  will not help. `instance` — the caller holds it, but not on the resource this request named.
+</ResponseField>
+
+<ResponseField name="data.required_any_of" type="array">
+  Any one of these grants would have allowed the request. Hand this to whoever administers your
+  team: it is the shortest answer to "what do I need".
+</ResponseField>
+
+<Note>
+  A refusal never says whether the resource exists. A 403 and a 404 are deliberately not
+  distinguishable from outside for something you may not reach.
+</Note>
+
 ## Error Codes
 
 | Error Code | Description |

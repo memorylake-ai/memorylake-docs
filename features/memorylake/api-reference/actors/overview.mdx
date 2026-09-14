@@ -7,10 +7,19 @@ An **Actor** represents a participant identity in MemoryLake. Every message in a
 
 ## Actor Types
 
-| Type | Description |
-|------|-------------|
-| `HUMAN` | An end user interacting with your application |
-| `ASSISTANT` | An AI agent (automatically created when you [create an Agent](/features/memorylake/api-reference/agents/create-agent)) |
+The Actor API works with the people using your application. An actor you create here is a person —
+there is nothing else to choose.
+
+An agent also has an identity that carries its memories, created for it when you
+[create an Agent](/features/memorylake/api-reference/agents/create-agent). That identity is an
+implementation detail of the agent and **the Actor API does not acknowledge it**: fetching it by id
+answers `404`, and it does not appear in actor listings. Address an agent's memories through the
+[Agent](/features/memorylake/api-reference/agents/overview) endpoints, by the agent's own id.
+
+<Note>
+  If you previously read an agent's memories through its identity actor, switch to the agent id. It
+  is the same memories, named the way everything else names them.
+</Note>
 
 ## How Actors Work
 

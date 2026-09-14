@@ -7,10 +7,13 @@ description: "Actor 是 MemoryLake 的身份层 — 所有记忆的主体"
 
 ## Actor 类型
 
-| 类型 | 说明 |
-|------|------|
-| `HUMAN` | 与你的应用交互的终端用户 |
-| `ASSISTANT` | AI Agent（[创建 Agent](/zh/features/memorylake/api-reference/agents/create-agent) 时自动生成） |
+Actor API 面向的是使用你的应用的**人**。你在这里创建的 actor 就是一个人，没有别的类型可选。
+
+Agent 也有一个承载其记忆的身份，它在你[创建 Agent](/features/memorylake/api-reference/agents/create-agent) 时被一并创建。**那个身份是 Agent 的实现细节，Actor API 不承认它**：按 id 获取会返回 `404`，它也不会出现在 actor 列表中。要访问 Agent 的记忆，请通过 [Agent](/features/memorylake/api-reference/agents/overview) 相关端点、用 Agent 自己的 id。
+
+<Note>
+  如果你此前通过 Agent 的身份 actor 读取它的记忆，请改用 agent id。记忆是同一份，只是改用和其他地方一致的称呼方式。
+</Note>
 
 ## 工作流程
 

@@ -19,9 +19,6 @@ POST /openapi/memorylake/api/v3/actors
 调用方定义的外部标识符。在您的账户中必须唯一。使用此字段将 Actor 映射到您自己系统中的身份。
 </ParamField>
 
-<ParamField body="actor_type" type="string">
-Actor 类型。可选值：`HUMAN`（默认，终端用户）或 `ASSISTANT`（AI Agent — 通常在创建 Agent 时自动生成）。
-</ParamField>
 
 <ParamField body="display_name" type="string" required>
 人类可读的名称，显示在控制台中并在 API 响应中返回。
@@ -59,7 +56,6 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors' \
 <Expandable title="Actor">
   <ResponseField name="id" type="string">Actor ID</ResponseField>
   <ResponseField name="custom_id" type="string">调用方定义的外部标识符</ResponseField>
-  <ResponseField name="actor_type" type="string">Actor 类型：`HUMAN` 或 `ASSISTANT`</ResponseField>
   <ResponseField name="display_name" type="string">人类可读的显示名称</ResponseField>
   <ResponseField name="description" type="string">Actor 描述</ResponseField>
   <ResponseField name="metadata" type="object">调用方定义的元数据</ResponseField>
