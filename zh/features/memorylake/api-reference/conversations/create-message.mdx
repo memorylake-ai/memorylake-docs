@@ -36,7 +36,7 @@ POST /openapi/memorylake/api/v3/conversations/{conversationId}/messages
 </ParamField>
 
 <ParamField body="agent_id" type="string">
-发送这条消息的 Agent 标识符，用于替代 `actor_id`。两者必须且只能提供一个。
+发送这条消息的 Agent 标识符，用于替代 `actor_id`。两者必须且只能提供一个——Agent 一律用 agent id 指名，不要用 actor id。
 </ParamField>
 
 <ParamField body="timestamp" type="string">

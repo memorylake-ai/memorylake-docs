@@ -84,6 +84,16 @@ Playground 对话和 Agent 会话会被自动分析——提取持久事实，�
 
 两者都经过提取 → 溯源 → 冲突校验 → 检索的流程；区别在于作用域和治理方式。参见[个人 AI 记忆](/zh/scenarios/personal-ai-memory)和[团队知识库](/zh/scenarios/team-knowledge-base)场景。
 
+## 这条记忆属于谁
+
+每条事实都属于一个主体，主体决定了您从哪里把它读回来。
+
+- **某个人** —— 事实跟着这个 Actor 跨越工作空间内的所有项目。*"Jane 偏好深色模式"*
+- **某个 Agent** —— 事实同样跟着它走，用 **agent id** 读取。*"这个 Agent 用法语回答"*
+- **某个项目** —— 事实留在项目里，不论由谁贡献。*"Q1 营收为 1250 万美元"*
+
+人和 Agent 是两类独立的主体，但形态相同：对人的事实能做的操作，对 Agent 的事实同样能做；而 Agent 一律用 agent id 指名。请求与响应结构见 [Actor 事实](/zh/features/memorylake/api-reference/facts/list-actor-facts)，两边共用同一套。
+
 ## 通过程序使用记忆
 
 ```bash

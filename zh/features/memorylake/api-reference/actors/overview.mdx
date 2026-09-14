@@ -22,21 +22,15 @@ Actor API 面向的是使用您的应用的**人**。您在这里创建的 actor
 3. **使用** actor 的 ID [追加消息](/zh/features/memorylake/api-reference/conversations/create-message)到会话中
 4. **查询** actor 积累的事实，通过 [Actor 事实](/zh/features/memorylake/api-reference/facts/list-actor-facts)
 
-## 事实存储在哪里
+## Actor 的事实
 
-MemoryLake 在三个范围上保存事实。一条事实属于哪个范围，决定了您从哪里把它读回来：
+Actor 会在工作空间内的所有项目中积累事实——*"Jane 偏好深色模式"*——并且这些事实跟着它跨项目走。这正是让每个人在您的应用里拥有各自记忆的机制。读取路径：
 
-| 范围 | 记住的是 | 从哪里读 |
-|---|---|---|
-| **Actor 事实** | 某个人，跨工作空间内的所有项目。*"Jane 偏好深色模式"* | `/workspaces/{workspaceId}/actors/{actorId}/facts` |
-| **Agent 事实** | 某个 Agent，跨工作空间内的所有项目。*"这个 Agent 用法语回答"* | `/workspaces/{workspaceId}/agents/{agentId}/facts` |
-| **项目事实** | 某一个项目，不论由谁贡献。*"Q1 营收为 1250 万美元"* | `/workspaces/{workspaceId}/projects/{projectId}/memories/facts` |
+```
+/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts
+```
 
-Actor 与 Agent 的事实会跟着各自的主体跨项目走——这正是让每个人、每个 Agent 在您的应用里各自拥有记忆的机制。项目事实则留在项目里。
-
-<Note>
-  **Agent 的事实要用它的 agent id、在 agent 上读**，不是通过上面的 actor 端点。两条路径是对称的：对人的事实能做的操作，对 Agent 的事实同样能做，区别只在 id 和路径。
-</Note>
+范围落在项目而不是人身上的事实，会留在项目里。各范围之间的关系见[记忆](/zh/features/memorylake/memories/overview)。
 
 ## 端点
 

@@ -19,20 +19,18 @@ Agents are created globally, then [bound](/features/memorylake/api-reference/age
 
 ### Agent Memory
 
-An agent accumulates facts of its own, the way a person does — what it has learned, and how it is
-meant to behave. They live on the agent, addressed by its agent id within a workspace:
+An agent accumulates facts of its own — what it has learned, and how it is meant to behave. They
+live on the agent, read by its agent id within a workspace:
 
 ```
 /api/v3/workspaces/{workspaceId}/agents/{agentId}/facts
 ```
 
-The path mirrors the one for a person's facts, so the same operations are available on both: list,
-read, add, update, forget, and resolve conflicts. See [Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts)
-for the request and response shapes — an agent's facts use the same ones.
+The operations match the ones for a person's facts exactly — list, read, add, update, forget,
+resolve conflicts — so [Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts)
+documents the shapes for both. For how agent facts sit alongside the other scopes, see
+[Memories](/features/memorylake/memories/overview).
 
-<Note>
-  Read an agent's facts by its **agent id**. An agent is not addressable through the Actor API.
-</Note>
 
 ### A2A Protocol
 

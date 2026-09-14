@@ -34,7 +34,7 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/search
 </ParamField>
 
 <ParamField body="agent_ids" type="array">
-可选。要一并搜索其记忆的 Agent ID，与 `actor_ids` 并列。两者是合并生效的：这里指名 Agent、那里指名 Actor，两边都会被搜索。
+要搜索其记忆的 Agent ID。用 agent id 在这里指名；不要放进 `actor_ids`。两个列表都给出时会一并搜索。
 </ParamField>
 
 <ParamField body="memory_types" type="array of strings">

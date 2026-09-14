@@ -32,7 +32,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/facts
 </ParamField>
 
 <ParamField query="agent_ids" type="array of strings">
-可选。要返回其事实的 Agent ID，与 `actor_ids` 并列，两者合并生效。
+要返回其事实的 Agent ID。用 agent id 在这里指名；不要放进 `actor_ids`。
 </ParamField>
 
 <ParamField query="fact_fuzzy" type="string">

@@ -27,24 +27,18 @@ agent's id. Nothing belonging to an agent is returned here, and an id that is no
 3. **Use** the actor's ID when [appending messages](/features/memorylake/api-reference/conversations/create-message) to conversations
 4. **Query** the actor's accumulated facts via [Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts)
 
-## Where facts are stored
+## An actor's facts
 
-MemoryLake keeps facts at three scopes. Which one a fact belongs to decides where you read it back:
+An actor accumulates facts across every project in a workspace — *"Jane prefers dark mode"* — and
+they follow the actor from project to project. That is what gives each person a memory of their own
+throughout your application. Read them at:
 
-| Scope | What it remembers | Where you read it |
-|---|---|---|
-| **Actor facts** | A person, across every project in a workspace. *"Jane prefers dark mode"* | `/workspaces/{workspaceId}/actors/{actorId}/facts` |
-| **Agent facts** | An agent, across every project in a workspace. *"This agent answers in French"* | `/workspaces/{workspaceId}/agents/{agentId}/facts` |
-| **Project facts** | One project, whoever contributed it. *"Q1 revenue was $12.5M"* | `/workspaces/{workspaceId}/projects/{projectId}/memories/facts` |
+```
+/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts
+```
 
-Actor and agent facts follow their subject across projects — that is what gives each person, and each
-agent, a memory of its own throughout your application. Project facts stay with the project.
-
-<Note>
-  **An agent's facts are read on the agent, by its agent id** — not through the actor endpoints above.
-  The two paths are symmetrical, so anything you can do with a person's facts you can do with an
-  agent's; only the id and the path differ.
-</Note>
+Facts scoped to a project rather than to a person stay with the project. For how the scopes relate,
+see [Memories](/features/memorylake/memories/overview).
 
 ## Endpoints
 

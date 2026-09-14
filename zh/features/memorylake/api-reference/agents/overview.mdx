@@ -19,17 +19,14 @@ Agent 全局创建后，[绑定](/zh/features/memorylake/api-reference/agents/bi
 
 ### Agent 记忆
 
-Agent 和人一样会积累自己的事实——它学到了什么、应当如何表现。这些事实挂在 Agent 上，在某个工作空间内用它的 agent id 访问：
+Agent 会积累自己的事实——它学到了什么、应当如何表现。这些事实挂在 Agent 上，在工作空间内用它的 agent id 读取：
 
 ```
 /api/v3/workspaces/{workspaceId}/agents/{agentId}/facts
 ```
 
-这条路径与人的事实路径是对称的，因此两边可用的操作相同：列出、读取、添加、更新、遗忘，以及处理冲突。请求与响应的结构见 [Actor 事实](/zh/features/memorylake/api-reference/facts/list-actor-facts)——Agent 的事实用的是同一套。
+可用操作与人的事实完全一致——列出、读取、添加、更新、遗忘、处理冲突——因此结构文档见 [Actor 事实](/zh/features/memorylake/api-reference/facts/list-actor-facts)，两边共用。Agent 事实与其他范围的关系见[记忆](/zh/features/memorylake/memories/overview)。
 
-<Note>
-  读取 Agent 的事实要用它的 **agent id**。Agent 不能通过 Actor API 访问。
-</Note>
 
 ### A2A 协议
 

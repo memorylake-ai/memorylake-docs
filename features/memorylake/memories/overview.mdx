@@ -7,6 +7,7 @@ description: "How MemoryLake extracts, stores, retrieves, and maintains long-ter
 
 Memories are the heart of MemoryLake: structured, durable facts distilled from your conversations and documents. Unlike a chat log (noisy, unbounded) or a document chunk (raw text), a memory is an *extracted* statement worth keeping — deduplicated, searchable, traceable to its source, and checked for consistency.
 
+
 ## Where Memories Come From
 
 <CardGroup cols={2}>
@@ -84,6 +85,18 @@ The same machinery serves two different kinds of knowledge:
 
 Both flow through extraction → trace → conflict-checking → retrieval; the difference is scope and governance. See the [Personal AI Memory](/scenarios/personal-ai-memory) and [Team Knowledge Base](/scenarios/team-knowledge-base) scenarios.
 
+## Whose memory is it
+
+Every fact belongs to one subject, and that decides where you read it back.
+
+- **A person** — facts follow the actor across every project in a workspace. *"Jane prefers dark mode"*
+- **An agent** — facts follow the agent the same way, read by its **agent id**. *"This agent answers in French"*
+- **A project** — facts stay with the project, whoever contributed them. *"Q1 revenue was $12.5M"*
+
+People and agents are separate subjects with the same shape: anything you can do with a person's
+facts you can do with an agent's, and an agent is always named by its agent id. See
+[Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts) for the request and
+response shapes, which both use.
 ## Working with Memories Programmatically
 
 ```bash
