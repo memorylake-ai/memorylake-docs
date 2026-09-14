@@ -33,6 +33,14 @@ Token from a previous response to fetch the next page of results
 Fuzzy search by agent name
 </ParamField>
 
+<ParamField query="agent_type" type="string">
+Filter by whether the platform hosts the agent's runtime. Omit to get both. A binding whose agent no longer has a record has no type and is left out of a filtered page, the same way the name filter leaves it out
+</ParamField>
+
+<ParamField query="status" type="string">
+Filter by whether the agent still exists. Omit to get both
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents?page_size=20' \

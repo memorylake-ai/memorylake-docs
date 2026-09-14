@@ -10,11 +10,10 @@ An **Actor** represents a participant identity in MemoryLake. Every message in a
 The Actor API works with the people using your application. An actor you create here is a person —
 there is nothing else to choose.
 
-An agent also has an identity that carries its memories, created for it when you
-[create an Agent](/features/memorylake/api-reference/agents/create-agent). That identity is an
-implementation detail of the agent and **the Actor API does not acknowledge it**: fetching it by id
-answers `404`, and it does not appear in actor listings. Address an agent's memories through the
-[Agent](/features/memorylake/api-reference/agents/overview) endpoints, by the agent's own id.
+**An agent is not reachable through this API.** Agents have memories of their own, but you address
+them through the [Agent](/features/memorylake/api-reference/agents/overview) endpoints, using the
+agent's id. Nothing belonging to an agent is returned here, and an id that is not an actor's answers
+`404`.
 
 <Note>
   If you previously read an agent's memories through its identity actor, switch to the agent id. It
@@ -28,14 +27,24 @@ answers `404`, and it does not appear in actor listings. Address an agent's memo
 3. **Use** the actor's ID when [appending messages](/features/memorylake/api-reference/conversations/create-message) to conversations
 4. **Query** the actor's accumulated facts via [Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts)
 
-## Actor Facts vs Project Facts
+## Where facts are stored
 
-MemoryLake stores facts at two scopes:
+MemoryLake keeps facts at three scopes. Which one a fact belongs to decides where you read it back:
 
-- **Actor Facts** — knowledge about a specific person or agent, accumulated across all projects in a workspace. Example: *"Jane prefers dark mode"*
-- **Project Facts** — knowledge scoped to a specific project. Example: *"Q1 revenue was $12.5M"*
+| Scope | What it remembers | Where you read it |
+|---|---|---|
+| **Actor facts** | A person, across every project in a workspace. *"Jane prefers dark mode"* | `/workspaces/{workspaceId}/actors/{actorId}/facts` |
+| **Agent facts** | An agent, across every project in a workspace. *"This agent answers in French"* | `/workspaces/{workspaceId}/agents/{agentId}/facts` |
+| **Project facts** | One project, whoever contributed it. *"Q1 revenue was $12.5M"* | `/workspaces/{workspaceId}/projects/{projectId}/memories/facts` |
 
-When an actor participates in conversations across multiple projects, their actor facts follow them — enabling **per-user memory** across your entire application.
+Actor and agent facts follow their subject across projects — that is what gives each person, and each
+agent, a memory of its own throughout your application. Project facts stay with the project.
+
+<Note>
+  **An agent's facts are read on the agent, by its agent id** — not through the actor endpoints above.
+  The two paths are symmetrical, so anything you can do with a person's facts you can do with an
+  agent's; only the id and the path differ.
+</Note>
 
 ## Endpoints
 

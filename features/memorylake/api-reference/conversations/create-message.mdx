@@ -35,6 +35,10 @@ Accepted `block_type` values: `TEXT`, `FILE`, `IMAGE`, `THINKING`, `TOOL_USE`, `
 ID of the actor sending this message. Should reference an actor participating in the conversation.
 </ParamField>
 
+<ParamField body="agent_id" type="string">
+Identifier of the agent that sent this message, in place of `actor_id`. Provide exactly one of the two.
+</ParamField>
+
 <ParamField body="timestamp" type="string">
 ISO 8601 timestamp for when the message originally occurred. Use this when ingesting historical conversations so MemoryLake preserves the original timeline.
 </ParamField>

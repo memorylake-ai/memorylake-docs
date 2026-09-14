@@ -58,7 +58,7 @@ description: "理解和处理 API 错误"
 </ResponseField>
 
 <ResponseField name="data.stage" type="string">
-  `capability` —— 调用方在任何地方都没有这个权限，只在某个资源上授予它是不够的。`instance` —— 调用方持有它，但不在本次请求指名的那个资源上。
+  决定您该向管理员提哪种请求。`capability` —— 去要这项权限本身；您在任何地方都没有它，只放开这一个资源是不够的。`instance` —— 去要这个资源的访问范围；这项权限您在别处已经有了。
 </ResponseField>
 
 <ResponseField name="data.required_any_of" type="array">

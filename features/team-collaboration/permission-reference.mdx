@@ -47,10 +47,10 @@ Permissions live on seven resources. Every capability below belongs to one of th
     Your tenant-level data boundary — conversations, workspace-scoped search, and the right to bring actors and agents into it. All `workspace:*` capabilities live here.
   </Card>
   <Card title="Actor in a workspace" icon="user-check">
-    One actor's membership of one workspace, and the facts it accumulates there. Granted on the membership itself, not on the workspace. All `workspace_actor:*` capabilities live here.
+    What one actor may do inside one workspace, and the facts it accumulates there. Granted for that actor in that workspace — not for the workspace as a whole. All `workspace_actor:*` capabilities live here.
   </Card>
   <Card title="Agent in a workspace" icon="robot">
-    One agent's membership of one workspace — its facts there, and A2A operations run as it. Granted on the membership itself. All `workspace_agent:*` capabilities live here.
+    What one agent may do inside one workspace — its facts there, and A2A operations run as it. Granted for that agent in that workspace. All `workspace_agent:*` capabilities live here.
   </Card>
   <Card title="Actor" icon="user">
     Individual memory carriers — the people whose facts accumulate across projects. An agent's memories are addressed on the agent, not here. All `actor:*` capabilities live here.
@@ -333,7 +333,7 @@ Lets you add an existing actor to a workspace so they can participate in convers
 
 **Identifier:** `workspace_actor:create`
 
-**Level:** `instance` — granted on the binding between an actor and a workspace.
+**Level:** `instance` — granted per actor, in one workspace.
 
 ---
 
@@ -345,7 +345,7 @@ Lets you unbind an actor from a workspace — they stop participating, but their
 
 **Identifier:** `workspace_actor:delete`
 
-**Level:** `instance` — granted on the binding between an actor and a workspace.
+**Level:** `instance` — granted per actor, in one workspace.
 
 ---
 
@@ -362,7 +362,7 @@ Lets you view the full content of a specific actor fact.
 
 **Identifier:** `workspace_actor:fact_read`
 
-**Level:** `instance` — granted on the binding between an actor and a workspace.
+**Level:** `instance` — granted per actor, in one workspace.
 
 ---
 
@@ -374,7 +374,7 @@ Lets you edit the content of an actor fact.
 
 **Identifier:** `workspace_actor:fact_modify`
 
-**Level:** `instance` — granted on the binding between an actor and a workspace.
+**Level:** `instance` — granted per actor, in one workspace.
 
 ---
 
@@ -386,7 +386,7 @@ Lets you permanently remove an actor fact.
 
 **Identifier:** `workspace_actor:fact_delete`
 
-**Level:** `instance` — granted on the binding between an actor and a workspace.
+**Level:** `instance` — granted per actor, in one workspace.
 
 ---
 
@@ -403,7 +403,7 @@ Lets you add an existing agent to a workspace so it can serve conversations.
 
 **Identifier:** `workspace_agent:create`
 
-**Level:** `instance` — granted on the binding between an agent and a workspace.
+**Level:** `instance` — granted per agent, in one workspace.
 
 ---
 
@@ -415,7 +415,7 @@ Lets you unbind an agent from a workspace — it stops serving conversations, bu
 
 **Identifier:** `workspace_agent:delete`
 
-**Level:** `instance` — granted on the binding between an agent and a workspace.
+**Level:** `instance` — granted per agent, in one workspace.
 
 ---
 
@@ -429,7 +429,7 @@ Lets you initiate and participate in Agent-to-Agent (A2A) protocol operations wi
 
 **Identifier:** `workspace_agent:a2a`
 
-**Level:** `instance` — granted on the binding between an agent and a workspace.
+**Level:** `instance` — granted per agent, in one workspace.
 
 ---
 
@@ -902,9 +902,8 @@ Lets you permanently delete files and folders, one or in bulk.
   <Accordion title="My API call came back with 403 ACCESS_DENIED">
     The response body names the permission, so you do not have to work it out. Read `data.denied[].permission`
     for the identifier, and `data.required_any_of` for what would have satisfied it — granting any one of those
-    entries is enough. `data.stage` tells you which ask to make: `capability` means the role itself is missing
-    the permission, `instance` means the role has it but this particular workspace or project is outside your
-    resource scope. See [Errors](/features/memorylake/api-reference/errors) for the full body.
+    entries is enough. `data.stage` tells you which ask to make: `capability` — ask for the permission itself;
+  `instance` — ask for this workspace or project to be added to your access. See [Errors](/features/memorylake/api-reference/errors) for the full body.
   </Accordion>
 
   <Accordion title="I asked my admin for a permission — how do they actually grant it?">

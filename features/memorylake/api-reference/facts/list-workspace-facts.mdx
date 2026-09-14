@@ -31,6 +31,10 @@ Project IDs to include; comma-separated (e.g. `proj-a,proj-b`)
 Actor IDs to include; comma-separated (e.g. `actor-a,actor-b`)
 </ParamField>
 
+<ParamField query="agent_ids" type="array of strings">
+Optional agent IDs whose facts to return, alongside any `actor_ids`. The two are combined.
+</ParamField>
+
 <ParamField query="fact_fuzzy" type="string">
 Filter facts by content substring
 </ParamField>

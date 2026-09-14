@@ -27,6 +27,10 @@ Custom identifier for external system integration. Must be unique across your ag
 Agent description
 </ParamField>
 
+<ParamField body="agent_type" type="string">
+Whether the platform hosts the agent's runtime. `INTERNAL` (the default) runs the agent here and supports versions, forking and A2A. `EXTERNAL` registers memory only — the agent runs on your side, so every runtime field below (`system_prompt`, `model`, `model_settings`, `capabilities`, `policies`, `output`, `runtime_bindings`, `subagents`, `skills`) is ignored.
+</ParamField>
+
 <ParamField body="metadata" type="object">
 Arbitrary key-value pairs for storing additional agent information
 </ParamField>

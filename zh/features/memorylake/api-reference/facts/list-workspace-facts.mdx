@@ -31,6 +31,10 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/facts
 要包含的 Actor ID；以逗号分隔（例如 `actor-a,actor-b`）
 </ParamField>
 
+<ParamField query="agent_ids" type="array of strings">
+可选。要返回其事实的 Agent ID，与 `actor_ids` 并列，两者合并生效。
+</ParamField>
+
 <ParamField query="fact_fuzzy" type="string">
 按内容子串筛选事实
 </ParamField>

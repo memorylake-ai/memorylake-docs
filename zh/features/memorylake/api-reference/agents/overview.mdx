@@ -17,6 +17,20 @@ Agent 的配置是版本化的。当你修改模型、系统提示词或策略�
 
 Agent 全局创建后，[绑定](/zh/features/memorylake/api-reference/agents/bind-agent)到特定工作空间。Agent 只能在其绑定的工作空间内运作。
 
+### Agent 记忆
+
+Agent 和人一样会积累自己的事实——它学到了什么、应当如何表现。这些事实挂在 Agent 上，在某个工作空间内用它的 agent id 访问：
+
+```
+/api/v3/workspaces/{workspaceId}/agents/{agentId}/facts
+```
+
+这条路径与人的事实路径是对称的，因此两边可用的操作相同：列出、读取、添加、更新、遗忘，以及处理冲突。请求与响应的结构见 [Actor 事实](/zh/features/memorylake/api-reference/facts/list-actor-facts)——Agent 的事实用的是同一套。
+
+<Note>
+  读取 Agent 的事实要用它的 **agent id**。Agent 不能通过 Actor API 访问。
+</Note>
+
 ### A2A 协议
 
 MemoryLake agent 可通过标准的 [A2A（Agent 对 Agent）协议](/zh/features/memorylake/api-reference/a2a/overview)访问。使用任何 A2A 兼容客户端向 agent 发送消息，通过 MemoryLake 的 `metadata.memorylake` 扩展提供记忆上下文（actor 身份、项目绑定、模型覆盖）。

@@ -27,6 +27,10 @@ Agent 名称
 Agent 描述
 </ParamField>
 
+<ParamField body="agent_type" type="string">
+平台是否托管这个 Agent 的运行时。`INTERNAL`（默认）在平台内运行，支持版本、fork 与 A2A；`EXTERNAL` 只登记记忆——Agent 运行在您那边，因此下面所有运行时字段都不适用。
+</ParamField>
+
 <ParamField body="metadata" type="object">
 用于存储 Agent 附加信息的任意键值对
 </ParamField>

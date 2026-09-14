@@ -33,6 +33,14 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents
 按 Agent 名称模糊搜索
 </ParamField>
 
+<ParamField query="agent_type" type="string">
+按平台是否托管该 Agent 的运行时过滤：`INTERNAL` 或 `EXTERNAL`。
+</ParamField>
+
+<ParamField query="status" type="string">
+按绑定状态过滤：`ACTIVE`（可读写）或 `INACTIVE`（绑定还在，但它指向的 Agent 已被删除）。
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/agents?page_size=20' \

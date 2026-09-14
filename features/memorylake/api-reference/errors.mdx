@@ -61,8 +61,9 @@ response without guessing:
 </ResponseField>
 
 <ResponseField name="data.stage" type="string">
-  `capability` — the caller does not hold this permission anywhere, so granting it on one resource
-  will not help. `instance` — the caller holds it, but not on the resource this request named.
+  Which request to make of your admin. `capability` — ask for the permission itself; you do not have
+  it anywhere, so widening your access to this one resource will not help. `instance` — ask for access
+  to this resource; you already hold the permission elsewhere.
 </ResponseField>
 
 <ResponseField name="data.required_any_of" type="array">

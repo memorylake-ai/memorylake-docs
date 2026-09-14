@@ -35,6 +35,10 @@ POST /openapi/memorylake/api/v3/conversations/{conversationId}/messages
 发送此消息的 Actor ID。应引用参与该会话的 Actor。
 </ParamField>
 
+<ParamField body="agent_id" type="string">
+发送这条消息的 Agent 标识符，用于替代 `actor_id`。两者必须且只能提供一个。
+</ParamField>
+
 <ParamField body="timestamp" type="string">
 消息原始发生时间的 ISO 8601 时间戳。在导入历史会话时使用此字段，以便 MemoryLake 保留原始时间线。
 </ParamField>

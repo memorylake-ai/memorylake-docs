@@ -33,6 +33,10 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/search
 将搜索限定到与特定 Actor 关联的记忆
 </ParamField>
 
+<ParamField body="agent_ids" type="array">
+可选。要一并搜索其记忆的 Agent ID，与 `actor_ids` 并列。两者是合并生效的：这里指名 Agent、那里指名 Actor，两边都会被搜索。
+</ParamField>
+
 <ParamField body="memory_types" type="array of strings">
 按记忆类型筛选结果。可接受的值：`document`、`fact`。省略时将搜索所有类型。
 </ParamField>
