@@ -30,7 +30,7 @@ You don't have to memorize anything. MemoryLake makes missing permissions visibl
     - **Opening a URL directly** redirects you back, or shows a "no permission" page.
   </Card>
   <Card title="When calling the API" icon="code">
-    - Requests are rejected with **HTTP 403** and an `INSUFFICIENT_PERMISSION` error code.
+    - Requests are rejected with **HTTP 403** and an `ACCESS_DENIED` error code.
     - The error response tells you which permission is missing.
     - See [Errors](/features/memorylake/api-reference/errors) for the full error envelope.
   </Card>
@@ -53,7 +53,7 @@ Permissions live on seven resources. Every capability below belongs to one of th
     One agent's membership of one workspace — its facts there, and A2A operations run as it. Granted on the membership itself. All `workspace_agent:*` capabilities live here.
   </Card>
   <Card title="Actor" icon="user">
-    Individual memory carriers — the people and assistants whose facts accumulate across projects. All `actor:*` capabilities live here.
+    Individual memory carriers — the people whose facts accumulate across projects. An agent's memories are addressed on the agent, not here. All `actor:*` capabilities live here.
   </Card>
   <Card title="Agent" icon="robot">
     AI agent definitions — model, system prompt, capabilities, and versioned configurations. All `agent:*` capabilities live here.
@@ -503,7 +503,7 @@ Lets you define a new agent with its model, system prompt, and capabilities. Cre
 
 ### View an agent
 
-Lets you open an agent and see its configuration — model, system prompt, capabilities, and policies.
+Lets you open an agent and see its configuration — model, system prompt, capabilities, and policies. **Its version history comes with it**: listing past versions and opening any one of them are part of reading the agent, not permissions of their own.
 
 **Without it:** agent rows appear faded; clicking does nothing.
 
@@ -515,7 +515,7 @@ Lets you open an agent and see its configuration — model, system prompt, capab
 
 ### Edit an agent's identity
 
-Lets you update an agent's identity fields — name, description, and other top-level settings that apply across all versions.
+Lets you update an agent's identity fields — name, description, and other top-level settings that apply across all versions. **Publishing a new version is the same permission**: a version is a snapshot of the agent, so changing what it will be next is changing the agent.
 
 **Without it:** "Edit" options on the agent's identity are greyed out.
 
@@ -541,41 +541,7 @@ Lets you permanently remove an agent and all its versions.
 
 ---
 
-### List agent versions
 
-Lets you see the version history of an agent — each past configuration snapshot.
-
-**Without it:** the versions area loads empty.
-
-**Identifier:** `agent:read`
-
-**Level:** `instance` — granted on a specific agent.
-
----
-
-### Create an agent version
-
-Lets you publish a new version of an agent — a snapshot of updated model, prompt, or capability settings.
-
-**Without it:** the "Publish version" action is greyed out.
-
-**Identifier:** `agent:modify`
-
-**Level:** `instance` — granted on a specific agent.
-
----
-
-### View an agent version
-
-Lets you inspect the details of a specific agent version — its model, prompt, and capability configuration at that point in time.
-
-**Without it:** version rows appear faded; clicking does nothing.
-
-**Identifier:** `agent:read`
-
-**Level:** `instance` — granted on a specific agent.
-
----
 
 ## Working with projects
 
@@ -933,8 +899,12 @@ Lets you permanently delete files and folders, one or in bulk.
     You need both `agent:read` on the agent **and** `workspace_agent:create` on the workspace. Check that you have both.
   </Accordion>
 
-  <Accordion title="My API call came back with 403 INSUFFICIENT_PERMISSION">
-    The error response names which permission your credential is missing. Find it in the relevant section above, then ask your admin to grant that permission to the role tied to your API key.
+  <Accordion title="My API call came back with 403 ACCESS_DENIED">
+    The response body names the permission, so you do not have to work it out. Read `data.denied[].permission`
+    for the identifier, and `data.required_any_of` for what would have satisfied it — granting any one of those
+    entries is enough. `data.stage` tells you which ask to make: `capability` means the role itself is missing
+    the permission, `instance` means the role has it but this particular workspace or project is outside your
+    resource scope. See [Errors](/features/memorylake/api-reference/errors) for the full body.
   </Accordion>
 
   <Accordion title="I asked my admin for a permission — how do they actually grant it?">

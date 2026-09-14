@@ -48,7 +48,7 @@ POST /openapi/memorylake/api/v3/conversations/{conversationId}/messages
 </ParamField>
 
 <ParamField body="parent_message_id" type="string|null" required>
-本条消息在会话中的前驱消息 ID，也就是紧挨在它前面的那一条。它表达的是**顺序**，不是回复关系：即使本条并不是对上一条的回复，也要填上一条的 ID。顺序由调用方声明，服务端不会替你猜。
+本条消息在会话中的前驱消息 ID，也就是紧挨在它前面的那一条。它表达的是**顺序**，不是回复关系：即使本条并不是对上一条的回复，也要填上一条的 ID。顺序由调用方声明，服务端不会替您猜。
 
 会话的第一条消息没有前驱，填 `null`。之后的每一条都必须填一个真实的 ID —— 上一次追加返回的 `id`，或者续写已有会话时读到的 `current_message_id`。
 

@@ -71,8 +71,9 @@ response without guessing:
 </ResponseField>
 
 <Note>
-  A refusal never says whether the resource exists. A 403 and a 404 are deliberately not
-  distinguishable from outside for something you may not reach.
+  A refusal does not tell you whether the resource exists — a `403` on a read means "not for you"
+  and says nothing more. Deleting is the exception: it answers `200` whether the resource was
+  removed or was never there, so a repeated delete is safe to retry.
 </Note>
 
 ## Error Codes

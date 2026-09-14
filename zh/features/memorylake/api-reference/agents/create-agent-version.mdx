@@ -7,7 +7,7 @@ description: "使用更新的配置创建 Agent 的新版本"
 POST /openapi/memorylake/api/v3/agents/{id}/versions
 ```
 
-为指定 Agent 创建新版本。新版本使用合并语义：仅你提供的字段会覆盖上一版本的值。省略的字段将从当前版本原样继承。
+为指定 Agent 创建新版本。新版本使用合并语义：仅您提供的字段会覆盖上一版本的值。省略的字段将从当前版本原样继承。
 
 这是更新 Agent 的模型、能力、策略、子 Agent、技能、系统提示词和其他配置的方式。Agent 的 `version` 字段会自动推进到新创建的版本。
 
