@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces
 Returns a paginated list of workspaces accessible to the authenticated user. You can filter results by name using fuzzy search and control pagination with continuation tokens.
 
 <Note>
-**Permission required:** `workspace:list`
+**Permission required:** `workspace:read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Query Parameters

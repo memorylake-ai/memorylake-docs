@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents
 Returns a paginated list of all agents that are bound to the specified workspace. Bound agents are available for A2A communication and task execution within the workspace.
 
 <Note>
-**Permission required:** `workspace:agent_list`
+**Permission required:** `workspace_agent:read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Path Parameters

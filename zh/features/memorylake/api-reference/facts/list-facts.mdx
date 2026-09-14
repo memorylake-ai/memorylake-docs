@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/mem
 返回项目中存储的事实分页列表。事实是从会话中自动提取的结构化知识片段。您可以使用 `fact_fuzzy` 按内容筛选事实。
 
 <Note>
-**所需权限：** `project:mem_list`
+**所需权限：** `project:mem_read` —— 你打不开的行不会出现在列表里，列表本身不会被拒绝
 </Note>
 
 ### 路径参数

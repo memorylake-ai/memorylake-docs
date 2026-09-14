@@ -12,7 +12,7 @@ Returns facts across the given projects and/or actors in a workspace, newest fir
 At least one `project_ids` or `actor_ids` entry is required, and the two combined must reference at most 50 distinct projects/actors.
 
 <Note>
-**Permission required:** `project:mem_list`
+**Permission required:** `project:mem_read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Path Parameters

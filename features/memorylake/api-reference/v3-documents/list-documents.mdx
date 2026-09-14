@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/mem
 Returns documents that have been imported into a project. Uses cursor pagination: if `continuation_token` is returned, pass it back on the next request to fetch the next page. When the token is absent from the response, you have reached the end.
 
 <Note>
-**Permission required:** `project:doc_list`
+**Permission required:** `project:doc_read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Path Parameters

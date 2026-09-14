@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects
 Returns a paginated list of projects in the specified workspace. You can filter results by name using a fuzzy match and control pagination with `page_size` and `continuation_token`.
 
 <Note>
-**Permission required:** `project:list`
+**Permission required:** `project:read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Path Parameters

@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/agents
 Returns a paginated list of all agents in your account. You can search by name with `name_fuzzy` and control pagination with `page_size` and `continuation_token`.
 
 <Note>
-**Permission required:** `agent:list`
+**Permission required:** `agent:read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Query Parameters

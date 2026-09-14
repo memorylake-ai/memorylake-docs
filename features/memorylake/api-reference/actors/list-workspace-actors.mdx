@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors
 Returns a paginated list of actors that are bound to the specified workspace. Only bound actors can participate in conversations within the workspace's projects.
 
 <Note>
-**Permission required:** `workspace:actor_list`
+**Permission required:** `workspace_actor:read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Path Parameters

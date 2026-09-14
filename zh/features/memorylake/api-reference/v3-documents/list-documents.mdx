@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/mem
 返回已导入项目的文档。使用游标分页：如果响应中返回了 `continuation_token`，将其传入下一次请求以获取下一页。当响应中不包含该 token 时，表示已到达最后一页。
 
 <Note>
-**所需权限：** `project:doc_list`
+**所需权限：** `project:doc_read` —— 你打不开的行不会出现在列表里，列表本身不会被拒绝
 </Note>
 
 ### 路径参数

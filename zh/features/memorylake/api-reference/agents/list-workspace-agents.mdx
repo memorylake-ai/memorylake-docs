@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents
 返回绑定到指定工作空间的所有 Agent 的分页列表。已绑定的 Agent 可在工作空间内进行 A2A 通信和任务执行。
 
 <Note>
-**所需权限：** `workspace:agent_list`
+**所需权限：** `workspace_agent:read` —— 你打不开的行不会出现在列表里，列表本身不会被拒绝
 </Note>
 
 ### 路径参数

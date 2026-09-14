@@ -12,7 +12,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/memorie
 您可以按解决状态筛选，仅显示需要关注的未解决冲突，或仅显示已解决的冲突以供审计。如需查看项目知识内部的冲突，请改用[列出记忆冲突](/zh/features/memorylake/api-reference/v3-conflicts/list-conflicts)。
 
 <Note>
-**所需权限：** `workspace:actor_fact_list`
+**所需权限：** `workspace_actor:fact_read` —— 你打不开的行不会出现在列表里，列表本身不会被拒绝
 </Note>
 
 ### 路径参数

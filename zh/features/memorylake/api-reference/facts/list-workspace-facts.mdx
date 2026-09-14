@@ -12,7 +12,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/facts
 `project_ids` 或 `actor_ids` 至少需要提供一项，且两者合计最多只能引用 50 个不同的项目/Actor。
 
 <Note>
-**所需权限：** `project:mem_list`
+**所需权限：** `project:mem_read` —— 你打不开的行不会出现在列表里，列表本身不会被拒绝
 </Note>
 
 ### 路径参数

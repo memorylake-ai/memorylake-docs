@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/mem
 Returns a paginated list of facts stored in a project. Facts are structured pieces of knowledge automatically extracted from conversations. You can filter facts by content with `fact_fuzzy`.
 
 <Note>
-**Permission required:** `project:mem_list`
+**Permission required:** `project:mem_read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Path Parameters
