@@ -16,7 +16,7 @@ Creates a new actor. Actors represent participants in conversations -- typically
 ### Request Body
 
 <ParamField body="custom_id" type="string" required>
-Caller-defined external identifier. Must be unique across your account. Use this to map actors to identities in your own system.
+Your own identifier for this actor — the one it already has in your system. Must be unique within your tenant. Pass `by_custom_id=true` on later requests to address the actor by it instead of by `id`. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
 </ParamField>
 
 

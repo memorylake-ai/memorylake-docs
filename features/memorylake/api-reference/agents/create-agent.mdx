@@ -20,7 +20,7 @@ Agent name
 </ParamField>
 
 <ParamField body="custom_id" type="string" required>
-Custom identifier for external system integration. Must be unique across your agents.
+Your own identifier for this agent — the one it already has in your system. Must be unique within your tenant. Pass `by_custom_id=true` on later requests to address the agent by it instead of by `id`. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
 </ParamField>
 
 <ParamField body="description" type="string">

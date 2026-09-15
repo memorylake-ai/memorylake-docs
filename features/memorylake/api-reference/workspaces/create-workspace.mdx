@@ -20,7 +20,7 @@ Workspace name
 </ParamField>
 
 <ParamField body="custom_id" type="string" required>
-Caller-defined unique identifier for external reference. Must be unique across all your workspaces.
+Your own identifier for this workspace — the one it already has in your system. Must be unique within your tenant. Pass `by_custom_id=true` on later requests to address the workspace by it instead of by `id`. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
 </ParamField>
 
 <ParamField body="description" type="string">

@@ -70,6 +70,29 @@ Error responses:
 }
 ```
 
+### Your own identifiers
+
+Every resource you create has two identifiers. `id` is minted here — a prefix and 32 hex characters,
+like `actor-7b5470549febfaca2acc5a3ebcaa2138`. `custom_id` is the one you bring: the identifier this
+thing already has in your system.
+
+Setting it means you do not have to store our id next to your record. Create an actor with the user
+id your application already uses, and from then on you can address that actor by it:
+
+```bash
+# create with the id your system already has
+curl -X POST .../api/v3/actors \
+  -d '{"custom_id": "user-4471", "display_name": "Jane"}'
+
+# and reach it by that id afterwards, with by_custom_id=true
+curl .../api/v3/actors/user-4471?by_custom_id=true
+```
+
+<Note>
+  **A `custom_id` must be unique within your tenant**, per kind of resource — two actors cannot share
+  one, though an actor and a project may. Deleting a resource frees its `custom_id` for reuse.
+</Note>
+
 ### Pagination
 
 List endpoints use continuation-token pagination:
