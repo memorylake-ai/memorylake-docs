@@ -7,7 +7,7 @@ description: "返回特定 Actor 的事实分页列表"
 GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts
 ```
 
-返回特定 Actor 范围内的事实分页列表。Actor 事实代表关于用户的知识，可在工作空间内的所有项目中访问。
+返回特定 Actor 范围内的事实分页列表。Actor 事实是该主体在工作空间内所有项目中积累下来的内容。这个 id 可能属于人，也可能属于 Agent；两种情况下读到的事实形态相同，可在工作空间内的所有项目中访问。
 
 <Note>
 **所需权限：** 人的记忆需要 `workspace_actor:fact_read`，Agent 的记忆需要 `workspace_agent:fact_read`——取决于该 id 属于哪一方

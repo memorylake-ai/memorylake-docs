@@ -7,7 +7,7 @@ description: "Returns a paginated list of facts for a specific actor"
 GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts
 ```
 
-Returns a paginated list of facts scoped to a specific actor. Actor facts represent knowledge about a user that is accessible across all projects within the workspace.
+Returns a paginated list of facts scoped to a specific actor. Actor facts are what the subject has accumulated across every project in the workspace. The id may be a person's or an agent's; the facts read the same either way.
 
 <Note>
 **Permission required:** `workspace_actor:fact_read` on a person's memories, or `workspace_agent:fact_read` on an agent's — whichever the id belongs to
