@@ -16,12 +16,9 @@ Creates a new actor. Actors represent participants in conversations -- typically
 ### Request Body
 
 <ParamField body="custom_id" type="string" required>
-Caller-defined external identifier. Must be unique across your account. Use this to map actors to identities in your own system.
+Your own identifier for this actor — the one it already has in your system. Must be unique within your tenant. Pass `by_custom_id=true` on later requests to address the actor by it instead of by `id`. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
 </ParamField>
 
-<ParamField body="actor_type" type="string">
-Actor type. Accepted values: `HUMAN` (default, an end user) or `ASSISTANT` (an AI agent — typically auto-created when you create an Agent).
-</ParamField>
 
 <ParamField body="display_name" type="string" required>
 Human-readable name shown in the console and returned in API responses.
@@ -64,7 +61,6 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors' \
 <Expandable title="Actor">
   <ResponseField name="id" type="string">Actor ID</ResponseField>
   <ResponseField name="custom_id" type="string">Caller-defined external identifier</ResponseField>
-  <ResponseField name="actor_type" type="string">Actor type: `HUMAN` or `ASSISTANT`</ResponseField>
   <ResponseField name="display_name" type="string">Human-readable display name</ResponseField>
   <ResponseField name="description" type="string">Actor description</ResponseField>
   <ResponseField name="tags" type="string[]">Labels attached to the actor. Empty when the actor has none</ResponseField>
@@ -79,7 +75,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/actors' \
 {
   "success": true,
   "data": {
-    "id": "act-a1b2c3d4e5f6",
+    "id": "actor-8d093c0578ffeb19f8fa10ea28ee9362",
     "custom_id": "user-ext-001",
     "actor_type": "HUMAN",
     "display_name": "Alice Chen",

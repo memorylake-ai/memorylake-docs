@@ -12,7 +12,7 @@ When MemoryLake extracts facts from conversations, it compares new facts against
 You can filter by resolution status to show only unresolved conflicts that need attention, or only resolved ones for audit purposes. For conflicts among an actor's personal facts, use [List Actor Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-actor-conflicts) instead.
 
 <Note>
-**Permission required:** `project:mem_list`
+**Permission required:** `project:mem_conflict_read`
 </Note>
 
 ### Path Parameters
@@ -41,12 +41,12 @@ Token from a previous response to fetch the next page of results
 
 <RequestExample>
 ```bash Unresolved conflicts
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts?resolved=false&page_size=20' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/conflicts?resolved=false&page_size=20' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
 ```bash All conflicts
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts?page_size=50' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/conflicts?page_size=50' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -105,14 +105,14 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
         "resolve": null,
         "stale": false,
         "conflict_type": "logical",
-        "fact_ids": ["fact-001", "fact-002"],
+        "fact_ids": ["fact-4d5d087022dac9318b1abbfacbc4340c", "fact-b21e7865a355b52582356646e793d79d"],
         "fact_snapshots": [
           {
-            "fact_id": "fact-001",
+            "fact_id": "fact-4d5d087022dac9318b1abbfacbc4340c",
             "fact_text": "Project deadline is March 2025"
           },
           {
-            "fact_id": "fact-002",
+            "fact_id": "fact-b21e7865a355b52582356646e793d79d",
             "fact_text": "Project deadline was moved to June 2025"
           }
         ],

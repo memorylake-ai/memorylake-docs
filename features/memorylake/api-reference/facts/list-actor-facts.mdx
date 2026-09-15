@@ -7,10 +7,10 @@ description: "Returns a paginated list of facts for a specific actor"
 GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts
 ```
 
-Returns a paginated list of facts scoped to a specific actor. Actor facts represent knowledge about a user that is accessible across all projects within the workspace.
+Returns a paginated list of facts scoped to a specific actor. Actor facts are what the subject has accumulated across every project in the workspace. The id may be a person's or an agent's; the facts read the same either way.
 
 <Note>
-**Permission required:** `workspace:actor_fact_list`
+**Permission required:** `workspace_actor:fact_read` on a person's memories, or `workspace_agent:fact_read` on an agent's — whichever the id belongs to
 </Note>
 
 ### Path Parameters
@@ -39,7 +39,7 @@ Filter facts by content substring
 
 <RequestExample>
 ```bash cURL
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/actors/actor_5e4d3c2b1a0f/facts?page_size=20' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-fe314186ccd18cde04d6af48a5afd79f/actors/actor_5e4d3c2b1a0f/facts?page_size=20' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -74,7 +74,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
   "data": {
     "items": [
       {
-        "id": "fact_4c5d6e7f8a9b",
+        "id": "fact-11a0e057d09877c9c492633fd60424fc",
         "fact": "User's primary programming language is Python",
         "metadata": {
           "category": "skills",
@@ -87,7 +87,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
         "updated_at": "2025-05-20T10:00:00Z"
       },
       {
-        "id": "fact_1a2b3c4d5e6f",
+        "id": "fact-9e6e9b323824eb264c1165994af65c1e",
         "fact": "User works at a fintech startup with 50 employees",
         "metadata": {
           "category": "work"

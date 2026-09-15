@@ -10,7 +10,7 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conversations
 Creates a new conversation within a workspace. A conversation groups related messages together so MemoryLake can extract structured facts from the exchange. You must attach exactly one read-write project via `rw_project_ids` — this is the project where extracted facts and memory are stored.
 
 <Note>
-**Permission required:** `workspace:conv_create` (plus `project:mem_add` and `project:doc_add` on the specified project)
+**Permission required:** `workspace:conv_create` on the workspace, plus one set per participant you name — on each project in `rw_project_ids`: `project:mem_add`, `project:doc_add`, `project:mem_search` and `project:doc_search`; on each actor in `actor_ids`: `workspace_actor:fact_add` and `workspace_actor:fact_search`; on each agent in `agent_ids`: `workspace_agent:fact_add` and `workspace_agent:fact_search`. A conversation both writes memories and reads them back, which is why each participant needs the add and the search half.
 </Note>
 
 ### Path Parameters
@@ -22,7 +22,7 @@ Workspace identifier
 ### Request Body
 
 <ParamField body="custom_id" type="string" required>
-Caller-defined unique identifier. Use this to correlate the conversation with records in your own system.
+Your own identifier for this conversation — the one it already has in your system. Must be unique within your tenant. Pass `by_custom_id=true` on later requests to address the conversation by it instead of by `id`. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
 </ParamField>
 
 <ParamField body="kind" type="string" required>
@@ -34,7 +34,11 @@ Read-write project(s) the conversation reads context from and writes facts to. E
 </ParamField>
 
 <ParamField body="actor_ids" type="array" required>
-IDs of the actors taking part in the conversation. At least one is required: every message is attributed to an actor, and each actor's memory is built from what they say, so a conversation with no actor can neither tell its participants apart nor build anyone's memory. Each ID must reference an actor you have already created and bound to this workspace.
+Actors participating in this conversation. At least one participant is required across `actor_ids` and `agent_ids`: a participant is what a message is attributed to and whose memory the conversation writes to, so a conversation without one can neither tell its participants apart nor build anyone's memory.
+</ParamField>
+
+<ParamField body="agent_ids" type="array of strings">
+Agents taking part in the conversation.
 </ParamField>
 
 <ParamField body="name" type="string">
@@ -47,19 +51,19 @@ Arbitrary key-value metadata to attach to the conversation
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/memories/conversations' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-fe314186ccd18cde04d6af48a5afd79f/memories/conversations' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "custom_id": "session-20250601-042",
     "name": "Product Feedback Call",
     "kind": "DIRECT",
-    "rw_project_ids": ["proj_def456"],
+    "rw_project_ids": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"],
     "metadata": {
       "channel": "zoom",
       "language": "en"
     },
-    "actor_ids": ["actor_user_jane", "actor_assistant_v2"]
+    "actor_ids": ["actor-93688d5ec8d2e98701be3d5554cbc455", "actor-9831773f1353358f4196b22505d879e0"]
   }'
 ```
 </RequestExample>
@@ -86,7 +90,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
 {
   "success": true,
   "data": {
-    "id": "conv_7d2e3f4a5b6c7d8e",
+    "id": "conv-4f42addb6cb69d6ee7de2451cb590e06",
     "name": "Product Feedback Call",
     "kind": "DIRECT",
     "metadata": {
@@ -94,8 +98,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
       "language": "en"
     },
     "custom_id": "session-20250601-042",
-    "rw_project_ids": ["proj_def456"],
-    "actor_ids": ["actor_user_jane", "actor_assistant_v2"],
+    "rw_project_ids": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"],
+    "actor_ids": ["actor-93688d5ec8d2e98701be3d5554cbc455", "actor-9831773f1353358f4196b22505d879e0"],
     "current_message_id": null,
     "created_at": "2025-06-01T14:00:00Z",
     "updated_at": "2025-06-01T14:00:00Z"

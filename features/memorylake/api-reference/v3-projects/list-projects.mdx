@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects
 Returns a paginated list of projects in the specified workspace. You can filter results by name using a fuzzy match and control pagination with `page_size` and `continuation_token`.
 
 <Note>
-**Permission required:** `project:list`
+**Permission required:** `project:read` — rows you cannot open are left out of the list rather than the list being refused
 </Note>
 
 ### Path Parameters
@@ -35,7 +35,7 @@ Fuzzy filter by project name (partial match)
 
 <RequestExample>
 ```bash cURL
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects?page_size=20' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects?page_size=20' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -66,7 +66,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_a
   "data": {
     "items": [
       {
-        "id": "proj_def456",
+        "id": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
         "name": "Customer Research",
         "description": "Interview transcripts and survey analysis",
         "custom_id": "research-2024-q1",
