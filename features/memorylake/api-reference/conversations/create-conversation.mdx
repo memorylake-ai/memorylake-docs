@@ -37,8 +37,8 @@ Read-write project(s) the conversation reads context from and writes facts to. E
 Actors participating in this conversation. At least one participant is required across `actor_ids` and `agent_ids`: a participant is what a message is attributed to and whose memory the conversation writes to, so a conversation without one can neither tell its participants apart nor build anyone's memory.
 </ParamField>
 
-<ParamField body="agent_ids" type="array">
-Agents participating in this conversation. Name an agent here by its agent id; it does not go in `actor_ids`.
+<ParamField body="agent_ids" type="array of strings">
+Agents taking part in the conversation.
 </ParamField>
 
 <ParamField body="name" type="string">

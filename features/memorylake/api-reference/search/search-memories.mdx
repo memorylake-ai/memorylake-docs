@@ -33,8 +33,8 @@ Limit search to specific projects. When omitted, all projects in the workspace a
 Limit search to memories associated with specific actors
 </ParamField>
 
-<ParamField body="agent_ids" type="array">
-Agent IDs whose memories to search. Name an agent here by its agent id; it does not go in `actor_ids`. Both lists are searched when you give both.
+<ParamField body="agent_ids" type="array of strings">
+Limit search to memories belonging to specific agents.
 </ParamField>
 
 <ParamField body="memory_types" type="array of strings">

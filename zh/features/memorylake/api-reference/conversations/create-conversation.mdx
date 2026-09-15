@@ -37,8 +37,8 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conversations
 参与本次会话的 Actor。`actor_ids` 与 `agent_ids` 合起来至少要有一个参与者：消息归属于参与者，记忆也在参与者身上积累。
 </ParamField>
 
-<ParamField body="agent_ids" type="array">
-参与本次会话的 Agent。用 agent id 在这里指名；不要放进 `actor_ids`。
+<ParamField body="agent_ids" type="array of strings">
+参与本次会话的 Agent。
 </ParamField>
 
 <ParamField body="name" type="string">
