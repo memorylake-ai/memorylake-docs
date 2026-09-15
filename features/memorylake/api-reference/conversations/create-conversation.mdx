@@ -51,19 +51,19 @@ Arbitrary key-value metadata to attach to the conversation
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123def456/memories/conversations' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-fe314186ccd18cde04d6af48a5afd79f/memories/conversations' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "custom_id": "session-20250601-042",
     "name": "Product Feedback Call",
     "kind": "DIRECT",
-    "rw_project_ids": ["proj_def456"],
+    "rw_project_ids": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"],
     "metadata": {
       "channel": "zoom",
       "language": "en"
     },
-    "actor_ids": ["actor_user_jane", "actor_assistant_v2"]
+    "actor_ids": ["actor-93688d5ec8d2e98701be3d5554cbc455", "actor-9831773f1353358f4196b22505d879e0"]
   }'
 ```
 </RequestExample>
@@ -90,7 +90,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
 {
   "success": true,
   "data": {
-    "id": "conv_7d2e3f4a5b6c7d8e",
+    "id": "conv-4f42addb6cb69d6ee7de2451cb590e06",
     "name": "Product Feedback Call",
     "kind": "DIRECT",
     "metadata": {
@@ -98,8 +98,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
       "language": "en"
     },
     "custom_id": "session-20250601-042",
-    "rw_project_ids": ["proj_def456"],
-    "actor_ids": ["actor_user_jane", "actor_assistant_v2"],
+    "rw_project_ids": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"],
+    "actor_ids": ["actor-93688d5ec8d2e98701be3d5554cbc455", "actor-9831773f1353358f4196b22505d879e0"],
     "current_message_id": null,
     "created_at": "2025-06-01T14:00:00Z",
     "updated_at": "2025-06-01T14:00:00Z"

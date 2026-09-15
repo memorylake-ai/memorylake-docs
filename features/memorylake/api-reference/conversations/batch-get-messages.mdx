@@ -27,7 +27,7 @@ List of message entry IDs to retrieve. Maximum 100 entries per request.
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv_7d2e3f4a5b6c7d8e/messages/batch-get' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv-4f42addb6cb69d6ee7de2451cb590e06/messages/batch-get' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -78,9 +78,9 @@ Array of message objects matching the requested entry IDs
       ],
       "metadata": {},
       "timestamp": "2025-06-01T14:10:00Z",
-      "conversation_id": "conv_7d2e3f4a5b6c7d8e",
+      "conversation_id": "conv-4f42addb6cb69d6ee7de2451cb590e06",
       "sequence_no": 3,
-      "actor_id": "actor_user_jane",
+      "actor_id": "actor-93688d5ec8d2e98701be3d5554cbc455",
       "created_at": "2025-06-01T14:10:05Z"
     },
     {
@@ -93,9 +93,9 @@ Array of message objects matching the requested entry IDs
       ],
       "metadata": {},
       "timestamp": "2025-06-01T14:10:30Z",
-      "conversation_id": "conv_7d2e3f4a5b6c7d8e",
+      "conversation_id": "conv-4f42addb6cb69d6ee7de2451cb590e06",
       "sequence_no": 4,
-      "actor_id": "actor_assistant_v2",
+      "actor_id": "actor-9831773f1353358f4196b22505d879e0",
       "created_at": "2025-06-01T14:10:32Z"
     }
   ]

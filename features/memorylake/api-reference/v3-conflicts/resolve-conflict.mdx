@@ -46,17 +46,17 @@ ID of the fact to keep. Required when `strategy` is `keep_fact`.
 
 <RequestExample>
 ```bash Keep a fact
-curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts/conf-abc123/resolve' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/conflicts/conf-abc123/resolve' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
     "strategy": "keep_fact",
-    "keep_fact_id": "fact-002"
+    "keep_fact_id": "fact-b21e7865a355b52582356646e793d79d"
   }'
 ```
 
 ```bash Trust the document
-curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts/conf-abc123/resolve' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/conflicts/conf-abc123/resolve' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -65,7 +65,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
 ```
 
 ```bash Dismiss
-curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_abc123/projects/proj_def456/memories/conflicts/conf-abc123/resolve' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/conflicts/conf-abc123/resolve' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -96,7 +96,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws_
     "resolved": true,
     "strategy": "keep_fact",
     "resolve_id": "res-9f8e7d6c",
-    "forgotten_fact_ids": ["fact-001"],
+    "forgotten_fact_ids": ["fact-4d5d087022dac9318b1abbfacbc4340c"],
     "updated_fact_ids": []
   }
 }

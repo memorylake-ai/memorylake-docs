@@ -62,12 +62,12 @@ Comma-separated list of memory IDs. Returns conflicts that involve any of the li
 
 <RequestExample>
 ```bash Unresolved conflicts
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conflicts?resolved=false&page=1&page_size=50' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-e7b262987be4589fabc60257ec2a2230/memories/conflicts?resolved=false&page=1&page_size=50' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 
 ```bash Conflicts involving specific memories
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a1b2c3d4e5f6g7h8i9j0k1l2m3n4o5p6/memories/conflicts?memory_ids=mem-001,mem-002' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-e7b262987be4589fabc60257ec2a2230/memories/conflicts?memory_ids=mem-001,mem-002' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -115,10 +115,10 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v2/projects/proj-a
         "conflict_type": "logical",
         "resolved": false,
         "stale": false,
-        "memory_ids": ["mem-001", "mem-002"],
+        "memory_ids": ["fact-7f20f052f02e642c44e79b2f371acc52", "fact-c9fe56ab6ca621340629858ab9480b09"],
         "memory_snapshots": [
-          { "memory_id": "mem-001", "memory_text": "User prefers spicy food" },
-          { "memory_id": "mem-002", "memory_text": "User avoids spicy food" }
+          { "memory_id": "fact-7f20f052f02e642c44e79b2f371acc52", "memory_text": "User prefers spicy food" },
+          { "memory_id": "fact-c9fe56ab6ca621340629858ab9480b09", "memory_text": "User avoids spicy food" }
         ],
         "file_chunks": [],
         "event_id": "evt-xyz",

@@ -85,18 +85,23 @@ The same machinery serves two different kinds of knowledge:
 
 Both flow through extraction → trace → conflict-checking → retrieval; the difference is scope and governance. See the [Personal AI Memory](/scenarios/personal-ai-memory) and [Team Knowledge Base](/scenarios/team-knowledge-base) scenarios.
 
-## Whose memory is it
 
-Every fact belongs to one subject, and that decides where you read it back.
+### Which subject a fact belongs to
 
-- **A person** — facts follow the actor across every project in a workspace. *"Jane prefers dark mode"*
-- **An agent** — facts follow the agent the same way, read by its **agent id**. *"This agent answers in French"*
-- **A project** — facts stay with the project, whoever contributed them. *"Q1 revenue was $12.5M"*
+Individual memory has two subjects, not one — a person and an agent both accumulate their own facts,
+and both keep them across every project in a workspace. Organizational memory is the third: it stays
+with the project, whoever contributed it.
 
-People and agents are separate subjects with the same shape: anything you can do with a person's
-facts you can do with an agent's, and an agent is always named by its agent id. See
-[Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts) for the request and
-response shapes, which both use.
+Which subject a fact belongs to is what decides where you read it back:
+
+- **A person** — *"Jane prefers dark mode"*
+- **An agent**, read by its agent id — *"This agent answers in French"*
+- **A project** — *"Q1 revenue was $12.5M"*
+
+People and agents have the same shape: anything you can do with a person's facts you can do with an
+agent's. See [Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts) for the request
+and response shapes, which both use.
+
 ## Working with Memories Programmatically
 
 ```bash
