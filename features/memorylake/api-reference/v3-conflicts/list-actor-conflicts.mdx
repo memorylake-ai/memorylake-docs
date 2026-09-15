@@ -12,7 +12,7 @@ When MemoryLake extracts facts about an actor, it compares new facts against the
 You can filter by resolution status to show only unresolved conflicts that need attention, or only resolved ones for audit purposes. For conflicts within a project's knowledge, use [List Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-conflicts) instead.
 
 <Note>
-**Permission required:** `workspace_actor:fact_read` — rows you cannot open are left out of the list rather than the list being refused
+**Permission required:** `workspace_actor:fact_conflict_read` on a person's memories, or `workspace_agent:fact_conflict_read` on an agent's — whichever the id belongs to
 </Note>
 
 ### Path Parameters

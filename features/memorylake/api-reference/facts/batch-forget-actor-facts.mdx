@@ -10,7 +10,7 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts/
 Marks multiple actor-level facts as forgotten (expired) in a single request. Like [Forget Actor Fact](/features/memorylake/api-reference/facts/forget-actor-fact), this is a soft delete -- facts remain available for audit purposes but are excluded from future retrievals and searches.
 
 <Note>
-**Permission required:** `workspace_actor:fact_delete`
+**Permission required:** `workspace_actor:fact_delete` on a person's memories, or `workspace_agent:fact_delete` on an agent's — whichever the id belongs to
 </Note>
 
 ### Path Parameters

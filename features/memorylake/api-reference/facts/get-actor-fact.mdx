@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts/{
 Returns the content and metadata of a single fact scoped to an actor.
 
 <Note>
-**Permission required:** `workspace_actor:fact_read`
+**Permission required:** `workspace_actor:fact_read` on a person's memories, or `workspace_agent:fact_read` on an agent's — whichever the id belongs to
 </Note>
 
 ### Path Parameters

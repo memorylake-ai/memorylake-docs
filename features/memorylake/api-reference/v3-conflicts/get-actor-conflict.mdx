@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/memorie
 Returns the complete record for a single conflict, including the fact snapshots captured at detection time, any document excerpts involved, and the resolution record if the conflict has been resolved.
 
 <Note>
-**Permission required:** `workspace_actor:fact_read`
+**Permission required:** `workspace_actor:fact_conflict_read` on a person's memories, or `workspace_agent:fact_conflict_read` on an agent's — whichever the id belongs to
 </Note>
 
 ### Path Parameters

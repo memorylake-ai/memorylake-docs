@@ -10,7 +10,7 @@ GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts
 Returns a paginated list of facts scoped to a specific actor. Actor facts represent knowledge about a user that is accessible across all projects within the workspace.
 
 <Note>
-**Permission required:** `workspace_actor:fact_read` — rows you cannot open are left out of the list rather than the list being refused
+**Permission required:** `workspace_actor:fact_read` on a person's memories, or `workspace_agent:fact_read` on an agent's — whichever the id belongs to
 </Note>
 
 ### Path Parameters
