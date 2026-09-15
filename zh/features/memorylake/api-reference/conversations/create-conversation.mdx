@@ -10,7 +10,7 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conversations
 在工作空间中创建新会话。会话将相关消息组织在一起，以便 MemoryLake 从交互中提取结构化事实。您必须通过 `rw_project_ids` 指定一个读写项目 -- 这是存储提取的事实和记忆的项目。
 
 <Note>
-**所需权限：** `workspace:conv_create`（以及指定项目上的 `project:mem_add` 和 `project:doc_add`）
+**所需权限：** 工作空间上需要 `workspace:conv_create`，此外按您指名的对象各需一组——`rw_project_ids` 里的每个项目需要 `project:mem_add`、`project:doc_add`、`project:mem_search`、`project:doc_search`；`actor_ids` 里的每个 Actor 需要 `workspace_actor:fact_add` 与 `workspace_actor:fact_search`；`agent_ids` 里的每个 Agent 需要 `workspace_agent:fact_add` 与 `workspace_agent:fact_search`。会话既写入记忆也要读回，所以每个参与者的「写」和「搜」两半都要。
 </Note>
 
 ### 路径参数

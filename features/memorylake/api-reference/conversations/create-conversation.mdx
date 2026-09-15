@@ -10,7 +10,7 @@ POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conversations
 Creates a new conversation within a workspace. A conversation groups related messages together so MemoryLake can extract structured facts from the exchange. You must attach exactly one read-write project via `rw_project_ids` — this is the project where extracted facts and memory are stored.
 
 <Note>
-**Permission required:** `workspace:conv_create` (plus `project:mem_add` and `project:doc_add` on the specified project)
+**Permission required:** `workspace:conv_create` on the workspace, plus one set per participant you name — on each project in `rw_project_ids`: `project:mem_add`, `project:doc_add`, `project:mem_search` and `project:doc_search`; on each actor in `actor_ids`: `workspace_actor:fact_add` and `workspace_actor:fact_search`; on each agent in `agent_ids`: `workspace_agent:fact_add` and `workspace_agent:fact_search`. A conversation both writes memories and reads them back, which is why each participant needs the add and the search half.
 </Note>
 
 ### Path Parameters
