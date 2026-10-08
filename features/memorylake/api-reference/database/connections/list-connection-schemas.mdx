@@ -1,0 +1,47 @@
+---
+title: "List Connection Schemas"
+description: "List the schemas a saved database connection can read"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/db-connections/{connectionId}/schemas
+```
+
+Lists the schemas that a saved connection can read. Use the result to choose the schema when you [create a datasource](/features/memorylake/api-reference/database/datasources/create-datasource). Unlike [Test Database Connectivity](/features/memorylake/api-reference/database/connections/test-database-connectivity), it does not need the password.
+
+<Note>
+**Permission required:** `dbconn:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="connectionId" type="string" required>
+Database connection ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections/dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d/schemas' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Readable schemas">
+  <ResponseField name="schemas" type="array">Schemas the connection can read. Pick one of them when you create a datasource.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "schemas": ["public", "sales"]
+  }
+}
+```
+</ResponseExample>

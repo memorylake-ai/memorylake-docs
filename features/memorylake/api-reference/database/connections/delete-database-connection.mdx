@@ -1,0 +1,42 @@
+---
+title: "Delete Database Connection"
+description: "Delete a database connection that no datasource uses"
+noindex: true
+---
+
+```
+DELETE /openapi/memorylake/api/v3/db-connections/{connectionId}
+```
+
+Deletes a database connection. The request is refused while any datasource still reads through the connection, that is, while its `datasource_count` is greater than zero. [Delete those datasources](/features/memorylake/api-reference/database/datasources/delete-datasource) first.
+
+<Note>
+**Permission required:** `dbconn:delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="connectionId" type="string" required>
+Database connection ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections/dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>

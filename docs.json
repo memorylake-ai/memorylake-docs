@@ -295,6 +295,25 @@
                     ]
                   },
                   {
+                    "group": "Databases",
+                    "tag": "Preview",
+                    "pages": [
+                      "features/memorylake/api-reference/database/overview",
+                      {
+                        "group": "Connections",
+                        "pages": [
+                          "features/memorylake/api-reference/database/connections/list-database-connections",
+                          "features/memorylake/api-reference/database/connections/test-database-connectivity",
+                          "features/memorylake/api-reference/database/connections/create-database-connection",
+                          "features/memorylake/api-reference/database/connections/get-database-connection",
+                          "features/memorylake/api-reference/database/connections/update-database-connection",
+                          "features/memorylake/api-reference/database/connections/delete-database-connection",
+                          "features/memorylake/api-reference/database/connections/list-connection-schemas"
+                        ]
+                      }
+                    ]
+                  },
+                  {
                     "group": "Deprecated",
                     "pages": [
                       {
@@ -668,6 +687,25 @@
                           "zh/features/memorylake/api-reference/v3-conflicts/list-conflicts",
                           "zh/features/memorylake/api-reference/v3-conflicts/get-conflict",
                           "zh/features/memorylake/api-reference/v3-conflicts/resolve-conflict"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "group": "数据库",
+                    "tag": "预览",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/database/overview",
+                      {
+                        "group": "数据库连接",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/database/connections/list-database-connections",
+                          "zh/features/memorylake/api-reference/database/connections/test-database-connectivity",
+                          "zh/features/memorylake/api-reference/database/connections/create-database-connection",
+                          "zh/features/memorylake/api-reference/database/connections/get-database-connection",
+                          "zh/features/memorylake/api-reference/database/connections/update-database-connection",
+                          "zh/features/memorylake/api-reference/database/connections/delete-database-connection",
+                          "zh/features/memorylake/api-reference/database/connections/list-connection-schemas"
                         ]
                       }
                     ]

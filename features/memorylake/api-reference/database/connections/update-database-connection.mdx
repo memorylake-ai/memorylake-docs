@@ -1,0 +1,115 @@
+---
+title: "Update Database Connection"
+description: "Change a database connection's name, address or credentials"
+noindex: true
+---
+
+```
+PATCH /openapi/memorylake/api/v3/db-connections/{connectionId}
+```
+
+Partially updates a database connection. Fields you leave out stay unchanged.
+
+Because the password is never returned, you must send `password` again whenever you change any credential field (`host`, `port`, `database` or `username`).
+
+<Note>
+**Permission required:** `dbconn:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="connectionId" type="string" required>
+Database connection ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string">
+Display name
+</ParamField>
+
+<ParamField body="description" type="string">
+Free-form description
+</ParamField>
+
+<ParamField body="host" type="string">
+Server host name or address
+</ParamField>
+
+<ParamField body="port" type="integer">
+Server port, from 1 to 65535
+</ParamField>
+
+<ParamField body="database" type="string">
+Name of the database to read
+</ParamField>
+
+<ParamField body="username" type="string">
+User name to authenticate with
+</ParamField>
+
+<ParamField body="password" type="string">
+Password to authenticate with. It is never returned by any endpoint.
+</ParamField>
+
+<RequestExample>
+```bash Rename
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections/dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Sales warehouse (replica)"
+  }'
+```
+
+```bash Rotate credentials
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections/dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "analytics_ro_2026",
+    "password": "your-new-database-password"
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns the updated connection.
+
+<ResponseField name="data" type="object">
+<Expandable title="Connection object">
+  <ResponseField name="id" type="string">Database connection identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="description" type="string">Free-form description</ResponseField>
+  <ResponseField name="host" type="string">Server host name or address</ResponseField>
+  <ResponseField name="port" type="integer">Server port</ResponseField>
+  <ResponseField name="username" type="string">User name the connection authenticates with</ResponseField>
+  <ResponseField name="database" type="string">Name of the database to read</ResponseField>
+  <ResponseField name="custom_id" type="string">Your own identifier for this connection, if you set one</ResponseField>
+  <ResponseField name="datasource_count" type="integer">Number of datasources that currently read through this connection</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d",
+    "name": "Sales warehouse (replica)",
+    "description": "Read-only replica of the sales database",
+    "host": "pg.internal.example.com",
+    "port": 5432,
+    "username": "analytics_ro",
+    "database": "sales",
+    "custom_id": "sales-warehouse",
+    "datasource_count": 1,
+    "created_at": "2026-09-18T07:42:17.139Z",
+    "updated_at": "2026-09-20T03:15:42.508Z"
+  }
+}
+```
+</ResponseExample>

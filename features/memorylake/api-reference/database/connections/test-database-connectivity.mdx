@@ -1,0 +1,73 @@
+---
+title: "Test Database Connectivity"
+description: "Check database credentials before saving them and list the schemas they can read"
+noindex: true
+---
+
+```
+POST /openapi/memorylake/api/v3/db-connections/connectivity-test
+```
+
+Checks database credentials that you have not saved yet and returns the schemas they can read. Use it to validate the form before you [create a connection](/features/memorylake/api-reference/database/connections/create-database-connection). Nothing is stored.
+
+Once a connection exists, call [List Connection Schemas](/features/memorylake/api-reference/database/connections/list-connection-schemas) instead, which does not need the password.
+
+<Note>
+**Permission required:** `dbconn:add`
+</Note>
+
+### Request Body
+
+<ParamField body="host" type="string" required>
+Server host name or address
+</ParamField>
+
+<ParamField body="port" type="integer" default="5432">
+Server port, from 1 to 65535
+</ParamField>
+
+<ParamField body="database" type="string" required>
+Name of the database to read
+</ParamField>
+
+<ParamField body="username" type="string" required>
+User name to authenticate with
+</ParamField>
+
+<ParamField body="password" type="string" required>
+Password to authenticate with
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections/connectivity-test' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "host": "pg.internal.example.com",
+    "port": 5432,
+    "database": "sales",
+    "username": "analytics_ro",
+    "password": "your-database-password"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Readable schemas">
+  <ResponseField name="schemas" type="array">Schemas the credentials can read. Pick one of them when you create a datasource.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "schemas": ["public", "sales"]
+  }
+}
+```
+</ResponseExample>

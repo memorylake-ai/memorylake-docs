@@ -1,0 +1,78 @@
+---
+title: "Get Database Connection"
+description: "Retrieve a database connection by ID or custom ID"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/db-connections/{connectionId}
+```
+
+Retrieves a database connection by its ID. To look it up by the `custom_id` you set when you created it, set `by_custom_id` to `true` and pass the custom ID as the path parameter. The password is never returned.
+
+<Note>
+**Permission required:** `dbconn:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="connectionId" type="string" required>
+Database connection ID, or the connection's `custom_id` when `by_custom_id` is `true`
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="by_custom_id" type="boolean" default="false">
+Set to `true` to look up the connection by `custom_id` instead of its ID
+</ParamField>
+
+<RequestExample>
+```bash By connection ID
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections/dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash By custom ID
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections/sales-warehouse?by_custom_id=true' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Connection object">
+  <ResponseField name="id" type="string">Database connection identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="description" type="string">Free-form description</ResponseField>
+  <ResponseField name="host" type="string">Server host name or address</ResponseField>
+  <ResponseField name="port" type="integer">Server port</ResponseField>
+  <ResponseField name="username" type="string">User name the connection authenticates with</ResponseField>
+  <ResponseField name="database" type="string">Name of the database to read</ResponseField>
+  <ResponseField name="custom_id" type="string">Your own identifier for this connection, if you set one</ResponseField>
+  <ResponseField name="datasource_count" type="integer">Number of datasources that currently read through this connection. The connection cannot be deleted while this is greater than zero.</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d",
+    "name": "Sales warehouse",
+    "description": "Read-only replica of the sales database",
+    "host": "pg.internal.example.com",
+    "port": 5432,
+    "username": "analytics_ro",
+    "database": "sales",
+    "custom_id": "sales-warehouse",
+    "datasource_count": 1,
+    "created_at": "2026-09-18T07:42:17.139Z",
+    "updated_at": "2026-09-18T07:42:17.139Z"
+  }
+}
+```
+</ResponseExample>
