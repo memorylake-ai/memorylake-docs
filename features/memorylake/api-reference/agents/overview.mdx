@@ -26,10 +26,11 @@ live on the agent, read by its agent id within a workspace:
 /api/v3/workspaces/{workspaceId}/agents/{agentId}/facts
 ```
 
-The operations match the ones for a person's facts exactly — list, read, add, update, forget,
-resolve conflicts — so [Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts)
-documents the shapes for both. For how agent facts sit alongside the other scopes, see
-[Memories](/features/memorylake/memories/overview).
+You can list, read, add, update and forget them, read their change history, and review and
+resolve conflicts between them — see [Agent Facts](/features/memorylake/api-reference/facts/list-agent-facts)
+and [Agent Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-agent-conflicts).
+Address them by agent id: the actor endpoints do not accept an agent. For how agent facts sit
+alongside the other scopes, see [Memories](/features/memorylake/memories/overview).
 
 
 ### A2A Protocol

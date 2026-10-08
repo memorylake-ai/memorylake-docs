@@ -1,16 +1,16 @@
 ---
-title: "Get Actor Fact"
-description: "Returns the content and metadata of a single actor-level fact"
+title: "Get Agent Fact"
+description: "Returns the content and metadata of a single agent fact"
 ---
 
 ```
-GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/facts/{factId}
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents/{agentId}/facts/{factId}
 ```
 
-Returns the content and metadata of a single fact scoped to an actor.
+Returns the content and metadata of a single fact of an agent.
 
 <Note>
-**Permission required:** `workspace_actor:fact_read`
+**Permission required:** `workspace_agent:fact_read`
 </Note>
 
 ### Path Parameters
@@ -19,8 +19,8 @@ Returns the content and metadata of a single fact scoped to an actor.
 Workspace ID
 </ParamField>
 
-<ParamField path="actorId" type="string" required>
-Actor ID
+<ParamField path="agentId" type="string" required>
+Agent ID
 </ParamField>
 
 <ParamField path="factId" type="string" required>
@@ -29,7 +29,7 @@ Fact ID
 
 <RequestExample>
 ```bash cURL
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-fe314186ccd18cde04d6af48a5afd79f/actors/actor_5e4d3c2b1a0f/facts/fact_4c5d6e7f8a9b' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-fe314186ccd18cde04d6af48a5afd79f/agents/agent-f8bf71ab17ed8eccad8c0e8ae708273f/facts/fact_4c5d6e7f8a9b' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -55,7 +55,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-f
   "success": true,
   "data": {
     "id": "fact-11a0e057d09877c9c492633fd60424fc",
-    "fact": "User's primary programming language is Python",
+    "fact": "Replies to support tickets in the customer's language",
     "metadata": {
       "category": "skills",
       "confidence": "high"

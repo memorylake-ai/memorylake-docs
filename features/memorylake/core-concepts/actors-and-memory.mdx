@@ -114,13 +114,14 @@ You have full control over the facts MemoryLake extracts. For both project facts
 - **List** all facts to see what MemoryLake has learned
 - **Get** a specific fact by ID
 - **Update** a fact to correct or refine it
-- **Forget** a fact to remove it permanently
+- **Get the change history** of a fact, including the conversation messages it was extracted from
+- **Forget** a fact to take it out of retrieval and search
 - **Batch forget** multiple facts at once
 
-This is useful for data privacy (removing a user's facts when they request deletion), correcting inaccurate extractions, or managing the knowledge base over time.
+This is useful for correcting inaccurate extractions, retiring facts that no longer hold, or managing the knowledge base over time.
 
 <Warning>
-Forgetting a fact is permanent. The fact is deleted and cannot be recovered. Use batch forget carefully.
+Forgetting a fact cannot be undone. A forgotten fact no longer appears in retrieval or search and can no longer be read by ID, but it is not erased: its change history, including its text, stays available for audit through [Get Fact Change History](/features/memorylake/api-reference/facts/get-fact-trace) and [Get Actor Fact Change History](/features/memorylake/api-reference/facts/get-actor-fact-trace). Use batch forget carefully.
 </Warning>
 
 ## Best Practices

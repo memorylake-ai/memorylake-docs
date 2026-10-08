@@ -351,7 +351,7 @@ Lets you unbind an actor from a workspace — they stop participating, but their
 
 ## Managing actor facts in a workspace
 
-Actor facts are knowledge about a specific person or agent that accumulates across projects within a workspace. These permissions control access to that per-actor knowledge.
+Actor facts are knowledge about a specific person that accumulates across projects within a workspace. These permissions control access to that per-actor knowledge. An agent's own facts are governed separately, by the `workspace_agent:fact_*` permissions under [Managing agent facts in a workspace](#managing-agent-facts-in-a-workspace).
 
 
 ### Read an actor fact
@@ -363,6 +363,8 @@ Lets you view the full content of a specific actor fact.
 **Identifier:** `workspace_actor:fact_read`
 
 **Level:** `instance` — granted per actor, in one workspace.
+
+**Covers these APIs:** [List Actor Facts](/features/memorylake/api-reference/facts/list-actor-facts), [Get Actor Fact](/features/memorylake/api-reference/facts/get-actor-fact), [Get Actor Fact Change History](/features/memorylake/api-reference/facts/get-actor-fact-trace).
 
 ---
 
@@ -376,17 +378,49 @@ Lets you edit the content of an actor fact.
 
 **Level:** `instance` — granted per actor, in one workspace.
 
+**Covers these APIs:** [Add Actor Facts](/features/memorylake/api-reference/facts/add-actor-facts), [Update Actor Fact](/features/memorylake/api-reference/facts/update-actor-fact).
+
 ---
 
 ### Forget an actor fact
 
-Lets you permanently remove an actor fact.
+Lets you forget an actor fact, which takes it out of retrieval and search. Its change history is kept.
 
 **Without it:** "Forget" actions on actor facts are greyed out.
 
 **Identifier:** `workspace_actor:fact_delete`
 
 **Level:** `instance` — granted per actor, in one workspace.
+
+**Covers these APIs:** [Forget Actor Fact](/features/memorylake/api-reference/facts/forget-actor-fact), [Batch Forget Actor Facts](/features/memorylake/api-reference/facts/batch-forget-actor-facts).
+
+---
+
+### Review actor memory conflicts
+
+Lets you list an actor's memory conflicts and open one to see the facts involved.
+
+**Without it:** these requests return 403.
+
+**Identifier:** `workspace_actor:fact_conflict_read`
+
+**Level:** `instance` — granted per actor, in one workspace.
+
+**Covers these APIs:** [List Actor Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-actor-conflicts), [Get Actor Memory Conflict](/features/memorylake/api-reference/v3-conflicts/get-actor-conflict).
+
+---
+
+### Resolve an actor memory conflict
+
+Lets you resolve a conflict between an actor's facts. Resolving can forget facts or rewrite their text.
+
+**Without it:** resolve requests return 403.
+
+**Identifier:** `workspace_actor:fact_conflict_resolve`
+
+**Level:** `instance` — granted per actor, in one workspace.
+
+**Covers this API:** [Resolve Actor Memory Conflict](/features/memorylake/api-reference/v3-conflicts/resolve-actor-conflict).
 
 ---
 
@@ -416,6 +450,81 @@ Lets you unbind an agent from a workspace — it stops serving conversations, bu
 **Identifier:** `workspace_agent:delete`
 
 **Level:** `instance` — granted per agent, in one workspace.
+
+---
+
+## Managing agent facts in a workspace
+
+An agent's own facts — what it has learned, and how it is meant to behave — accumulate across projects within a workspace, separately from any person's. These permissions control access to them. They are granted per agent, in one workspace, and are separate from the `workspace_actor:fact_*` permissions: access to a person's memories gives none to an agent's, and the other way round.
+
+
+### Read an agent fact
+
+Lets you list an agent's facts, read one, and read its change history.
+
+**Without it:** these requests return 403.
+
+**Identifier:** `workspace_agent:fact_read`
+
+**Level:** `instance` — granted per agent, in one workspace.
+
+**Covers these APIs:** [List Agent Facts](/features/memorylake/api-reference/facts/list-agent-facts), [Get Agent Fact](/features/memorylake/api-reference/facts/get-agent-fact), [Get Agent Fact Change History](/features/memorylake/api-reference/facts/get-agent-fact-trace).
+
+---
+
+### Add or update an agent fact
+
+Lets you add facts to an agent and edit existing ones.
+
+**Without it:** these requests return 403.
+
+**Identifier:** `workspace_agent:fact_modify`
+
+**Level:** `instance` — granted per agent, in one workspace.
+
+**Covers these APIs:** [Add Agent Facts](/features/memorylake/api-reference/facts/add-agent-facts), [Update Agent Fact](/features/memorylake/api-reference/facts/update-agent-fact).
+
+---
+
+### Forget an agent fact
+
+Lets you forget an agent fact, which takes it out of retrieval and search. Its change history is kept.
+
+**Without it:** these requests return 403.
+
+**Identifier:** `workspace_agent:fact_delete`
+
+**Level:** `instance` — granted per agent, in one workspace.
+
+**Covers these APIs:** [Forget Agent Fact](/features/memorylake/api-reference/facts/forget-agent-fact), [Batch Forget Agent Facts](/features/memorylake/api-reference/facts/batch-forget-agent-facts).
+
+---
+
+### Review agent memory conflicts
+
+Lets you list an agent's memory conflicts and open one to see the facts involved.
+
+**Without it:** these requests return 403.
+
+**Identifier:** `workspace_agent:fact_conflict_read`
+
+**Level:** `instance` — granted per agent, in one workspace.
+
+**Covers these APIs:** [List Agent Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-agent-conflicts), [Get Agent Memory Conflict](/features/memorylake/api-reference/v3-conflicts/get-agent-conflict).
+
+---
+
+### Resolve an agent memory conflict
+
+Lets you resolve a conflict between an agent's facts. Resolving can forget facts or rewrite their text.
+
+**Without it:** resolve requests return 403.
+
+**Identifier:** `workspace_agent:fact_conflict_resolve`
+
+**Level:** `instance` — granted per agent, in one workspace.
+
+**Covers this API:** [Resolve Agent Memory Conflict](/features/memorylake/api-reference/v3-conflicts/resolve-agent-conflict).
 
 ---
 
@@ -682,7 +791,7 @@ Lets you click a fact row to open its detail panel — full content, timestamps,
 
 **Level:** `instance` — granted on a specific project.
 
-**Covers this API:** [Get Fact](/features/memorylake/api-reference/facts/get-fact).
+**Covers these APIs:** [Get Fact](/features/memorylake/api-reference/facts/get-fact), [Get Fact Change History](/features/memorylake/api-reference/facts/get-fact-trace).
 
 ---
 
@@ -709,6 +818,8 @@ Lets you push a fact in directly through the API.
 **Identifier:** `project:mem_add`
 
 **Level:** `instance` — granted on a specific project.
+
+**Covers this API:** [Add Facts](/features/memorylake/api-reference/facts/add-facts).
 
 ---
 

@@ -25,7 +25,7 @@ Agent 会积累自己的事实——它学到了什么、应当如何表现。�
 /api/v3/workspaces/{workspaceId}/agents/{agentId}/facts
 ```
 
-可用操作与人的事实完全一致——列出、读取、添加、更新、遗忘、处理冲突——因此结构文档见 [Actor 事实](/zh/features/memorylake/api-reference/facts/list-actor-facts)，两边共用。Agent 事实与其他范围的关系见[记忆](/zh/features/memorylake/memories/overview)。
+您可以列出、读取、添加、更新和遗忘这些事实，查看它们的变更历史，并审查和解决它们之间的冲突——详见 [Agent 事实](/zh/features/memorylake/api-reference/facts/list-agent-facts)和 [Agent 记忆冲突](/zh/features/memorylake/api-reference/v3-conflicts/list-agent-conflicts)。请用 agent id 访问：Actor 端点不接受 Agent。Agent 事实与其他范围的关系见[记忆](/zh/features/memorylake/memories/overview)。
 
 
 ### A2A 协议

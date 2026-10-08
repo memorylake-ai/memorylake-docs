@@ -1,16 +1,16 @@
 ---
-title: "Get Actor Memory Conflict"
-description: "Retrieve the full details of a single memory conflict among an actor's facts"
+title: "Get Agent Memory Conflict"
+description: "Retrieve the full details of a single memory conflict among an agent's facts"
 ---
 
 ```
-GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/memories/conflicts/{conflictId}
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents/{agentId}/memories/conflicts/{conflictId}
 ```
 
 Returns the complete record for a single conflict, including the fact snapshots captured at detection time, any document excerpts involved, and the resolution record if the conflict has been resolved.
 
 <Note>
-**Permission required:** `workspace_actor:fact_conflict_read`
+**Permission required:** `workspace_agent:fact_conflict_read`
 </Note>
 
 ### Path Parameters
@@ -19,8 +19,8 @@ Returns the complete record for a single conflict, including the fact snapshots 
 Workspace ID
 </ParamField>
 
-<ParamField path="actorId" type="string" required>
-Actor ID
+<ParamField path="agentId" type="string" required>
+Agent ID
 </ParamField>
 
 <ParamField path="conflictId" type="string" required>
@@ -29,7 +29,7 @@ Conflict ID
 
 <RequestExample>
 ```bash cURL
-curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/actors/actor-8d093c0578ffeb19f8fa10ea28ee9362/memories/conflicts/conf-def456' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/agents/agent-f8bf71ab17ed8eccad8c0e8ae708273f/memories/conflicts/conf-def456' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -82,8 +82,8 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8
   "success": true,
   "data": {
     "id": "conf-def456",
-    "name": "Contradicting dietary preference",
-    "description": "One fact states the user is vegetarian; another says their favorite dish is steak.",
+    "name": "Contradicting time zone rule",
+    "description": "One fact says to report times in UTC; another says to report them in the customer's local time.",
     "category": "m2m",
     "resolved": true,
     "resolve": {
@@ -99,11 +99,11 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8
     "fact_snapshots": [
       {
         "fact_id": "fact-4d89ead72a591e8c6abbf68f99edf5e2",
-        "fact_text": "User is vegetarian"
+        "fact_text": "Reports times in UTC"
       },
       {
         "fact_id": "fact-91263517847b3371a69814787441263f",
-        "fact_text": "User's favorite dish is steak"
+        "fact_text": "Reports times in the customer's local time"
       }
     ],
     "file_chunks": [],
@@ -115,5 +115,5 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8
 </ResponseExample>
 
 <Tip>
-To resolve this conflict, call [Resolve Actor Memory Conflict](/features/memorylake/api-reference/v3-conflicts/resolve-actor-conflict) with the strategy you want to apply.
+To resolve this conflict, call [Resolve Agent Memory Conflict](/features/memorylake/api-reference/v3-conflicts/resolve-agent-conflict) with the strategy you want to apply.
 </Tip>
