@@ -68,7 +68,8 @@ def main():
             next_to_hidden = any(neighbor_hidden for _, neighbor_hidden in neighbors)
             has_flag = frontmatter_flag(page, "hideFooterPagination")
             if next_to_hidden and not has_flag:
-                errors.append(f"{page}: next to a hidden page in tab {language}/{tab['tab']}, "
+                where = f"{language}/{tab['tab']}" if language else tab["tab"]
+                errors.append(f"{page}: next to a hidden page in tab {where}, "
                               "add `hideFooterPagination: true`")
             elif has_flag and not next_to_hidden:
                 notes.append(f"{page}: `hideFooterPagination` is no longer needed for hidden docs "
