@@ -1,0 +1,89 @@
+---
+title: "Update Analysis Model"
+description: "Rename an analysis model or change its description"
+noindex: true
+---
+
+```
+PATCH /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models/{modelId}
+```
+
+Partially updates an analysis model. Fields you leave out stay unchanged.
+
+Only the name and description can be changed. The datasource, template type, custom ID and fork source are fixed when the model is created. To change the knowledge the model holds, use the [knowledge entry endpoints](/features/memorylake/api-reference/database/analysis-models/list-knowledge-entries).
+
+<Note>
+**Permission required:** `analysis_model:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="modelId" type="string" required>
+Analysis model ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string">
+Display name
+</ParamField>
+
+<ParamField body="description" type="string">
+Free-form description
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Sales Q&A (orders)",
+    "description": "Answers questions about orders, revenue and customers"
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns the updated analysis model.
+
+<ResponseField name="data" type="object">
+<Expandable title="Analysis model object">
+  <ResponseField name="id" type="string">Analysis model identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="description" type="string">Free-form description</ResponseField>
+  <ResponseField name="type" type="string">Template the model follows, such as `ASK_DATA`. It decides which kinds of knowledge the model accepts.</ResponseField>
+  <ResponseField name="schemas" type="array">Schemas the model covers, inherited from its datasource</ResponseField>
+  <ResponseField name="custom_id" type="string">Your own identifier for this model, if you set one</ResponseField>
+  <ResponseField name="db_datasource_id" type="string">Datasource the model is built on</ResponseField>
+  <ResponseField name="workspace_id" type="string">Workspace the model belongs to</ResponseField>
+  <ResponseField name="fork_from" type="string">Model this one was forked from. Absent for a model created from nothing.</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e",
+    "name": "Sales Q&A (orders)",
+    "description": "Answers questions about orders, revenue and customers",
+    "type": "ASK_DATA",
+    "schemas": ["sales"],
+    "custom_id": "sales-qa",
+    "db_datasource_id": "dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c",
+    "workspace_id": "ws-8001856949ad4f6a5b6226f415ffa877",
+    "created_at": "2026-09-21T09:14:05.612Z",
+    "updated_at": "2026-09-22T02:31:17.904Z"
+  }
+}
+```
+</ResponseExample>

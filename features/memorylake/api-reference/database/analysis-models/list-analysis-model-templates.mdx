@@ -1,0 +1,167 @@
+---
+title: "List Analysis Model Templates"
+description: "List the kinds of analysis model you can create and the kinds of knowledge each one accepts"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models/templates
+```
+
+Lists the kinds of analysis model you can create and, for each one, the kinds of knowledge it accepts. Use a template's `type` when you [create an analysis model](/features/memorylake/api-reference/database/analysis-models/create-analysis-model), and an entry type's `code` as `entity_type` when you [add a knowledge entry](/features/memorylake/api-reference/database/analysis-models/add-knowledge-entry).
+
+The templates are static configuration and are the same for every caller. At the time of writing, the endpoint returns these templates:
+
+| Model `type` | Name | Accepted `entity_type` values |
+|---|---|---|
+| `ASK_DATA` | Smart Data Query | `general`, `biz_rule`, `few_shot` |
+| `DRILLDOWN` | Attribution Analysis | `drilldown_entity`, `general`, `biz_rule`, `few_shot` |
+| `INDICATOR_EXTRACT` | Indicator Extraction | `general`, `biz_rule` |
+
+| `entity_type` | Name | Matched semantically | Can be deleted |
+|---|---|---|---|
+| `general` | General Knowledge | No | Always |
+| `biz_rule` | Business Knowledge | Yes | Always |
+| `few_shot` | Few-shot Case | Yes | Always |
+| `drilldown_entity` | Drilldown Entity | Yes | Only when nothing else hangs off it |
+
+<Tip>
+Read the templates from this endpoint instead of hard-coding the tables above. They are configuration, so templates and entry types can be added or changed.
+</Tip>
+
+<Note>
+**Permission required:** none. The templates are the same for every caller.
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="type" type="string">
+Only return the template with this type, for example `ASK_DATA`
+</ParamField>
+
+<RequestExample>
+```bash All templates
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/templates' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash One template
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/templates?type=ASK_DATA' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="array">
+Array of template objects
+<Expandable title="Template object">
+  <ResponseField name="type" type="string">Template type. Pass it as `type` when you create an analysis model.</ResponseField>
+  <ResponseField name="name" type="object">Display name per language tag, for example `{"en": "Smart Data Query", "zh": "智能分析"}`</ResponseField>
+  <ResponseField name="entity_types" type="array">
+  Kinds of knowledge a model of this type accepts
+  <Expandable title="Entry type object">
+    <ResponseField name="code" type="string">Value to pass as `entity_type` when you add, list, edit or delete knowledge entries</ResponseField>
+    <ResponseField name="name" type="object">Display name per language tag</ResponseField>
+    <ResponseField name="vectorized" type="boolean">Whether entries of this kind are matched semantically rather than only by exact lookup</ResponseField>
+    <ResponseField name="delete_validation" type="string">
+    When an entry of this kind can be deleted:
+
+    - `ANYWAY`: always
+    - `LEAF`: only when nothing else hangs off it
+    - `ISLAND`: only when it is connected to nothing at all
+
+    Use it to rule out a delete before you offer one. [Delete Knowledge Entry](/features/memorylake/api-reference/database/analysis-models/delete-knowledge-entry) checks the condition again and refuses the request on its own.
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": [
+    {
+      "type": "ASK_DATA",
+      "name": { "en": "Smart Data Query", "zh": "智能分析" },
+      "entity_types": [
+        {
+          "code": "general",
+          "name": { "en": "General Knowledge", "zh": "通用知识" },
+          "vectorized": false,
+          "delete_validation": "ANYWAY"
+        },
+        {
+          "code": "biz_rule",
+          "name": { "en": "Business Knowledge", "zh": "业务知识" },
+          "vectorized": true,
+          "delete_validation": "ANYWAY"
+        },
+        {
+          "code": "few_shot",
+          "name": { "en": "Few-shot Case", "zh": "优化案例" },
+          "vectorized": true,
+          "delete_validation": "ANYWAY"
+        }
+      ]
+    },
+    {
+      "type": "DRILLDOWN",
+      "name": { "en": "Attribution Analysis", "zh": "归因分析" },
+      "entity_types": [
+        {
+          "code": "drilldown_entity",
+          "name": { "en": "Drilldown Entity", "zh": "业务模型" },
+          "vectorized": true,
+          "delete_validation": "LEAF"
+        },
+        {
+          "code": "general",
+          "name": { "en": "General Knowledge", "zh": "通用知识" },
+          "vectorized": false,
+          "delete_validation": "ANYWAY"
+        },
+        {
+          "code": "biz_rule",
+          "name": { "en": "Business Knowledge", "zh": "业务知识" },
+          "vectorized": true,
+          "delete_validation": "ANYWAY"
+        },
+        {
+          "code": "few_shot",
+          "name": { "en": "Few-shot Case", "zh": "优化案例" },
+          "vectorized": true,
+          "delete_validation": "ANYWAY"
+        }
+      ]
+    },
+    {
+      "type": "INDICATOR_EXTRACT",
+      "name": { "en": "Indicator Extraction", "zh": "指标取数" },
+      "entity_types": [
+        {
+          "code": "general",
+          "name": { "en": "General Knowledge", "zh": "通用知识" },
+          "vectorized": false,
+          "delete_validation": "ANYWAY"
+        },
+        {
+          "code": "biz_rule",
+          "name": { "en": "Business Knowledge", "zh": "业务知识" },
+          "vectorized": true,
+          "delete_validation": "ANYWAY"
+        }
+      ]
+    }
+  ]
+}
+```
+</ResponseExample>

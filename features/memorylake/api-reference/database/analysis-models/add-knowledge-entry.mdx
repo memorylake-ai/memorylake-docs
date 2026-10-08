@@ -1,0 +1,203 @@
+---
+title: "Add Knowledge Entry"
+description: "Add background, a business rule, a worked example or a metric to an analysis model"
+noindex: true
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models/{modelId}/entries
+```
+
+Adds one knowledge entry to an analysis model. Every entry has a kind, `entity_type`, which decides what goes in `embedding` and the shape of `payload`:
+
+| `entity_type` | What it holds | `embedding` holds |
+|---|---|---|
+| `general` | Background about the data, read as context | What the background is filed under |
+| `biz_rule` | A business rule or definition | The term the rule is about |
+| `few_shot` | A question together with the SQL that answers it | The question |
+| `drilldown_entity` | A metric with its definitions and thresholds | The metric's name |
+
+A model accepts only the kinds its template lists. Call [List Analysis Model Templates](/features/memorylake/api-reference/database/analysis-models/list-analysis-model-templates) to see which kinds a model of each type accepts.
+
+<Note>
+**Permission required:** `analysis_model:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="modelId" type="string" required>
+Analysis model ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="entity_type" type="string" required>
+Kind of knowledge: `general`, `biz_rule`, `few_shot` or `drilldown_entity`. It decides the shape of `payload`. A model may accept kinds not described here; the templates endpoint lists the ones it accepts, and the `payload` of such an entry is passed on as given.
+</ParamField>
+
+<ParamField body="embedding" type="string">
+Text the entry is filed under. Required for `general`, `few_shot` and `drilldown_entity`; optional for `biz_rule`.
+
+- `general`: names the entry. It is not matched against questions, because general knowledge is read as context rather than looked up.
+- `biz_rule`: the term the rule is about, matched against incoming questions. Leave it out and the model derives the term from the rule; send both and each is kept as given.
+- `few_shot`: the question the example answers. Incoming questions are matched against it, and the SQL is used once the example is chosen.
+- `drilldown_entity`: the metric's name, matched against incoming questions.
+</ParamField>
+
+<ParamField body="payload" type="object" required>
+Content of the entry. Its shape follows `entity_type`: the content goes into named slots under `artifact`, and each slot is a slot object. Keys other than the ones listed here are kept and returned as given.
+
+<Expandable title="general · General Knowledge">
+  <ParamField body="artifact.general" type="object">The background itself, usually prose or Markdown</ParamField>
+</Expandable>
+<Expandable title="biz_rule · Business Knowledge">
+  <ParamField body="artifact.biz_rule" type="object">The rule itself</ParamField>
+  <ParamField body="source_spec" type="array">Read-only. It is returned when you read the entry; sending it has no effect.</ParamField>
+</Expandable>
+<Expandable title="few_shot · Few-shot Case">
+  <ParamField body="artifact.question" type="object">The question the example answers</ParamField>
+  <ParamField body="artifact.few_shot" type="object">The SQL that answers it, with `type` set to `SQL`. It is checked when the entry is saved: it must parse, and every table it names must exist in the datasource the model is built on. A statement written against another schema is refused rather than stored.</ParamField>
+</Expandable>
+<Expandable title="drilldown_entity · Drilldown Entity">
+  <ParamField body="artifact.busi_caliber" type="object">What the metric means to the business</ParamField>
+  <ParamField body="artifact.tech_caliber" type="object">How the metric is computed</ParamField>
+  <ParamField body="artifact.threshold" type="object">What counts as an unusual value for the metric</ParamField>
+  <ParamField body="artifact.analysis_hint" type="object">What to look at first when the metric moves</ParamField>
+</Expandable>
+<Expandable title="Slot object">
+  <ParamField body="type" type="string">How to read `content`: `LIST`, `DICT`, `MARKDOWN`, `TEXT`, `SQL` or `FILE`. It is the format of the value, not the kind of entry: a few-shot case's SQL is `SQL`, prose is `TEXT`.</ParamField>
+  <ParamField body="desc" type="string">Display name for the slot, for whoever renders it</ParamField>
+  <ParamField body="content" type="string">The value itself</ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="disabled" type="boolean" default="false">
+Set to `true` to add the entry already excluded from answering. Ignored for kinds that cannot be disabled, such as general knowledge.
+</ParamField>
+
+<ParamField body="extra" type="object">
+Anything you want kept alongside the entry. It is stored and returned untouched and takes no part in matching. A business rule on a model backed by a document library needs `doc_id` here, naming the document the rule belongs to.
+</ParamField>
+
+<RequestExample>
+```bash Few-shot case
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e/entries' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  --data-binary @- <<'EOF'
+{
+  "entity_type": "few_shot",
+  "embedding": "What was total revenue last month?",
+  "payload": {
+    "artifact": {
+      "question": {
+        "type": "TEXT",
+        "content": "What was total revenue last month?"
+      },
+      "few_shot": {
+        "type": "SQL",
+        "content": "SELECT SUM(total_amount) FROM sales.orders WHERE created_at >= date_trunc('month', now()) - interval '1 month' AND created_at < date_trunc('month', now())"
+      }
+    }
+  }
+}
+EOF
+```
+
+```bash General knowledge
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e/entries' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "entity_type": "general",
+    "embedding": "Sales data overview",
+    "payload": {
+      "artifact": {
+        "general": {
+          "type": "MARKDOWN",
+          "content": "## Sales data overview\n`sales.orders` holds one row per customer order. All amounts are in USD."
+        }
+      }
+    }
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns the new entry as [Get Knowledge Entry](/features/memorylake/api-reference/database/analysis-models/get-knowledge-entry) returns it.
+
+<ResponseField name="data" type="object">
+<Expandable title="Knowledge entry object">
+  <ResponseField name="id" type="string">Knowledge entry identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="entity_type" type="string">Kind of knowledge, such as `general` or `few_shot`. It decides the shape of `payload`.</ResponseField>
+  <ResponseField name="embedding" type="string">Text the entry is matched against: what a question has to resemble for the entry to be used. On a general-knowledge entry it only names the entry. On a business rule it may have been derived from the rule itself.</ResponseField>
+  <ResponseField name="disabled" type="boolean">Whether the entry is currently excluded from answering</ResponseField>
+  <ResponseField name="score" type="number">How close the entry is to the `keyword` of a search, from 0 to 1. Outside a search it carries no information and is usually 0 or absent, so do not read it as a quality score.</ResponseField>
+  <ResponseField name="payload" type="object">
+  Content of the entry. Its shape follows `entity_type`: the content sits in named slots under `artifact`, and each slot is a slot object. Keys not listed here are returned as stored.
+  <Expandable title="general · General Knowledge">
+    <ResponseField name="artifact.general" type="object">The background itself, usually prose or Markdown</ResponseField>
+  </Expandable>
+  <Expandable title="biz_rule · Business Knowledge">
+    <ResponseField name="artifact.biz_rule" type="object">The rule itself</ResponseField>
+    <ResponseField name="source_spec" type="array">Data entities the rule belongs to, each with its matching text. Read-only: it is derived from links between entries, which this API does not let you set.</ResponseField>
+  </Expandable>
+  <Expandable title="few_shot · Few-shot Case">
+    <ResponseField name="artifact.question" type="object">The question the example answers</ResponseField>
+    <ResponseField name="artifact.few_shot" type="object">The SQL that answers it</ResponseField>
+  </Expandable>
+  <Expandable title="drilldown_entity · Drilldown Entity">
+    <ResponseField name="artifact.busi_caliber" type="object">What the metric means to the business</ResponseField>
+    <ResponseField name="artifact.tech_caliber" type="object">How the metric is computed</ResponseField>
+    <ResponseField name="artifact.threshold" type="object">What counts as an unusual value for the metric</ResponseField>
+    <ResponseField name="artifact.analysis_hint" type="object">What to look at first when the metric moves</ResponseField>
+  </Expandable>
+  <Expandable title="Slot object">
+    <ResponseField name="type" type="string">How to read `content`: `LIST`, `DICT`, `MARKDOWN`, `TEXT`, `SQL` or `FILE`</ResponseField>
+    <ResponseField name="desc" type="string">Display name for the slot, for whoever renders it</ResponseField>
+    <ResponseField name="content" type="string">The value itself</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="extra" type="object">Whatever you stored alongside the entry, returned untouched. Omitted when you stored nothing.</ResponseField>
+  <ResponseField name="source_count" type="integer">How many entries point at this one</ResponseField>
+  <ResponseField name="target_count" type="integer">How many entries this one points at</ResponseField>
+  <ResponseField name="created_at" type="string">When the entry was added</ResponseField>
+  <ResponseField name="updated_at" type="string">When the entry was last changed. Disabling or restoring it counts as a change.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "5d2e7b9cb31d11f1a7c35e9b2d4f6a81",
+    "embedding": "What was total revenue last month?",
+    "disabled": false,
+    "score": 0.0,
+    "payload": {
+      "artifact": {
+        "question": {
+          "type": "TEXT",
+          "content": "What was total revenue last month?"
+        },
+        "few_shot": {
+          "type": "SQL",
+          "content": "SELECT SUM(total_amount) FROM sales.orders WHERE created_at >= date_trunc('month', now()) - interval '1 month' AND created_at < date_trunc('month', now())"
+        }
+      }
+    },
+    "entity_type": "few_shot",
+    "source_count": 0,
+    "target_count": 0,
+    "created_at": "2026-09-21T09:26:38.417Z",
+    "updated_at": "2026-09-21T09:26:38.417Z"
+  }
+}
+```
+</ResponseExample>
