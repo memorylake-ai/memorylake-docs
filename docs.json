@@ -341,6 +341,18 @@
                           "features/memorylake/api-reference/database/analysis-models/disable-knowledge-entry",
                           "features/memorylake/api-reference/database/analysis-models/delete-knowledge-entry"
                         ]
+                      },
+                      {
+                        "group": "Database Memories",
+                        "pages": [
+                          "features/memorylake/api-reference/database/database-memories/list-database-memories",
+                          "features/memorylake/api-reference/database/database-memories/create-database-memory",
+                          "features/memorylake/api-reference/database/database-memories/get-database-memory",
+                          "features/memorylake/api-reference/database/database-memories/update-database-memory",
+                          "features/memorylake/api-reference/database/database-memories/delete-database-memory",
+                          "features/memorylake/api-reference/database/database-memories/reload-database-memory",
+                          "features/memorylake/api-reference/database/database-memories/generate-database-memory-instruction"
+                        ]
                       }
                     ]
                   },
@@ -768,6 +780,18 @@
                           "zh/features/memorylake/api-reference/database/analysis-models/edit-knowledge-entry",
                           "zh/features/memorylake/api-reference/database/analysis-models/disable-knowledge-entry",
                           "zh/features/memorylake/api-reference/database/analysis-models/delete-knowledge-entry"
+                        ]
+                      },
+                      {
+                        "group": "数据库记忆",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/database/database-memories/list-database-memories",
+                          "zh/features/memorylake/api-reference/database/database-memories/create-database-memory",
+                          "zh/features/memorylake/api-reference/database/database-memories/get-database-memory",
+                          "zh/features/memorylake/api-reference/database/database-memories/update-database-memory",
+                          "zh/features/memorylake/api-reference/database/database-memories/delete-database-memory",
+                          "zh/features/memorylake/api-reference/database/database-memories/reload-database-memory",
+                          "zh/features/memorylake/api-reference/database/database-memories/generate-database-memory-instruction"
                         ]
                       }
                     ]

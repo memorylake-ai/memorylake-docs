@@ -1,0 +1,54 @@
+---
+title: "Reload Database Memory"
+description: "Reprocess a database memory to refresh its schema and table metadata"
+noindex: true
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/databases/{databaseId}/reload
+```
+
+Reprocesses a database memory, refreshing the schema and table metadata it answers from. Use it to retry a memory whose `status` is `error`, or to pick up changes to the database's tables.
+
+The reload runs asynchronously. The memory's `status` goes back to `pending`; poll [Get Database Memory](/features/memorylake/api-reference/database/database-memories/get-database-memory) until it is `okay` or `error` again.
+
+You can only reload a memory whose `status` is `okay` or `error`. While it is `pending` or `running`, the request is refused with `STATE_NOT_READY`; wait for the current processing to finish and try again.
+
+<Note>
+**Permission required:** `project:dbset_modify` on the project
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+ID of the workspace the project belongs to
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+<ParamField path="databaseId" type="string" required>
+Database memory ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/databases/doc-2e6a9c4f8b1d4a7e9c3b5d8f0a2c4e6b/reload' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the reload was started</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>
