@@ -54,7 +54,7 @@ These fields are returned by the actual API but should not be exposed in the pub
 
 ## Hidden API docs
 
-Some API reference groups are published but hidden by default: they sit at their final place in the `API reference` tab, but readers only see them after clicking the page title 5 times within 3 seconds (clicking 5 more times hides them again; the choice is remembered in the browser). `hidden-docs.js` handles the clicks and `hidden-docs.css` does the hiding. This only keeps them out of sight. The repository is public, so never put anything confidential in a hidden page.
+Some API reference groups are published but hidden by default: they sit at their final place in the `API reference` tab, but readers only see them after clicking the `API reference` tab in the top bar 5 times within 3 seconds (clicking it 5 more times hides them again; the choice is remembered in the browser). This works on desktop only: on narrow screens the tabs collapse into a menu, so open hidden pages by direct link there. `hidden-docs.js` handles the clicks and `hidden-docs.css` does the hiding. This only keeps them out of sight. The repository is public, so never put anything confidential in a hidden page.
 
 To hide a group:
 
