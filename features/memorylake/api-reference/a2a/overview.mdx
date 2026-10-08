@@ -97,6 +97,15 @@ MemoryLake-specific configuration. Without this, the agent runs without any memo
     <ParamField body="maxTurns" type="integer">Override the maximum number of turns</ParamField>
   </Expandable>
   </ParamField>
+
+  <ParamField body="runtimeOptions" type="object">
+  Run options for this request.
+  <Expandable title="Run option fields">
+    <ParamField body="language" type="string">
+    Language the agent responds in, given as a language name such as `English`, `Chinese`, or `Japanese`. Omit it to have the agent reply in the language of the user's message.
+    </ParamField>
+  </Expandable>
+  </ParamField>
 </Expandable>
 </ParamField>
 
