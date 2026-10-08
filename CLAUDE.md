@@ -52,6 +52,21 @@ When writing or updating API reference documentation, the following internal fie
 
 These fields are returned by the actual API but should not be exposed in the public documentation.
 
+## Hidden API docs
+
+Some API reference groups are published but hidden by default: they sit at their final place in the `API reference` tab, but readers only see them after clicking the page title 5 times within 3 seconds (clicking 5 more times hides them again; the choice is remembered in the browser). `hidden-docs.js` handles the clicks and `hidden-docs.css` does the hiding. This only keeps them out of sight. The repository is public, so never put anything confidential in a hidden page.
+
+To hide a group:
+
+1. Add `"tag": "Preview"` to the group in the `en` tree and `"tag": "预览"` in the `zh` tree. These two tag values are reserved for hidden groups.
+2. Add `noindex: true` to the frontmatter of every page in the group, which keeps it out of site search, the sitemap, `llms.txt` and the AI assistant.
+3. Add `hideFooterPagination: true` to the public pages right before and after the group in the tab's page order. Otherwise their previous/next links point into the hidden group.
+4. Run `python3 scripts/check_hidden_docs.py` before opening the pull request. It reports a missing `noindex`, a missing `hideFooterPagination`, and a `hideFooterPagination` that is no longer needed.
+
+To publish a hidden group, remove its `tag` and the `noindex` lines, then run the script. It lists the `hideFooterPagination` lines that you can remove.
+
+Hidden groups so far: `Databases` / `数据库` under `MemoryLake API`.
+
 ## Key Details
 
 - Base API URL: `https://app.memorylake.ai/openapi/memorylake`
