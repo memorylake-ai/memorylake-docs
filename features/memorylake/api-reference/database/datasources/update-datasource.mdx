@@ -1,0 +1,109 @@
+---
+title: "Update Datasource"
+description: "Change a datasource's name, description or table filter"
+noindex: true
+---
+
+```
+PATCH /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources/{datasourceId}
+```
+
+Partially updates a datasource. Fields you leave out stay unchanged. The connection and the schema are fixed at creation and cannot be changed here; to cover a different schema, [create another datasource](/features/memorylake/api-reference/database/datasources/create-datasource).
+
+`table_filter_rule` decides which tables a build indexes. After you change it, [build the index](/features/memorylake/api-reference/database/datasources/build-datasource-index) again so that the index follows the new rule.
+
+<Note>
+**Permission required:** `db_datasource:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="datasourceId" type="string" required>
+Datasource ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string">
+Display name
+</ParamField>
+
+<ParamField body="description" type="string">
+Free-form description
+</ParamField>
+
+<ParamField body="table_filter_rule" type="string">
+Regular expression that selects which tables of the schema are indexed. `.*` takes every table.
+</ParamField>
+
+<RequestExample>
+```bash Rename
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources/dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Sales",
+    "description": "Orders and customers, refreshed nightly"
+  }'
+```
+
+```bash Index only some tables
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources/dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "table_filter_rule": "^(orders|customers)$"
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns the updated datasource.
+
+<ResponseField name="data" type="object">
+<Expandable title="Datasource object">
+  <ResponseField name="id" type="string">Datasource identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="description" type="string">Free-form description</ResponseField>
+  <ResponseField name="schemas" type="array">The schema this datasource covers. Holds exactly one entry for now and cannot be changed.</ResponseField>
+  <ResponseField name="workspace_id" type="string">Workspace this datasource belongs to</ResponseField>
+  <ResponseField name="db_connection_id" type="string">Connection this datasource reads through</ResponseField>
+  <ResponseField name="custom_id" type="string">Your own identifier for this datasource, if you set one</ResponseField>
+  <ResponseField name="table_filter_rule" type="string">Regular expression that selects which tables of the schema are indexed. `.*` takes every table.</ResponseField>
+  <ResponseField name="database_count" type="integer">Number of database memories that currently use this datasource</ResponseField>
+  <ResponseField name="build_version" type="string">Version of the most recently built index. Empty until the first build finishes.</ResponseField>
+  <ResponseField name="building_version" type="string">Version of the index being built right now. Empty when no build is running.</ResponseField>
+  <ResponseField name="data_version" type="string">Version of the data, used to tell whether the index is current. When it is set and differs from `build_version`, the index is behind the data and a rebuild is due.</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c",
+    "name": "Sales",
+    "description": "Orders and customers, refreshed nightly",
+    "schemas": ["sales"],
+    "workspace_id": "ws-8001856949ad4f6a5b6226f415ffa877",
+    "db_connection_id": "dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d",
+    "custom_id": "sales-ds",
+    "table_filter_rule": ".*",
+    "database_count": 1,
+    "build_version": "20260921082748374",
+    "building_version": "",
+    "data_version": "",
+    "created_at": "2026-09-18T07:42:43.299Z",
+    "updated_at": "2026-09-22T02:10:36.415Z"
+  }
+}
+```
+</ResponseExample>

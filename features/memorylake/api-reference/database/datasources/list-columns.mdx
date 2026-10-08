@@ -1,0 +1,107 @@
+---
+title: "List Columns"
+description: "List the columns of one table in a datasource, with their comments and indexing settings"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources/{datasourceId}/columns
+```
+
+Lists the columns of one table in the schema this datasource covers, together with each column's comment and whether its values are indexed for semantic matching. The full list comes back in a single response. Find table names with [List Tables](/features/memorylake/api-reference/database/datasources/list-tables). A table name that the datasource does not cover returns an empty list.
+
+To change a column's comment or its indexing flag, call [Edit Schema Metadata](/features/memorylake/api-reference/database/datasources/edit-schema-metadata).
+
+<Note>
+**Permission required:** `db_datasource:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="datasourceId" type="string" required>
+Datasource ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="table_name" type="string" required>
+Name of the table to list columns from
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources/dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c/columns?table_name=orders' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Column list">
+  <ResponseField name="items" type="array">
+  Array of column objects
+  <Expandable title="Column object">
+    <ResponseField name="comment" type="string">Comment describing what the column holds. Empty when none is set.</ResponseField>
+    <ResponseField name="schema_name" type="string">Schema the column belongs to</ResponseField>
+    <ResponseField name="table_name" type="string">Table the column belongs to</ResponseField>
+    <ResponseField name="column_name" type="string">Column name</ResponseField>
+    <ResponseField name="data_type" type="string">Column type as reported by the database, for example `bigint` or `varchar`</ResponseField>
+    <ResponseField name="embedding_enabled" type="boolean">Whether the column's values are indexed for semantic matching</ResponseField>
+    <ResponseField name="max_embedding_rows" type="integer">Upper limit on how many of the column's values are indexed. You cannot change it through the API.</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "comment": "Order identifier",
+        "schema_name": "sales",
+        "table_name": "orders",
+        "column_name": "order_id",
+        "data_type": "bigint",
+        "embedding_enabled": false,
+        "max_embedding_rows": 1000
+      },
+      {
+        "comment": "Customer who placed the order",
+        "schema_name": "sales",
+        "table_name": "orders",
+        "column_name": "customer_id",
+        "data_type": "bigint",
+        "embedding_enabled": false,
+        "max_embedding_rows": 1000
+      },
+      {
+        "comment": "Order total, including tax",
+        "schema_name": "sales",
+        "table_name": "orders",
+        "column_name": "total_amount",
+        "data_type": "numeric",
+        "embedding_enabled": false,
+        "max_embedding_rows": 1000
+      },
+      {
+        "comment": "",
+        "schema_name": "sales",
+        "table_name": "orders",
+        "column_name": "created_at",
+        "data_type": "timestamp",
+        "embedding_enabled": false,
+        "max_embedding_rows": 1000
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

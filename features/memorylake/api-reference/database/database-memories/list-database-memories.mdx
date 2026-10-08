@@ -1,0 +1,99 @@
+---
+title: "List Database Memories"
+description: "Returns a paginated list of the database memories in a project"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/databases
+```
+
+Returns the database memories in a project. Page through the results with continuation tokens.
+
+List results leave out each memory's `instruction`. Call [Get Database Memory](/features/memorylake/api-reference/database/database-memories/get-database-memory) to read it.
+
+<Note>
+**Permission required:** `project:dbset_read` on the project. The list includes every database memory in the project.
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+ID of the workspace the project belongs to
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of database memories to return per page, from 1 to 100
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page. Omit it for the first page.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/databases?page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated database memory list">
+  <ResponseField name="items" type="array">
+  Array of database memory objects
+  <Expandable title="Database memory object">
+    <ResponseField name="id" type="string">Database memory identifier. Treat it as an opaque string.</ResponseField>
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="status" type="string">Processing status: `pending`, `running`, `okay`, or `error`. The memory is ready to use once it is `okay`.</ResponseField>
+    <ResponseField name="error" type="object">
+    Details of the failure. Present only when `status` is `error`, and only when a cause was reported.
+    <Expandable title="Error details">
+      <ResponseField name="code" type="string">Error code</ResponseField>
+      <ResponseField name="msg" type="string">Error message</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="project_id" type="string">ID of the project the memory belongs to</ResponseField>
+    <ResponseField name="db_datasource_id" type="string">Datasource this memory reads</ResponseField>
+    <ResponseField name="analysis_model_id" type="string">Analysis model this memory draws its knowledge from. Omitted when none is bound.</ResponseField>
+    <ResponseField name="instruction" type="string">Not included in list results. Call [Get Database Memory](/features/memorylake/api-reference/database/database-memories/get-database-memory) to read it.</ResponseField>
+    <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">
+  Token to retrieve the next page. Omitted on the last page.
+  </ResponseField>
+  <ResponseField name="total" type="integer">
+  Total number of database memories in the project across all pages
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "doc-2e6a9c4f8b1d4a7e9c3b5d8f0a2c4e6b",
+        "name": "Sales database",
+        "status": "okay",
+        "project_id": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
+        "db_datasource_id": "dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c",
+        "analysis_model_id": "am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e",
+        "created_at": "2026-09-21T09:03:17.482Z"
+      }
+    ],
+    "total": 1
+  }
+}
+```
+</ResponseExample>

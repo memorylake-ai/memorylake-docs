@@ -1,0 +1,56 @@
+---
+title: "Delete Database Memory"
+description: "Remove a database memory from a project"
+noindex: true
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/databases/{databaseId}
+```
+
+Removes a database memory from the project. The datasource, the analysis model and your database itself are not affected.
+
+A datasource cannot be deleted while any database memory reads it, and an analysis model cannot be deleted while any database memory is bound to it. To [delete a datasource](/features/memorylake/api-reference/database/datasources/delete-datasource), delete its memories first. To [delete an analysis model](/features/memorylake/api-reference/database/analysis-models/delete-analysis-model), delete the memories bound to it or remove the binding with [Update Database Memory](/features/memorylake/api-reference/database/database-memories/update-database-memory).
+
+<Note>
+**Permission required:** `project:dbset_delete` on the project
+</Note>
+
+<Warning>
+This cannot be undone. The memory's instruction and everything MemoryLake prepared from the database for this memory are removed with it.
+</Warning>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+ID of the workspace the project belongs to
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+<ParamField path="databaseId" type="string" required>
+Database memory ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/databases/doc-2e6a9c4f8b1d4a7e9c3b5d8f0a2c4e6b' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>

@@ -1,0 +1,172 @@
+---
+title: "List Knowledge Entries"
+description: "List one kind of knowledge an analysis model holds, or search it by similarity"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models/{modelId}/entries
+```
+
+Returns a paginated list of the knowledge entries of one kind in an analysis model. To read all of a model's knowledge, list each kind its template accepts; [List Analysis Model Templates](/features/memorylake/api-reference/database/analysis-models/list-analysis-model-templates) shows which kinds those are.
+
+Pass `keyword` to rank the entries by similarity instead. A search always returns the closest entries, even when none of them is a good match, so use each entry's `score` to tell a near match from a distant one.
+
+<Note>
+**Permission required:** `analysis_model:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="modelId" type="string" required>
+Analysis model ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="entity_type" type="string" required>
+Kind of knowledge to list, such as `general`, `biz_rule`, `few_shot` or `drilldown_entity`. A model lists one kind at a time.
+</ParamField>
+
+<ParamField query="keyword" type="string">
+Rank entries by how close they are to this text, closest first. This is a similarity search, not a filter: text that matches nothing still returns the closest entries rather than an empty page, so do not treat a non-empty result as a hit. Disabled entries are left out.
+</ParamField>
+
+<ParamField query="from" type="string">
+Only return entries from this source: `MANUAL` for entries written by hand, `BUILD` for entries the model produced when it was built
+</ParamField>
+
+<ParamField query="ids" type="array">
+Only return these entries, by ID. Repeat the parameter to pass several IDs.
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="20">
+Number of entries to return per page, from 1 to 100
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from a previous response to fetch the next page. Omit it for the first page.
+</ParamField>
+
+<RequestExample>
+```bash List
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e/entries?entity_type=few_shot&page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Search
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e/entries?entity_type=few_shot&keyword=revenue%20last%20month' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated knowledge entry list">
+  <ResponseField name="items" type="array">
+  Array of knowledge entry objects
+  <Expandable title="Knowledge entry object">
+    <ResponseField name="id" type="string">Knowledge entry identifier. Treat it as an opaque string.</ResponseField>
+    <ResponseField name="entity_type" type="string">Kind of knowledge, such as `general` or `few_shot`. It decides the shape of `payload`.</ResponseField>
+    <ResponseField name="embedding" type="string">Text the entry is matched against: what a question has to resemble for the entry to be used. On a general-knowledge entry it only names the entry. On a business rule it may have been derived from the rule itself.</ResponseField>
+    <ResponseField name="disabled" type="boolean">Whether the entry is currently excluded from answering</ResponseField>
+    <ResponseField name="score" type="number">How close the entry is to the `keyword` of a search, from 0 to 1. Outside a search it carries no information and is usually 0 or absent, so do not read it as a quality score.</ResponseField>
+    <ResponseField name="payload" type="object">
+    Content of the entry. Its shape follows `entity_type`: the content sits in named slots under `artifact`, and each slot is a slot object. Keys not listed here are returned as stored.
+    <Expandable title="general · General Knowledge">
+      <ResponseField name="artifact.general" type="object">The background itself, usually prose or Markdown</ResponseField>
+    </Expandable>
+    <Expandable title="biz_rule · Business Knowledge">
+      <ResponseField name="artifact.biz_rule" type="object">The rule itself</ResponseField>
+      <ResponseField name="source_spec" type="array">Data entities the rule belongs to, each with its matching text. Read-only: it is derived from links between entries, which this API does not let you set.</ResponseField>
+    </Expandable>
+    <Expandable title="few_shot · Few-shot Case">
+      <ResponseField name="artifact.question" type="object">The question the example answers</ResponseField>
+      <ResponseField name="artifact.few_shot" type="object">The SQL that answers it</ResponseField>
+    </Expandable>
+    <Expandable title="drilldown_entity · Drilldown Entity">
+      <ResponseField name="artifact.busi_caliber" type="object">What the metric means to the business</ResponseField>
+      <ResponseField name="artifact.tech_caliber" type="object">How the metric is computed</ResponseField>
+      <ResponseField name="artifact.threshold" type="object">What counts as an unusual value for the metric</ResponseField>
+      <ResponseField name="artifact.analysis_hint" type="object">What to look at first when the metric moves</ResponseField>
+    </Expandable>
+    <Expandable title="Slot object">
+      <ResponseField name="type" type="string">How to read `content`: `LIST`, `DICT`, `MARKDOWN`, `TEXT`, `SQL` or `FILE`</ResponseField>
+      <ResponseField name="desc" type="string">Display name for the slot, for whoever renders it</ResponseField>
+      <ResponseField name="content" type="string">The value itself</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="extra" type="object">Whatever you stored alongside the entry, returned untouched. Omitted when you stored nothing.</ResponseField>
+    <ResponseField name="source_count" type="integer">How many entries point at this one. Lists may leave it out; [Get Knowledge Entry](/features/memorylake/api-reference/database/analysis-models/get-knowledge-entry) returns it.</ResponseField>
+    <ResponseField name="target_count" type="integer">How many entries this one points at. Lists may leave it out; [Get Knowledge Entry](/features/memorylake/api-reference/database/analysis-models/get-knowledge-entry) returns it.</ResponseField>
+    <ResponseField name="created_at" type="string">When the entry was added</ResponseField>
+    <ResponseField name="updated_at" type="string">When the entry was last changed. Disabling or restoring it counts as a change.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">
+  Token to retrieve the next page. Omitted on the last page.
+  </ResponseField>
+  <ResponseField name="total" type="integer">
+  Total number of matching entries across all pages. It may be omitted; page through with `continuation_token` instead of computing page counts from it.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "id": "5d2e7b9cb31d11f1a7c35e9b2d4f6a81",
+        "embedding": "What was total revenue last month?",
+        "disabled": false,
+        "score": 0.0,
+        "payload": {
+          "artifact": {
+            "question": {
+              "type": "TEXT",
+              "content": "What was total revenue last month?"
+            },
+            "few_shot": {
+              "type": "SQL",
+              "content": "SELECT SUM(total_amount) FROM sales.orders WHERE created_at >= date_trunc('month', now()) - interval '1 month' AND created_at < date_trunc('month', now())"
+            }
+          }
+        },
+        "entity_type": "few_shot",
+        "created_at": "2026-09-21T09:26:38.417Z",
+        "updated_at": "2026-09-21T09:26:38.417Z"
+      },
+      {
+        "id": "7a1c3e5fb31d11f1a7c35e9b2d4f6a81",
+        "embedding": "How many orders did each customer place this year?",
+        "disabled": false,
+        "score": 0.0,
+        "payload": {
+          "artifact": {
+            "question": {
+              "type": "TEXT",
+              "content": "How many orders did each customer place this year?"
+            },
+            "few_shot": {
+              "type": "SQL",
+              "content": "SELECT customer_id, COUNT(*) AS order_count FROM sales.orders WHERE created_at >= date_trunc('year', now()) GROUP BY customer_id"
+            }
+          }
+        },
+        "entity_type": "few_shot",
+        "created_at": "2026-09-21T09:28:02.751Z",
+        "updated_at": "2026-09-21T09:28:02.751Z"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,99 @@
+---
+title: "Generate Database Memory Instruction"
+description: "Draft an instruction for a database memory with a model"
+noindex: true
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/databases/{databaseId}/instruction/generate
+```
+
+Uses a model to draft guidance for how questions against this database should be answered, and returns the draft. The draft is not saved: review and edit it, then save it as the memory's `instruction` with [Update Database Memory](/features/memorylake/api-reference/database/database-memories/update-database-memory). The memory's current instruction stays unchanged until you do.
+
+Generating calls a model and can take a while. Set `stream` to `true` to keep the connection alive while you wait: the response becomes a stream of server-sent events, with a heartbeat comment every 10 seconds until the result is ready.
+
+<Note>
+**Permission required:** `project:dbset_modify` on the project
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+ID of the workspace the project belongs to
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+<ParamField path="databaseId" type="string" required>
+Database memory ID
+</ParamField>
+
+### Request Body
+
+The body is optional.
+
+<ParamField body="stream" type="boolean" default="false">
+Set to `true` to receive the result as server-sent events instead of one JSON response
+</ParamField>
+
+<RequestExample>
+```bash Single response
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/databases/doc-2e6a9c4f8b1d4a7e9c3b5d8f0a2c4e6b/instruction/generate' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Streamed
+curl -N -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/memories/databases/doc-2e6a9c4f8b1d4a7e9c3b5d8f0a2c4e6b/instruction/generate' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -H 'Accept: text/event-stream' \
+  -d '{
+    "stream": true
+  }'
+```
+</RequestExample>
+
+### Response
+
+Without `stream`, the response is a single JSON object:
+
+<ResponseField name="data" type="object">
+<Expandable title="Generated instruction">
+  <ResponseField name="instruction" type="string">The generated draft. It is not saved on the memory until you send it with Update Database Memory.</ResponseField>
+</Expandable>
+</ResponseField>
+
+With `stream` set to `true`, the response has the content type `text/event-stream` and carries these events:
+
+| Event | Data | Meaning |
+|---|---|---|
+| `data` | `{"instruction": "..."}` | The generated draft, sent once with the whole text. It is not saved on the memory. |
+| `end` | Empty | The stream finished successfully. |
+| `error` | `{"error_code": "..."}` | Generation failed. No `end` event follows. |
+
+Lines that start with `:` are heartbeat comments; ignore them. Once the stream has started, the HTTP status is always 200, so check for an `error` event. Problems found before the stream starts, such as a memory that does not exist or a missing permission, come back as ordinary JSON error responses.
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "instruction": "This database holds the sales schema. Use sales.orders for order and revenue questions: total_amount is the order value and created_at is when the order was placed. Join sales.customers on customer_id for customer details."
+  }
+}
+```
+
+```text Streamed (200)
+:keepalive
+
+:keepalive
+
+event:data
+data:{"instruction":"This database holds the sales schema. Use sales.orders for order and revenue questions: total_amount is the order value and created_at is when the order was placed. Join sales.customers on customer_id for customer details."}
+
+event:end
+data:
+```
+</ResponseExample>

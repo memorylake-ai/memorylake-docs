@@ -1,0 +1,112 @@
+---
+title: "Create Datasource"
+description: "Create a datasource in a workspace over one schema of a saved connection"
+noindex: true
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources
+```
+
+Creates a datasource in a workspace over one schema of an existing [database connection](/features/memorylake/api-reference/database/connections/get-database-connection). Analysis models and database memories are built on a datasource.
+
+The connection and the schema are fixed once the datasource exists. To cover a different schema, create another datasource.
+
+A datasource needs a built index before it can be used. If `building_version` in the response is non-empty, a build has already started: poll [Get Datasource](/features/memorylake/api-reference/database/datasources/get-datasource) until it is empty again. Otherwise, start one with [Build Datasource Index](/features/memorylake/api-reference/database/datasources/build-datasource-index).
+
+<Note>
+**Permission required:** `db_datasource:add` on the workspace, and `dbconn:read` on the connection
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+Display name
+</ParamField>
+
+<ParamField body="db_connection_id" type="string" required>
+ID of the connection this datasource reads through. You need `dbconn:read` on it.
+</ParamField>
+
+<ParamField body="schemas" type="array" required>
+The schema this datasource covers, as a list with exactly one entry, for example `["sales"]`. It must be a schema the connection can read; call [List Connection Schemas](/features/memorylake/api-reference/database/connections/list-connection-schemas) to see the choices. It cannot be changed later.
+</ParamField>
+
+<ParamField body="description" type="string">
+Free-form description
+</ParamField>
+
+<ParamField body="table_filter_rule" type="string" default=".*">
+Regular expression that selects which tables of the schema are indexed. The default `.*` takes every table.
+</ParamField>
+
+<ParamField body="custom_id" type="string">
+Your own identifier for this datasource, up to 255 characters. Must be unique within your tenant, cannot be changed once set, and must not start with `_sys_`. Pass `by_custom_id=true` on [Get Datasource](/features/memorylake/api-reference/database/datasources/get-datasource) to look the datasource up by it. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Sales warehouse · sales",
+    "description": "Orders and customers from the sales schema",
+    "db_connection_id": "dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d",
+    "schemas": ["sales"],
+    "table_filter_rule": ".*",
+    "custom_id": "sales-ds"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Datasource object">
+  <ResponseField name="id" type="string">Datasource identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="description" type="string">Free-form description</ResponseField>
+  <ResponseField name="schemas" type="array">The schema this datasource covers. Holds exactly one entry for now and cannot be changed.</ResponseField>
+  <ResponseField name="workspace_id" type="string">Workspace this datasource belongs to</ResponseField>
+  <ResponseField name="db_connection_id" type="string">Connection this datasource reads through</ResponseField>
+  <ResponseField name="custom_id" type="string">Your own identifier for this datasource, if you set one</ResponseField>
+  <ResponseField name="table_filter_rule" type="string">Regular expression that selects which tables of the schema are indexed. `.*` takes every table.</ResponseField>
+  <ResponseField name="database_count" type="integer">Number of database memories that currently use this datasource</ResponseField>
+  <ResponseField name="build_version" type="string">Version of the most recently built index. Empty until the first build finishes.</ResponseField>
+  <ResponseField name="building_version" type="string">Version of the index being built right now. Empty when no build is running.</ResponseField>
+  <ResponseField name="data_version" type="string">Version of the data, used to tell whether the index is current. When it is set and differs from `build_version`, the index is behind the data and a rebuild is due.</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c",
+    "name": "Sales warehouse · sales",
+    "description": "Orders and customers from the sales schema",
+    "schemas": ["sales"],
+    "workspace_id": "ws-8001856949ad4f6a5b6226f415ffa877",
+    "db_connection_id": "dbconn-7c1e9a4b2d6f4a8e9b3c5d7f1a2b4c6d",
+    "custom_id": "sales-ds",
+    "table_filter_rule": ".*",
+    "database_count": 0,
+    "build_version": "",
+    "building_version": "20260918074243318",
+    "data_version": "",
+    "created_at": "2026-09-18T07:42:43.299Z",
+    "updated_at": "2026-09-18T07:42:43.299Z"
+  }
+}
+```
+</ResponseExample>

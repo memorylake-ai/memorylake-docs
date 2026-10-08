@@ -1,0 +1,110 @@
+---
+title: "Get Knowledge Entry"
+description: "Retrieve one knowledge entry of an analysis model"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models/{modelId}/entries/{entryId}
+```
+
+Retrieves one knowledge entry. Pass the `entity_type` the entry was created with: some kinds cannot be found from the ID alone.
+
+<Note>
+**Permission required:** `analysis_model:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="modelId" type="string" required>
+Analysis model ID
+</ParamField>
+
+<ParamField path="entryId" type="string" required>
+Knowledge entry ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="entity_type" type="string">
+Kind of the entry, as it was created, such as `general` or `few_shot`. Some kinds cannot be found from the ID alone.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e/entries/8c4f2a6eb31d11f1a7c35e9b2d4f6a81?entity_type=general' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Knowledge entry object">
+  <ResponseField name="id" type="string">Knowledge entry identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="entity_type" type="string">Kind of knowledge, such as `general` or `few_shot`. It decides the shape of `payload`.</ResponseField>
+  <ResponseField name="embedding" type="string">Text the entry is matched against: what a question has to resemble for the entry to be used. On a general-knowledge entry it only names the entry. On a business rule it may have been derived from the rule itself.</ResponseField>
+  <ResponseField name="disabled" type="boolean">Whether the entry is currently excluded from answering</ResponseField>
+  <ResponseField name="score" type="number">How close the entry is to the `keyword` of a search, from 0 to 1. Outside a search it carries no information and is usually 0 or absent, so do not read it as a quality score.</ResponseField>
+  <ResponseField name="payload" type="object">
+  Content of the entry. Its shape follows `entity_type`: the content sits in named slots under `artifact`, and each slot is a slot object. Keys not listed here are returned as stored.
+  <Expandable title="general · General Knowledge">
+    <ResponseField name="artifact.general" type="object">The background itself, usually prose or Markdown</ResponseField>
+  </Expandable>
+  <Expandable title="biz_rule · Business Knowledge">
+    <ResponseField name="artifact.biz_rule" type="object">The rule itself</ResponseField>
+    <ResponseField name="source_spec" type="array">Data entities the rule belongs to, each with its matching text. Read-only: it is derived from links between entries, which this API does not let you set.</ResponseField>
+  </Expandable>
+  <Expandable title="few_shot · Few-shot Case">
+    <ResponseField name="artifact.question" type="object">The question the example answers</ResponseField>
+    <ResponseField name="artifact.few_shot" type="object">The SQL that answers it</ResponseField>
+  </Expandable>
+  <Expandable title="drilldown_entity · Drilldown Entity">
+    <ResponseField name="artifact.busi_caliber" type="object">What the metric means to the business</ResponseField>
+    <ResponseField name="artifact.tech_caliber" type="object">How the metric is computed</ResponseField>
+    <ResponseField name="artifact.threshold" type="object">What counts as an unusual value for the metric</ResponseField>
+    <ResponseField name="artifact.analysis_hint" type="object">What to look at first when the metric moves</ResponseField>
+  </Expandable>
+  <Expandable title="Slot object">
+    <ResponseField name="type" type="string">How to read `content`: `LIST`, `DICT`, `MARKDOWN`, `TEXT`, `SQL` or `FILE`</ResponseField>
+    <ResponseField name="desc" type="string">Display name for the slot, for whoever renders it</ResponseField>
+    <ResponseField name="content" type="string">The value itself</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="extra" type="object">Whatever you stored alongside the entry, returned untouched. Omitted when you stored nothing.</ResponseField>
+  <ResponseField name="source_count" type="integer">How many entries point at this one</ResponseField>
+  <ResponseField name="target_count" type="integer">How many entries this one points at</ResponseField>
+  <ResponseField name="created_at" type="string">When the entry was added</ResponseField>
+  <ResponseField name="updated_at" type="string">When the entry was last changed. Disabling or restoring it counts as a change.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "8c4f2a6eb31d11f1a7c35e9b2d4f6a81",
+    "embedding": "Sales data overview",
+    "disabled": false,
+    "payload": {
+      "artifact": {
+        "general": {
+          "type": "MARKDOWN",
+          "content": "## Sales data overview\n`sales.orders` holds one row per customer order. All amounts are in USD."
+        }
+      }
+    },
+    "entity_type": "general",
+    "source_count": 0,
+    "target_count": 0,
+    "created_at": "2026-09-21T09:22:51.086Z",
+    "updated_at": "2026-09-21T09:22:51.086Z"
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,118 @@
+---
+title: "Create Analysis Model"
+description: "Create an analysis model on a datasource to hold curated knowledge about its data"
+noindex: true
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models
+```
+
+Creates an analysis model on a datasource in the workspace. [Add knowledge entries](/features/memorylake/api-reference/database/analysis-models/add-knowledge-entry) to the model to describe the data, then bind it to a [database memory](/features/memorylake/api-reference/database/database-memories/create-database-memory) built on the same datasource.
+
+The template `type` decides which kinds of knowledge the model accepts. Call [List Analysis Model Templates](/features/memorylake/api-reference/database/analysis-models/list-analysis-model-templates) to see the available types. The model covers the schema of its datasource, so you do not pass a schema.
+
+<Note>
+**Permission required:** `analysis_model:add` on the workspace and `db_datasource:read` on the datasource
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+Display name
+</ParamField>
+
+<ParamField body="type" type="string" required>
+Template to follow, for example `ASK_DATA`. It decides which kinds of knowledge the model accepts. See [List Analysis Model Templates](/features/memorylake/api-reference/database/analysis-models/list-analysis-model-templates).
+</ParamField>
+
+<ParamField body="db_datasource_id" type="string" required>
+Datasource to build the model on. It must belong to this workspace, and you need `db_datasource:read` on it. Cannot be changed after creation.
+</ParamField>
+
+<ParamField body="description" type="string">
+Free-form description
+</ParamField>
+
+<ParamField body="custom_id" type="string">
+Your own identifier for this model, up to 255 characters. Must be unique within your tenant, cannot be changed once set, and must not start with `_sys_`. Pass `by_custom_id=true` on [Get Analysis Model](/features/memorylake/api-reference/database/analysis-models/get-analysis-model) to look the model up by it. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
+</ParamField>
+
+<ParamField body="fork_from" type="string">
+ID of an existing model to start this one from. The new model records it in `fork_from` as where it came from. Leave it out to start from nothing.
+
+A fork does not take the source's name, description, datasource or type: you still supply every other field yourself. It does take the source's knowledge: once the new model is created, a build starts in the background that copies the source model's knowledge entries into it. Until that build finishes the new model can hold fewer entries than the source, so [list its entries](/features/memorylake/api-reference/database/analysis-models/list-knowledge-entries) to check. If the build cannot be started, the model is still created, without the copied knowledge.
+
+The source must be a model in this workspace with the same `type`. It can be built on a different datasource, so you can continue knowledge curated against one database on another. A model that was itself forked cannot be forked again: only one level is allowed. Cannot be changed once set.
+</ParamField>
+
+<RequestExample>
+```bash Create
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Sales Q&A",
+    "description": "Answers questions about orders and revenue",
+    "type": "ASK_DATA",
+    "db_datasource_id": "dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c",
+    "custom_id": "sales-qa"
+  }'
+```
+
+```bash Fork an existing model
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Sales Q&A (draft)",
+    "type": "ASK_DATA",
+    "db_datasource_id": "dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c",
+    "fork_from": "am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Analysis model object">
+  <ResponseField name="id" type="string">Analysis model identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="description" type="string">Free-form description</ResponseField>
+  <ResponseField name="type" type="string">Template the model follows, such as `ASK_DATA`. It decides which kinds of knowledge the model accepts.</ResponseField>
+  <ResponseField name="schemas" type="array">Schemas the model covers, inherited from its datasource</ResponseField>
+  <ResponseField name="custom_id" type="string">Your own identifier for this model, if you set one</ResponseField>
+  <ResponseField name="db_datasource_id" type="string">Datasource the model is built on</ResponseField>
+  <ResponseField name="workspace_id" type="string">Workspace the model belongs to</ResponseField>
+  <ResponseField name="fork_from" type="string">Model this one was forked from. Absent for a model created from nothing.</ResponseField>
+  <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
+  <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e",
+    "name": "Sales Q&A",
+    "description": "Answers questions about orders and revenue",
+    "type": "ASK_DATA",
+    "schemas": ["sales"],
+    "custom_id": "sales-qa",
+    "db_datasource_id": "dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c",
+    "workspace_id": "ws-8001856949ad4f6a5b6226f415ffa877",
+    "created_at": "2026-09-21T09:14:05.612Z",
+    "updated_at": "2026-09-21T09:14:05.618Z"
+  }
+}
+```
+</ResponseExample>

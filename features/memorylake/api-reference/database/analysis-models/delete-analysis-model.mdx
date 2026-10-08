@@ -1,0 +1,48 @@
+---
+title: "Delete Analysis Model"
+description: "Delete an analysis model that no database memory uses"
+noindex: true
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models/{modelId}
+```
+
+Deletes an analysis model. The request is refused while any database memory still uses the model. First remove it from those memories with [Update Database Memory](/features/memorylake/api-reference/database/database-memories/update-database-memory) by sending an empty `analysis_model_id`, or [delete the memories](/features/memorylake/api-reference/database/database-memories/delete-database-memory).
+
+Models forked from this one are not affected. Their `fork_from` keeps naming the deleted model.
+
+<Note>
+**Permission required:** `analysis_model:delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="modelId" type="string" required>
+Analysis model ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>

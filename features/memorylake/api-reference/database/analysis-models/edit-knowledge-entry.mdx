@@ -1,0 +1,188 @@
+---
+title: "Edit Knowledge Entry"
+description: "Replace the content of a knowledge entry or change its matching text"
+noindex: true
+---
+
+```
+PATCH /openapi/memorylake/api/v3/workspaces/{workspaceId}/analysis-models/{modelId}/entries/{entryId}
+```
+
+Changes one knowledge entry. Fields you leave out keep their current values.
+
+`payload` is replaced as a whole when you send it, so include every slot you want to keep, not only the ones you change. A few-shot case's SQL is checked again when the entry is saved, as it is when you [add the entry](/features/memorylake/api-reference/database/analysis-models/add-knowledge-entry).
+
+To only take an entry out of use or put it back, you can also call [Disable or Restore Knowledge Entry](/features/memorylake/api-reference/database/analysis-models/disable-knowledge-entry).
+
+<Note>
+**Permission required:** `analysis_model:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="modelId" type="string" required>
+Analysis model ID
+</ParamField>
+
+<ParamField path="entryId" type="string" required>
+Knowledge entry ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="entity_type" type="string" required>
+Kind of the entry being edited, as it was created, such as `general` or `few_shot`. The edit is routed by it, and some kinds cannot be found from the ID alone.
+</ParamField>
+
+<ParamField body="embedding" type="string">
+Replacement text the entry is filed under and matched against. Omit it to keep the current one. See [Add Knowledge Entry](/features/memorylake/api-reference/database/analysis-models/add-knowledge-entry) for what it holds for each kind.
+</ParamField>
+
+<ParamField body="payload" type="object">
+Replacement content of the entry, in the shape `entity_type` calls for. Omit it to keep the current content.
+
+<Expandable title="general · General Knowledge">
+  <ParamField body="artifact.general" type="object">The background itself, usually prose or Markdown</ParamField>
+</Expandable>
+<Expandable title="biz_rule · Business Knowledge">
+  <ParamField body="artifact.biz_rule" type="object">The rule itself</ParamField>
+  <ParamField body="source_spec" type="array">Read-only. It is returned when you read the entry; sending it has no effect.</ParamField>
+</Expandable>
+<Expandable title="few_shot · Few-shot Case">
+  <ParamField body="artifact.question" type="object">The question the example answers</ParamField>
+  <ParamField body="artifact.few_shot" type="object">The SQL that answers it, with `type` set to `SQL`. Every table it names must exist in the datasource the model is built on.</ParamField>
+</Expandable>
+<Expandable title="drilldown_entity · Drilldown Entity">
+  <ParamField body="artifact.busi_caliber" type="object">What the metric means to the business</ParamField>
+  <ParamField body="artifact.tech_caliber" type="object">How the metric is computed</ParamField>
+  <ParamField body="artifact.threshold" type="object">What counts as an unusual value for the metric</ParamField>
+  <ParamField body="artifact.analysis_hint" type="object">What to look at first when the metric moves</ParamField>
+</Expandable>
+<Expandable title="Slot object">
+  <ParamField body="type" type="string">How to read `content`: `LIST`, `DICT`, `MARKDOWN`, `TEXT`, `SQL` or `FILE`. It is the format of the value, not the kind of entry.</ParamField>
+  <ParamField body="desc" type="string">Display name for the slot, for whoever renders it</ParamField>
+  <ParamField body="content" type="string">The value itself</ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="disabled" type="boolean">
+Set to `true` to exclude the entry from answering, or `false` to put it back into use. Omit it to keep the current setting.
+</ParamField>
+
+<ParamField body="extra" type="object">
+Anything you want kept alongside the entry. Omit it to keep what is there; sending a value replaces it.
+</ParamField>
+
+<RequestExample>
+```bash Replace the SQL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e/entries/5d2e7b9cb31d11f1a7c35e9b2d4f6a81' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  --data-binary @- <<'EOF'
+{
+  "entity_type": "few_shot",
+  "payload": {
+    "artifact": {
+      "question": {
+        "type": "TEXT",
+        "content": "What was total revenue last month?"
+      },
+      "few_shot": {
+        "type": "SQL",
+        "content": "SELECT COALESCE(SUM(total_amount), 0) FROM sales.orders WHERE created_at >= date_trunc('month', now()) - interval '1 month' AND created_at < date_trunc('month', now())"
+      }
+    }
+  }
+}
+EOF
+```
+
+```bash Take out of use
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/analysis-models/am-9d3f7b1e5a2c4d8f6b0e3a7c9d1f5b2e/entries/5d2e7b9cb31d11f1a7c35e9b2d4f6a81' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "entity_type": "few_shot",
+    "disabled": true
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns the entry after the edit.
+
+<ResponseField name="data" type="object">
+<Expandable title="Knowledge entry object">
+  <ResponseField name="id" type="string">Knowledge entry identifier. Treat it as an opaque string.</ResponseField>
+  <ResponseField name="entity_type" type="string">Kind of knowledge, such as `general` or `few_shot`. It decides the shape of `payload`.</ResponseField>
+  <ResponseField name="embedding" type="string">Text the entry is matched against: what a question has to resemble for the entry to be used. On a general-knowledge entry it only names the entry. On a business rule it may have been derived from the rule itself.</ResponseField>
+  <ResponseField name="disabled" type="boolean">Whether the entry is currently excluded from answering</ResponseField>
+  <ResponseField name="score" type="number">How close the entry is to the `keyword` of a search, from 0 to 1. Outside a search it carries no information and is usually 0 or absent, so do not read it as a quality score.</ResponseField>
+  <ResponseField name="payload" type="object">
+  Content of the entry. Its shape follows `entity_type`: the content sits in named slots under `artifact`, and each slot is a slot object. Keys not listed here are returned as stored.
+  <Expandable title="general · General Knowledge">
+    <ResponseField name="artifact.general" type="object">The background itself, usually prose or Markdown</ResponseField>
+  </Expandable>
+  <Expandable title="biz_rule · Business Knowledge">
+    <ResponseField name="artifact.biz_rule" type="object">The rule itself</ResponseField>
+    <ResponseField name="source_spec" type="array">Data entities the rule belongs to, each with its matching text. Read-only: it is derived from links between entries, which this API does not let you set.</ResponseField>
+  </Expandable>
+  <Expandable title="few_shot · Few-shot Case">
+    <ResponseField name="artifact.question" type="object">The question the example answers</ResponseField>
+    <ResponseField name="artifact.few_shot" type="object">The SQL that answers it</ResponseField>
+  </Expandable>
+  <Expandable title="drilldown_entity · Drilldown Entity">
+    <ResponseField name="artifact.busi_caliber" type="object">What the metric means to the business</ResponseField>
+    <ResponseField name="artifact.tech_caliber" type="object">How the metric is computed</ResponseField>
+    <ResponseField name="artifact.threshold" type="object">What counts as an unusual value for the metric</ResponseField>
+    <ResponseField name="artifact.analysis_hint" type="object">What to look at first when the metric moves</ResponseField>
+  </Expandable>
+  <Expandable title="Slot object">
+    <ResponseField name="type" type="string">How to read `content`: `LIST`, `DICT`, `MARKDOWN`, `TEXT`, `SQL` or `FILE`</ResponseField>
+    <ResponseField name="desc" type="string">Display name for the slot, for whoever renders it</ResponseField>
+    <ResponseField name="content" type="string">The value itself</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="extra" type="object">Whatever you stored alongside the entry, returned untouched. Omitted when you stored nothing.</ResponseField>
+  <ResponseField name="source_count" type="integer">How many entries point at this one</ResponseField>
+  <ResponseField name="target_count" type="integer">How many entries this one points at</ResponseField>
+  <ResponseField name="created_at" type="string">When the entry was added</ResponseField>
+  <ResponseField name="updated_at" type="string">When the entry was last changed. Disabling or restoring it counts as a change.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "5d2e7b9cb31d11f1a7c35e9b2d4f6a81",
+    "embedding": "What was total revenue last month?",
+    "disabled": false,
+    "score": 0.0,
+    "payload": {
+      "artifact": {
+        "question": {
+          "type": "TEXT",
+          "content": "What was total revenue last month?"
+        },
+        "few_shot": {
+          "type": "SQL",
+          "content": "SELECT COALESCE(SUM(total_amount), 0) FROM sales.orders WHERE created_at >= date_trunc('month', now()) - interval '1 month' AND created_at < date_trunc('month', now())"
+        }
+      }
+    },
+    "entity_type": "few_shot",
+    "source_count": 0,
+    "target_count": 0,
+    "created_at": "2026-09-21T09:26:38.417Z",
+    "updated_at": "2026-09-22T03:05:12.630Z"
+  }
+}
+```
+</ResponseExample>

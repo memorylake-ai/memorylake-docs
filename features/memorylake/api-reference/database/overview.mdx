@@ -1,0 +1,69 @@
+---
+title: "Databases API Overview"
+description: "Connect a relational database, index its schema, curate analysis knowledge, and use it as project memory"
+noindex: true
+---
+
+The Databases API lets MemoryLake answer questions against your own relational database. You register how to reach the database, choose a schema to index, optionally curate knowledge about the data, and then add the database to a project as a memory source.
+
+<Note>
+Database features must be enabled for your team before you can use these endpoints. Until they are, the database permissions below cannot be granted to team members.
+</Note>
+
+## Resources
+
+The API is built from four resources. Each one lives at a different level, which decides who can see it and where its endpoints are mounted.
+
+| Resource | Level | What it holds | Path prefix |
+|---|---|---|---|
+| [Connection](/features/memorylake/api-reference/database/connections/list-database-connections) | Team | Host, port, database name and credentials. The password is write-only and never returned. | `/api/v3/db-connections` |
+| [Datasource](/features/memorylake/api-reference/database/datasources/list-datasources) | Workspace | One connection plus the schema it covers, the table and column comments, and the search index built over them. | `/api/v3/workspaces/{workspaceId}/db-datasources` |
+| [Analysis model](/features/memorylake/api-reference/database/analysis-models/list-analysis-models) | Workspace | Curated knowledge about one datasource: general background, business rules, and example question-and-SQL pairs. | `/api/v3/workspaces/{workspaceId}/analysis-models` |
+| [Database memory](/features/memorylake/api-reference/database/database-memories/list-database-memories) | Project | A datasource added to a project as a memory source, with an optional analysis model and answering instruction. | `/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/databases` |
+
+How they relate:
+
+- One connection can serve many datasources. A connection cannot be deleted while any datasource still reads through it.
+- A datasource covers exactly one schema of its connection. The schema cannot be changed later; create another datasource for a different schema.
+- One datasource can have many analysis models and many database memories.
+- A database memory can draw on one analysis model, which must be built on the same datasource.
+
+## Typical flow
+
+<Steps>
+<Step title="Check the credentials">
+Call [Test Database Connectivity](/features/memorylake/api-reference/database/connections/test-database-connectivity) with the host, port, database, user name and password. The response lists the schemas those credentials can read.
+</Step>
+<Step title="Create a connection">
+Call [Create Database Connection](/features/memorylake/api-reference/database/connections/create-database-connection) with the same credentials. Later calls only need the connection ID.
+</Step>
+<Step title="Create a datasource">
+Call [Create Datasource](/features/memorylake/api-reference/database/datasources/create-datasource) in a workspace with the connection ID and one schema. Creating it also starts the first index build, which runs asynchronously: poll [Get Datasource](/features/memorylake/api-reference/database/datasources/get-datasource) until `building_version` is empty. To rebuild later, for example after the data changes, call [Build Datasource Index](/features/memorylake/api-reference/database/datasources/build-datasource-index).
+</Step>
+<Step title="Describe the data (optional)">
+Add table and column comments with [Edit Schema Metadata](/features/memorylake/api-reference/database/datasources/edit-schema-metadata). To curate deeper knowledge, [create an analysis model](/features/memorylake/api-reference/database/analysis-models/create-analysis-model) on the datasource and [add knowledge entries](/features/memorylake/api-reference/database/analysis-models/add-knowledge-entry) to it.
+</Step>
+<Step title="Add the database to a project">
+Call [Create Database Memory](/features/memorylake/api-reference/database/database-memories/create-database-memory) with the datasource ID and, optionally, an analysis model ID and an instruction. Poll [Get Database Memory](/features/memorylake/api-reference/database/database-memories/get-database-memory) until `status` is `okay`.
+</Step>
+</Steps>
+
+## Permissions
+
+| Resource | Permissions |
+|---|---|
+| Connection | `dbconn:add`, `dbconn:read`, `dbconn:modify`, `dbconn:delete` |
+| Datasource | `db_datasource:add` (granted on the workspace), `db_datasource:read`, `db_datasource:modify`, `db_datasource:delete` |
+| Analysis model | `analysis_model:add` (granted on the workspace), `analysis_model:read`, `analysis_model:modify`, `analysis_model:delete` |
+| Database memory | `project:dbset_add`, `project:dbset_read`, `project:dbset_modify`, `project:dbset_delete` (granted on the project) |
+
+Building on another resource also needs read access to it: creating a datasource needs `dbconn:read` on the connection, and creating an analysis model or a database memory needs `db_datasource:read` on the datasource. The connection, datasource and analysis model lists leave out the rows you cannot open instead of refusing the request.
+
+## Conventions
+
+The Databases API follows the same conventions as the rest of the MemoryLake API:
+
+- Responses use the standard `success` / `data` envelope. See [Response Format](/features/memorylake/api-reference/overview#response-format).
+- Connections, datasources and analysis models accept a `custom_id` and can be addressed by it with `by_custom_id=true`. See [Your own identifiers](/features/memorylake/api-reference/overview#your-own-identifiers).
+- List endpoints use continuation-token pagination. See [Pagination](/features/memorylake/api-reference/overview#pagination).
+- Errors use the standard error codes. See [Errors](/features/memorylake/api-reference/errors).

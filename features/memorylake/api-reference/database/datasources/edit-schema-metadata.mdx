@@ -1,0 +1,106 @@
+---
+title: "Edit Schema Metadata"
+description: "Edit table and column comments and column indexing flags in one batch"
+noindex: true
+---
+
+```
+PATCH /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources/{datasourceId}/schema-metadata
+```
+
+Edits table and column comments, and the indexing flag on columns, in one batch. Each edit names its `target`: a `table` edit changes a table's comment, and a `column` edit changes a column's comment, whether the column's values are indexed for semantic matching, or both.
+
+- Omit `comment` to leave the current comment as it is. Send an empty string to clear it.
+- Every edit must change something. A `table` edit needs `comment`; a `column` edit needs `comment`, `embedding_enabled`, or both.
+- Edits are applied one at a time, in the order you send them. If one fails, the request returns an error and the edits before it stay applied.
+
+Comments are stored with this datasource only. They do not change the comments in your database, or those of other datasources over the same schema. Read the current values with [List Tables](/features/memorylake/api-reference/database/datasources/list-tables) and [List Columns](/features/memorylake/api-reference/database/datasources/list-columns).
+
+<Note>
+**Permission required:** `db_datasource:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="datasourceId" type="string" required>
+Datasource ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="items" type="array" required>
+Edits to apply, from 1 to 200 per request
+<Expandable title="Edit object">
+  <ParamField body="items[].target" type="string" required>
+  What the edit applies to: `table` or `column`
+  </ParamField>
+  <ParamField body="items[].table_name" type="string" required>
+  Table the edit applies to. Column edits need it too, because a column is addressed as a column of a table.
+  </ParamField>
+  <ParamField body="items[].column_name" type="string">
+  Column to edit. Required when `target` is `column`.
+  </ParamField>
+  <ParamField body="items[].schema_name" type="string">
+  Schema the edit applies to. Omit it to use the schema the datasource covers.
+  </ParamField>
+  <ParamField body="items[].comment" type="string | null">
+  New comment. Omit it to leave the current comment as it is; send an empty string to clear it. Required when `target` is `table`.
+  </ParamField>
+  <ParamField body="items[].embedding_enabled" type="boolean | null">
+  Whether to index the column's values for semantic matching. Omit it to leave the setting as it is. Only for `column` edits.
+  </ParamField>
+</Expandable>
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources/dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c/schema-metadata' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "items": [
+      {
+        "target": "table",
+        "table_name": "orders",
+        "comment": "One row per customer order"
+      },
+      {
+        "target": "column",
+        "table_name": "orders",
+        "column_name": "total_amount",
+        "comment": "Order total, including tax"
+      },
+      {
+        "target": "column",
+        "table_name": "orders",
+        "column_name": "created_at",
+        "comment": ""
+      },
+      {
+        "target": "column",
+        "table_name": "customers",
+        "column_name": "city",
+        "embedding_enabled": true
+      }
+    ]
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>
