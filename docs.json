@@ -310,6 +310,20 @@
                           "features/memorylake/api-reference/database/connections/delete-database-connection",
                           "features/memorylake/api-reference/database/connections/list-connection-schemas"
                         ]
+                      },
+                      {
+                        "group": "Datasources",
+                        "pages": [
+                          "features/memorylake/api-reference/database/datasources/list-datasources",
+                          "features/memorylake/api-reference/database/datasources/create-datasource",
+                          "features/memorylake/api-reference/database/datasources/get-datasource",
+                          "features/memorylake/api-reference/database/datasources/update-datasource",
+                          "features/memorylake/api-reference/database/datasources/delete-datasource",
+                          "features/memorylake/api-reference/database/datasources/build-datasource-index",
+                          "features/memorylake/api-reference/database/datasources/list-tables",
+                          "features/memorylake/api-reference/database/datasources/list-columns",
+                          "features/memorylake/api-reference/database/datasources/edit-schema-metadata"
+                        ]
                       }
                     ]
                   },
@@ -706,6 +720,20 @@
                           "zh/features/memorylake/api-reference/database/connections/update-database-connection",
                           "zh/features/memorylake/api-reference/database/connections/delete-database-connection",
                           "zh/features/memorylake/api-reference/database/connections/list-connection-schemas"
+                        ]
+                      },
+                      {
+                        "group": "数据源",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/database/datasources/list-datasources",
+                          "zh/features/memorylake/api-reference/database/datasources/create-datasource",
+                          "zh/features/memorylake/api-reference/database/datasources/get-datasource",
+                          "zh/features/memorylake/api-reference/database/datasources/update-datasource",
+                          "zh/features/memorylake/api-reference/database/datasources/delete-datasource",
+                          "zh/features/memorylake/api-reference/database/datasources/build-datasource-index",
+                          "zh/features/memorylake/api-reference/database/datasources/list-tables",
+                          "zh/features/memorylake/api-reference/database/datasources/list-columns",
+                          "zh/features/memorylake/api-reference/database/datasources/edit-schema-metadata"
                         ]
                       }
                     ]

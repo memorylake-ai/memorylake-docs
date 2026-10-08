@@ -1,0 +1,48 @@
+---
+title: "Delete Datasource"
+description: "Delete a datasource that no analysis model or database memory uses"
+noindex: true
+---
+
+```
+DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources/{datasourceId}
+```
+
+Deletes a datasource. The request is refused while any analysis model or database memory still uses the datasource. [Delete those analysis models](/features/memorylake/api-reference/database/analysis-models/delete-analysis-model) and [database memories](/features/memorylake/api-reference/database/database-memories/delete-database-memory) first. The datasource's `database_count` shows how many database memories still use it.
+
+Deleting a datasource does not delete its connection.
+
+<Note>
+**Permission required:** `db_datasource:delete`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="datasourceId" type="string" required>
+Datasource ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources/dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>

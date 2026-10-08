@@ -1,0 +1,78 @@
+---
+title: "List Tables"
+description: "List the tables a datasource covers, with their comments"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources/{datasourceId}/tables
+```
+
+Lists the tables in the schema this datasource covers, together with the comment on each one. The full list comes back in a single response. Pass a table name to [List Columns](/features/memorylake/api-reference/database/datasources/list-columns) to see its columns, and change comments with [Edit Schema Metadata](/features/memorylake/api-reference/database/datasources/edit-schema-metadata).
+
+<Note>
+**Permission required:** `db_datasource:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="datasourceId" type="string" required>
+Datasource ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="name_fuzzy" type="string">
+Only return tables whose name contains this text (case-insensitive)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources/dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c/tables' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Table list">
+  <ResponseField name="items" type="array">
+  Array of table objects
+  <Expandable title="Table object">
+    <ResponseField name="comment" type="string">Comment describing what the table holds. Empty when none is set.</ResponseField>
+    <ResponseField name="schema_name" type="string">Schema the table belongs to</ResponseField>
+    <ResponseField name="table_name" type="string">Table name</ResponseField>
+    <ResponseField name="table_type" type="string">Kind of relation as reported by the database, for example `table`</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "comment": "Registered customers",
+        "schema_name": "sales",
+        "table_name": "customers",
+        "table_type": "table"
+      },
+      {
+        "comment": "One row per customer order",
+        "schema_name": "sales",
+        "table_name": "orders",
+        "table_type": "table"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

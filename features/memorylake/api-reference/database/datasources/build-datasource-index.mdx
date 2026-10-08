@@ -1,0 +1,50 @@
+---
+title: "Build Datasource Index"
+description: "Start building a new search index over a datasource's schema"
+noindex: true
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources/{datasourceId}/build
+```
+
+Starts building the index over the schema this datasource covers. The build runs asynchronously: the request returns once the build is accepted, without waiting for it to finish.
+
+Datasources have no `status` field. To follow the build, poll [Get Datasource](/features/memorylake/api-reference/database/datasources/get-datasource): `building_version` is non-empty while the build runs, and the build has finished once it is empty again.
+
+Unlike reloading a document, a build is not a retry: each one produces a new index version, and you can start one at any time. Build again when `data_version` is non-empty and differs from `build_version`, which means the index is behind the data, or after you change `table_filter_rule` with [Update Datasource](/features/memorylake/api-reference/database/datasources/update-datasource).
+
+<Note>
+**Permission required:** `db_datasource:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="datasourceId" type="string" required>
+Datasource ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/db-datasources/dbds-4b8e2f6a1c9d4e7b8a3f5c2d6e9b1a7c/build' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+<ResponseField name="message" type="string">Human-readable status message</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully"
+}
+```
+</ResponseExample>
