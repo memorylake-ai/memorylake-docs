@@ -1,0 +1,77 @@
+---
+title: "Overview"
+description: "Package a capability as a skill, have it security-reviewed, and attach it to your agents"
+---
+
+A **skill** is a packaged capability that an [agent](/features/memorylake/api-reference/agents/overview) can use. You upload the package as a ZIP archive, MemoryLake runs a security review on it, and once the review passes you attach the skill to an agent by listing it in the agent's `skills`.
+
+Skills belong to your tenant, not to a workspace: one skill can be attached to any agent in any of your workspaces.
+
+## How Skills Work
+
+<Steps>
+<Step title="Request an upload slot">
+  Call [Request Package Upload](/features/memorylake/api-reference/skills/create-package-upload). It returns a presigned `upload_url`, the `upload_headers` to send with it, and an `s3_uri` that names the upload.
+</Step>
+<Step title="Upload the ZIP archive">
+  Send the archive as the body of a single `PUT` to `upload_url`, with every header from `upload_headers`.
+</Step>
+<Step title="Create the skill">
+  Call [Create Skill](/features/memorylake/api-reference/skills/create-skill) with the `s3_uri` in `package_ref`. The skill is created with its first version, and `latest_security_status` is `pending`.
+</Step>
+<Step title="Wait for the security review">
+  Poll [Get Skill](/features/memorylake/api-reference/skills/get-skill) until `latest_security_status` is no longer `pending`.
+</Step>
+<Step title="Attach it to an agent">
+  Pass the skill's `id` in `skills` when you [create an agent](/features/memorylake/api-reference/agents/create-agent) or [create an agent version](/features/memorylake/api-reference/agents/create-agent-version).
+</Step>
+</Steps>
+
+## Security Review
+
+Every package is reviewed before an agent can use it. The result is reported per version, and the skill's `latest_security_status` reports it for the latest version:
+
+| Status | Meaning | Can an agent reference it? |
+|--------|---------|----------------------------|
+| `pending` | The review is still running | No |
+| `safe` | The review passed | Yes |
+| `blocked` | The review refused the package | No — publish a corrected package as a new version |
+| `error` | The review itself failed | No — publish the package again as a new version to rerun the review |
+
+`latest_security_status` can also be absent. Read `latest_version` to tell what that means:
+
+- `latest_version` above `0`: security review is switched off on this deployment, and the skill can be referenced.
+- `latest_version` is `0`: no package has been published, and the skill cannot be referenced.
+- `latest_version` absent too: the state could not be read, and any reference to the skill is refused until it can.
+
+## Referencing a Skill From an Agent
+
+An agent references a skill with `skill_id` and, optionally, `skill_version`. Without `skill_version` the reference follows the latest version; with it, the reference is pinned to that version and checked against that version's own review result.
+
+When you create an agent or an agent version, every skill it references is checked. If any of them cannot be used, the whole request fails with `400` and error code `SKILL_NOT_USABLE`, and the message names each skill that failed and why. Built-in skills provided by MemoryLake are checked the same way.
+
+<Warning>
+Publishing a new version of a skill puts it back under review. Until the new version passes, agents whose reference follows the latest version cannot be created or given new versions with that skill. Agent versions pinned to an older version number are unaffected.
+</Warning>
+
+## Names and Identifiers
+
+`name` must be unique within your tenant, and cannot be changed after the skill is created. `id` (for example `skill-2b0f5f9f4ea54767822f51f4940c8f24`) is what every other endpoint and every agent reference uses.
+
+## Built-in Skills
+
+MemoryLake also provides built-in skills. Agents can reference them by `id`, but they are not returned by [List Skills](/features/memorylake/api-reference/skills/list-skills) and cannot be updated or deleted.
+
+## Endpoints
+
+| Operation | Method | Path |
+|-----------|--------|------|
+| [Request Package Upload](/features/memorylake/api-reference/skills/create-package-upload) | `POST` | `/api/v3/skills/package-uploads` |
+| [List Skills](/features/memorylake/api-reference/skills/list-skills) | `GET` | `/api/v3/skills` |
+| [Create Skill](/features/memorylake/api-reference/skills/create-skill) | `POST` | `/api/v3/skills` |
+| [Get Skill](/features/memorylake/api-reference/skills/get-skill) | `GET` | `/api/v3/skills/{id}` |
+| [Update Skill](/features/memorylake/api-reference/skills/update-skill) | `PATCH` | `/api/v3/skills/{id}` |
+| [Delete Skill](/features/memorylake/api-reference/skills/delete-skill) | `DELETE` | `/api/v3/skills/{id}` |
+| [List Skill Versions](/features/memorylake/api-reference/skills/list-skill-versions) | `GET` | `/api/v3/skills/{id}/versions` |
+| [Publish Skill Version](/features/memorylake/api-reference/skills/create-skill-version) | `POST` | `/api/v3/skills/{id}/versions` |
+| [Get Skill Version](/features/memorylake/api-reference/skills/get-skill-version) | `GET` | `/api/v3/skills/{id}/versions/{version}` |

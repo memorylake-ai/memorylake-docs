@@ -1,0 +1,63 @@
+---
+title: "Request Package Upload"
+description: "Get a presigned URL to upload a skill package before creating a skill or publishing a version"
+---
+
+```
+POST /openapi/memorylake/api/v3/skills/package-uploads
+```
+
+Returns a presigned URL to upload a skill package to, and the `s3_uri` to pass as `package_ref.s3_uri` when you [create a skill](/features/memorylake/api-reference/skills/create-skill) or [publish a version](/features/memorylake/api-reference/skills/create-skill-version). Request a new slot for every package you upload.
+
+This endpoint takes no request body.
+
+<Note>
+**Permission required:** none beyond a valid API key. Creating the skill or publishing the version is where permissions are checked.
+</Note>
+
+### Package Requirements
+
+- **Format:** a ZIP archive. No other format is accepted.
+- **Size:** at most 10 MiB. The size is not checked while you upload: an oversized archive uploads successfully and is then refused with `400` when you create the skill or publish the version.
+- **Expiry:** `upload_url` expires after `expires_in_seconds`. If it does, request a new slot.
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Upload slot">
+  <ResponseField name="upload_url" type="string">Presigned URL. Send the ZIP archive as the body of a single `PUT` to it.</ResponseField>
+  <ResponseField name="upload_headers" type="object">Headers the `PUT` must carry, name to value. Always includes `Content-Type: application/zip`, which the URL is signed for; there may be more depending on the storage behind the URL. Send every one exactly as given, and do not add or change any: a `PUT` that misses one is rejected before the upload starts.</ResponseField>
+  <ResponseField name="s3_uri" type="string">Pass this back unchanged as `package_ref.s3_uri`. Treat it as an opaque string: its scheme depends on where the service is deployed. Only URIs issued by this endpoint are accepted.</ResponseField>
+  <ResponseField name="expires_in_seconds" type="integer">Seconds until `upload_url` expires</ResponseField>
+</Expandable>
+</ResponseField>
+
+<RequestExample>
+```bash Request a slot
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/skills/package-uploads' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+
+```bash Upload the archive
+# Use the upload_url and every header from upload_headers in the response
+curl -X PUT "$UPLOAD_URL" \
+  -H 'Content-Type: application/zip' \
+  --data-binary @equity-research.zip
+```
+</RequestExample>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "upload_url": "https://storage.example.com/skill-packages/3f2a1c8e9b7d4f5a8c6b2d1e0f9a8b7c.zip?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=1800&X-Amz-SignedHeaders=content-type%3Bhost&X-Amz-Signature=8b1f...",
+    "upload_headers": {
+      "Content-Type": "application/zip"
+    },
+    "s3_uri": "s3://example-bucket/skill-packages/3f2a1c8e9b7d4f5a8c6b2d1e0f9a8b7c.zip",
+    "expires_in_seconds": 1800
+  }
+}
+```
+</ResponseExample>

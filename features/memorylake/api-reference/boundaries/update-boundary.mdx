@@ -1,0 +1,93 @@
+---
+title: "Update Boundary"
+description: "Rename a boundary or change the projects, actor and agent it covers"
+---
+
+```
+PATCH /openapi/memorylake/api/v3/boundaries/{id}
+```
+
+Updates a boundary. Each field has three states:
+
+- **Not sent** — left as it is.
+- **Sent with a value** — replaced.
+- **Cleared** — send `""` for `human_actor_id` or `agent_id` to remove it, or `[]` for `project_ids` to stop narrowing the scope to particular projects.
+
+`workspace_id` and `custom_id` cannot be changed.
+
+<Note>
+**Permission required:** `boundary:modify`, plus search permission on every project, actor and agent the request names — see [Permissions](/features/memorylake/api-reference/boundaries/overview#permissions). Only what the request names is checked, so a rename does not need permission on what the boundary already covers.
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Boundary ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string">
+New display name, 1 to 255 characters.
+</ParamField>
+
+<ParamField body="project_ids" type="string[]">
+Projects in scope. Replaces the whole list; send `[]` to stop narrowing the scope to particular projects.
+</ParamField>
+
+<ParamField body="human_actor_id" type="string">
+ID of the actor in scope. Send `""` to remove it.
+</ParamField>
+
+<ParamField body="agent_id" type="string">
+ID of the agent whose memories are in scope. Send `""` to remove it.
+</ParamField>
+
+<RequestExample>
+```bash Change the projects
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/boundaries/bnd-5e8a2c71d94f4b3a8e6d0c2b7f1a9e34' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "project_ids": [
+      "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
+      "proj-e7b262987be4589fabc60257ec2a2230"
+    ]
+  }'
+```
+
+```bash Remove the agent
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/boundaries/bnd-5e8a2c71d94f4b3a8e6d0c2b7f1a9e34' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "agent_id": ""
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns the updated boundary, in the same shape as [Get Boundary](/features/memorylake/api-reference/boundaries/get-boundary). The errors are the same as for [Create Boundary](/features/memorylake/api-reference/boundaries/create-boundary#errors).
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "id": "bnd-5e8a2c71d94f4b3a8e6d0c2b7f1a9e34",
+    "custom_id": "user-ext-001",
+    "workspace_id": "ws-8001856949ad4f6a5b6226f415ffa877",
+    "name": "Alice Chen - Support Assistant",
+    "project_ids": [
+      "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
+      "proj-e7b262987be4589fabc60257ec2a2230"
+    ],
+    "human_actor_id": "actor-8d093c0578ffeb19f8fa10ea28ee9362",
+    "agent_id": "agent-f8bf71ab17ed8eccad8c0e8ae708273f",
+    "created_at": "2026-09-14T03:22:10Z",
+    "updated_at": "2026-09-20T07:48:36Z"
+  }
+}
+```
+</ResponseExample>

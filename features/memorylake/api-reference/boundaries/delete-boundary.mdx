@@ -1,0 +1,45 @@
+---
+title: "Delete Boundary"
+description: "Delete a boundary"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/boundaries/{id}
+```
+
+Deletes a boundary. Only the boundary is removed: the projects, actors, agents and memories it covered are not touched.
+
+Deleting a boundary that does not exist, or was already deleted, also returns `200`, so a repeated delete is safe to retry.
+
+<Note>
+**Permission required:** `boundary:delete`
+</Note>
+
+<Warning>
+Integrations that pass this boundary's ID — Memory Router calls with `?boundary_id=`, or MCP clients authorized to it — will no longer find it.
+</Warning>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Boundary ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/boundaries/bnd-5e8a2c71d94f4b3a8e6d0c2b7f1a9e34' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true
+}
+```
+</ResponseExample>

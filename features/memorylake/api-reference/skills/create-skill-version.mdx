@@ -1,0 +1,86 @@
+---
+title: "Publish Skill Version"
+description: "Replace a skill's package by publishing a new version"
+---
+
+```
+POST /openapi/memorylake/api/v3/skills/{id}/versions
+```
+
+Publishes a new version of a skill from a package you have uploaded with [Request Package Upload](/features/memorylake/api-reference/skills/create-package-upload). The new version becomes the latest version and goes through security review; the response comes back with `security_status` set to `pending`.
+
+<Warning>
+Until the new version passes review, agents whose reference follows the latest version cannot be created or given new versions with this skill. Agent versions pinned to an older version number are unaffected. See [Referencing a Skill From an Agent](/features/memorylake/api-reference/skills/overview#referencing-a-skill-from-an-agent).
+</Warning>
+
+<Note>
+**Permission required:** `skill:modify`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Skill ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="package_ref" type="object" required>
+The uploaded package.
+<Expandable title="Package reference">
+  <ParamField body="package_ref.s3_uri" type="string" required>
+  The `s3_uri` returned by [Request Package Upload](/features/memorylake/api-reference/skills/create-package-upload), unchanged. Upload the archive to its `upload_url` first.
+  </ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="changelog" type="string">
+Release notes for this version.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/skills/skill-2b0f5f9f4ea54767822f51f4940c8f24/versions' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "package_ref": {
+      "s3_uri": "s3://example-bucket/skill-packages/9d4e7a1b2c3f4e5d8a6b0c1d2e3f4a5b.zip"
+    },
+    "changelog": "Add analyst consensus to the summary table"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Skill version">
+  <ResponseField name="skill_id" type="string">Skill ID</ResponseField>
+  <ResponseField name="version" type="integer">Number assigned to the new version</ResponseField>
+  <ResponseField name="changelog" type="string">Release notes for this version</ResponseField>
+  <ResponseField name="security_status" type="string">Security review state of this version. `pending` right after publishing.</ResponseField>
+  <ResponseField name="created_at" type="string">When the version was published</ResponseField>
+</Expandable>
+</ResponseField>
+
+### Errors
+
+| Status | Error code | When |
+|--------|------------|------|
+| `400` | `INVALID_ARGUMENT` | `package_ref.s3_uri` was not issued by Request Package Upload, nothing was uploaded to it, or the package is empty or larger than 10 MiB |
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "skill_id": "skill-2b0f5f9f4ea54767822f51f4940c8f24",
+    "version": 3,
+    "changelog": "Add analyst consensus to the summary table",
+    "security_status": "pending",
+    "created_at": "2026-09-30T02:41:07Z"
+  }
+}
+```
+</ResponseExample>

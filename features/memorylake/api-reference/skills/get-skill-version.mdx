@@ -1,0 +1,58 @@
+---
+title: "Get Skill Version"
+description: "Retrieve one version of a skill and its security review state"
+---
+
+```
+GET /openapi/memorylake/api/v3/skills/{id}/versions/{version}
+```
+
+Returns one version of a skill. Use it to check the version an agent is pinned to: a pinned reference is accepted only if that version's own `security_status` allows it.
+
+<Note>
+**Permission required:** `skill:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Skill ID
+</ParamField>
+
+<ParamField path="version" type="integer" required>
+Version number
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/skills/skill-2b0f5f9f4ea54767822f51f4940c8f24/versions/2' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Skill version">
+  <ResponseField name="skill_id" type="string">Skill ID</ResponseField>
+  <ResponseField name="version" type="integer">Version number</ResponseField>
+  <ResponseField name="changelog" type="string">Release notes for this version</ResponseField>
+  <ResponseField name="security_status" type="string">Security review state of this version: `pending`, `safe`, `blocked` or `error`</ResponseField>
+  <ResponseField name="created_at" type="string">When the version was published</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "skill_id": "skill-2b0f5f9f4ea54767822f51f4940c8f24",
+    "version": 2,
+    "changelog": "Fetch filings over HTTPS only",
+    "security_status": "blocked",
+    "created_at": "2026-09-12T08:15:52Z"
+  }
+}
+```
+</ResponseExample>
