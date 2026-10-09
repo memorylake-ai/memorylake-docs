@@ -1,0 +1,115 @@
+---
+title: "Get Fact Change History"
+description: "Returns a fact together with every change made to it"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/facts/{factId}/trace
+```
+
+Returns a fact in a project together with its full change history, newest first, in a single response. Each entry records one change — the fact being added, updated, or forgotten — and how it was made: extracted from a conversation, or made directly through the API.
+
+For a change extracted from a conversation, the entry carries the `conversation_id` and the `source_entry_ids` of the messages it came from. Pass them to [Batch Get Messages](/features/memorylake/api-reference/conversations/batch-get-messages) to read those messages.
+
+Forgetting a fact does not erase its history. You can still get the history of a forgotten fact, including the text it had before it was forgotten; the fact itself comes back with `expired` set to `true`.
+
+<Note>
+**Permission required:** `project:mem_read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project ID
+</ParamField>
+
+<ParamField path="factId" type="string" required>
+Fact ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-fe314186ccd18cde04d6af48a5afd79f/projects/proj_a1b2c3d4e5f6/memories/facts/fact-2fe07aee0058d141c744685a2d7272be/trace' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Fact history">
+  <ResponseField name="fact" type="object">The fact in its current state — the same object [Get Fact](/features/memorylake/api-reference/facts/get-fact) returns. `expired` is `true` if the fact has been forgotten.</ResponseField>
+  <ResponseField name="trace" type="array">
+  Change history, newest first. The whole history is returned at once; it is not paginated.
+  <Expandable title="Change entry">
+    <ResponseField name="history_id" type="string">Unique identifier of this change</ResponseField>
+    <ResponseField name="event" type="string">The kind of change: `ADD`, `UPDATE`, or `FORGET`</ResponseField>
+    <ResponseField name="source_kind" type="string">How the change was made: `COOK` — extracted from a conversation; `MANUAL` — made directly through the API (adding, updating, or forgetting a fact)</ResponseField>
+    <ResponseField name="old_fact" type="string">The fact text before the change. Absent for `ADD`</ResponseField>
+    <ResponseField name="new_fact" type="string">The fact text after the change. Absent for `FORGET`</ResponseField>
+    <ResponseField name="conversation_id" type="string">The conversation the change was extracted from. Absent for a `MANUAL` change</ResponseField>
+    <ResponseField name="source_entry_ids" type="string[]">IDs of the messages the change was extracted from; empty for a `MANUAL` change. Batch Get Messages leaves out messages that have been deleted since</ResponseField>
+    <ResponseField name="source_event_id" type="string">Opaque identifier of the operation that made the change. Changes extracted in the same run share it</ResponseField>
+    <ResponseField name="timestamp" type="string">When the change was made</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "fact": {
+      "id": "fact-2fe07aee0058d141c744685a2d7272be",
+      "fact": "User prefers dark mode in all applications",
+      "metadata": {},
+      "expired": false,
+      "created_at": "2025-06-10T14:30:00Z",
+      "updated_at": "2025-06-12T09:15:00Z"
+    },
+    "trace": [
+      {
+        "history_id": "facthist-6ee3e00169cf409699c9d214c1ab1ae8",
+        "event": "UPDATE",
+        "source_kind": "MANUAL",
+        "old_fact": "User prefers dark mode in the editor",
+        "new_fact": "User prefers dark mode in all applications",
+        "source_entry_ids": [],
+        "source_event_id": "api-0c048db26b904f11b7feff8549f7e47e",
+        "timestamp": "2025-06-12T09:15:00Z"
+      },
+      {
+        "history_id": "facthist-93b16a154fe74bbe8a0be7c938123c98",
+        "event": "ADD",
+        "source_kind": "COOK",
+        "new_fact": "User prefers dark mode in the editor",
+        "conversation_id": "conv-0a0c350c96034fd6a3092fd3bba70bcc",
+        "source_entry_ids": [
+          "conv-entry-393ddf4c71f0423eb9dce5f0ddc221af",
+          "conv-entry-ef0d7f55c7484f1dae5b88db99c443d4"
+        ],
+        "source_event_id": "cookrun-fdc3db03e81944da8bbf511416a65881",
+        "timestamp": "2025-06-10T14:30:00Z"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
+
+### Read the source messages
+
+To see what was said when a change was extracted, pass its `conversation_id` and `source_entry_ids` to [Batch Get Messages](/features/memorylake/api-reference/conversations/batch-get-messages):
+
+```bash
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/conversations/conv-0a0c350c96034fd6a3092fd3bba70bcc/messages/batch-get' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{"entry_ids": ["conv-entry-393ddf4c71f0423eb9dce5f0ddc221af", "conv-entry-ef0d7f55c7484f1dae5b88db99c443d4"]}'
+```
