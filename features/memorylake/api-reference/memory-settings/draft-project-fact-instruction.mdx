@@ -1,0 +1,76 @@
+---
+title: "Draft Project Fact Instruction"
+description: "Write a candidate fact instruction for a project with a model"
+hideFooterPagination: true
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/settings/fact-instruction/draft
+```
+
+Uses a model to write a candidate `fact_instruction` for the project and returns it. The draft is not saved: review and edit it, then save it with [Update Project Memory Settings](/features/memorylake/api-reference/memory-settings/update-project-memory-settings). The current instruction stays in effect until you do.
+
+Drafting is a single synchronous call to a model. It usually returns within about 15 seconds and takes longer for a memory that holds many facts, so give your client a generous timeout. Each call gives a slightly different draft. If drafting fails, the request returns `500` with `INTERNAL_ERROR`; trying again usually works.
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project identifier
+</ParamField>
+
+### Request Body
+
+The body is optional. Without one, the draft is written from the built-in default for projects.
+
+<ParamField body="guidance" type="string">
+What the draft should say, in any language, at most 2,000 characters.
+</ParamField>
+
+<ParamField body="language" type="string" default="English">
+Language to write the draft in, including its section headings, at most 64 characters. Give an English language name such as `English`, `Simplified Chinese`, `Traditional Chinese` or `Japanese`, not a locale code such as `zh-CN`.
+</ParamField>
+
+<ParamField body="use_existing_facts" type="boolean" default="false">
+Set to `true` to let the draft read the facts already stored in this project, so it describes what is actually being recorded. If there are none, the draft is written from the default.
+</ParamField>
+
+<ParamField body="use_documents" type="boolean" default="false">
+Set to `true` to let the draft read the names and summaries of the project's documents, never their contents, so it describes the material being recorded from. If the project has no documents, the draft is written from the default.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/settings/fact-instruction/draft' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "guidance": "Only record how the docs and the CLI are used, not anyone'\''s preferences",
+    "language": "English",
+    "use_existing_facts": true,
+    "use_documents": true
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Drafted instruction">
+  <ResponseField name="fact_instruction" type="string">The drafted instruction, in Markdown. It is not saved until you send it with Update Project Memory Settings.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": "The record of one body of work.\n\n## Include\nHow the docs are used\nHow the CLI is used\nHow the docs and the CLI are used together\n\n## Exclude\nAny person's own record\nAnyone's preferences or habits\nAn assistant's working profile"
+  }
+}
+```
+</ResponseExample>

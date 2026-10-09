@@ -1,0 +1,61 @@
+---
+title: "Get Agent Memory Settings"
+description: "Read the settings that govern what an agent's memory records in a workspace"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents/{agentId}/settings
+```
+
+Returns the memory settings of an agent in a workspace. An agent's memory holds what it has learned and how it is meant to behave, and each workspace the agent is bound to has its own. Today there is one setting: `fact_instruction`, which says what this memory is about and what it is not. MemoryLake reads it every time it extracts facts into the agent's memory, so it narrows the subject matter that gets recorded.
+
+An empty `fact_instruction` means none has been set and the built-in default for agents is in effect. The settings of an agent that has been deleted stay readable.
+
+<Note>
+**Permission required:** `workspace_agent:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="agentId" type="string" required>
+Agent identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/agents/agent-7d2e9b4f1c6a4e3b8f5d0a9c2e7b6f13/settings' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Memory settings object">
+  <ResponseField name="fact_instruction" type="string">What this memory is about and what it is not, in Markdown, at most 2,000 characters. An empty string means none has been set and the built-in default is in effect.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": "The working profile of the support assistant.\n\n## Include\n- Which products it answers questions about\n- Tools it must use and the limits it works within\n- Corrections users have made to its answers\n\n## Exclude\n- Facts about any specific person"
+  }
+}
+```
+
+```json Not set (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": ""
+  }
+}
+```
+</ResponseExample>

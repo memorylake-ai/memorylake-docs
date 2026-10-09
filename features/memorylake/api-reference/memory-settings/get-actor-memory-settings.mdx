@@ -1,0 +1,63 @@
+---
+title: "Get Actor Memory Settings"
+description: "Read the settings that govern what an actor's memory records in a workspace"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/settings
+```
+
+Returns the memory settings of an actor in a workspace. An actor's memory holds what MemoryLake learns about that person across every project in the workspace, and each workspace the actor is bound to has its own. Today there is one setting: `fact_instruction`, which says what this memory is about and what it is not. MemoryLake reads it every time it extracts facts about the actor, so it narrows the subject matter that gets recorded.
+
+An empty `fact_instruction` means none has been set and the built-in default for actors is in effect. The settings of an actor that has been deleted stay readable.
+
+This endpoint takes a person's actor ID. For an agent, use [Get Agent Memory Settings](/features/memorylake/api-reference/memory-settings/get-agent-memory-settings).
+
+<Note>
+**Permission required:** `workspace_actor:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="actorId" type="string" required>
+Actor ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/actors/actor-3f9c2a7e5b1d4c8e9a6f0b2d7e4c1a95/settings' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Memory settings object">
+  <ResponseField name="fact_instruction" type="string">What this memory is about and what it is not, in Markdown, at most 2,000 characters. An empty string means none has been set and the built-in default is in effect.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": "The personal profile of one person.\n\n## Include\n- Role, team and the products they work on\n- How they prefer work to be done\n\n## Exclude\n- The record of any single project\n- Anything about the assistant"
+  }
+}
+```
+
+```json Not set (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": ""
+  }
+}
+```
+</ResponseExample>
