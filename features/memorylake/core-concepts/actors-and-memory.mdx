@@ -97,8 +97,10 @@ This happens automatically. You submit messages with Jane's `actor_id`, and Memo
 For an actor's facts to be accessible within a workspace, the actor must be **bound** to that workspace. Binding tells MemoryLake that this actor participates in this workspace's projects.
 
 ```bash
-curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspace_id}/actors/{actor_id}/bind \
-  -H "Authorization: Bearer $MEMORYLAKE_API_KEY"
+curl -X POST https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/{workspace_id}/actors \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{"actor_id": "{actor_id}"}'
 ```
 
 <Tip>
