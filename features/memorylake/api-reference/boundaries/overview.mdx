@@ -1,0 +1,50 @@
+---
+title: "Overview"
+description: "A boundary is a named memory scope — a workspace, its projects, a person and an agent — that you reference by one ID"
+---
+
+A **boundary** is a named memory scope inside one workspace. It records which projects, which person and which agent a piece of traffic is about, so that whatever uses it reads and writes only that memory. Instead of passing those four references on every call, you pass the boundary's ID.
+
+Boundaries are used by:
+
+- **[Memory Router](/features/memory-router/how-it-works#boundaries-define-the-scope)** — pass the boundary as `?boundary_id=` on LLM calls. A common pattern is one boundary per end user, so each user's conversations read and write only their own memory.
+- **[MCP](/features/memorylake/mcp-servers/creating-api-keys)** — the user picks a workspace and a boundary on the OAuth consent screen when a client connects.
+
+You can create boundaries in the console, or manage them with the endpoints below.
+
+## What a Boundary Contains
+
+| Field | Meaning |
+|-------|---------|
+| `workspace_id` | The workspace the boundary belongs to. Set at creation and cannot be changed. |
+| `project_ids` | Projects in scope. Omitted or empty means the scope is not narrowed to particular projects. |
+| `human_actor_id` | The [actor](/features/memorylake/api-reference/actors/overview) — the person — in scope. Optional. |
+| `agent_id` | The [agent](/features/memorylake/api-reference/agents/overview) whose memories are in scope. Optional. |
+| `name` | Display name |
+| `custom_id` | Your own identifier, for looking the boundary up with `by_custom_id=true`. Set at creation and cannot be changed. |
+
+Every project, actor and agent a boundary names must belong to its workspace: projects must be in the workspace, and the actor and agent must be bound to it and not deleted.
+
+## Permissions
+
+Reading a boundary needs only `boundary:read`. It shows which scope was declared, not what is in it: searches through the boundary still check permission on the content.
+
+Creating or updating a boundary also needs search permission on everything the request names, because a boundary is a way to search that content:
+
+| The request names | Permission needed on it |
+|-------------------|-------------------------|
+| A project in `project_ids` | `project:mem_search` and `project:doc_search` |
+| `human_actor_id` | `workspace_actor:fact_search` |
+| `agent_id` | `workspace_agent:fact_search` |
+
+If any one is missing, the whole request is refused with `403`.
+
+## Endpoints
+
+| Operation | Method | Path |
+|-----------|--------|------|
+| [List Boundaries](/features/memorylake/api-reference/boundaries/list-boundaries) | `GET` | `/api/v3/boundaries` |
+| [Create Boundary](/features/memorylake/api-reference/boundaries/create-boundary) | `POST` | `/api/v3/boundaries` |
+| [Get Boundary](/features/memorylake/api-reference/boundaries/get-boundary) | `GET` | `/api/v3/boundaries/{id}` |
+| [Update Boundary](/features/memorylake/api-reference/boundaries/update-boundary) | `PATCH` | `/api/v3/boundaries/{id}` |
+| [Delete Boundary](/features/memorylake/api-reference/boundaries/delete-boundary) | `DELETE` | `/api/v3/boundaries/{id}` |

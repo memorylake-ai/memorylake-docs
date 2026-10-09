@@ -73,8 +73,9 @@ response without guessing:
 
 <Note>
   A refusal does not tell you whether the resource exists — a `403` on a read means "not for you"
-  and says nothing more. Deleting is the exception: it answers `200` whether the resource was
-  removed or was never there, so a repeated delete is safe to retry.
+  and says nothing more. Deleting is the exception: most delete endpoints answer `200` whether the
+  resource was removed or was never there, so a repeated delete is safe to retry. Deleting a skill,
+  database connection, datasource or analysis model that does not exist answers `404` instead.
 </Note>
 
 ## Error Codes
@@ -90,11 +91,17 @@ response without guessing:
 | `QUOTA_EXCEEDED` | Quota or usage limit exceeded |
 | `DATASET_TABLE_LIMIT_EXCEEDED` | Number of tables in the NL2SQL dataset exceeds the allowed limit |
 | `DB_CONNECTION_FAILED` | Could not connect to the database with the connection settings provided: the host is unreachable, the credentials were rejected, or the database does not exist. Retrying with the same settings will not help |
+| `RESOURCE_LIMIT_EXCEEDED` | A count limit configured for your account was exceeded, for example the number of projects in a workspace or the number of `project_ids` in one request |
 | `DOWNLOAD_NOT_SUPPORTED` | The requested resource does not support download |
 | `UNAUTHORIZE` | Authentication required |
 | `CONNECTOR_UNAUTHORIZE` | Connector unauthorized |
 | `CUSTOM_ID_CONFLICT` | A resource with the given `custom_id` already exists |
 | `BINDING_ALREADY_EXISTS` | The binding relationship already exists |
+| `RESOURCE_IN_USE` | The resource is still referenced by others and cannot be deleted until they are, for example a database connection that still has datasources, or an analysis model still bound to a database memory |
+| `SKILL_NAME_CONFLICT` | A skill with the given `name` already exists in your tenant |
+| `SKILL_NOT_USABLE` | An agent or agent version referenced a skill that has not passed security review, does not exist, or has no package yet |
+| `ACTOR_INACTIVE` | The actor or agent has been deleted. It is still listed in the workspace and its memories stay readable, but it can no longer take part in writes |
+| `AGENT_OPERATION_NOT_SUPPORTED` | The operation needs an agent whose runtime MemoryLake hosts: versions, forking and A2A are only available for `INTERNAL` agents, not `EXTERNAL` ones. Unlike `STATE_NOT_READY`, retrying will not help |
 | `INTERNAL_ERROR` | Unexpected server-side error |
 
 ## Error Handling Best Practices

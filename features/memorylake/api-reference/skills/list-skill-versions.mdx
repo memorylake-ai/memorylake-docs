@@ -1,0 +1,90 @@
+---
+title: "List Skill Versions"
+description: "Returns a skill's published versions with their security review state"
+---
+
+```
+GET /openapi/memorylake/api/v3/skills/{id}/versions
+```
+
+Returns the published versions of a skill, newest first, each with its own security review state.
+
+<Note>
+**Permission required:** `skill:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Skill ID
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of versions per page, from 1 to 100.
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token returned by the previous call. Omit on the first request.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/skills/skill-2b0f5f9f4ea54767822f51f4940c8f24/versions?page_size=20' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Paginated version list">
+  <ResponseField name="items" type="array">
+  Array of version objects
+  <Expandable title="Version object">
+    <ResponseField name="skill_id" type="string">Skill ID this version belongs to</ResponseField>
+    <ResponseField name="version" type="integer">Version number. Assigned when the version is published and never reused.</ResponseField>
+    <ResponseField name="changelog" type="string">Release notes for this version</ResponseField>
+    <ResponseField name="security_status" type="string">Security review state of this version: `pending`, `safe`, `blocked` or `error`</ResponseField>
+    <ResponseField name="created_at" type="string">When the version was published</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="total" type="integer">Total number of versions</ResponseField>
+  <ResponseField name="continuation_token" type="string">Token for the next page. Absent or `null` when this is the last page.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "items": [
+      {
+        "skill_id": "skill-2b0f5f9f4ea54767822f51f4940c8f24",
+        "version": 3,
+        "changelog": "Add analyst consensus to the summary table",
+        "security_status": "safe",
+        "created_at": "2026-09-30T02:41:07Z"
+      },
+      {
+        "skill_id": "skill-2b0f5f9f4ea54767822f51f4940c8f24",
+        "version": 2,
+        "changelog": "Fetch filings over HTTPS only",
+        "security_status": "blocked",
+        "created_at": "2026-09-12T08:15:52Z"
+      },
+      {
+        "skill_id": "skill-2b0f5f9f4ea54767822f51f4940c8f24",
+        "version": 1,
+        "changelog": "Initial version",
+        "security_status": "safe",
+        "created_at": "2026-08-21T09:12:44Z"
+      }
+    ],
+    "total": 3
+  }
+}
+```
+</ResponseExample>

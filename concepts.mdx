@@ -71,6 +71,8 @@ A **boundary** is the memory scope used by API traffic and MCP clients. It binds
 - With [Memory Router](/features/memory-router/overview), you pass it as `?boundary_id=` on LLM calls — commonly one boundary per end user, so each user's conversations read and write only their own memory.
 - With [MCP](/features/memorylake/mcp-servers/creating-api-keys), you select the workspace and boundary on the OAuth consent screen when a client connects.
 
+Create boundaries in the console, or manage them with the [Boundaries API](/features/memorylake/api-reference/boundaries/overview).
+
 ## API Key
 
 An **API key** (`sk-…`) is your credential for everything programmatic: the REST API, Model Router, and agent plugins. Create keys in the console under **API Keys** — each has a name and an expiry, and its permissions mirror those of the member who created it. Rotate or revoke anytime. See [Authentication](/authentication).

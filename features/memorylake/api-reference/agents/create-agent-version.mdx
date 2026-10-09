@@ -64,10 +64,10 @@ Updated subagent definitions
 </ParamField>
 
 <ParamField body="skills" type="array">
-Updated skill references
+Updated [skill](/features/memorylake/api-reference/skills/overview) references. Every skill must be usable: if any has not passed security review, does not exist, or has no package, the request fails with `400` and `SKILL_NOT_USABLE`, naming each skill and the reason.
 <Expandable title="Skill reference">
-  <ParamField body="skills[].skill_id" type="string">Skill identifier</ParamField>
-  <ParamField body="skills[].skill_version" type="integer">Skill version number</ParamField>
+  <ParamField body="skills[].skill_id" type="string">Skill ID</ParamField>
+  <ParamField body="skills[].skill_version" type="integer">Pin the reference to this version. Omit to follow the latest version. A pinned reference is checked against that version's own review result.</ParamField>
 </Expandable>
 </ParamField>
 

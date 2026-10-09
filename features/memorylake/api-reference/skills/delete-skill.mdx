@@ -1,0 +1,45 @@
+---
+title: "Delete Skill"
+description: "Delete a skill from your tenant"
+---
+
+```
+DELETE /openapi/memorylake/api/v3/skills/{id}
+```
+
+Deletes a skill. Built-in skills cannot be deleted.
+
+<Note>
+**Permission required:** `skill:delete`
+</Note>
+
+<Warning>
+Agent versions that already reference this skill are not rewritten, and new agents and agent versions can no longer reference it.
+</Warning>
+
+Unlike most delete endpoints, this one answers `404` for a skill that does not exist or has already been deleted, so a repeated delete returns `404` rather than `200`.
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Skill ID
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/api/v3/skills/skill-2b0f5f9f4ea54767822f51f4940c8f24' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="success" type="boolean">Indicates if the request was successful</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true
+}
+```
+</ResponseExample>
