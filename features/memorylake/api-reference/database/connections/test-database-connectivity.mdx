@@ -61,6 +61,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections
 </Expandable>
 </ResponseField>
 
+If the database cannot be reached, or it rejects the credentials, the call answers `400` with `error_code` `DB_CONNECTION_FAILED`. The response does not say which of the two happened: check the host, port, database name, user name and password, and that the database accepts connections from MemoryLake. Retrying with the same values will not help.
+
 <ResponseExample>
 ```json Success (200)
 {
@@ -68,6 +70,14 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/db-connections
   "data": {
     "schemas": ["public", "sales"]
   }
+}
+```
+
+```json Connection failed (400)
+{
+  "success": false,
+  "message": "[CONNECTION_FAILED] Database connection failed",
+  "error_code": "DB_CONNECTION_FAILED"
 }
 ```
 </ResponseExample>
