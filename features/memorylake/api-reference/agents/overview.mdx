@@ -48,6 +48,9 @@ MemoryLake agents are accessible via the standard [A2A (Agent-to-Agent) protocol
 | [Delete Agent](/features/memorylake/api-reference/agents/delete-agent) | `DELETE` | `/api/v3/agents/{id}` |
 | [Create Version](/features/memorylake/api-reference/agents/create-agent-version) | `POST` | `/api/v3/agents/{id}/versions` |
 | [Bind to Workspace](/features/memorylake/api-reference/agents/bind-agent) | `POST` | `/api/v3/workspaces/{id}/agents` |
+| [List Agent Facts](/features/memorylake/api-reference/facts/list-agent-facts) | `GET` | `/api/v3/workspaces/{id}/agents/{agentId}/facts` |
+| [Add Agent Facts](/features/memorylake/api-reference/facts/add-agent-facts) | `POST` | `/api/v3/workspaces/{id}/agents/{agentId}/facts` |
+| [List Agent Memory Conflicts](/features/memorylake/api-reference/v3-conflicts/list-agent-conflicts) | `GET` | `/api/v3/workspaces/{id}/agents/{agentId}/memories/conflicts` |
 | [Get Memory Settings](/features/memorylake/api-reference/memory-settings/get-agent-memory-settings) | `GET` | `/api/v3/workspaces/{id}/agents/{agentId}/settings` |
 | [Update Memory Settings](/features/memorylake/api-reference/memory-settings/update-agent-memory-settings) | `PATCH` | `/api/v3/workspaces/{id}/agents/{agentId}/settings` |
 | [Draft Fact Instruction](/features/memorylake/api-reference/memory-settings/draft-agent-fact-instruction) | `POST` | `/api/v3/workspaces/{id}/agents/{agentId}/settings/fact-instruction/draft` |
