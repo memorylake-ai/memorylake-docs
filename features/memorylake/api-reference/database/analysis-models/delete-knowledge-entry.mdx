@@ -16,6 +16,8 @@ Whether an entry can be deleted depends on its kind. [List Analysis Model Templa
 - `LEAF`: only when nothing else hangs off it.
 - `ISLAND`: only when it is connected to nothing at all.
 
+Deleting an entry that does not exist, or was already deleted, currently answers `400`.
+
 <Note>
 **Permission required:** `analysis_model:modify`
 </Note>

@@ -17,7 +17,7 @@ Deletes a skill. Built-in skills cannot be deleted.
 Agent versions that already reference this skill are not rewritten, and new agents and agent versions can no longer reference it.
 </Warning>
 
-Unlike most delete endpoints, this one answers `404` for a skill that does not exist or has already been deleted, so a repeated delete returns `404` rather than `200`.
+Deleting a skill that does not exist, or was already deleted, also returns `200`, so a repeated delete is safe to retry.
 
 ### Path Parameters
 

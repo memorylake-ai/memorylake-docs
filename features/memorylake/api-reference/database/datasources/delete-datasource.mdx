@@ -10,7 +10,7 @@ DELETE /openapi/memorylake/api/v3/workspaces/{workspaceId}/db-datasources/{datas
 
 Deletes a datasource. The request is refused with `409` and `RESOURCE_IN_USE` while any analysis model or database memory still uses the datasource. [Delete those analysis models](/features/memorylake/api-reference/database/analysis-models/delete-analysis-model) and [database memories](/features/memorylake/api-reference/database/database-memories/delete-database-memory) first. The datasource's `database_count` shows how many database memories still use it.
 
-Deleting a datasource does not delete its connection. Deleting a datasource that does not exist, or was already deleted, answers `404`.
+Deleting a datasource does not delete its connection. Deleting a datasource that does not exist, or was already deleted, also returns `200`, so a repeated delete is safe to retry.
 
 <Note>
 **Permission required:** `db_datasource:delete`
