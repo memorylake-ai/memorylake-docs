@@ -1,0 +1,61 @@
+---
+title: "Get Project Memory Settings"
+description: "Read the settings that govern what a project's memory records"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/settings
+```
+
+Returns the memory settings of a project. Memory settings govern how the project's memory behaves from now on. Today there is one: `fact_instruction`, which says what this memory is about and what it is not. MemoryLake reads it every time it extracts facts into the project, so it narrows the subject matter that gets recorded. In the console it is the **Memory instruction** in a project's **Memory settings**.
+
+An empty `fact_instruction` means none has been set and the built-in default for projects is in effect.
+
+<Note>
+**Permission required:** `project:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/projects/proj-b93e8d95a8705bcc4ec42a65ba4cc7f8/settings' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Memory settings object">
+  <ResponseField name="fact_instruction" type="string">What this memory is about and what it is not, in Markdown, at most 2,000 characters. An empty string means none has been set and the built-in default is in effect.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": "Records how the docs and the CLI are used.\n\n## Include\n- Commands people run and the options they pass\n- Docs pages people read and the questions they bring\n\n## Exclude\n- Anyone's personal preferences"
+  }
+}
+```
+
+```json Not set (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": ""
+  }
+}
+```
+</ResponseExample>
