@@ -70,6 +70,8 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/boundaries/bn
 
 Returns the updated boundary, in the same shape as [Get Boundary](/features/memorylake/api-reference/boundaries/get-boundary). The errors are the same as for [Create Boundary](/features/memorylake/api-reference/boundaries/create-boundary#errors).
 
+The `updated_at` in this response is the value from before this update. Call [Get Boundary](/features/memorylake/api-reference/boundaries/get-boundary) to read the new one.
+
 <ResponseExample>
 ```json Success (200)
 {
@@ -86,7 +88,7 @@ Returns the updated boundary, in the same shape as [Get Boundary](/features/memo
     "human_actor_id": "actor-8d093c0578ffeb19f8fa10ea28ee9362",
     "agent_id": "agent-f8bf71ab17ed8eccad8c0e8ae708273f",
     "created_at": "2026-09-14T03:22:10Z",
-    "updated_at": "2026-09-20T07:48:36Z"
+    "updated_at": "2026-09-14T03:22:10Z"
   }
 }
 ```
