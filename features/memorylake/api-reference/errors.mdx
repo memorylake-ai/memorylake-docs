@@ -72,10 +72,12 @@ response without guessing:
 </ResponseField>
 
 <Note>
-  A refusal does not tell you whether the resource exists — a `403` on a read means "not for you"
-  and says nothing more. Deleting is the exception: most delete endpoints answer `200` whether the
-  resource was removed or was never there, so a repeated delete is safe to retry. Deleting a skill,
-  database connection, datasource or analysis model that does not exist answers `404` instead.
+  A refusal does not tell you whether the resource exists — a `403` means "not for you" and says
+  nothing more. Deletes work the same way: permission is checked first. Once it passes, deleting a
+  resource that was already removed or was never there answers `200`, so a repeated delete is safe
+  to retry. If you could delete a resource only through a grant on that resource itself, rather than
+  through your role, the grant is removed with the resource, so deleting it again answers `403`.
+  Deleting a knowledge entry that does not exist currently answers `400`.
 </Note>
 
 ## Error Codes

@@ -12,7 +12,7 @@ Deletes an analysis model. The request is refused with `409` and `RESOURCE_IN_US
 
 Models forked from this one are not affected. Their `fork_from` keeps naming the deleted model.
 
-Deleting a model that does not exist, or was already deleted, answers `404`.
+Deleting a model that does not exist, or was already deleted, also returns `200`, so a repeated delete is safe to retry.
 
 <Note>
 **Permission required:** `analysis_model:delete`

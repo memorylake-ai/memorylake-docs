@@ -10,7 +10,7 @@ DELETE /openapi/memorylake/api/v3/db-connections/{connectionId}
 
 Deletes a database connection. The request is refused with `409` and `RESOURCE_IN_USE` while any datasource still reads through the connection, that is, while its `datasource_count` is greater than zero. [Delete those datasources](/features/memorylake/api-reference/database/datasources/delete-datasource) first.
 
-Deleting a connection that does not exist, or was already deleted, answers `404`.
+Deleting a connection that does not exist, or was already deleted, also returns `200`, so a repeated delete is safe to retry.
 
 <Note>
 **Permission required:** `dbconn:delete`
