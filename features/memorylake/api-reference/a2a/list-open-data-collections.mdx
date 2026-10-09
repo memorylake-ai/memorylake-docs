@@ -1,0 +1,83 @@
+---
+title: "List Open Data Collections"
+description: "List the Open Data collections an agent can search, with the identifiers to pass in open_datasets"
+---
+
+```
+GET /openapi/memorylake/api/v1/industry-opendata
+```
+
+Lists the Open Data collections that MemoryLake curates. To have an agent search a collection alongside the web, pass its `id` in `web_search.open_datasets` when you [send the agent a message](/features/memorylake/api-reference/a2a/overview#memorylake-extension).
+
+The list is the same for every caller. Names and descriptions are in English, and entries come back in no particular order.
+
+<Tip>
+Read the identifiers from this endpoint instead of hard-coding them. Collections can be added over time.
+</Tip>
+
+<Note>
+**Permission required:** none. The list is the same for every caller.
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v1/industry-opendata' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="array">
+Array of Open Data collections
+<Expandable title="Collection object">
+  <ResponseField name="id" type="string">Collection identifier, for example `research/academic`. Pass it in `open_datasets`.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="description" type="string">What the collection contains</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": [
+    {
+      "id": "clinical/trials",
+      "name": "Clinical Trials",
+      "description": "Clinical trial records from ClinicalTrials.gov"
+    },
+    {
+      "id": "economic/data",
+      "name": "Economic Data",
+      "description": "Economic indicators from FRED, BLS, Destatis, World Bank, and USAspending"
+    },
+    {
+      "id": "research/academic",
+      "name": "Academic Papers",
+      "description": "Academic papers from arXiv, PubMed, bioRxiv, and medRxiv"
+    },
+    {
+      "id": "patents/ip",
+      "name": "Patent Search",
+      "description": "USPTO patent records and intellectual property filings"
+    },
+    {
+      "id": "company/fundamentals",
+      "name": "SEC Filings",
+      "description": "SEC filings, earnings, balance sheets, income statements, cash flows, dividends, and insider transactions"
+    },
+    {
+      "id": "drug/database",
+      "name": "Drug Databases",
+      "description": "Drug and compound data from ChEMBL, PubChem, DrugBank, FDA drug labels, and Open Targets"
+    },
+    {
+      "id": "financial/markets",
+      "name": "Financial Data",
+      "description": "Real-time and historical prices for stocks, crypto, forex, funds, and commodities"
+    }
+  ]
+}
+```
+</ResponseExample>

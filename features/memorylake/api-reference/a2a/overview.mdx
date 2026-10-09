@@ -43,6 +43,10 @@ All four route families accept the same `configuration` object and the same Memo
 | `acceptedOutputModes` | array | Output MIME types the client can handle. |
 | `pushNotificationConfig` | object | Callback URL (plus optional auth) for task update notifications. |
 
+<Warning>
+**One message at a time per conversation.** Messages that share a `contextId` belong to the same conversation, and a conversation processes one message at a time. While a message is still being processed, including a non-blocking send whose task has not finished, another message sent with the same `contextId` is rejected, not queued. Wait for the previous response or task to finish before you send the next message. To run requests in parallel, give each one its own `contextId`.
+</Warning>
+
 ## MemoryLake Extension
 
 MemoryLake extends the standard A2A protocol through the `metadata.memorylake` namespace. Pass this object in the request metadata of `message:send` or `message:stream` to control how the agent interacts with MemoryLake's memory layer.
@@ -88,7 +92,7 @@ MemoryLake-specific configuration. Without this, the agent runs without any memo
       Lets the agent search the web. Pass an empty object `{}` for web search on its own, or add `open_datasets` to search MemoryLake's curated Open Data collections as well.
       <Expandable title="web_search fields">
         <ParamField body="open_datasets" type="array">
-        Open Data collections to search alongside the web, by identifier: `research/academic`, `clinical/trials`, `drug/database`, `company/fundamentals`, `financial/markets`, `economic/data`, `patents/ip`.
+        Open Data collections to search alongside the web, by identifier: `research/academic`, `clinical/trials`, `drug/database`, `company/fundamentals`, `financial/markets`, `economic/data`, `patents/ip`. [List Open Data Collections](/features/memorylake/api-reference/a2a/list-open-data-collections) returns the current identifiers.
         </ParamField>
       </Expandable>
       </ParamField>
