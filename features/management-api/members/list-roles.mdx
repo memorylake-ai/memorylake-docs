@@ -1,0 +1,80 @@
+---
+title: "List Roles"
+description: "Returns the roles members and invitees can hold"
+---
+
+```
+GET /openapi/memorylake/admin/v1/roles
+```
+
+Lists the team's role catalog: the three built-in roles first (owner, admin, member), then this team's custom roles, oldest first. The `key` is the value the `role` fields of [Create Virtual Member](/features/management-api/members/create-member), [Update Member Role](/features/management-api/members/update-member), and [Create Invitation](/features/management-api/invitations/create-invitation) accept. Any member's key may read this.
+
+There are no parameters — the catalog is small and fixed, so it is not paginated.
+
+<RequestExample>
+```bash cURL
+curl 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles' \
+  -H 'Authorization: Bearer sk-xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Role catalog">
+  <ResponseField name="roles" type="array">
+  <Expandable title="Role object">
+    <ResponseField name="key" type="string">The value the `role` fields of member and invitation writes accept</ResponseField>
+    <ResponseField name="label" type="string">Display name: fixed English for built-in roles, operator-authored for custom roles</ResponseField>
+    <ResponseField name="description" type="string">Operator-authored description. Only custom roles carry one.</ResponseField>
+    <ResponseField name="built_in" type="boolean">`true` for the three roles every team has; `false` for roles authored in this team</ResponseField>
+    <ResponseField name="assignable" type="boolean">Whether member and invitation writes accept this role. The owner role never is — ownership transfer stays in the console.</ResponseField>
+    <ResponseField name="admin_grant_only" type="boolean">When `true`, only a caller whose own role is owner or admin may grant it. Applies to `tenant_admin` and custom roles that inherit from it.</ResponseField>
+    <ResponseField name="parent_role_key" type="string">For custom roles: the role its policies were copied from at creation. Absent on built-in roles.</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "roles": [
+      {
+        "key": "tenant_owner",
+        "label": "Owner",
+        "built_in": true,
+        "assignable": false,
+        "admin_grant_only": false
+      },
+      {
+        "key": "tenant_admin",
+        "label": "Admin",
+        "built_in": true,
+        "assignable": true,
+        "admin_grant_only": true
+      },
+      {
+        "key": "tenant_member",
+        "label": "Member",
+        "built_in": true,
+        "assignable": true,
+        "admin_grant_only": false
+      },
+      {
+        "key": "tenant_custom_a1b2c3d4",
+        "label": "Billing Operator",
+        "description": "Read-only usage plus invoice export",
+        "built_in": false,
+        "assignable": true,
+        "admin_grant_only": false,
+        "parent_role_key": "tenant_member"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
