@@ -1,0 +1,81 @@
+---
+title: "Update Actor Memory Settings"
+description: "Set or clear the instruction that decides what an actor's memory records in a workspace"
+---
+
+```
+PATCH /openapi/memorylake/api/v3/workspaces/{workspaceId}/actors/{actorId}/settings
+```
+
+Partially updates an actor's memory settings in a workspace. Fields you leave out stay unchanged. The change applies to this workspace only.
+
+A new `fact_instruction` replaces the current one whole; it is not appended to. It takes effect the next time facts are extracted about the actor. Facts already recorded stay as they are.
+
+If the actor has been deleted, its settings can still be read but no longer changed: the request returns `404` with `ACTOR_INACTIVE`.
+
+This endpoint takes a person's actor ID. For an agent, use [Update Agent Memory Settings](/features/memorylake/api-reference/memory-settings/update-agent-memory-settings).
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID
+</ParamField>
+
+<ParamField path="actorId" type="string" required>
+Actor ID
+</ParamField>
+
+### Request Body
+
+<ParamField body="fact_instruction" type="string">
+What this memory is about and what it is not, in Markdown, at most 2,000 characters. Send an empty string to clear it and put the built-in default back in effect. [Draft Actor Fact Instruction](/features/memorylake/api-reference/memory-settings/draft-actor-fact-instruction) can write one for you.
+</ParamField>
+
+<RequestExample>
+```bash Set the instruction
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/actors/actor-3f9c2a7e5b1d4c8e9a6f0b2d7e4c1a95/settings' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "fact_instruction": "The personal profile of one person.\n\n## Include\n- Role, team and the products they work on\n- How they prefer work to be done\n\n## Exclude\n- The record of any single project\n- Anything about the assistant"
+  }'
+```
+
+```bash Clear the instruction
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/actors/actor-3f9c2a7e5b1d4c8e9a6f0b2d7e4c1a95/settings' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "fact_instruction": ""
+  }'
+```
+</RequestExample>
+
+### Response
+
+Returns the memory settings after the update.
+
+<ResponseField name="data" type="object">
+<Expandable title="Memory settings object">
+  <ResponseField name="fact_instruction" type="string">What this memory is about and what it is not, in Markdown. An empty string means none has been set and the built-in default is in effect.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": "The personal profile of one person.\n\n## Include\n- Role, team and the products they work on\n- How they prefer work to be done\n\n## Exclude\n- The record of any single project\n- Anything about the assistant"
+  }
+}
+```
+
+```json Actor deleted (404)
+{
+  "success": false,
+  "message": "Actor 'actor-3f9c2a7e5b1d4c8e9a6f0b2d7e4c1a95' is inactive because it has been deleted. Its existing memories stay readable, but it can no longer take part in writes.",
+  "error_code": "ACTOR_INACTIVE"
+}
+```
+</ResponseExample>

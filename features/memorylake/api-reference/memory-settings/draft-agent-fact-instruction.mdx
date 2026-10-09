@@ -1,0 +1,70 @@
+---
+title: "Draft Agent Fact Instruction"
+description: "Write a candidate fact instruction for an agent in a workspace with a model"
+---
+
+```
+POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/agents/{agentId}/settings/fact-instruction/draft
+```
+
+Uses a model to write a candidate `fact_instruction` for an agent in a workspace and returns it. The draft is not saved: review and edit it, then save it with [Update Agent Memory Settings](/features/memorylake/api-reference/memory-settings/update-agent-memory-settings). The current instruction stays in effect until you do.
+
+Drafting is a single synchronous call to a model. It usually returns within about 15 seconds and takes longer for a memory that holds many facts, so give your client a generous timeout. Each call gives a slightly different draft. If drafting fails, the request returns `500` with `INTERNAL_ERROR`; trying again usually works.
+
+A deleted agent cannot be drafted for: the request returns `404` with `NOT_FOUND`.
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace identifier
+</ParamField>
+
+<ParamField path="agentId" type="string" required>
+Agent identifier
+</ParamField>
+
+### Request Body
+
+The body is optional. Without one, the draft is written from the built-in default for agents.
+
+<ParamField body="guidance" type="string">
+What the draft should say, in any language, at most 2,000 characters.
+</ParamField>
+
+<ParamField body="language" type="string" default="English">
+Language to write the draft in, including its section headings, at most 64 characters. Give an English language name such as `English`, `Simplified Chinese`, `Traditional Chinese` or `Japanese`, not a locale code such as `zh-CN`.
+</ParamField>
+
+<ParamField body="use_existing_facts" type="boolean" default="false">
+Set to `true` to let the draft read the facts already stored in the agent's memory in this workspace, so it describes what is actually being recorded. If there are none, the draft is written from the default.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/agents/agent-7d2e9b4f1c6a4e3b8f5d0a9c2e7b6f13/settings/fact-instruction/draft' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "use_existing_facts": true
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Drafted instruction">
+  <ResponseField name="fact_instruction" type="string">The drafted instruction, in Markdown. It is not saved until you send it with Update Agent Memory Settings.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "data": {
+    "fact_instruction": "The working profile of the one assistant this memory belongs to.\n\n## Include\nCapabilities and limitations\nTool-use requirements and constraints\nKnowledge base and document retrieval abilities\n\n## Exclude\nAny facts about a specific person\nThe state or details of any project"
+  }
+}
+```
+</ResponseExample>

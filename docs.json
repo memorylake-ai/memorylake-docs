@@ -231,6 +231,14 @@
                           "features/memorylake/api-reference/v3-conflicts/get-actor-conflict",
                           "features/memorylake/api-reference/v3-conflicts/resolve-actor-conflict"
                         ]
+                      },
+                      {
+                        "group": "Memory Settings",
+                        "pages": [
+                          "features/memorylake/api-reference/memory-settings/get-actor-memory-settings",
+                          "features/memorylake/api-reference/memory-settings/update-actor-memory-settings",
+                          "features/memorylake/api-reference/memory-settings/draft-actor-fact-instruction"
+                        ]
                       }
                     ]
                   },
@@ -254,7 +262,15 @@
                       },
                       "features/memorylake/api-reference/agents/list-workspace-agents",
                       "features/memorylake/api-reference/agents/bind-agent",
-                      "features/memorylake/api-reference/agents/unbind-agent"
+                      "features/memorylake/api-reference/agents/unbind-agent",
+                      {
+                        "group": "Memory Settings",
+                        "pages": [
+                          "features/memorylake/api-reference/memory-settings/get-agent-memory-settings",
+                          "features/memorylake/api-reference/memory-settings/update-agent-memory-settings",
+                          "features/memorylake/api-reference/memory-settings/draft-agent-fact-instruction"
+                        ]
+                      }
                     ]
                   },
                   {
@@ -290,6 +306,14 @@
                           "features/memorylake/api-reference/v3-conflicts/list-conflicts",
                           "features/memorylake/api-reference/v3-conflicts/get-conflict",
                           "features/memorylake/api-reference/v3-conflicts/resolve-conflict"
+                        ]
+                      },
+                      {
+                        "group": "Memory Settings",
+                        "pages": [
+                          "features/memorylake/api-reference/memory-settings/get-project-memory-settings",
+                          "features/memorylake/api-reference/memory-settings/update-project-memory-settings",
+                          "features/memorylake/api-reference/memory-settings/draft-project-fact-instruction"
                         ]
                       }
                     ]
@@ -671,6 +695,14 @@
                           "zh/features/memorylake/api-reference/v3-conflicts/get-actor-conflict",
                           "zh/features/memorylake/api-reference/v3-conflicts/resolve-actor-conflict"
                         ]
+                      },
+                      {
+                        "group": "记忆设置",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/memory-settings/get-actor-memory-settings",
+                          "zh/features/memorylake/api-reference/memory-settings/update-actor-memory-settings",
+                          "zh/features/memorylake/api-reference/memory-settings/draft-actor-fact-instruction"
+                        ]
                       }
                     ]
                   },
@@ -694,7 +726,15 @@
                       },
                       "zh/features/memorylake/api-reference/agents/list-workspace-agents",
                       "zh/features/memorylake/api-reference/agents/bind-agent",
-                      "zh/features/memorylake/api-reference/agents/unbind-agent"
+                      "zh/features/memorylake/api-reference/agents/unbind-agent",
+                      {
+                        "group": "记忆设置",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/memory-settings/get-agent-memory-settings",
+                          "zh/features/memorylake/api-reference/memory-settings/update-agent-memory-settings",
+                          "zh/features/memorylake/api-reference/memory-settings/draft-agent-fact-instruction"
+                        ]
+                      }
                     ]
                   },
                   {
@@ -730,6 +770,14 @@
                           "zh/features/memorylake/api-reference/v3-conflicts/list-conflicts",
                           "zh/features/memorylake/api-reference/v3-conflicts/get-conflict",
                           "zh/features/memorylake/api-reference/v3-conflicts/resolve-conflict"
+                        ]
+                      },
+                      {
+                        "group": "记忆设置",
+                        "pages": [
+                          "zh/features/memorylake/api-reference/memory-settings/get-project-memory-settings",
+                          "zh/features/memorylake/api-reference/memory-settings/update-project-memory-settings",
+                          "zh/features/memorylake/api-reference/memory-settings/draft-project-fact-instruction"
                         ]
                       }
                     ]
