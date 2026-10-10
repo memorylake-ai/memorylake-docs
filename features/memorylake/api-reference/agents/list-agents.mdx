@@ -47,7 +47,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents?page_siz
     <ResponseField name="metadata" type="object">Arbitrary key-value pairs for storing additional agent information</ResponseField>
     <ResponseField name="version" type="integer">Current active version number</ResponseField>
     <ResponseField name="model" type="string">Model used by the agent (e.g. `gpt-4o`, `claude-sonnet-4-20250514`)</ResponseField>
-    <ResponseField name="capabilities" type="array">List of capability identifiers the agent supports</ResponseField>
+    <ResponseField name="capabilities" type="object">Capabilities the agent has, keyed by capability name. The platform fills in default values for fields you didn't set, so a configuration can include fields these docs don't describe.</ResponseField>
     <ResponseField name="policies" type="object">
     Execution policies that constrain agent behavior
     <Expandable title="Policies object">
@@ -112,7 +112,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents?page_siz
         },
         "version": 3,
         "model": "gpt-4o",
-        "capabilities": ["tool_use", "memory_read", "memory_write"],
+        "capabilities": {"web_search": {"max_results": 5, "search_depth": "basic", "chunks_per_source": 2, "open_datasets": ["research/academic"]}},
         "policies": {
           "max_turns": 20,
           "max_tool_calls": 10,

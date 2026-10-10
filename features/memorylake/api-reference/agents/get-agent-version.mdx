@@ -36,7 +36,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents/agent-f8
 <Expandable title="Agent version object">
   <ResponseField name="version" type="integer">Version number</ResponseField>
   <ResponseField name="model" type="string">Model used in this version</ResponseField>
-  <ResponseField name="capabilities" type="array">List of capability identifiers</ResponseField>
+  <ResponseField name="capabilities" type="object">Capabilities of this version, keyed by capability name. The platform fills in default values for fields you didn't set, so a configuration can include fields these docs don't describe.</ResponseField>
   <ResponseField name="policies" type="object">
   Execution policies for this version
   <Expandable title="Policies object">
@@ -86,7 +86,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents/agent-f8
   "data": {
     "version": 3,
     "model": "gpt-4o",
-    "capabilities": ["tool_use", "memory_read", "memory_write"],
+    "capabilities": {"web_search": {"max_results": 5, "search_depth": "basic", "chunks_per_source": 2, "open_datasets": ["research/academic"]}},
     "policies": {
       "max_turns": 20,
       "max_tool_calls": 10,

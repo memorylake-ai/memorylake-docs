@@ -86,17 +86,7 @@ MemoryLake-specific configuration. Without this, the agent runs without any memo
     </Expandable>
     </ParamField>
     <ParamField body="capabilitiesOverride" type="object">
-    Per-request capability overrides, keyed by capability name. Include a capability to turn it on for this request with the configuration you supply; omit it to keep the agent's own setting. Capability names and their fields are snake_case, unlike the camelCase fields around them. `web_search` is the only capability exposed here today — more may follow.
-    <Expandable title="Capabilities">
-      <ParamField body="web_search" type="object">
-      Lets the agent search the web. Pass an empty object `{}` for web search on its own, or add `open_datasets` to search MemoryLake's curated Open Data collections as well.
-      <Expandable title="web_search fields">
-        <ParamField body="open_datasets" type="array">
-        Open Data collections to search alongside the web, by identifier: `research/academic`, `clinical/trials`, `drug/database`, `company/fundamentals`, `financial/markets`, `economic/data`, `patents/ip`. [List Open Data Collections](/features/memorylake/api-reference/a2a/list-open-data-collections) returns the current identifiers.
-        </ParamField>
-      </Expandable>
-      </ParamField>
-    </Expandable>
+    Extra capabilities for this message, keyed by capability name with each capability's configuration as the value: `web_search`, `web_fetch`, `pii` and `vega`. See [Turn on capabilities per message](#turn-on-capabilities-per-message) for what each one does and how the override combines with the agent's own configuration.
     </ParamField>
     <ParamField body="maxTurns" type="integer">Override the maximum number of turns</ParamField>
   </Expandable>
@@ -112,6 +102,37 @@ MemoryLake-specific configuration. Without this, the agent runs without any memo
   </ParamField>
 </Expandable>
 </ParamField>
+
+### Turn on capabilities per message
+
+`overrides.capabilitiesOverride` turns on extra capabilities for a single message. It is an object keyed by capability name, and each value is that capability's configuration. Capability names and their fields are snake_case, unlike the camelCase fields around them.
+
+```json
+"capabilitiesOverride": {
+  "web_search": { "open_datasets": ["research/academic"] },
+  "web_fetch": {},
+  "pii": {},
+  "vega": {}
+}
+```
+
+| Capability | What it does | Configuration |
+|---|---|---|
+| `web_search` | Searches the web. With `open_datasets`, it also searches MemoryLake's curated Open Data collections. | `open_datasets` (optional): array of collection identifiers from [List Open Data Collections](/features/memorylake/api-reference/a2a/list-open-data-collections). Pass `{}` for web search alone. |
+| `web_fetch` | Reads a web page by URL, for example when the user shares a link and asks for a summary. | None. Pass `{}`. |
+| `pii` | Masks personal information before messages reach the model. Email addresses, mainland China mobile and ID card numbers, bank card numbers, IP addresses and similar values become placeholders such as `[EMAIL_REDACTED]`. The model never sees the original values, so its answer contains only the placeholders. The conversation record keeps the original text. | None. Pass `{}`. |
+| `vega` | Draws charts: the agent can turn data into bar, line, pie, scatter and other charts. | None. Pass `{}`. |
+
+Keep in mind:
+
+- **It applies to this message only.** The next message in the same conversation doesn't get the capability unless it carries the override too.
+- **Agents don't have these capabilities by default.** Without the override, an agent searches the web or reads pages only if its own configuration turns that on (see `capabilities` in [Create Agent](/features/memorylake/api-reference/agents/create-agent)). `pii` and `vega` can only be turned on here.
+- **What you pass replaces the agent's own configuration.** Send the complete configuration you want for a capability, and don't count on fields carrying over from the agent. For example, if the agent's `web_search` sets `open_datasets` and you pass `"web_search": {}`, this message searches no Open Data collections.
+- **You can turn capabilities on, not off.** Leaving a capability out keeps the agent's own setting. Neither `null` nor `{"enabled": false}` turns off a capability the agent has. To run without it, use an agent that doesn't have it.
+
+<Warning>
+**Mistakes don't return errors.** A misspelled capability name is ignored. If a capability's configuration is invalid, for example `open_datasets` given as a string or `web_search` given as `true`, the whole capability is dropped and the request still returns 200, just without it. Unknown Open Data identifiers are skipped, and if none are valid the agent searches the web only. The request fails with 400 only when `capabilitiesOverride` itself isn't an object, such as an array. If the agent acts as though a capability is off, check the capability names and configuration in your request first.
+</Warning>
 
 ## Examples
 
