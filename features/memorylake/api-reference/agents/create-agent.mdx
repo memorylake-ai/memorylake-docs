@@ -39,8 +39,8 @@ Arbitrary key-value pairs for storing additional agent information
 Model to use for the agent (e.g. `gpt-4o`, `claude-sonnet-4-20250514`)
 </ParamField>
 
-<ParamField body="capabilities" type="array">
-List of capability identifiers the agent supports (e.g. `tool_use`, `memory_read`, `memory_write`)
+<ParamField body="capabilities" type="object">
+Capabilities the agent has in every conversation, keyed by capability name with each capability's configuration as the value. You can set `web_search` and `web_fetch` here, in the same form as [`capabilitiesOverride`](/features/memorylake/api-reference/a2a/overview#turn-on-capabilities-per-message) in an A2A message; `pii` and `vega` can only be turned on per message. A name this field doesn't recognize is dropped without an error. Omit the field and the agent has neither.
 </ParamField>
 
 <ParamField body="policies" type="object">
@@ -107,7 +107,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
       "tier": "production"
     },
     "model": "gpt-4o",
-    "capabilities": ["tool_use", "memory_read", "memory_write"],
+    "capabilities": {"web_search": {"open_datasets": ["research/academic"]}},
     "policies": {
       "max_turns": 20,
       "max_tool_calls": 10,
@@ -148,7 +148,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
   <ResponseField name="metadata" type="object">Arbitrary key-value pairs for storing additional agent information</ResponseField>
   <ResponseField name="version" type="integer">Current active version number</ResponseField>
   <ResponseField name="model" type="string">Model used by the agent</ResponseField>
-  <ResponseField name="capabilities" type="array">List of capability identifiers the agent supports</ResponseField>
+  <ResponseField name="capabilities" type="object">Capabilities the agent has, keyed by capability name. The platform fills in default values for fields you didn't set, so a configuration can include fields these docs don't describe.</ResponseField>
   <ResponseField name="policies" type="object">
   Execution policies that constrain agent behavior
   <Expandable title="Policies object">
@@ -208,7 +208,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/agents' \
     },
     "version": 1,
     "model": "gpt-4o",
-    "capabilities": ["tool_use", "memory_read", "memory_write"],
+    "capabilities": {"web_search": {"max_results": 5, "search_depth": "basic", "chunks_per_source": 2, "open_datasets": ["research/academic"]}},
     "policies": {
       "max_turns": 20,
       "max_tool_calls": 10,
