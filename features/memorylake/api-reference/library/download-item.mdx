@@ -1,0 +1,86 @@
+---
+title: "Download Item"
+description: "Download the content of a file in the Library"
+---
+
+```
+GET /openapi/memorylake/api/v1/drives/items/{item_id}/binary
+```
+
+Downloads the content of a Library file. Usually the response is a `303` redirect to a storage URL that serves the file. For files whose storage cannot be read through a plain URL, MemoryLake streams the content back itself with `200`. Follow redirects and you get the file either way.
+
+<Note>
+**Permission required:** [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+</Note>
+
+### Path Parameters
+
+<ParamField path="item_id" type="string" required>
+ID of the file to download. Folders, including `MY_SPACE`, cannot be downloaded.
+</ParamField>
+
+### Following the redirect
+
+The storage URL in the `Location` header carries its own signature:
+
+- **Request it without your API key.** Storage rejects a request that also carries an `Authorization` header. `curl -L` and Python `requests` drop the header for you when they follow the redirect. If your HTTP client forwards headers on redirect, turn automatic redirects off and request the `Location` URL yourself.
+- **Use it right away.** The URL expires after a short time. When you need the file again later, call this endpoint again instead of saving the URL.
+
+The file downloads as an attachment named after the Library item.
+
+<RequestExample>
+```bash cURL
+curl -L 'https://app.memorylake.ai/openapi/memorylake/api/v1/drives/items/sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5/binary' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -o report.pdf
+```
+
+```python Python
+import requests
+
+BASE = "https://app.memorylake.ai/openapi/memorylake/api/v1"
+HEADERS = {"Authorization": "Bearer sk_xxxxxx"}
+
+def download_item(item_id: str, path: str) -> None:
+    """Download a Library file to a local path."""
+    resp = requests.get(
+        f"{BASE}/drives/items/{item_id}/binary",
+        headers=HEADERS,
+        stream=True,  # follows the 303 and drops your API key on the way
+    )
+    resp.raise_for_status()
+    with open(path, "wb") as f:
+        for chunk in resp.iter_content(chunk_size=1024 * 1024):
+            f.write(chunk)
+```
+</RequestExample>
+
+### Response
+
+| Status | Body | When |
+|--------|------|------|
+| `303` | Empty | Most files. The `Location` header holds the storage URL that serves the file |
+| `200` | The file content | Files whose storage cannot be read through a plain URL. MemoryLake streams the content back itself |
+
+### Errors
+
+| Status | Error code | When |
+|--------|------------|------|
+| `400` | `DOWNLOAD_NOT_SUPPORTED` | The item is a folder, or cannot be downloaded for another reason |
+| `404` | — | No item with this `item_id` exists. This response has no body |
+
+<ResponseExample>
+```text Redirect (303)
+HTTP/1.1 303 See Other
+Location: https://<storage-host>/<path>?<signature>
+Content-Length: 0
+```
+
+```json Folder (400)
+{
+  "success": false,
+  "message": "This resource does not support download",
+  "error_code": "DOWNLOAD_NOT_SUPPORTED"
+}
+```
+</ResponseExample>
