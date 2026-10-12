@@ -45,6 +45,8 @@ All four route families accept the same `configuration` object and the same Memo
 
 <Warning>
 **One message at a time per conversation.** Messages that share a `contextId` belong to the same conversation, and a conversation processes one message at a time. While a message is still being processed, including a non-blocking send whose task has not finished, another message sent with the same `contextId` is rejected, not queued. Wait for the previous response or task to finish before you send the next message. To run requests in parallel, give each one its own `contextId`.
+
+**One agent per conversation.** A `contextId` belongs to the agent it was first used with. A message sent to a different agent with the same `contextId` is rejected. To talk to another agent, start a new conversation with a new `contextId`.
 </Warning>
 
 ## MemoryLake Extension
