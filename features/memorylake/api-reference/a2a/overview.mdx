@@ -39,16 +39,16 @@ All four route families accept the same `configuration` object and the same Memo
 | `configuration` field | Version | Type | Description |
 |---|---|---|---|
 | `returnImmediately` | v1.0 | boolean | `true` responds as soon as the task is created, without waiting for it to finish. Defaults to `false`: the response waits for the task to complete. v1.0 routes ignore `blocking`. |
-| `blocking` | v0.3 | boolean | `true` waits for the task to complete before responding. |
-| `historyLength` | both | integer | Number of most recent messages from the task history to include in the response. |
+| `blocking` | v0.3 | boolean | `true` waits for the task to complete before responding. If you leave it out, the REST route returns immediately while the JSON-RPC method waits, so set it explicitly. |
+| `historyLength` | both | integer | Number of most recent messages from the task history to include in the response. `0` leaves `history` out. Leaving the field out returns the full history, except over v0.3 REST, where it leaves `history` out. |
 | `acceptedOutputModes` | both | array | Output MIME types the client can handle. |
 
 <Note>
-**Push notifications aren't supported.** The agent card advertises `pushNotifications: false`, and no callbacks are sent for `pushNotificationConfig` (v0.3) or `taskPushNotificationConfig` (v1.0). To follow a task, stream the response or poll `GET {baseUrl}/tasks/{taskId}`.
+**Push notifications aren't supported.** The agent card advertises `pushNotifications: false`, and no callbacks are sent for `pushNotificationConfig` (v0.3) or `taskPushNotificationConfig` (v1.0). To follow a task, stream the response or [subscribe to the task](#follow-a-task).
 </Note>
 
 <Warning>
-**One message at a time per conversation.** Messages that share a `contextId` belong to the same conversation, and a conversation processes one message at a time. While a message is still being processed, including a non-blocking send whose task has not finished, another message sent with the same `contextId` is rejected, not queued. Wait for the previous response or task to finish before you send the next message. To run requests in parallel, give each one its own `contextId`.
+**One message at a time per conversation.** Messages that share a `contextId` belong to the same conversation, and a conversation processes one message at a time. While a message is still being processed, including a non-blocking send whose task has not finished, another message sent with the same `contextId` is rejected with `400 INVALID_ARGUMENT`, not queued. Wait for the previous response or task to finish before you send the next message. To run requests in parallel, give each one its own `contextId`.
 </Warning>
 
 ## MemoryLake Extension
@@ -420,3 +420,169 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
   }'
 ```
 </CodeGroup>
+
+## Responses
+
+Every combination returns the same task model. Only the envelope and a few spellings change with the protocol version and transport; see [v0.3 differences](#v0-3-differences). The examples in this section use v1.0 REST.
+
+| Combination | `message:send` body | Each `message:stream` event |
+|---|---|---|
+| v1.0 · REST | `{"task": {...}}` | `{"task": {...}}`, `{"statusUpdate": {...}}` or `{"artifactUpdate": {...}}` |
+| v1.0 · JSON-RPC | `{"jsonrpc": "2.0", "id": ..., "result": {"task": {...}}}` | `{"jsonrpc": "2.0", "id": ..., "result": {"statusUpdate": {...}}}` and so on |
+| v0.3 · REST | `{"task": {...}}` | `{"statusUpdate": {...}}` and so on |
+| v0.3 · JSON-RPC | `{"jsonrpc": "2.0", "id": ..., "result": {"kind": "task", ...}}` | `{"jsonrpc": "2.0", "id": ..., "result": {"kind": "status-update", ...}}` and so on |
+
+### Send
+
+`message:send` always returns a task, never a bare message. By default it waits until the task finishes:
+
+```json
+{
+  "task": {
+    "id": "run-e21fffe8d53647f4bc918bb4a8fb7d73",
+    "contextId": "ctx-demo-1",
+    "status": { "state": "TASK_STATE_COMPLETED" },
+    "artifacts": [
+      {
+        "artifactId": "result-run-e21fffe8d53647f4bc918bb4a8fb7d73",
+        "name": "result",
+        "parts": [{ "text": "Paris is the capital of France." }],
+        "metadata": {}
+      }
+    ],
+    "history": [
+      {
+        "messageId": "msg-1",
+        "contextId": "ctx-demo-1",
+        "taskId": "run-e21fffe8d53647f4bc918bb4a8fb7d73",
+        "role": "ROLE_USER",
+        "parts": [{ "text": "What is the capital of France?" }]
+      },
+      {
+        "messageId": "run-e21fffe8d53647f4bc918bb4a8fb7d73-3",
+        "contextId": "ctx-demo-1",
+        "taskId": "run-e21fffe8d53647f4bc918bb4a8fb7d73",
+        "role": "ROLE_AGENT",
+        "parts": [{ "text": "Paris is the capital of France." }]
+      }
+    ]
+  }
+}
+```
+
+<ResponseField name="id" type="string">
+Task ID.
+</ResponseField>
+
+<ResponseField name="contextId" type="string">
+The conversation this task belongs to. Send it as `message.contextId` to continue the conversation. If your request had none, a new one is generated.
+</ResponseField>
+
+<ResponseField name="status" type="object">
+<Expandable title="Status fields">
+  <ResponseField name="state" type="string">
+  `TASK_STATE_COMPLETED`, `TASK_STATE_FAILED` or `TASK_STATE_CANCELED` once the task has finished; `TASK_STATE_SUBMITTED` or `TASK_STATE_WORKING` while it's still running.
+  </ResponseField>
+  <ResponseField name="message" type="object">
+  Only on a failed task: a message whose `parts[0].text` describes the error.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="artifacts" type="array">
+The answer: at most one artifact, named `result`. It's missing when the task failed or produced nothing. See [The answer](#the-answer).
+</ResponseField>
+
+<ResponseField name="history" type="array">
+Your message, followed by the agent's messages in order: text it wrote along the way, its thinking, and its [tool calls](#tool-calls). Consecutive text is merged into one message. `configuration.historyLength` keeps only the last N messages, and `0` leaves `history` out.
+</ResponseField>
+
+With `returnImmediately: true` (v1.0) or `blocking: false` (v0.3), the response comes back as soon as the task is created. The task is in `TASK_STATE_SUBMITTED` (or already `TASK_STATE_WORKING`), `history` holds only your message, and there are no artifacts. The task keeps running; to get its answer, [subscribe to it](#follow-a-task).
+
+### Stream
+
+`message:stream` responds with `text/event-stream`. Each `data:` line is one JSON event, in this order:
+
+1. **`task`**: the task as created, with your message in `history`.
+2. **`statusUpdate`** with `TASK_STATE_WORKING` as the agent starts.
+3. **`statusUpdate`** with `TASK_STATE_WORKING` for each step of progress. `status.message` holds a single part:
+   - a chunk of answer text. Chunks are **incremental**, so append them; each has its own `messageId`;
+   - a chunk of thinking text, marked with `metadata.adk_thought: true`;
+   - a [tool call or tool result](#tool-calls);
+   - a file the agent created, as `{"url": "...", "mediaType": "...", "filename": "..."}`.
+4. **`artifactUpdate`** with the answer. See [The answer](#the-answer).
+5. **`statusUpdate`** with the final state, `TASK_STATE_COMPLETED`, `TASK_STATE_FAILED` (with the error in `status.message`) or `TASK_STATE_CANCELED`. The stream then ends.
+
+Use the text chunks for live display, and take the final answer from the artifact. The chunks also carry text the agent writes before calling a tool, while the artifact's text is the finished answer. Lines that start with `:` are keep-alive comments; ignore them.
+
+```text
+data: {"task": {"id": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_SUBMITTED"}, "history": [{"messageId": "msg-1", "role": "ROLE_USER", "parts": [{"text": "What is the capital of France?"}], …}]}}
+
+data: {"statusUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_WORKING"}}}
+
+data: {"statusUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-3", "role": "ROLE_AGENT", "parts": [{"text": "Let me look that up."}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-8-call", "role": "ROLE_AGENT", "parts": [{"data": {"id": "call_1", "name": "web_search", "args": {"query": "capital of France"}}, "metadata": {"adk_type": "function_call"}}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-9-response", "role": "ROLE_AGENT", "parts": [{"data": {"id": "call_1", "name": "web_search", "response": "{\"results\": [{\"title\": \"Paris\", \"url\": \"https://en.wikipedia.org/wiki/Paris\"}]}"}, "metadata": {"adk_type": "function_response"}}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-11", "role": "ROLE_AGENT", "parts": [{"text": "Paris is"}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-12", "role": "ROLE_AGENT", "parts": [{"text": " the capital of France."}], …}}}}
+
+data: {"artifactUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "artifact": {"artifactId": "result-run-7828…6073", "name": "result", "parts": [{"text": "Paris is the capital of France."}, {"data": {"kind": "recommended_questions", "questions": ["What is the population of Paris?"]}}], "metadata": {}}, "lastChunk": true}}
+
+data: {"statusUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_COMPLETED"}}}
+```
+
+IDs are shortened with `…` and repeated fields are elided for readability.
+
+### The answer
+
+The `result` artifact holds the answer as a list of parts:
+
+| Part | Shape | Description |
+|---|---|---|
+| Answer text | `{"text": "..."}` | The final answer. |
+| Attachments | `{"data": {"kind": "attachments", "attachments": [...]}}` | Files the agent produced. Each item has `name`, `mime_type`, `presign_url` (a download URL) and `description`. When a file couldn't be saved, `committed` is `false` and `error` says why. |
+| Suggested questions | `{"data": {"kind": "recommended_questions", "questions": ["..."]}}` | Follow-up questions the user might ask next. Present only when the agent suggests some. |
+
+Other `data` parts may appear in the artifact and in the stream. Skip any `data` part whose `kind` you don't recognize, or that has no `kind`. Numbers inside `data` parts come back as floating point, so `2` arrives as `2.0`.
+
+### Tool calls
+
+The agent's tool activity appears as `data` parts tagged with `metadata.adk_type`, the convention used by Google's Agent Development Kit. You'll see them in the stream and in `history`.
+
+| `metadata.adk_type` | `data` | Description |
+|---|---|---|
+| `function_call` | `{"id", "name", "args"}` | Sent when the agent calls a tool, before the tool runs. `args` is an object. |
+| `function_response` | `{"id", "name", "response"}` | The tool's result; `id` matches the call. `response` is often a JSON-encoded string. If the tool failed, it's `{"error": "..."}`, plus `code` when there is one. |
+
+A function call may also carry `metadata.adk_thought_signature`, an opaque value you can ignore.
+
+### Follow a task
+
+`GET {baseUrl}/tasks/{taskId}` (v0.3: `{baseUrl}/v1/tasks/{taskId}`) returns only the task's `id`, `contextId` and `status`, with `state` and `timestamp`. It has no answer, no history, and no error text for a failed task.
+
+To get the answer of a task you didn't wait for, subscribe to it: `GET {baseUrl}/tasks/{taskId}:subscribe` (v0.3: `{baseUrl}/v1/tasks/{taskId}:subscribe`) with `Accept: text/event-stream`. It replays the task's events from the beginning in the same format as `message:stream`, without the leading `task` event, and follows the task live until it finishes. A task that has failed or been canceled can't be subscribed to.
+
+### Errors
+
+**The task fails.** The request still returns HTTP 200; the task ends in `TASK_STATE_FAILED`, and `status.message.parts[0].text` describes the error. For example, an unknown `overrides.model` fails the task with `LLM model config not found: <model>`.
+
+**The request is rejected.** REST routes answer with an HTTP error status and the standard [error body](/features/memorylake/api-reference/errors) (`success`, `message`, `error_code`). For example:
+
+| Status | `error_code` | When |
+|---|---|---|
+| 400 | `INVALID_ARGUMENT` | The request is invalid, or another message in the same conversation is still being processed. |
+| 402 | `QUOTA_EXCEEDED` | Your quota is used up. |
+| 403 | `ACCESS_DENIED` | You lack a permission the request needs. |
+| 404 | `NOT_FOUND` | The agent or task doesn't exist. |
+
+Over JSON-RPC, errors that MemoryLake raises before the agent runs, such as quota or permission errors, use the same HTTP status and error body. Errors the agent reports come back as a JSON-RPC `error` object with HTTP 200, and v0.3 methods report all of those with code `-32603`.
+
+### v0.3 differences
+
+- **JSON-RPC.** The result is the task itself, marked `"kind": "task"`. Stream events are marked `"kind": "status-update"` or `"artifact-update"`, and the last status update has `"final": true`. States are lowercase, for example `completed`, `failed`, `canceled`, `submitted` and `working`. Roles are `user` and `agent`. Every part carries a `kind`: `{"kind": "text", "text": ...}`, `{"kind": "data", "data": {...}}` or `{"kind": "file", "file": {...}}`.
+- **REST.** States use the v1.0 spelling, except that a canceled task is `TASK_STATE_CANCELLED`. Message parts are under `content` instead of `parts`, and a data part is `{"data": {"data": {...}}}`. The task returned by `GET` has no `timestamp`.
+- **REST defaults.** If you leave out `blocking`, `message:send` returns immediately instead of waiting. If you leave out `historyLength`, `history` is left out. Set both explicitly.
