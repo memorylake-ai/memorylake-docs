@@ -57,13 +57,13 @@ MemoryLake extends the standard A2A protocol through the `metadata.memorylake` n
 
 This is the key difference from a vanilla A2A server — these fields connect the agent to workspaces, projects, and actors in MemoryLake. The object carries two kinds of fields:
 
-- **[Memory and identity](#memory-and-identity)**: `actorId`, `readWriteProjectId`, `readOnlyProjectIds` and `skipMemory`. MemoryLake resolves these itself: it checks your access, binds the conversation to its memory, and tells the agent whose memory to work with.
-- **[Run configuration](#run-configuration)**: `overrides`, `runtimeOptions` and `ttlSeconds`. MemoryLake passes these to the agent runtime unchanged.
+- **[Memory and identity](#memory-and-identity)**: `actorId`, `readWriteProjectId`, `readOnlyProjectIds` and `skipMemory` decide whose memory the agent uses and which projects it reads and writes.
+- **[Run configuration](#run-configuration)**: `overrides` and `runtimeOptions` change how the agent handles this message.
 
 Use the camelCase field names shown on this page. Unknown fields are ignored rather than rejected, so if a setting seems to have no effect, check its spelling first. The agent doesn't read keys under `metadata` other than `memorylake`.
 
 <Note>
-`metadata.memorylake` can be left out only when the request carries an `x-memorylake-project-id` header, which then acts as `readWriteProjectId`. With neither, the request fails with `400 INVALID_ARGUMENT`. An empty object `{}` is valid: the agent works with your own actor, and memory is on.
+**`metadata.memorylake` is required.** Without it the request fails with `400 INVALID_ARGUMENT`. Send an empty object `{}` to use the defaults: the agent works with your own actor, and memory is on.
 </Note>
 
 ### Memory and identity
@@ -143,33 +143,8 @@ Run options for this message.
   <ParamField body="language" type="string">
   Language the agent responds in, given as a language name such as `English`, `Chinese` or `Japanese`. `en` is read as `English` and `zh` or `cn` as `Chinese`; any other value is used as written. Leave it out to have the agent reply in the language of the user's message.
   </ParamField>
-
-  <ParamField body="promptVariant" type="string">
-  Which wording of MemoryLake's built-in instructions the agent gets: `default`, `zh` or `en`. Leave it out to pick one from the model: `zh` for Chinese model series, `en` for the rest. It doesn't change the reply language; use `language` for that.
-  </ParamField>
 </Expandable>
 </ParamField>
-
-<ParamField body="ttlSeconds" type="integer" default="3600">
-Idle timeout, in seconds, for this run's sandbox, the environment where the agent runs code and works with files. Once the sandbox has gone unused this long, it's reclaimed.
-</ParamField>
-
-### Accepted but currently ignored
-
-The fields below are accepted and validated, but the agent runtime MemoryLake currently runs doesn't act on them. A request that sets them still succeeds.
-
-| Field | Notes |
-|---|---|
-| `subagentMapping` | Sub-agent routing isn't available on the current runtime, and agents configured with sub-agents can't run. |
-| `overrides.reasoning` | Reasoning settings come from MemoryLake's configuration for the model. |
-| `overrides.maxTurns` | The agent's own turn limit applies. If you send it, it must still be a positive integer, or the request fails. |
-| `overrides.mcpServersExtend` | Configure MCP servers on the agent instead. |
-| `overrides.modelParams.stop_sequences` | — |
-| `runtimeOptions.subagentProgress` | — |
-
-### Set by MemoryLake
-
-Don't send `userId`, `assistantId`, `memoryStores`, `datasets`, `driveRef` or `preassignedRunId`. MemoryLake fills these in for the agent from the [memory and identity](#memory-and-identity) fields above.
 
 ### Turn on capabilities per message
 
@@ -251,7 +226,6 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
         "readOnlyProjectIds": ["proj-cd2e83f761eec93c75977f51667889cd"],
         "overrides": {
           "model": "gpt-4o",
-          "maxTurns": 5,
           "capabilitiesOverride": {
             "web_search": {
               "open_datasets": ["research/academic", "clinical/trials"]
@@ -363,8 +337,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
           "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
           "readOnlyProjectIds": ["proj-cd2e83f761eec93c75977f51667889cd"],
           "overrides": {
-            "model": "gpt-4o",
-            "maxTurns": 5
+            "model": "gpt-4o"
           }
         }
       }
