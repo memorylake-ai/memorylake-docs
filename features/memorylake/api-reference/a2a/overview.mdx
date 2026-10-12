@@ -120,17 +120,6 @@ Changes the agent's configuration for this message only. Anything you leave out 
   A value of the wrong type is dropped on its own, without an error, and the other parameters still apply. Unknown keys are ignored. MemoryLake doesn't check value ranges.
   </ParamField>
 
-  <ParamField body="responseFormat" type="object">
-  Makes the agent answer with JSON that matches a JSON Schema. Pass the schema object itself, or wrap it as `{"type": "json_schema", "schema": {...}}` or, OpenAI-style, `{"type": "json_schema", "json_schema": {"name": "...", "schema": {...}}}`. The answer's text part is then a JSON string that matches the schema.
-  </ParamField>
-
-  <ParamField body="extraSkills" type="object[]">
-  Skills to add for this message, on top of the skills bound to the agent. Each item is `{"skillId": "skill-…", "skillVersion": 2}`; leave out `skillVersion` to use the latest version. An entry for a skill the agent already has replaces that binding for this message.
-  - A skill must belong to your organization or be one of MemoryLake's built-in skills.
-  - A skill or version that doesn't exist fails the request.
-  - A version whose [security review](/features/memorylake/api-reference/skills/overview#security-review) isn't `safe` is skipped without an error.
-  </ParamField>
-
   <ParamField body="capabilitiesOverride" type="object">
   Extra capabilities for this message, keyed by capability name with each capability's configuration as the value: `web_search`, `web_fetch`, `pii` and `vega`. See [Turn on capabilities per message](#turn-on-capabilities-per-message) for what each one does and how the override combines with the agent's own configuration.
   </ParamField>
