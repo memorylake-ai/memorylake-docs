@@ -34,80 +34,112 @@ The `/v1/` path prefix refers to the older **A2A v0.3** wire format, not to prot
 
 Over JSON-RPC, both versions post to the bare `{baseUrl}` and pick the operation with `method`: v1.0 uses `SendMessage`, `SendStreamingMessage`, `GetTask`, `CancelTask`, `SubscribeToTask`; v0.3 uses `message/send`, `message/stream`, `tasks/get`, `tasks/cancel`, `tasks/resubscribe`. The protocol version is negotiated from the method name, and v1.0 clients should also send `A2A-Version: 1.0`.
 
-All four route families accept the same `configuration` object and the same MemoryLake extension described below:
+All four route families accept the same `configuration` object and the same MemoryLake extension described below. The two protocol versions spell the wait-for-completion switch differently:
 
-| `configuration` field | Type | Description |
-|---|---|---|
-| `blocking` | boolean | Wait for the task to complete before responding. Applies to both v1.0 and v0.3. |
-| `historyLength` | integer | Number of most recent messages from the task history to include in the response. |
-| `acceptedOutputModes` | array | Output MIME types the client can handle. |
-| `pushNotificationConfig` | object | Callback URL (plus optional auth) for task update notifications. |
+| `configuration` field | Version | Type | Description |
+|---|---|---|---|
+| `returnImmediately` | v1.0 | boolean | `true` responds as soon as the task is created, without waiting for it to finish. Defaults to `false`: the response waits for the task to complete. v1.0 routes ignore `blocking`. |
+| `blocking` | v0.3 | boolean | `true` waits for the task to complete before responding. If you leave it out, the REST route returns immediately while the JSON-RPC method waits, so set it explicitly. |
+| `historyLength` | both | integer | Number of most recent messages from the task history to include in the response. `0` leaves `history` out. Leaving the field out returns the full history, except over v0.3 REST, where it leaves `history` out. |
+| `acceptedOutputModes` | both | array | Output MIME types the client can handle. |
+
+<Note>
+**Push notifications aren't supported.** The agent card advertises `pushNotifications: false`, and no callbacks are sent for `pushNotificationConfig` (v0.3) or `taskPushNotificationConfig` (v1.0). To follow a task, stream the response or [subscribe to the task](#follow-a-task).
+</Note>
 
 <Warning>
-**One message at a time per conversation.** Messages that share a `contextId` belong to the same conversation, and a conversation processes one message at a time. While a message is still being processed, including a non-blocking send whose task has not finished, another message sent with the same `contextId` is rejected, not queued. Wait for the previous response or task to finish before you send the next message. To run requests in parallel, give each one its own `contextId`.
+**One message at a time per conversation.** Messages that share a `contextId` belong to the same conversation, and a conversation processes one message at a time. While a message is still being processed, including a non-blocking send whose task has not finished, another message sent with the same `contextId` is rejected with `400 INVALID_ARGUMENT`, not queued. Wait for the previous response or task to finish before you send the next message. To run requests in parallel, give each one its own `contextId`.
 
 **One agent per conversation.** A `contextId` belongs to the agent it was first used with. A message sent to a different agent with the same `contextId` is rejected. To talk to another agent, start a new conversation with a new `contextId`.
 </Warning>
 
 ## MemoryLake Extension
 
-MemoryLake extends the standard A2A protocol through the `metadata.memorylake` namespace. Pass this object in the request metadata of `message:send` or `message:stream` to control how the agent interacts with MemoryLake's memory layer.
+MemoryLake extends the standard A2A protocol through the `metadata.memorylake` namespace. Put it in the `metadata` of the send request (top-level `metadata` in a REST body, `params.metadata` in JSON-RPC) on `message:send` or `message:stream`. The agent doesn't read `message.metadata` for this.
 
-This is the key difference from a vanilla A2A server — these fields connect the agent to workspaces, projects, and actors in MemoryLake.
+This is the key difference from a vanilla A2A server — these fields connect the agent to workspaces, projects, and actors in MemoryLake. The object carries two kinds of fields:
 
-<ParamField body="metadata.memorylake" type="object" required>
-MemoryLake-specific configuration. Without this, the agent runs without any memory context.
-<Expandable title="Fields" defaultOpen>
-  <ParamField body="actorId" type="string">
-  Actor identifier representing the end user. Facts extracted from the conversation are associated with this actor, enabling per-user memory.
+- **[Memory and identity](#memory-and-identity)**: `actorId`, `readWriteProjectId`, `readOnlyProjectIds` and `skipMemory` decide whose memory the agent uses and which projects it reads and writes.
+- **[Run configuration](#run-configuration)**: `overrides` and `runtimeOptions` change how the agent handles this message.
+
+Use the camelCase field names shown on this page. Unknown fields are ignored rather than rejected, so if a setting seems to have no effect, check its spelling first. The agent doesn't read keys under `metadata` other than `memorylake`.
+
+<Note>
+**`metadata.memorylake` is required.** Without it the request fails with `400 INVALID_ARGUMENT`. Send an empty object `{}` to use the defaults: the agent works with your own actor, and memory is on.
+</Note>
+
+### Memory and identity
+
+<ParamField body="actorId" type="string">
+The end user this message comes from, as a MemoryLake actor ID (`actor-` followed by 32 hex characters). The agent searches this actor's memories, and the user's side of the conversation is recorded under this actor, which gives each end user their own memory.
+
+- **Default:** the authenticated user's own actor in this workspace. If that user has no actor here, the request fails with `400 STATE_NOT_READY`.
+- **Must be** an actor bound to this workspace. Any other ID returns `400`, and a deleted actor returns `400 ACTOR_INACTIVE`.
+- **Permissions:** `workspace_actor:fact_add` and `workspace_actor:fact_search` on the actor. They're checked when the conversation starts, and again when a later message brings an actor the conversation hasn't had before.
+</ParamField>
+
+<ParamField body="readWriteProjectId" type="string">
+The project the agent works in (`proj-` followed by 32 hex characters). The agent searches this project's documents and memories, and the conversation is recorded against it, which is where memories extracted from the conversation are kept. Conversation history itself is stored at the workspace level.
+
+- **Fixed for the conversation.** The first message of a conversation (`contextId`) binds the project. Later messages can leave it out and keep using it. Sending a different project, or adding one to a conversation that started without a project, fails with `400`.
+- **Same workspace only.** A project from another workspace returns `404`.
+- **Permissions:** `project:mem_add`, `project:doc_add`, `project:mem_search` and `project:doc_search` on the project, checked when the conversation starts.
+- **Required for file attachments.** Files in the message (`drive://` references or inline bytes) are imported into this project as documents. A message that carries files must name the project itself; inheriting it from the conversation isn't enough, and the request fails with `400`.
+</ParamField>
+
+<ParamField body="readOnlyProjectIds" type="string[]">
+More projects the agent can search, both documents and memories, without writing to them. Use it to give the agent a shared knowledge base.
+
+- **Applies to this message only.** It isn't stored on the conversation, so send it with every message that should see these projects.
+- **Permissions:** `project:mem_search` and `project:doc_search` on each project. Missing either returns `403`.
+- IDs that don't match a project are skipped without an error.
+</ParamField>
+
+<ParamField body="skipMemory" type="boolean" default="false">
+`true` runs this message without memory: the agent doesn't search memories or project documents, and nothing from this message is written to memory. The conversation is still created, and access to the actor and projects is still checked.
+</ParamField>
+
+### Run configuration
+
+<ParamField body="overrides" type="object">
+Changes the agent's configuration for this message only. Anything you leave out comes from the agent.
+<Expandable title="Override fields">
+  <ParamField body="model" type="string">
+  Model code to use instead of the agent's model, for example `gpt-4o`. It's looked up among the models available to your organization. An unknown model doesn't fail the request: the task ends in the failed state with `LLM model config not found: <model>`.
   </ParamField>
 
-  <ParamField body="readWriteProjectId" type="string">
-  Project the agent can both read from and write to. Extracted facts are persisted to this project; conversation history is stored at the workspace level, not in the project.
+  <ParamField body="systemPromptOverride" type="string">
+  Replaces the agent's own instructions for this message. MemoryLake's built-in instructions, such as how to use tools and capabilities and which language to reply in, still apply, so describe only the agent's role and task.
   </ParamField>
 
-  <ParamField body="readOnlyProjectIds" type="array">
-  Additional projects the agent can search (documents and facts) but not modify. Use this to give the agent access to shared knowledge bases.
-  </ParamField>
-
-  <ParamField body="subagentMapping" type="object">
-  Maps subagent names (defined in the agent configuration) to concrete agent IDs. Allows dynamic routing of subagent calls at request time.
-  </ParamField>
-
-  <ParamField body="overrides" type="object">
-  Runtime overrides for the agent's configuration.
-  <Expandable title="Override fields">
-    <ParamField body="model" type="string">Override the agent's model (e.g. `gpt-4o`, `claude-sonnet-4-20250514`)</ParamField>
-    <ParamField body="systemPromptOverride" type="string">Replace the agent's system prompt for this request</ParamField>
-    <ParamField body="modelParams" type="object">Override model parameters (e.g. `temperature`, `max_tokens`)</ParamField>
-    <ParamField body="reasoning" type="object">
-    Reasoning configuration
-    <Expandable title="Reasoning fields">
-      <ParamField body="type" type="string">Reasoning type</ParamField>
-      <ParamField body="budgetTokens" type="integer">Token budget for reasoning</ParamField>
-    </Expandable>
-    </ParamField>
-    <ParamField body="capabilitiesOverride" type="object">
-    Extra capabilities for this message, keyed by capability name with each capability's configuration as the value: `web_search`, `web_fetch`, `pii` and `vega`. See [Turn on capabilities per message](#turn-on-capabilities-per-message) for what each one does and how the override combines with the agent's own configuration.
-    </ParamField>
-    <ParamField body="maxTurns" type="integer">Override the maximum number of turns</ParamField>
+  <ParamField body="modelParams" type="object">
+  Sampling parameters for this message. Keys are snake_case; `maxTokens` and `topP` also work.
+  <Expandable title="Model parameters">
+    <ParamField body="max_tokens" type="integer">Maximum number of tokens in the answer.</ParamField>
+    <ParamField body="temperature" type="number">Sampling temperature.</ParamField>
+    <ParamField body="top_p" type="number">Nucleus sampling threshold.</ParamField>
   </Expandable>
+  A value of the wrong type is dropped on its own, without an error, and the other parameters still apply. Unknown keys are ignored. MemoryLake doesn't check value ranges.
   </ParamField>
 
-  <ParamField body="runtimeOptions" type="object">
-  Run options for this request.
-  <Expandable title="Run option fields">
-    <ParamField body="language" type="string">
-    Language the agent responds in, given as a language name such as `English`, `Chinese`, or `Japanese`. Omit it to have the agent reply in the language of the user's message.
-    </ParamField>
-  </Expandable>
+  <ParamField body="capabilitiesOverride" type="object">
+  Extra capabilities for this message, keyed by capability name with each capability's configuration as the value: `web_search`, `web_fetch`, `pii` and `vega`. See [Turn on capabilities per message](#turn-on-capabilities-per-message) for what each one does and how the override combines with the agent's own configuration.
+  </ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="runtimeOptions" type="object">
+Run options for this message.
+<Expandable title="Run option fields">
+  <ParamField body="language" type="string">
+  Language the agent responds in, given as a language name such as `English`, `Chinese` or `Japanese`. `en` is read as `English` and `zh` or `cn` as `Chinese`; any other value is used as written. Leave it out to have the agent reply in the language of the user's message.
   </ParamField>
 </Expandable>
 </ParamField>
 
 ### Turn on capabilities per message
 
-`overrides.capabilitiesOverride` turns on extra capabilities for a single message. It is an object keyed by capability name, and each value is that capability's configuration. Capability names and their fields are snake_case, unlike the camelCase fields around them.
+`overrides.capabilitiesOverride` turns on extra capabilities for a single message. It is an object keyed by capability name, and each value is that capability's configuration. Capability names and their fields are snake_case, unlike the camelCase fields around them (camelCase spellings such as `webSearch` and `openDatasets` are also accepted).
 
 ```json
 "capabilitiesOverride": {
@@ -130,7 +162,7 @@ Keep in mind:
 - **It applies to this message only.** The next message in the same conversation doesn't get the capability unless it carries the override too.
 - **Agents don't have these capabilities by default.** Without the override, an agent searches the web or reads pages only if its own configuration turns that on (see `capabilities` in [Create Agent](/features/memorylake/api-reference/agents/create-agent)). `pii` and `vega` can only be turned on here.
 - **What you pass replaces the agent's own configuration.** Send the complete configuration you want for a capability, and don't count on fields carrying over from the agent. For example, if the agent's `web_search` sets `open_datasets` and you pass `"web_search": {}`, this message searches no Open Data collections.
-- **You can turn capabilities on, not off.** Leaving a capability out keeps the agent's own setting. Neither `null` nor `{"enabled": false}` turns off a capability the agent has. To run without it, use an agent that doesn't have it.
+- **You can turn capabilities on, not off.** Leaving a capability out keeps the agent's own setting, and `null` doesn't turn off a capability the agent has. `{"enabled": false}` is worse: there is no `enabled` field, so it reads as `{}` and turns the capability **on** with default settings, even for an agent that didn't have it. To run without a capability, use an agent that doesn't have it.
 
 <Warning>
 **Mistakes don't return errors.** A misspelled capability name is ignored. If a capability's configuration is invalid, for example `open_datasets` given as a string or `web_search` given as `true`, the whole capability is dropped and the request still returns 200, just without it. Unknown Open Data identifiers are skipped, and if none are valid the agent searches the web only. The request fails with 400 only when `capabilitiesOverride` itself isn't an object, such as an array. If the agent acts as though a capability is off, check the capability names and configuration in your request first.
@@ -153,7 +185,7 @@ Paths below are relative to the base URL; JSON-RPC always posts to the bare base
 | 7 | v0.3 · send · JSON-RPC | `message/send` | — |
 | 8 | v0.3 · stream · JSON-RPC | `message/stream` | SSE |
 
-In the **Headers** column, **SSE** means `Accept: text/event-stream` and **v1.0** means `A2A-Version: 1.0`. All eight take the same `configuration` object and the same `metadata.memorylake` extension. The four streaming variants respond with `text/event-stream`; the four send variants respond with a single JSON body.
+In the **Headers** column, **SSE** means `Accept: text/event-stream` and **v1.0** means `A2A-Version: 1.0`. All eight take the same `configuration` fields (v1.0 waits by default and uses `returnImmediately`, v0.3 uses `blocking`) and the same `metadata.memorylake` extension. The four streaming variants respond with `text/event-stream`; the four send variants respond with a single JSON body.
 
 <Note>
 Watch the three shape differences between versions and transports: v1.0 uses `parts` with `role: "ROLE_USER"`; v0.3 **REST** uses `content` with `role: "ROLE_USER"`; v0.3 **JSON-RPC** uses `parts` where every part carries a `kind` discriminator, with `role: "user"` in lowercase.
@@ -175,17 +207,16 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
       "contextId": "ctx_m4n7p2q9"
     },
     "configuration": {
-      "blocking": true,
+      "returnImmediately": false,
       "historyLength": 10
     },
     "metadata": {
       "memorylake": {
-        "actorId": "act_user_jane",
+        "actorId": "actor-33d6b73298fb43482a765643ff92444b",
         "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
-        "readOnlyProjectIds": ["proj_shared_kb"],
+        "readOnlyProjectIds": ["proj-cd2e83f761eec93c75977f51667889cd"],
         "overrides": {
           "model": "gpt-4o",
-          "maxTurns": 5,
           "capabilitiesOverride": {
             "web_search": {
               "open_datasets": ["research/academic", "clinical/trials"]
@@ -211,8 +242,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
     },
     "metadata": {
       "memorylake": {
-        "actorId": "act_user_jane",
-        "readOnlyProjectIds": ["proj_meetings"]
+        "actorId": "actor-33d6b73298fb43482a765643ff92444b",
+        "readOnlyProjectIds": ["proj-c62be3c8aa01d134ac32975afe24d034"]
       }
     }
   }'
@@ -235,7 +266,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
     },
     "metadata": {
       "memorylake": {
-        "actorId": "act_user_jane",
+        "actorId": "actor-33d6b73298fb43482a765643ff92444b",
         "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"
       }
     }
@@ -256,8 +287,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
     },
     "metadata": {
       "memorylake": {
-        "actorId": "act_user_jane",
-        "readOnlyProjectIds": ["proj_meetings"]
+        "actorId": "actor-33d6b73298fb43482a765643ff92444b",
+        "readOnlyProjectIds": ["proj-c62be3c8aa01d134ac32975afe24d034"]
       }
     }
   }'
@@ -288,17 +319,16 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
         "contextId": "ctx_m4n7p2q9"
       },
       "configuration": {
-        "blocking": true,
+        "returnImmediately": false,
         "historyLength": 10
       },
       "metadata": {
         "memorylake": {
-          "actorId": "act_user_jane",
+          "actorId": "actor-33d6b73298fb43482a765643ff92444b",
           "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
-          "readOnlyProjectIds": ["proj_shared_kb"],
+          "readOnlyProjectIds": ["proj-cd2e83f761eec93c75977f51667889cd"],
           "overrides": {
-            "model": "gpt-4o",
-            "maxTurns": 5
+            "model": "gpt-4o"
           }
         }
       }
@@ -326,8 +356,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
       },
       "metadata": {
         "memorylake": {
-          "actorId": "act_user_jane",
-          "readOnlyProjectIds": ["proj_meetings"]
+          "actorId": "actor-33d6b73298fb43482a765643ff92444b",
+          "readOnlyProjectIds": ["proj-c62be3c8aa01d134ac32975afe24d034"]
         }
       }
     }
@@ -357,7 +387,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
       },
       "metadata": {
         "memorylake": {
-          "actorId": "act_user_jane",
+          "actorId": "actor-33d6b73298fb43482a765643ff92444b",
           "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"
         }
       }
@@ -384,11 +414,177 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
       },
       "metadata": {
         "memorylake": {
-          "actorId": "act_user_jane",
-          "readOnlyProjectIds": ["proj_meetings"]
+          "actorId": "actor-33d6b73298fb43482a765643ff92444b",
+          "readOnlyProjectIds": ["proj-c62be3c8aa01d134ac32975afe24d034"]
         }
       }
     }
   }'
 ```
 </CodeGroup>
+
+## Responses
+
+Every combination returns the same task model. Only the envelope and a few spellings change with the protocol version and transport; see [v0.3 differences](#v0-3-differences). The examples in this section use v1.0 REST.
+
+| Combination | `message:send` body | Each `message:stream` event |
+|---|---|---|
+| v1.0 · REST | `{"task": {...}}` | `{"task": {...}}`, `{"statusUpdate": {...}}` or `{"artifactUpdate": {...}}` |
+| v1.0 · JSON-RPC | `{"jsonrpc": "2.0", "id": ..., "result": {"task": {...}}}` | `{"jsonrpc": "2.0", "id": ..., "result": {"statusUpdate": {...}}}` and so on |
+| v0.3 · REST | `{"task": {...}}` | `{"statusUpdate": {...}}` and so on |
+| v0.3 · JSON-RPC | `{"jsonrpc": "2.0", "id": ..., "result": {"kind": "task", ...}}` | `{"jsonrpc": "2.0", "id": ..., "result": {"kind": "status-update", ...}}` and so on |
+
+### Send
+
+`message:send` always returns a task, never a bare message. By default it waits until the task finishes:
+
+```json
+{
+  "task": {
+    "id": "run-e21fffe8d53647f4bc918bb4a8fb7d73",
+    "contextId": "ctx-demo-1",
+    "status": { "state": "TASK_STATE_COMPLETED" },
+    "artifacts": [
+      {
+        "artifactId": "result-run-e21fffe8d53647f4bc918bb4a8fb7d73",
+        "name": "result",
+        "parts": [{ "text": "Paris is the capital of France." }],
+        "metadata": {}
+      }
+    ],
+    "history": [
+      {
+        "messageId": "msg-1",
+        "contextId": "ctx-demo-1",
+        "taskId": "run-e21fffe8d53647f4bc918bb4a8fb7d73",
+        "role": "ROLE_USER",
+        "parts": [{ "text": "What is the capital of France?" }]
+      },
+      {
+        "messageId": "run-e21fffe8d53647f4bc918bb4a8fb7d73-3",
+        "contextId": "ctx-demo-1",
+        "taskId": "run-e21fffe8d53647f4bc918bb4a8fb7d73",
+        "role": "ROLE_AGENT",
+        "parts": [{ "text": "Paris is the capital of France." }]
+      }
+    ]
+  }
+}
+```
+
+<ResponseField name="id" type="string">
+Task ID.
+</ResponseField>
+
+<ResponseField name="contextId" type="string">
+The conversation this task belongs to. Send it as `message.contextId` to continue the conversation. If your request had none, a new one is generated.
+</ResponseField>
+
+<ResponseField name="status" type="object">
+<Expandable title="Status fields">
+  <ResponseField name="state" type="string">
+  `TASK_STATE_COMPLETED`, `TASK_STATE_FAILED` or `TASK_STATE_CANCELED` once the task has finished; `TASK_STATE_SUBMITTED` or `TASK_STATE_WORKING` while it's still running.
+  </ResponseField>
+  <ResponseField name="message" type="object">
+  Only on a failed task: a message whose `parts[0].text` describes the error.
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseField name="artifacts" type="array">
+The answer: at most one artifact, named `result`. It's missing when the task failed or produced nothing. See [The answer](#the-answer).
+</ResponseField>
+
+<ResponseField name="history" type="array">
+Your message, followed by the agent's messages in order: text it wrote along the way, its thinking, and its [tool calls](#tool-calls). Consecutive text is merged into one message. `configuration.historyLength` keeps only the last N messages, and `0` leaves `history` out.
+</ResponseField>
+
+With `returnImmediately: true` (v1.0) or `blocking: false` (v0.3), the response comes back as soon as the task is created. The task is in `TASK_STATE_SUBMITTED` (or already `TASK_STATE_WORKING`), `history` holds only your message, and there are no artifacts. The task keeps running; to get its answer, [subscribe to it](#follow-a-task).
+
+### Stream
+
+`message:stream` responds with `text/event-stream`. Each `data:` line is one JSON event, in this order:
+
+1. **`task`**: the task as created, with your message in `history`.
+2. **`statusUpdate`** with `TASK_STATE_WORKING` as the agent starts.
+3. **`statusUpdate`** with `TASK_STATE_WORKING` for each step of progress. `status.message` holds a single part:
+   - a chunk of answer text. Chunks are **incremental**, so append them; each has its own `messageId`;
+   - a chunk of thinking text, marked with `metadata.adk_thought: true`;
+   - a [tool call or tool result](#tool-calls);
+   - a file the agent created, as `{"url": "...", "mediaType": "...", "filename": "..."}`.
+4. **`artifactUpdate`** with the answer. See [The answer](#the-answer).
+5. **`statusUpdate`** with the final state, `TASK_STATE_COMPLETED`, `TASK_STATE_FAILED` (with the error in `status.message`) or `TASK_STATE_CANCELED`. The stream then ends.
+
+Use the text chunks for live display, and take the final answer from the artifact. The chunks also carry text the agent writes before calling a tool, while the artifact's text is the finished answer. Lines that start with `:` are keep-alive comments; ignore them.
+
+```text
+data: {"task": {"id": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_SUBMITTED"}, "history": [{"messageId": "msg-1", "role": "ROLE_USER", "parts": [{"text": "What is the capital of France?"}], …}]}}
+
+data: {"statusUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_WORKING"}}}
+
+data: {"statusUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-3", "role": "ROLE_AGENT", "parts": [{"text": "Let me look that up."}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-8-call", "role": "ROLE_AGENT", "parts": [{"data": {"id": "call_1", "name": "web_search", "args": {"query": "capital of France"}}, "metadata": {"adk_type": "function_call"}}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-9-response", "role": "ROLE_AGENT", "parts": [{"data": {"id": "call_1", "name": "web_search", "response": "{\"results\": [{\"title\": \"Paris\", \"url\": \"https://en.wikipedia.org/wiki/Paris\"}]}"}, "metadata": {"adk_type": "function_response"}}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-11", "role": "ROLE_AGENT", "parts": [{"text": "Paris is"}], …}}}}
+
+data: {"statusUpdate": {…, "status": {"state": "TASK_STATE_WORKING", "message": {"messageId": "run-7828…6073-12", "role": "ROLE_AGENT", "parts": [{"text": " the capital of France."}], …}}}}
+
+data: {"artifactUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "artifact": {"artifactId": "result-run-7828…6073", "name": "result", "parts": [{"text": "Paris is the capital of France."}, {"data": {"kind": "recommended_questions", "questions": ["What is the population of Paris?"]}}], "metadata": {}}, "lastChunk": true}}
+
+data: {"statusUpdate": {"taskId": "run-7828…6073", "contextId": "ctx-demo-1", "status": {"state": "TASK_STATE_COMPLETED"}}}
+```
+
+IDs are shortened with `…` and repeated fields are elided for readability.
+
+### The answer
+
+The `result` artifact holds the answer as a list of parts:
+
+| Part | Shape | Description |
+|---|---|---|
+| Answer text | `{"text": "..."}` | The final answer. |
+| Attachments | `{"data": {"kind": "attachments", "attachments": [...]}}` | Files the agent produced. Each item has `name`, `mime_type`, `presign_url` (a download URL) and `description`. When a file couldn't be saved, `committed` is `false` and `error` says why. |
+| Suggested questions | `{"data": {"kind": "recommended_questions", "questions": ["..."]}}` | Follow-up questions the user might ask next. Present only when the agent suggests some. |
+
+Other `data` parts may appear in the artifact and in the stream. Skip any `data` part whose `kind` you don't recognize, or that has no `kind`. Numbers inside `data` parts come back as floating point, so `2` arrives as `2.0`.
+
+### Tool calls
+
+The agent's tool activity appears as `data` parts tagged with `metadata.adk_type`, the convention used by Google's Agent Development Kit. You'll see them in the stream and in `history`.
+
+| `metadata.adk_type` | `data` | Description |
+|---|---|---|
+| `function_call` | `{"id", "name", "args"}` | Sent when the agent calls a tool, before the tool runs. `args` is an object. |
+| `function_response` | `{"id", "name", "response"}` | The tool's result; `id` matches the call. `response` is often a JSON-encoded string. If the tool failed, it's `{"error": "..."}`, plus `code` when there is one. |
+
+A function call may also carry `metadata.adk_thought_signature`, an opaque value you can ignore.
+
+### Follow a task
+
+`GET {baseUrl}/tasks/{taskId}` (v0.3: `{baseUrl}/v1/tasks/{taskId}`) returns only the task's `id`, `contextId` and `status`, with `state` and `timestamp`. It has no answer, no history, and no error text for a failed task.
+
+To get the answer of a task you didn't wait for, subscribe to it: `GET {baseUrl}/tasks/{taskId}:subscribe` (v0.3: `{baseUrl}/v1/tasks/{taskId}:subscribe`) with `Accept: text/event-stream`. It replays the task's events from the beginning in the same format as `message:stream`, without the leading `task` event, and follows the task live until it finishes. A task that has failed or been canceled can't be subscribed to.
+
+### Errors
+
+**The task fails.** The request still returns HTTP 200; the task ends in `TASK_STATE_FAILED`, and `status.message.parts[0].text` describes the error. For example, an unknown `overrides.model` fails the task with `LLM model config not found: <model>`.
+
+**The request is rejected.** REST routes answer with an HTTP error status and the standard [error body](/features/memorylake/api-reference/errors) (`success`, `message`, `error_code`). For example:
+
+| Status | `error_code` | When |
+|---|---|---|
+| 400 | `INVALID_ARGUMENT` | The request is invalid, or another message in the same conversation is still being processed. |
+| 402 | `QUOTA_EXCEEDED` | Your quota is used up. |
+| 403 | `ACCESS_DENIED` | You lack a permission the request needs. |
+| 404 | `NOT_FOUND` | The agent or task doesn't exist. |
+
+Over JSON-RPC, errors that MemoryLake raises before the agent runs, such as quota or permission errors, use the same HTTP status and error body. Errors the agent reports come back as a JSON-RPC `error` object with HTTP 200, and v0.3 methods report all of those with code `-32603`.
+
+### v0.3 differences
+
+- **JSON-RPC.** The result is the task itself, marked `"kind": "task"`. Stream events are marked `"kind": "status-update"` or `"artifact-update"`, and the last status update has `"final": true`. States are lowercase, for example `completed`, `failed`, `canceled`, `submitted` and `working`. Roles are `user` and `agent`. Every part carries a `kind`: `{"kind": "text", "text": ...}`, `{"kind": "data", "data": {...}}` or `{"kind": "file", "file": {...}}`.
+- **REST.** States use the v1.0 spelling, except that a canceled task is `TASK_STATE_CANCELLED`. Message parts are under `content` instead of `parts`, and a data part is `{"data": {"data": {...}}}`. The task returned by `GET` has no `timestamp`.
+- **REST defaults.** If you leave out `blocking`, `message:send` returns immediately instead of waiting. If you leave out `historyLength`, `history` is left out. Set both explicitly.
