@@ -1,0 +1,138 @@
+---
+title: "Set Access Group Access Scope"
+description: "Replaces, per listed resource type, the instances the group gives its members access to"
+---
+
+```
+PUT /openapi/memorylake/admin/v1/access-groups/{group_id}/access-scope
+```
+
+Replaces, per listed resource type, the instances the group gives its members access to. A group only adds access: mode all removes the type's instances from the group and limits nobody. Project instances need their workspace_id. The response is the scope as [Get Access Group Access Scope](/features/memorylake/api-reference/access-control/get-access-group-access-scope) returns it, so view is required as well.
+
+The response carries an `ETag` header (the same value a GET of this resource returns). Send it back in `If-Match` to make the write conditional: when the resource has changed in the meantime the write is refused with 412 and nothing is changed. The check narrows, but does not fully close, the window for a concurrent overwrite — two writers that pass it at the same instant can both write.
+
+<Note>
+**Permission required:** `access_group:manage` and `access_group:view`
+
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="group_id" type="string" required>
+Identifier
+</ParamField>
+
+### Headers
+
+<ParamField header="If-Match" type="string">
+Optional. The ETag from a previous read of this resource. The write is refused with 412 when the resource has changed since; omit it to overwrite unconditionally.
+</ParamField>
+
+### Request Body
+
+<ParamField body="reason" type="string" required>
+Why the change is made; recorded in the audit log
+</ParamField>
+
+<ParamField body="scopes" type="array" required>
+Each listed resource type's instance list is replaced by the given one; mode all removes the type's instances (a group never limits anyone). Types not listed keep their current list.
+<Expandable title="Access Scope Entry object">
+  <ParamField body="scopes[].mode" type="string" required>all = every instance; instances = only the listed ones</ParamField>
+  <ParamField body="scopes[].resource_type" type="string" required>Resource type, e.g. memorylake:project</ParamField>
+  <ParamField body="scopes[].instances" type="array">
+  Required when mode is instances
+  <Expandable title="Access Scope Instance object">
+    <ParamField body="scopes[].instances[].id" type="string" required>Instance id</ParamField>
+    <ParamField body="scopes[].instances[].actions" type="array">Omit for every action the member's role allows</ParamField>
+    <ParamField body="scopes[].instances[].via_permission_level" type="boolean">Echo of a read-only row. Instances marked true are skipped on write — permission levels are set on the resource, not through scope.</ParamField>
+    <ParamField body="scopes[].instances[].workspace_id" type="string">Parent workspace — required for project instances</ParamField>
+  </Expandable>
+  </ParamField>
+</Expandable>
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PUT 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access-groups/7013fb5c15cfb29411f040967354b8a3/access-scope' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "reason": "example",
+    "scopes": [
+      {
+        "mode": "all",
+        "resource_type": "example",
+        "instances": [
+          {
+            "id": "185afe41ca6ac4566fdc7a9adeabf5a0",
+            "actions": [],
+            "via_permission_level": false,
+            "workspace_id": "12404b77739317d2b08fc918a95f0be9"
+          }
+        ]
+      }
+    ]
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Access Group Access Scope object">
+  <ResponseField name="group_id" type="string">The group</ResponseField>
+  <ResponseField name="scopes" type="array">
+  One entry per scopable resource type; a group only ever adds access
+  <Expandable title="Access Scope Entry object">
+    <ResponseField name="mode" type="string">all = every instance; instances = only the listed ones</ResponseField>
+    <ResponseField name="resource_type" type="string">Resource type, e.g. memorylake:project (see GET /permission-catalog)</ResponseField>
+    <ResponseField name="available_actions" type="array">Read-only. Instance-level actions the member's role grants for this type — the most a scope entry can allow.</ResponseField>
+    <ResponseField name="instances" type="array">
+    The instances, when mode is instances
+    <Expandable title="Access Scope Instance object">
+      <ResponseField name="id" type="string">Instance id, as returned by the data API</ResponseField>
+      <ResponseField name="actions" type="array">Actions allowed on this instance. Omit for every action the member's role allows.</ResponseField>
+      <ResponseField name="effective_actions" type="array">Read-only. The subset of actions the member's CURRENT role still grants.</ResponseField>
+      <ResponseField name="permission_level" type="string">Read-only. The permission level, when via_permission_level is true. One of: `read`, `write`, `manage`.</ResponseField>
+      <ResponseField name="shadowed_actions" type="array">Read-only. Actions stored here that the member's current role no longer grants.</ResponseField>
+      <ResponseField name="via_permission_level" type="boolean">Read-only. The member reaches this instance through a permission level granted on it, not through this scope. May be echoed back on write; such instances are skipped.</ResponseField>
+      <ResponseField name="workspace_id" type="string">Parent workspace of a project instance. Required when writing a project instance.</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "group_id": "75bcd78140d9e42928db031f1fbb59a5",
+    "scopes": [
+      {
+        "mode": "all",
+        "resource_type": "example",
+        "available_actions": [
+          "example"
+        ],
+        "instances": [
+          {
+            "id": "bc572b050c9920425b5fd75681eccbb2",
+            "actions": [],
+            "effective_actions": [],
+            "permission_level": "read",
+            "shadowed_actions": [],
+            "via_permission_level": false,
+            "workspace_id": "0fa2d21dc175adc7a003e0b37f156cb1"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

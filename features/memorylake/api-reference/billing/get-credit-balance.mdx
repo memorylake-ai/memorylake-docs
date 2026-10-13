@@ -1,0 +1,60 @@
+---
+title: "Get Credit Balance"
+description: "Returns the team's balance in tokens, split into this cycle's subscription grant and one-time credit, plus the billing mode"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/credit-balance
+```
+
+Returns the team's balance in tokens, split into this cycle's subscription grant and one-time credit, plus the billing mode.
+
+<Note>
+**Permission required:** `credits:view`
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/credit-balance' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Credit Balance object">
+  <ResponseField name="available_tokens" type="integer">Team balance in tokens: one_time plus the unexpired subscription bucket. Each bucket is rounded down on its own, so their sum can be up to one token below this. A member's own spending cap is not applied here (see GET /usage).</ResponseField>
+  <ResponseField name="billing_mode" type="string">standard = usage draws the balance down; metering_only = usage is recorded but not charged</ResponseField>
+  <ResponseField name="breakdown" type="array">
+  The balance by source
+  <Expandable title="Credit Balance Bucket object">
+    <ResponseField name="source" type="string">subscription = this cycle's subscription grant; one_time = purchased or granted credit that does not expire</ResponseField>
+    <ResponseField name="tokens" type="integer">Tokens left in this bucket. one_time can be negative after an overdraft</ResponseField>
+    <ResponseField name="expires_at" type="integer">When the bucket expires, Unix seconds; omitted for one_time and for an expired subscription bucket</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="unlimited" type="boolean">true = usage is not charged against the balance (billing_mode metering_only)</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "available_tokens": 1200000,
+    "billing_mode": "standard",
+    "breakdown": [
+      {
+        "source": "subscription",
+        "tokens": 1200000,
+        "expires_at": 1760000000
+      }
+    ],
+    "unlimited": false
+  }
+}
+```
+</ResponseExample>

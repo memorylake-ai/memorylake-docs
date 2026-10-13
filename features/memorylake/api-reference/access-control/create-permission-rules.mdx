@@ -1,0 +1,113 @@
+---
+title: "Create Permission Rules"
+description: "Allows one or more actions on a resource for a custom role or a single member — one rule per action"
+---
+
+```
+POST /openapi/memorylake/admin/v1/permission-rules
+```
+
+Allows one or more actions on a resource for a custom role or a single member — one rule per action. Only allow rules can be created; a deny (which would win over allows from any source except the owner) is not available — to take a permission away, delete the rule that grants it. The built-in roles cannot be changed, and actions that belong to the team owner cannot be granted. When an action depends on others the subject lacks, the request is refused with 409 unless auto_grant_prerequisites is set.
+
+<Note>
+**Permission required:** `policy:manage`
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+### Request Body
+
+<ParamField body="actions" type="array" required>
+Actions to allow on the resource; one rule per distinct action
+</ParamField>
+
+<ParamField body="reason" type="string" required>
+Why the change is made; recorded in the audit log
+</ParamField>
+
+<ParamField body="resource" type="string" required>
+Resource type, e.g. memorylake:project (see GET /permission-catalog), or one instance as &lt;resource_type&gt;:&lt;instance_id&gt;. API key permissions are written on tenant:service_account:own or tenant:service_account:any.
+</ParamField>
+
+<ParamField body="subject_id" type="string" required>
+A custom role key of this team, or a member's principal_id. The built-in roles cannot be changed.
+</ParamField>
+
+<ParamField body="subject_type" type="string" required>
+role or member
+</ParamField>
+
+<ParamField body="auto_grant_prerequisites" type="boolean">
+When an action needs others the subject lacks (e.g. modify needs read), add those too. Without it such a request is refused with 409 naming what is missing.
+</ParamField>
+
+<ParamField body="effect" type="string" default="allow">
+allow. Deny rules cannot be created: to take a permission away, delete the rule that grants it.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/permission-rules' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "actions": [
+      "example"
+    ],
+    "reason": "example",
+    "resource": "example",
+    "subject_id": "8488f48135da0a123c4c74cad0b8fbbc",
+    "subject_type": "role",
+    "auto_grant_prerequisites": false,
+    "effect": "allow"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Create Permission Rules object">
+  <ResponseField name="prerequisite_rule_count" type="integer">How many extra rules were added for prerequisites (auto_grant_prerequisites)</ResponseField>
+  <ResponseField name="rules" type="array">
+  The rules created, one per distinct action
+  <Expandable title="Permission Rule object">
+    <ResponseField name="action" type="string">Action</ResponseField>
+    <ResponseField name="editable" type="boolean">false for the rules of the built-in roles (owner, admin, member), which cannot be changed</ResponseField>
+    <ResponseField name="effect" type="string">allow grants the action; deny takes it away and wins over an allow from any non-owner source. Only allow rules can be created; deny rules may still appear on older data.</ResponseField>
+    <ResponseField name="resource" type="string">Resource type (see GET /permission-catalog), or one instance of it as &lt;resource_type&gt;:&lt;instance_id&gt;</ResponseField>
+    <ResponseField name="rule_id" type="string">Opaque identifier; pass it to [Delete Permission Rule](/features/memorylake/api-reference/access-control/delete-permission-rule). Do not parse it.</ResponseField>
+    <ResponseField name="subject_id" type="string">Role key, or the member's principal_id</ResponseField>
+    <ResponseField name="subject_type" type="string">What the rule applies to. One of: `role`, `member`.</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (201)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "prerequisite_rule_count": 1,
+    "rules": [
+      {
+        "action": "example",
+        "editable": false,
+        "effect": "allow",
+        "resource": "example",
+        "rule_id": "e15be74d9ecc690478b6de3c80b98886",
+        "subject_id": "e44cc30b3cc8c0e0c437912296ab9d73",
+        "subject_type": "role"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

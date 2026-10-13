@@ -1,0 +1,96 @@
+---
+title: "List Low-Balance Alert Events"
+description: "Lists the alert levels that fired, newest first, with the balance at the time and the emails sent"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/credit-balance/alert/events
+```
+
+Lists the alert levels that fired, newest first, with the balance at the time and the emails sent.
+
+<Note>
+**Permission required:** `credits:view`
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/credit-balance/alert/events' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Balance Alert Event object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Balance Alert Event object">
+    <ResponseField name="balance_tokens" type="integer">The balance when it fired, in tokens (negative after an overdraft)</ResponseField>
+    <ResponseField name="fired_at" type="integer">Unix seconds</ResponseField>
+    <ResponseField name="id" type="integer">Event id</ResponseField>
+    <ResponseField name="recipients" type="array">
+    Emails sent for this event. When several levels fire at once, only the most severe sends email; the others list none
+    <Expandable title="Balance Alert Delivery object">
+      <ResponseField name="status" type="string">Whether the email was accepted for delivery. One of: `sent`, `failed`.</ResponseField>
+      <ResponseField name="email" type="string">Recipient address. Alerts also go to the team owner; that address is shown only to owners and admins (the same rule as members' contact details) — for other callers the entry carries just its status.</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="recovered" type="boolean">The balance has since risen back above this level</ResponseField>
+    <ResponseField name="threshold" type="object">
+    The level that fired
+    <Expandable title="Balance Alert Threshold object">
+      <ResponseField name="type" type="string">percent_used = alert when the share of the subscription cycle (or, without a subscription, of all credit ever added) used reaches value percent; tokens_remaining = alert when the balance falls to value tokens</ResponseField>
+      <ResponseField name="value" type="integer">1–99 for percent_used; 1–1,000,000,000 for tokens_remaining</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="recovered_at" type="integer">When it recovered, Unix seconds</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "balance_tokens": 1200000,
+        "fired_at": 1760000000,
+        "id": 1,
+        "recipients": [
+          {
+            "status": "sent",
+            "email": "alice@example.com"
+          }
+        ],
+        "recovered": false,
+        "threshold": {
+          "type": "percent_used",
+          "value": 1
+        },
+        "recovered_at": 1760000000
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

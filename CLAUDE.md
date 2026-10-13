@@ -52,6 +52,12 @@ When writing or updating API reference documentation, the following internal fie
 
 These fields are returned by the actual API but should not be exposed in the public documentation.
 
+## Generated API pages
+
+The pages under `features/memorylake/api-reference/` in these directories are generated, in English and Chinese, from the API's own spec: `team/`, `members/`, `invitations/`, `api-keys/`, `access-control/`, `usage/`, `billing/`, `integrations/` (and the same paths under `zh/`). Do not edit them by hand — the next sync overwrites them. To change one, change the spec or the generator in the `memorylake-apiservice` repository (`cmd/docs-gen`: page list and order in `pages.yaml`, Chinese in `i18n/zh.yaml`) and run `task openapi:docs INTL=<this repo> CN=<memorylake-docs-cn>`, which rewrites both docs repos. The shared pages (`overview`, `authentication`, `errors`, `rate-limits`) stay hand-written.
+
+The old `features/management-api/*` URLs redirect to these pages (`redirects` in `docs.json`).
+
 ## Hidden API docs
 
 Some API reference groups are published but hidden by default: they sit at their final place in the `API reference` tab, but readers only see them after clicking the `API reference` tab in the top bar 5 times within 3 seconds (clicking it 5 more times hides them again; the choice is remembered in the browser). This works on desktop only: on narrow screens the tabs collapse into a menu, so open hidden pages by direct link there. `hidden-docs.js` handles the clicks and `hidden-docs.css` does the hiding. This only keeps them out of sight. The repository is public, so never put anything confidential in a hidden page.

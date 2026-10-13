@@ -1,0 +1,63 @@
+---
+title: "Access Control"
+description: "Roles, permission rules, access groups, access scopes and per-resource access"
+---
+
+Access control decides what each member of a team can do and where. Every API key acts as the member who created it, so the same rules decide what a key can do. These endpoints let you manage those rules without the console.
+
+## How access is decided
+
+<Steps>
+<Step title="Role">
+Every member has one role. The built-in roles are `tenant_owner`, `tenant_admin` and `tenant_member`; you can add [custom roles](/features/memorylake/api-reference/access-control/create-role). A role holds a set of actions, such as `project:modify` or `member:invite`. [List Roles](/features/memorylake/api-reference/members/list-roles) shows the roles of your team, and the [permission catalog](/features/memorylake/api-reference/access-control/get-permission-catalog) lists every action you can grant.
+</Step>
+<Step title="Permission rules">
+A [permission rule](/features/memorylake/api-reference/access-control/create-permission-rules) allows one more action, either for a custom role or for a single member. The built-in roles cannot be changed.
+</Step>
+<Step title="Access groups">
+An [access group](/features/memorylake/api-reference/access-control/create-access-group) bundles permissions, and optionally a list of resources, and gives them to every member you add to it.
+</Step>
+<Step title="Access scope">
+An [access scope](/features/memorylake/api-reference/members/set-member-access-scope) narrows a role to listed resources of a type — for example, only two of the team's workspaces. A scope only limits: it never grants more than the role allows. A resource type with no scope is unrestricted.
+</Step>
+<Step title="Resource access">
+On a single resource, you can give a member a permission level (`read`, `write` or `manage`), or add the resource to someone's restricted scope. See [Resource access](#resource-access) below.
+</Step>
+</Steps>
+
+To see the result for one member or access group, with the source of each permission, use [Get Member Effective Permissions](/features/memorylake/api-reference/members/get-member-effective-permissions) or [Get Access Group Effective Permissions](/features/memorylake/api-reference/access-control/get-access-group-effective-permissions). To check what your own key can do, use [List My Permissions](/features/memorylake/api-reference/access-control/list-my-permissions).
+
+## Resource access
+
+The resource access endpoints work the same way for every resource type that can be shared one resource at a time. The path names the type and the resource:
+
+```
+/openapi/memorylake/admin/v1/access/{resource_type}/{resource_id}
+```
+
+| `resource_type` | Resource |
+|---|---|
+| `workspaces` | Workspace |
+| `projects` | Project |
+| `actors` | Actor |
+| `agents` | Agent |
+| `skills` | Skill |
+| `boundaries` | Boundary |
+| `workspaces/{workspace_id}/actors` | An actor bound to a workspace |
+| `workspaces/{workspace_id}/agents` | An agent bound to a workspace |
+
+| Operation | What it does |
+|---|---|
+| [Get Resource Access](/features/memorylake/api-reference/access-control/get-resource-access) | Who can access the resource, and why |
+| [List Permission Level Options](/features/memorylake/api-reference/access-control/list-permission-level-options) | The levels you may set for one member |
+| [Set Permission Level](/features/memorylake/api-reference/access-control/set-permission-level) | Give a member `read`, `write` or `manage` on the resource |
+| [Grant Access](/features/memorylake/api-reference/access-control/grant-scope) | Add the resource to a restricted access scope |
+| [Revoke Access](/features/memorylake/api-reference/access-control/revoke-scope) | Remove it again |
+
+## Conditional writes
+
+Writes that replace a whole list — access scopes and an access group's permissions — return an `ETag` header. Send it back in `If-Match` on the next write: if someone changed the list in the meantime, the write is refused with `412` and nothing changes.
+
+## Protecting admins
+
+Some changes affect what an admin can do: giving someone an admin role, or narrowing an admin's access. Only the team owner or an admin can make them. When anyone else tries, the request is refused with `403`, and `data.operation` in the error names the change — see [Errors](/features/memorylake/api-reference/errors).

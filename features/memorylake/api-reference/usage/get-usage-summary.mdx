@@ -1,0 +1,100 @@
+---
+title: "Get Usage Summary"
+description: "Returns consumption for today, the trailing 7 days and the month to date"
+---
+
+```
+GET /openapi/memorylake/admin/v1/usage/summary
+```
+
+Returns consumption for today, the trailing 7 days and the month to date. Same scope rule and same figures as [Get Usage](/features/memorylake/api-reference/usage/get-usage) (platform metering operations included): the team with usage:view_all, otherwise the caller's own usage.
+
+<Note>
+**Permission required:** `usage:view_all` (whole team) or `usage:view_self` (your own only)
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/usage/summary' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Usage Summary object">
+  <ResponseField name="last_7_days" type="object">
+  The trailing 7 days, today included
+  <Expandable title="Usage Summary Window object">
+    <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+    <ResponseField name="end_date" type="string">Last day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+    <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+    <ResponseField name="start_date" type="string">First day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="month_to_date" type="object">
+  From the first of the current month through today
+  <Expandable title="Usage Summary Window object">
+    <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+    <ResponseField name="end_date" type="string">Last day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+    <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+    <ResponseField name="start_date" type="string">First day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="scope" type="string">Whose consumption the figures cover: team (caller holds usage:view_all) or self (only usage:view_self — the caller's own usage, including their API keys; API key usage before 2026-05-21 was recorded under the key itself and is not part of the self figures)</ResponseField>
+  <ResponseField name="timezone" type="string">IANA timezone the days are cut in (Asia/Shanghai)</ResponseField>
+  <ResponseField name="today" type="object">
+  Today
+  <Expandable title="Usage Summary Window object">
+    <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+    <ResponseField name="end_date" type="string">Last day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+    <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+    <ResponseField name="start_date" type="string">First day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "last_7_days": {
+      "completion_tokens": 1200000,
+      "end_date": "example",
+      "prompt_tokens": 1200000,
+      "requests": 1,
+      "start_date": "example",
+      "used_tokens": 1200000
+    },
+    "month_to_date": {
+      "completion_tokens": 1200000,
+      "end_date": "example",
+      "prompt_tokens": 1200000,
+      "requests": 1,
+      "start_date": "example",
+      "used_tokens": 1200000
+    },
+    "scope": "team",
+    "timezone": "example",
+    "today": {
+      "completion_tokens": 1200000,
+      "end_date": "example",
+      "prompt_tokens": 1200000,
+      "requests": 1,
+      "start_date": "example",
+      "used_tokens": 1200000
+    }
+  }
+}
+```
+</ResponseExample>

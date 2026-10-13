@@ -14,9 +14,16 @@ API requests are rate limited to ensure fair usage and system stability. Limits 
 | Per IP address | Sliding window of several minutes; the exact threshold is set per deployment and is generous for normal integration traffic |
 | Per user account | 600 requests / minute on the default access group |
 | Per IP address, upload endpoints | Separate, tighter per-minute bucket |
+| Per API key, [team, member, access-control, usage, billing and IM integration endpoints](/features/memorylake/api-reference/access-control/overview) | 60 requests / minute |
+| Per API key, [usage records](/features/memorylake/api-reference/usage/list-usage-records) and [audit logs](/features/memorylake/api-reference/usage/list-audit-logs) | 20 requests / minute, counted separately |
+| Per team, [invitations](/features/memorylake/api-reference/invitations/create-invitation) | 50 created invitations / day (UTC) |
 
 <Note>
 When either limit is exceeded, the API returns HTTP status `429 Too Many Requests` with a `Retry-After` header. The per-account limit is set by your access group, so it may differ from the default shown above — contact support for higher limits.
+</Note>
+
+<Note>
+Every `429` carries `Retry-After` (seconds to wait) and `X-RateLimit-Limit`, `X-RateLimit-Remaining` and `X-RateLimit-Reset` (the Unix second the limit frees up). Wait for `Retry-After` before retrying: a retry with the same `Idempotency-Key` is not replayed from a rate-limit refusal, so a backoff loop is safe.
 </Note>
 
 ## Rate Limit Exceeded Response

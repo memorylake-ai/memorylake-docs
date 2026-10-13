@@ -1,0 +1,84 @@
+---
+title: "List Permission Rules"
+description: "Lists the permission rules of your team — rules on roles (including the built-in ones) and rules set on individual members"
+---
+
+```
+GET /openapi/memorylake/admin/v1/permission-rules
+```
+
+Lists the permission rules of your team — rules on roles (including the built-in ones) and rules set on individual members. Filter by subject_type, and by subject_id within it. Access scopes, permission levels on resources and access-group permissions have their own endpoints and are not listed here.
+
+<Note>
+**Permission required:** `policy:manage`
+</Note>
+
+### Query Parameters
+
+<ParamField query="subject_type" type="string">
+Only rules of this subject type. One of: `role`, `member`.
+</ParamField>
+
+<ParamField query="subject_id" type="string">
+Only rules of this subject; requires subject_type
+</ParamField>
+
+<ParamField query="page_size" type="integer">
+Page size, 1–100 (default 20)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/permission-rules' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Permission Rule object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Permission Rule object">
+    <ResponseField name="action" type="string">Action</ResponseField>
+    <ResponseField name="editable" type="boolean">false for the rules of the built-in roles (owner, admin, member), which cannot be changed</ResponseField>
+    <ResponseField name="effect" type="string">allow grants the action; deny takes it away and wins over an allow from any non-owner source. Only allow rules can be created; deny rules may still appear on older data.</ResponseField>
+    <ResponseField name="resource" type="string">Resource type (see GET /permission-catalog), or one instance of it as &lt;resource_type&gt;:&lt;instance_id&gt;</ResponseField>
+    <ResponseField name="rule_id" type="string">Opaque identifier; pass it to [Delete Permission Rule](/features/memorylake/api-reference/access-control/delete-permission-rule). Do not parse it.</ResponseField>
+    <ResponseField name="subject_id" type="string">Role key, or the member's principal_id</ResponseField>
+    <ResponseField name="subject_type" type="string">What the rule applies to. One of: `role`, `member`.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "action": "example",
+        "editable": false,
+        "effect": "allow",
+        "resource": "example",
+        "rule_id": "e15be74d9ecc690478b6de3c80b98886",
+        "subject_id": "e44cc30b3cc8c0e0c437912296ab9d73",
+        "subject_type": "role"
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

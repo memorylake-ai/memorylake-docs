@@ -1,0 +1,81 @@
+---
+title: "Create Invitation"
+description: "Creates an invitation and emails the invitee"
+---
+
+```
+POST /openapi/memorylake/admin/v1/invitations
+```
+
+Creates an invitation and emails the invitee. One live invitation per email per team: if a pending one exists, revoke it first — re-inviting is revoke + create (there is no resend endpoint). Invitation emails expire after 7 days. Creation is capped per team per 24 hours; the cap counts created invitations, and 429 responses carry Retry-After.
+
+<Note>
+**Permission required:** `member:invite`
+
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result instead of sending a second email.
+</ParamField>
+
+### Request Body
+
+<ParamField body="email" type="string" required>
+Invitee email address. One live invitation per address per team.
+</ParamField>
+
+<ParamField body="role" type="string" required>
+Role the invitee will hold on acceptance: tenant_admin, tenant_member, or a custom role key of this team. The owner role cannot be invited.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/invitations' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "email": "alice@example.com",
+    "role": "tenant_member"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Invitation object">
+  <ResponseField name="created_at" type="integer">First invitation time, Unix seconds</ResponseField>
+  <ResponseField name="email" type="string">Invitee email address (normalised to lowercase)</ResponseField>
+  <ResponseField name="expires_at" type="integer">Expiry time of the current invitation email, Unix seconds</ResponseField>
+  <ResponseField name="id" type="string">Stable identifier of this invitation</ResponseField>
+  <ResponseField name="role" type="string">Role the invitee will hold on acceptance: tenant_admin | tenant_member | &lt;custom role&gt;</ResponseField>
+  <ResponseField name="status" type="string">Invitation state. One of: `pending`, `accepted`, `rejected`, `expired`, `revoked`.</ResponseField>
+  <ResponseField name="accepted_at" type="integer">Acceptance time, Unix seconds. Present only when accepted.</ResponseField>
+  <ResponseField name="accepted_principal_id" type="string">principal_id of the member this invitation produced. Present only when accepted.</ResponseField>
+  <ResponseField name="last_invited_at" type="integer">Most recent invitation email time, Unix seconds. Omitted on rows that predate this field.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (201)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "created_at": 1760000000,
+    "email": "alice@example.com",
+    "expires_at": 1760000000,
+    "id": "c079f4f4e529b9d687b3cce00eeb9644",
+    "role": "tenant_member",
+    "status": "pending",
+    "accepted_at": 1760000000,
+    "accepted_principal_id": "5a4863beca31b3b37f780badf1652511",
+    "last_invited_at": 1760000000
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,49 @@
+---
+title: "Delete Team"
+description: "Permanently dissolves this org team"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/team
+```
+
+Permanently dissolves this org team. All team API keys, including the key used for this request, stop working immediately. Paid subscriptions are cancelled immediately before deletion; cancellation failure leaves the team untouched. Personal teams cannot be deleted.
+
+<Warning>
+**High-risk operation.** It takes effect immediately. Read what it changes, above, before you call it.
+</Warning>
+
+<Note>
+**Permission required:** team owner only
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/team' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Delete Team object">
+  <ResponseField name="dissolved_at" type="integer">Deletion time, Unix seconds</ResponseField>
+  <ResponseField name="subscription_canceled" type="boolean">true when a paid subscription was cancelled before deletion; false when there was no paid subscription</ResponseField>
+  <ResponseField name="tenant_id" type="string">Deleted team id</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "dissolved_at": 1760000000,
+    "subscription_canceled": false,
+    "tenant_id": "a4d44d50a6ceaf6d613fd153dabea710"
+  }
+}
+```
+</ResponseExample>

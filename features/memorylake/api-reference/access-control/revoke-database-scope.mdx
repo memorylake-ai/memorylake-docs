@@ -1,0 +1,225 @@
+---
+title: "Revoke Database Access"
+description: "Remove a database resource from a restricted access scope"
+noindex: true
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/access/{resource_type}/{resource_id}/scope-grants/{subject_type}/{subject_id}
+```
+
+The [Revoke Access](/features/memorylake/api-reference/access-control/revoke-scope) operation for database connections, datasources and analysis models.
+
+| `resource_type` | `resource_id` is | Permission |
+|---|---|---|
+| `db-connections` | `connection_id` | `dbconn:assign` on `connection_id` or `member:set_scope` (when `subject_type` is `members`) or `access_group:manage` (when `subject_type` is `access-groups`)<br />Also required: `dbconn:assign` on `connection_id` or `access_group:view`<br />Also required: `dbconn:read` on `connection_id` |
+| `db-datasources` | `datasource_id` | `db_datasource:assign` on `datasource_id` or `member:set_scope` (when `subject_type` is `members`) or `access_group:manage` (when `subject_type` is `access-groups`)<br />Also required: `db_datasource:assign` on `datasource_id` or `access_group:view`<br />Also required: `db_datasource:read` on `datasource_id` |
+| `analysis-models` | `model_id` | `analysis_model:assign` on `model_id` or `member:set_scope` (when `subject_type` is `members`) or `access_group:manage` (when `subject_type` is `access-groups`)<br />Also required: `analysis_model:assign` on `model_id` or `access_group:view`<br />Also required: `analysis_model:read` on `model_id` |
+
+<Note>
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="resource_type" type="string" required>
+Resource type — one of the values in the table above
+</ParamField>
+
+<ParamField path="resource_id" type="string" required>
+Identifier of the resource, as listed in the table above
+</ParamField>
+
+<ParamField path="subject_type" type="string" required>
+members or access-groups
+</ParamField>
+
+<ParamField path="subject_id" type="string" required>
+principal_id of a member, or an access group id
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="reason" type="string">
+Optional reason recorded in the audit log
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access/db-connections/4c2da948e33c54f60ddd71e9b47076d4/scope-grants/members/89914667f74821b220f374d323f0f4b0' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Resource Access View object">
+  <ResponseField name="allowed" type="array">
+  Members and access groups that reach the instance
+  <Expandable title="Resource Access Entry object">
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="subject_id" type="string">principal_id, or access group id</ResponseField>
+    <ResponseField name="subject_type" type="string">member or access_group</ResponseField>
+    <ResponseField name="actions" type="array">Actions the explicit sources allow</ResponseField>
+    <ResponseField name="blocked_by" type="string">For blocked entries: scope = limited to other instances; permission = their role cannot view this resource type at all</ResponseField>
+    <ResponseField name="level_options" type="object">
+    Members: the levels the caller may set them to here
+    <Expandable title="Permission Level Options object">
+      <ResponseField name="can_set_none" type="boolean">Whether the caller may remove the member's level (level none)</ResponseField>
+      <ResponseField name="settable_levels" type="array">Levels the caller may set this member to (excluding the current one)</ResponseField>
+      <ResponseField name="blocked_reason" type="string">Why the current level cannot be lowered or removed: outranked = the member's level is not below the caller's; last_manager = the member is the last one who can manage the resource; no_permission = the caller cannot share this resource</ResponseField>
+      <ResponseField name="current_level" type="string">The member's level set on this instance; omitted when none is set. One of: `read`, `write`, `manage`.</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="member_count" type="integer">Access groups: number of members</ResponseField>
+    <ResponseField name="permission_level" type="string">What the member can do on this instance, from every source combined. One of: `read`, `write`, `manage`.</ResponseField>
+    <ResponseField name="role" type="string">Members: their role</ResponseField>
+    <ResponseField name="scope_grant_count" type="integer">How many instances of this resource type are in the subject's access scope</ResponseField>
+    <ResponseField name="scope_mode" type="string">Members: all = not limited by an access scope for this resource type; instances = limited to the instances in their scope</ResponseField>
+    <ResponseField name="sources" type="array">
+    How the subject reaches the instance
+    <Expandable title="Resource Access Source object">
+      <ResponseField name="type" type="string">role: the member's role reaches every instance. scope_grant: the instance is in the subject's access scope. access_group: an access group's instance list. parent: granted on the parent workspace. permission_level: a permission level set on this instance.</ResponseField>
+      <ResponseField name="access_group_id" type="string">For access_group: the group</ResponseField>
+      <ResponseField name="access_group_name" type="string">For access_group: its name</ResponseField>
+      <ResponseField name="actions" type="array">Actions this source allows; ["*"] = all the subject's permissions allow</ResponseField>
+      <ResponseField name="parent_id" type="string">For parent: the parent workspace id</ResponseField>
+      <ResponseField name="permission_levels" type="array">For permission_level: the levels held on this instance</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="allowed_count" type="integer">Members who can access the instance</ResponseField>
+  <ResponseField name="blocked" type="array">
+  Members who cannot
+  <Expandable title="Resource Access Entry object">
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="subject_id" type="string">principal_id, or access group id</ResponseField>
+    <ResponseField name="subject_type" type="string">member or access_group</ResponseField>
+    <ResponseField name="actions" type="array">Actions the explicit sources allow</ResponseField>
+    <ResponseField name="blocked_by" type="string">For blocked entries: scope = limited to other instances; permission = their role cannot view this resource type at all</ResponseField>
+    <ResponseField name="level_options" type="object">
+    Members: the levels the caller may set them to here
+    <Expandable title="Permission Level Options object">
+      <ResponseField name="can_set_none" type="boolean">Whether the caller may remove the member's level (level none)</ResponseField>
+      <ResponseField name="settable_levels" type="array">Levels the caller may set this member to (excluding the current one)</ResponseField>
+      <ResponseField name="blocked_reason" type="string">Why the current level cannot be lowered or removed: outranked = the member's level is not below the caller's; last_manager = the member is the last one who can manage the resource; no_permission = the caller cannot share this resource</ResponseField>
+      <ResponseField name="current_level" type="string">The member's level set on this instance; omitted when none is set. One of: `read`, `write`, `manage`.</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="member_count" type="integer">Access groups: number of members</ResponseField>
+    <ResponseField name="permission_level" type="string">What the member can do on this instance, from every source combined. One of: `read`, `write`, `manage`.</ResponseField>
+    <ResponseField name="role" type="string">Members: their role</ResponseField>
+    <ResponseField name="scope_grant_count" type="integer">How many instances of this resource type are in the subject's access scope</ResponseField>
+    <ResponseField name="scope_mode" type="string">Members: all = not limited by an access scope for this resource type; instances = limited to the instances in their scope</ResponseField>
+    <ResponseField name="sources" type="array">
+    How the subject reaches the instance
+    <Expandable title="Resource Access Source object">
+      <ResponseField name="type" type="string">role: the member's role reaches every instance. scope_grant: the instance is in the subject's access scope. access_group: an access group's instance list. parent: granted on the parent workspace. permission_level: a permission level set on this instance.</ResponseField>
+      <ResponseField name="access_group_id" type="string">For access_group: the group</ResponseField>
+      <ResponseField name="access_group_name" type="string">For access_group: its name</ResponseField>
+      <ResponseField name="actions" type="array">Actions this source allows; ["*"] = all the subject's permissions allow</ResponseField>
+      <ResponseField name="parent_id" type="string">For parent: the parent workspace id</ResponseField>
+      <ResponseField name="permission_levels" type="array">For permission_level: the levels held on this instance</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="grantable_levels" type="array">Permission levels the caller may set on this instance; empty when the caller cannot share it</ResponseField>
+  <ResponseField name="instance_id" type="string">Instance id; &lt;workspace_id&gt;/&lt;id&gt; for workspace actors and agents</ResponseField>
+  <ResponseField name="resource_type" type="string">Resource type</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "allowed": [
+      {
+        "name": "Example name",
+        "subject_id": "e9225468996bae25743a2b64eeb19cc7",
+        "subject_type": "member",
+        "actions": [
+          "example"
+        ],
+        "blocked_by": "scope",
+        "level_options": {
+          "can_set_none": true,
+          "settable_levels": [
+            "example"
+          ],
+          "blocked_reason": "outranked",
+          "current_level": "read"
+        },
+        "member_count": 1,
+        "permission_level": "read",
+        "role": "tenant_member",
+        "scope_grant_count": 1,
+        "scope_mode": "all",
+        "sources": [
+          {
+            "type": "role",
+            "access_group_id": "21b69c2e4fc3734ad8c25bf8b5224366",
+            "access_group_name": "Example access group",
+            "actions": [],
+            "parent_id": "ba8581988563142580f3237fbf400514",
+            "permission_levels": []
+          }
+        ]
+      }
+    ],
+    "allowed_count": 1,
+    "blocked": [
+      {
+        "name": "Example name",
+        "subject_id": "e9225468996bae25743a2b64eeb19cc7",
+        "subject_type": "member",
+        "actions": [
+          "example"
+        ],
+        "blocked_by": "scope",
+        "level_options": {
+          "can_set_none": true,
+          "settable_levels": [
+            "example"
+          ],
+          "blocked_reason": "outranked",
+          "current_level": "read"
+        },
+        "member_count": 1,
+        "permission_level": "read",
+        "role": "tenant_member",
+        "scope_grant_count": 1,
+        "scope_mode": "all",
+        "sources": [
+          {
+            "type": "role",
+            "access_group_id": "21b69c2e4fc3734ad8c25bf8b5224366",
+            "access_group_name": "Example access group",
+            "actions": [],
+            "parent_id": "ba8581988563142580f3237fbf400514",
+            "permission_levels": []
+          }
+        ]
+      }
+    ],
+    "grantable_levels": [
+      "example"
+    ],
+    "instance_id": "a88bb6c846106e751d8cf36bdeb592fe",
+    "resource_type": "example"
+  }
+}
+```
+</ResponseExample>

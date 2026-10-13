@@ -1,0 +1,117 @@
+---
+title: "List Usage Records"
+description: "Lists individual consumption records, newest first: one per billed model request or platform operation, with tokens and the consumption charged in tokens"
+---
+
+```
+GET /openapi/memorylake/admin/v1/usage/records
+```
+
+Lists individual consumption records, newest first: one per billed model request or platform operation, with tokens and the consumption charged in tokens. Consumption is attributed to members — to tell applications apart, give each its own virtual member. Records are near real-time; [Get Usage](/features/memorylake/api-reference/usage/get-usage) reads aggregates refreshed every few minutes, so the two can briefly disagree. With log:read_all the list covers the team; a caller holding only log:read_self sees their own records, and filtering by another member's principal_id is refused. The window defaults to the last 7 days and may span at most 92 days. Unlike other lists this one returns no total — page with continuation_token until it is absent. Rate limit: 20 requests per minute per key by default, counted separately from all other operations. When paging through many records, use the largest page_size (100).
+
+<Note>
+**Permission required:** `log:read_all` (whole team) or `log:read_self` (your own only)
+
+- When you filter by another member's `principal_id`: `log:read_all`
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page. Opaque — do not construct or parse it. Send the same filters with it.
+</ParamField>
+
+<ParamField query="start_time" type="integer">
+Earliest record time to include, Unix seconds (inclusive). Defaults to 7 days before end_time.
+</ParamField>
+
+<ParamField query="end_time" type="integer">
+Latest record time, Unix seconds (exclusive). Defaults to now. The window may span at most 92 days.
+</ParamField>
+
+<ParamField query="model" type="array">
+Only records for these models or platform operations (files_process, memory_input, retrieval_call, search_call). Repeat the parameter for several.
+</ParamField>
+
+<ParamField query="kind" type="string">
+model_call: model requests. platform_task: platform operations such as file processing and memory writes. Omit for both.
+</ParamField>
+
+<ParamField query="principal_id" type="array">
+Only records of these members. Repeat the parameter for several. A caller limited to their own records may only pass their own id.
+</ParamField>
+
+<ParamField query="request_id" type="string">
+Only the record of this request id.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/usage/records' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Usage Record object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Usage Record object">
+    <ResponseField name="completion_tokens" type="integer">Completion (output) tokens</ResponseField>
+    <ResponseField name="created_at" type="integer">When the consumption was recorded, Unix seconds</ResponseField>
+    <ResponseField name="id" type="string">Record id</ResponseField>
+    <ResponseField name="kind" type="string">model_call or platform_task</ResponseField>
+    <ResponseField name="model" type="string">Model name, or the platform operation (files_process, memory_input, retrieval_call, search_call)</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt (input) tokens</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+    <ResponseField name="member" type="object">
+    The member the consumption is attributed to; absent on records that carry none
+    <Expandable title="Usage Record Member object">
+      <ResponseField name="principal_id" type="string">The member's principal id</ResponseField>
+      <ResponseField name="display_name" type="string">The member's display name</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="request_id" type="string">Request id, when one was recorded</ResponseField>
+    <ResponseField name="trace_id" type="string">Trace id, when one was recorded</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "completion_tokens": 1200000,
+        "created_at": 1760000000,
+        "id": "a672d31430497d2bf7e0a35c08f0d757",
+        "kind": "model_call",
+        "model": "example",
+        "prompt_tokens": 1200000,
+        "used_tokens": 1200000,
+        "member": {
+          "principal_id": "d20a9584eebe672f5820bb4ad5859745",
+          "display_name": "Alice"
+        },
+        "request_id": "c5ed51a925f042a4ae5fa015330a6345",
+        "trace_id": "95917fd92abee21729b9575f0b9c9cec"
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

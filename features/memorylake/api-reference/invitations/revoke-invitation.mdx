@@ -1,0 +1,46 @@
+---
+title: "Revoke Invitation"
+description: "Revokes a pending invitation; its email link stops working"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/invitations/{id}
+```
+
+Revokes a pending invitation; its email link stops working. Accepted invitations cannot be revoked — remove the member instead.
+
+<Note>
+**Permission required:** `member:invite`
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Identifier of the invitation
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/invitations/9d971b8b5813eb1ecceec31354c101b4' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

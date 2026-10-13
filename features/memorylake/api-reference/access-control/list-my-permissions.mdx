@@ -1,0 +1,106 @@
+---
+title: "List My Permissions"
+description: "Returns what the caller (the key's owner) may do in this team: every permission held, and per scopable resource type whether it reaches every instance or only the listed ones"
+---
+
+```
+GET /openapi/memorylake/admin/v1/me/permissions
+```
+
+Returns what the caller (the key's owner) may do in this team: every permission held, and per scopable resource type whether it reaches every instance or only the listed ones. A permission held for a resource type applies only to the instances that type's scope allows. Any member may read their own permissions.
+
+<Note>
+**Permission required:** none — any member's key can call this
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/me/permissions' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="My Permissions object">
+  <ResponseField name="permissions" type="array">Every permission the caller holds, as &lt;resource_type&gt;:&lt;action&gt;</ResponseField>
+  <ResponseField name="role" type="string">The caller's role</ResponseField>
+  <ResponseField name="scopes" type="array">
+  Per scopable resource type: all = every instance; instances = only the listed ones
+  <Expandable title="My Access Scope object">
+    <ResponseField name="mode" type="string">all = every instance; instances = only the listed ones</ResponseField>
+    <ResponseField name="resource_type" type="string">Resource type, e.g. memorylake:project (see GET /permission-catalog)</ResponseField>
+    <ResponseField name="available_actions" type="array">Read-only. Instance-level actions the member's role grants for this type — the most a scope entry can allow.</ResponseField>
+    <ResponseField name="instance_only_actions" type="object">Actions the caller holds only on the listed instances (granted through a permission level on them), keyed by action. Actions not listed here hold on every instance the caller reaches.</ResponseField>
+    <ResponseField name="instances" type="array">
+    The instances, when mode is instances
+    <Expandable title="Access Scope Instance object">
+      <ResponseField name="id" type="string">Instance id, as returned by the data API</ResponseField>
+      <ResponseField name="actions" type="array">Actions allowed on this instance. Omit for every action the member's role allows.</ResponseField>
+      <ResponseField name="effective_actions" type="array">Read-only. The subset of actions the member's CURRENT role still grants.</ResponseField>
+      <ResponseField name="permission_level" type="string">Read-only. The permission level, when via_permission_level is true. One of: `read`, `write`, `manage`.</ResponseField>
+      <ResponseField name="shadowed_actions" type="array">Read-only. Actions stored here that the member's current role no longer grants.</ResponseField>
+      <ResponseField name="via_permission_level" type="boolean">Read-only. The member reaches this instance through a permission level granted on it, not through this scope. May be echoed back on write; such instances are skipped.</ResponseField>
+      <ResponseField name="workspace_id" type="string">Parent workspace of a project instance. Required when writing a project instance.</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="restricted_by" type="array">
+    When mode is instances: what limits the caller — a role's access scope or the caller's own (personal)
+    <Expandable title="Effective Source Ref object">
+      <ResponseField name="type" type="string">role, access_group, or personal (a rule set on the member directly)</ResponseField>
+      <ResponseField name="id" type="string">Role key or access group id; omitted for personal</ResponseField>
+      <ResponseField name="name" type="string">Display name of the role or access group; omitted for personal</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "permissions": [
+      "example"
+    ],
+    "role": "tenant_member",
+    "scopes": [
+      {
+        "mode": "all",
+        "resource_type": "example",
+        "available_actions": [
+          "example"
+        ],
+        "instance_only_actions": {
+          "key": [
+            "example"
+          ]
+        },
+        "instances": [
+          {
+            "id": "bc572b050c9920425b5fd75681eccbb2",
+            "actions": [],
+            "effective_actions": [],
+            "permission_level": "read",
+            "shadowed_actions": [],
+            "via_permission_level": false,
+            "workspace_id": "0fa2d21dc175adc7a003e0b37f156cb1"
+          }
+        ],
+        "restricted_by": [
+          {
+            "type": "role",
+            "id": "7ea9bf65e6937c3c168bc7a2a0f6fbf2",
+            "name": "Example name"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

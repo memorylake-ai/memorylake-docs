@@ -1,0 +1,68 @@
+---
+title: "Add Access Group Members"
+description: "Adds up to 200 members to an access group in one call, all or nothing: an id that is not a member of your team adds nobody (404)"
+---
+
+```
+POST /openapi/memorylake/admin/v1/access-groups/{group_id}/members
+```
+
+Adds up to 200 members to an access group in one call, all or nothing: an id that is not a member of your team adds nobody (404). Adding someone already in the group is not an error. Only an owner or admin may add members to a group based on tenant_admin.
+
+<Note>
+**Permission required:** `access_group:manage`
+
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="group_id" type="string" required>
+Identifier
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+### Request Body
+
+<ParamField body="principal_ids" type="array" required>
+Members to add (`principal_id`). All or nothing: one unknown id adds nobody.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access-groups/7013fb5c15cfb29411f040967354b8a3/members' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "principal_ids": [
+      "dbcf9a3aabee5042775269c9d137a2f8"
+    ]
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Add Access Group Members object">
+  <ResponseField name="added" type="integer">How many members were added (members already in the group count too)</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "added": 1
+  }
+}
+```
+</ResponseExample>

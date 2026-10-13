@@ -1,0 +1,70 @@
+---
+title: "List Database Permission Level Options"
+description: "Permission levels you may set on a database resource"
+noindex: true
+---
+
+```
+GET /openapi/memorylake/admin/v1/access/{resource_type}/{resource_id}/permission-levels/{subject_type}/{subject_id}/options
+```
+
+The [List Permission Level Options](/features/memorylake/api-reference/access-control/list-permission-level-options) operation for database connections, datasources and analysis models.
+
+| `resource_type` | `resource_id` is | Permission |
+|---|---|---|
+| `db-connections` | `connection_id` | `dbconn:assign` on `connection_id`<br />Also required: `dbconn:read` on `connection_id` |
+| `db-datasources` | `datasource_id` | `db_datasource:assign` on `datasource_id`<br />Also required: `db_datasource:read` on `datasource_id` |
+| `analysis-models` | `model_id` | `analysis_model:assign` on `model_id`<br />Also required: `analysis_model:read` on `model_id` |
+
+### Path Parameters
+
+<ParamField path="resource_type" type="string" required>
+Resource type — one of the values in the table above
+</ParamField>
+
+<ParamField path="resource_id" type="string" required>
+Identifier of the resource, as listed in the table above
+</ParamField>
+
+<ParamField path="subject_type" type="string" required>
+members (access groups cannot hold permission levels). One of: `members`, `access-groups`.
+</ParamField>
+
+<ParamField path="subject_id" type="string" required>
+principal_id of the member
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access/db-connections/4c2da948e33c54f60ddd71e9b47076d4/permission-levels/members/89914667f74821b220f374d323f0f4b0/options' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Permission Level Options object">
+  <ResponseField name="can_set_none" type="boolean">Whether the caller may remove the member's level (level none)</ResponseField>
+  <ResponseField name="settable_levels" type="array">Levels the caller may set this member to (excluding the current one)</ResponseField>
+  <ResponseField name="blocked_reason" type="string">Why the current level cannot be lowered or removed: outranked = the member's level is not below the caller's; last_manager = the member is the last one who can manage the resource; no_permission = the caller cannot share this resource</ResponseField>
+  <ResponseField name="current_level" type="string">The member's level set on this instance; omitted when none is set. One of: `read`, `write`, `manage`.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "can_set_none": true,
+    "settable_levels": [
+      "example"
+    ],
+    "blocked_reason": "outranked",
+    "current_level": "read"
+  }
+}
+```
+</ResponseExample>

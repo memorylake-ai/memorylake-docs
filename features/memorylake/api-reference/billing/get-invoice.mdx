@@ -1,0 +1,94 @@
+---
+title: "Get Invoice"
+description: "Returns one invoice"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/invoices/{invoice_id}
+```
+
+Returns one invoice. Invoices of other teams are reported as not found.
+
+<Note>
+**Permission required:** `invoice:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="invoice_id" type="string" required>
+Invoice id (`invoice_id`)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/invoices/2501a637ff332794f7dc5edee0556e67' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Billing Invoice object">
+  <ResponseField name="created_at" type="integer">Issue time, Unix seconds</ResponseField>
+  <ResponseField name="hosted_invoice_url" type="string">The payment provider's hosted invoice page; null when none</ResponseField>
+  <ResponseField name="invoice_id" type="string">Invoice id</ResponseField>
+  <ResponseField name="invoice_pdf_url" type="string">The payment provider's own PDF link; null when the provider has none yet. GET /billing/invoices/\{invoice_id\}/pdf always returns a PDF without leaving this API</ResponseField>
+  <ResponseField name="number" type="string">Invoice number printed on the document</ResponseField>
+  <ResponseField name="order_id" type="string">The order it belongs to (GET /billing/orders/\{order_id\}); null when none</ResponseField>
+  <ResponseField name="status" type="string">Invoice state. One of: `draft`, `open`, `paid`, `uncollectible`, `void`.</ResponseField>
+  <ResponseField name="subtotal" type="object">
+  Total before tax
+  <Expandable title="Money object">
+    <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+    <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="tax" type="object">
+  Tax
+  <Expandable title="Money object">
+    <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+    <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="total" type="object">
+  Total
+  <Expandable title="Money object">
+    <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+    <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="due_at" type="integer">Payment due time, Unix seconds</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "created_at": 1760000000,
+    "hosted_invoice_url": "https://example.com/hosted_invoice",
+    "invoice_id": "fc9ec77f14773109fc1b0f8a2749731e",
+    "invoice_pdf_url": "https://example.com/invoice_pdf",
+    "number": "example",
+    "order_id": "98fae70aa1ad919811f9214706e755e1",
+    "status": "draft",
+    "subtotal": {
+      "amount": 1999,
+      "currency": "usd"
+    },
+    "tax": {
+      "amount": 1999,
+      "currency": "usd"
+    },
+    "total": {
+      "amount": 1999,
+      "currency": "usd"
+    },
+    "due_at": 1760000000
+  }
+}
+```
+</ResponseExample>

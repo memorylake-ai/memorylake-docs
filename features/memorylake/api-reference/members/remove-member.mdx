@@ -1,0 +1,48 @@
+---
+title: "Remove Member"
+description: "Removes a member from the team"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/members/{principal_id}
+```
+
+Removes a member from the team. Their API keys in this team are disabled (not deleted). The team owner cannot be removed, and the caller cannot remove themselves.
+
+<Note>
+**Permission required:** `member:remove`
+
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="principal_id" type="string" required>
+Identifier of the member (`principal_id`)
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members/dbcf9a3aabee5042775269c9d137a2f8' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

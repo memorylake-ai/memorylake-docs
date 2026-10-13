@@ -1,0 +1,64 @@
+---
+title: "List Roles"
+description: "Lists the roles of your team: the three built-in roles plus this team's custom roles"
+---
+
+```
+GET /openapi/memorylake/admin/v1/roles
+```
+
+Lists the roles of your team: the three built-in roles plus this team's custom roles. The key is what the role fields of member and invitation writes accept. The owner role is never assignable through this API, and a role marked admin_grant_only can be granted only by the owner or a member holding the admin baseline (through their role or an access group). Both flags describe the role, not you: they are the same for every caller. Any member may read this.
+
+<Note>
+**Permission required:** none — any member's key can call this
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Roles object">
+  <ResponseField name="roles" type="array">
+  Built-in roles first (owner, admin, member), then this team's custom roles oldest-first
+  <Expandable title="Role object">
+    <ResponseField name="admin_grant_only" type="boolean">When true, only the team owner or a member holding the admin baseline — through their role or through an access group — may grant this role. A property of the role, the same for every caller; it is not the console role list's per-caller assignable flag.</ResponseField>
+    <ResponseField name="assignable" type="boolean">Whether member and invitation writes accept this role at all — the same for every caller. The owner role never is. Unlike the console's role list, this does not say whether you yourself may grant it: for that, combine it with admin_grant_only and your own role.</ResponseField>
+    <ResponseField name="built_in" type="boolean">true for the three roles every team has; false for roles authored in this team</ResponseField>
+    <ResponseField name="key" type="string">The value the role fields of member and invitation writes accept</ResponseField>
+    <ResponseField name="label" type="string">Display name. Built-in roles carry a fixed English label; custom roles carry the operator-authored one.</ResponseField>
+    <ResponseField name="base_role_key" type="string">For custom roles: the role whose permission rules were copied into this one when it was created. Absent on built-in roles and on custom roles created without a base.</ResponseField>
+    <ResponseField name="description" type="string">Operator-authored description. Only custom roles carry one.</ResponseField>
+    <ResponseField name="parent_role_key" type="string">Same value as base_role_key; kept for existing clients.</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "roles": [
+      {
+        "admin_grant_only": false,
+        "assignable": false,
+        "built_in": false,
+        "key": "sk-f6e5d4c3...redacted...b2a1",
+        "label": "example",
+        "base_role_key": "tenant_member",
+        "description": "Example description",
+        "parent_role_key": "example"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

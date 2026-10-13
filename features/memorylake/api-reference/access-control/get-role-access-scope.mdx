@@ -1,0 +1,87 @@
+---
+title: "Get Role Access Scope"
+description: "Returns, per resource type, whether holders of the role reach every instance (mode all) or only the listed ones (mode instances)"
+---
+
+```
+GET /openapi/memorylake/admin/v1/roles/{role_key}/access-scope
+```
+
+Returns, per resource type, whether holders of the role reach every instance (mode all) or only the listed ones (mode instances). The owner role has no scope (409). The `ETag` header identifies this state for a conditional [Set Role Access Scope](/features/memorylake/api-reference/access-control/set-role-access-scope).
+
+<Note>
+**Permission required:** `policy:manage`
+</Note>
+
+### Path Parameters
+
+<ParamField path="role_key" type="string" required>
+Role key (`key`)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles/data_analyst/access-scope' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Role Access Scope object">
+  <ResponseField name="role_key" type="string">The role</ResponseField>
+  <ResponseField name="scopes" type="array">
+  One entry per scopable resource type
+  <Expandable title="Access Scope Entry object">
+    <ResponseField name="mode" type="string">all = every instance; instances = only the listed ones</ResponseField>
+    <ResponseField name="resource_type" type="string">Resource type, e.g. memorylake:project (see GET /permission-catalog)</ResponseField>
+    <ResponseField name="available_actions" type="array">Read-only. Instance-level actions the member's role grants for this type — the most a scope entry can allow.</ResponseField>
+    <ResponseField name="instances" type="array">
+    The instances, when mode is instances
+    <Expandable title="Access Scope Instance object">
+      <ResponseField name="id" type="string">Instance id, as returned by the data API</ResponseField>
+      <ResponseField name="actions" type="array">Actions allowed on this instance. Omit for every action the member's role allows.</ResponseField>
+      <ResponseField name="effective_actions" type="array">Read-only. The subset of actions the member's CURRENT role still grants.</ResponseField>
+      <ResponseField name="permission_level" type="string">Read-only. The permission level, when via_permission_level is true. One of: `read`, `write`, `manage`.</ResponseField>
+      <ResponseField name="shadowed_actions" type="array">Read-only. Actions stored here that the member's current role no longer grants.</ResponseField>
+      <ResponseField name="via_permission_level" type="boolean">Read-only. The member reaches this instance through a permission level granted on it, not through this scope. May be echoed back on write; such instances are skipped.</ResponseField>
+      <ResponseField name="workspace_id" type="string">Parent workspace of a project instance. Required when writing a project instance.</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "role_key": "tenant_member",
+    "scopes": [
+      {
+        "mode": "all",
+        "resource_type": "example",
+        "available_actions": [
+          "example"
+        ],
+        "instances": [
+          {
+            "id": "bc572b050c9920425b5fd75681eccbb2",
+            "actions": [],
+            "effective_actions": [],
+            "permission_level": "read",
+            "shadowed_actions": [],
+            "via_permission_level": false,
+            "workspace_id": "0fa2d21dc175adc7a003e0b37f156cb1"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

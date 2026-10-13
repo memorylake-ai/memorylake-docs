@@ -1,0 +1,80 @@
+---
+title: "List Credit Transactions"
+description: "Lists credit added to the balance, newest first, with where it came from"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/credit-transactions
+```
+
+Lists credit added to the balance, newest first, with where it came from. With log:read_all the whole team's entries; with only log:read_self, the entries recorded for you. Paged by continuation_token only — there is no total.
+
+<Note>
+**Permission required:** `log:read_all` (whole team) or `log:read_self` (your own only)
+</Note>
+
+### Query Parameters
+
+<ParamField query="start_time" type="integer">
+Only entries at or after this time, Unix seconds
+</ParamField>
+
+<ParamField query="end_time" type="integer">
+Only entries before this time, Unix seconds
+</ParamField>
+
+<ParamField query="page_size" type="integer" default="20">
+Items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/credit-transactions' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Credit Transaction object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Credit Transaction object">
+    <ResponseField name="created_at" type="integer">Unix seconds</ResponseField>
+    <ResponseField name="id" type="integer">Transaction id</ResponseField>
+    <ResponseField name="order_id" type="string">The order behind it (GET /billing/orders/\{order_id\}); null when there is none</ResponseField>
+    <ResponseField name="source" type="string">Where the credit came from: order (a purchase), auto_topup, redemption (a redemption code), invite_code, subscription_grant (a subscription cycle's tokens); other = an older entry recorded without a source</ResponseField>
+    <ResponseField name="tokens" type="integer">Tokens added</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "created_at": 1760000000,
+        "id": 1,
+        "order_id": "afa1df0e22978cf3ba3d864039a2b510",
+        "source": "order",
+        "tokens": 1200000
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

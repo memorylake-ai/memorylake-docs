@@ -1,0 +1,133 @@
+---
+title: "Set Low-Balance Alert"
+description: "Replaces the low-balance alert configuration"
+---
+
+```
+PUT /openapi/memorylake/admin/v1/billing/credit-balance/alert
+```
+
+Replaces the low-balance alert configuration. Thresholds are all percent_used or all tokens_remaining (at most 5); absolute levels are in tokens. Recipients are added to the team owner, who is always notified. To stop alerts, set enabled to false.
+
+<Note>
+**Permission required:** `credits:manage`
+</Note>
+
+### Request Body
+
+<ParamField body="enabled" type="boolean" required>
+Whether alerts are sent
+</ParamField>
+
+<ParamField body="thresholds" type="array" required>
+Alert levels, all of one type; duplicates are dropped
+<Expandable title="Balance Alert Threshold object">
+  <ParamField body="thresholds[].type" type="string" required>Threshold type; every threshold in one request must share it. One of: `percent_used`, `tokens_remaining`.</ParamField>
+  <ParamField body="thresholds[].value" type="integer" required>1–99 for percent_used; 1–1,000,000,000 for tokens_remaining</ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="notification_channel" type="object">
+Omit to send to the team owner only
+<Expandable title="Alert Recipients Channel object">
+  <ParamField body="notification_channel.recipients" type="array" required>Additional addresses (the team owner always receives alerts); duplicates are dropped case-insensitively</ParamField>
+  <ParamField body="notification_channel.type" type="string" required>Delivery channel. One of: `email`.</ParamField>
+</Expandable>
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PUT 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/credit-balance/alert' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "enabled": true,
+    "thresholds": [
+      {
+        "type": "percent_used",
+        "value": 1
+      }
+    ],
+    "notification_channel": {
+      "recipients": [
+        "example"
+      ],
+      "type": "email"
+    }
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Balance Alert object">
+  <ResponseField name="delivery_enabled" type="boolean">false = this deployment does not evaluate low-balance alerts at all; the setting is kept but has no effect</ResponseField>
+  <ResponseField name="enabled" type="boolean">Whether alerts are sent</ResponseField>
+  <ResponseField name="is_default" type="boolean">true = nothing has been saved; the defaults shown apply (percent_used 80 / 95 with a subscription, otherwise tokens_remaining 1,600,000 / 320,000)</ResponseField>
+  <ResponseField name="notification_channel" type="object">
+  Where alerts go
+  <Expandable title="Alert Recipients Channel object">
+    <ResponseField name="recipients" type="array">Additional addresses, at most 5. The team owner's email always receives alerts as well</ResponseField>
+    <ResponseField name="type" type="string">Delivery channel. One of: `email`.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="status" type="object">
+  Current alert state
+  <Expandable title="Balance Alert Status object">
+    <ResponseField name="state" type="string">triggered = an alert has fired and the balance has not recovered above its level yet. One of: `ok`, `triggered`.</ResponseField>
+    <ResponseField name="balance_tokens" type="integer">The balance when it fired, in tokens</ResponseField>
+    <ResponseField name="threshold" type="object">
+    The level that fired
+    <Expandable title="Balance Alert Threshold object">
+      <ResponseField name="type" type="string">percent_used = alert when the share of the subscription cycle (or, without a subscription, of all credit ever added) used reaches value percent; tokens_remaining = alert when the balance falls to value tokens</ResponseField>
+      <ResponseField name="value" type="integer">1–99 for percent_used; 1–1,000,000,000 for tokens_remaining</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="triggered_at" type="integer">When the active alert fired, Unix seconds</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="thresholds" type="array">
+  Alert levels; all of one type
+  <Expandable title="Balance Alert Threshold object">
+    <ResponseField name="type" type="string">percent_used = alert when the share of the subscription cycle (or, without a subscription, of all credit ever added) used reaches value percent; tokens_remaining = alert when the balance falls to value tokens</ResponseField>
+    <ResponseField name="value" type="integer">1–99 for percent_used; 1–1,000,000,000 for tokens_remaining</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "delivery_enabled": true,
+    "enabled": true,
+    "is_default": true,
+    "notification_channel": {
+      "recipients": [
+        "example"
+      ],
+      "type": "email"
+    },
+    "status": {
+      "state": "ok",
+      "balance_tokens": 1200000,
+      "threshold": {
+        "type": "percent_used",
+        "value": 1
+      },
+      "triggered_at": 1760000000
+    },
+    "thresholds": [
+      {
+        "type": "percent_used",
+        "value": 1
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

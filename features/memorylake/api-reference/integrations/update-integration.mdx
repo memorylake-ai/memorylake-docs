@@ -1,0 +1,178 @@
+---
+title: "Update IM Integration"
+description: "Changes an integration"
+---
+
+```
+PATCH /openapi/memorylake/admin/v1/integrations/{integration_id}
+```
+
+Changes an integration. Only the fields you send change; null is rejected. Omit credentials to keep them; send only a new secret to rotate it. The bot's app identifier cannot change (422). New DingTalk, Feishu and Slack credentials are verified before saving, and the status returns to pending until the new connection is up. Changing a project reference needs the same project access as [Create IM Integration](/features/memorylake/api-reference/integrations/create-integration).
+
+<Note>
+**Permission required:** `workspace:integration_manage` on `workspace_id`
+
+- When you set `read_write_project_id`: `project:mem_add` on `read_write_project_id`
+- When you set `read_only_project_ids`: `project:mem_search` on `read_only_project_ids`
+</Note>
+
+### Path Parameters
+
+<ParamField path="integration_id" type="string" required>
+Identifier of the integration
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result. Credential values are not compared.
+</ParamField>
+
+### Request Body
+
+<ParamField body="agent_id" type="string">
+Switch the answering agent. Ongoing IM conversations start over with the new agent; sending the current agent_id changes nothing.
+</ParamField>
+
+<ParamField body="credentials" type="object">
+Write-only. Omit to keep the stored credentials. Send only the values that change: a secret can be rotated alone. The app identifier (appKey / appId / botId, or the Slack team and bot user) cannot change — delete and recreate the integration to connect a different bot. DingTalk, Feishu and Slack credentials are verified with the platform before saving.
+<Expandable title="Integration Credentials object">
+  <ParamField body="credentials.appId" type="string">Feishu: App ID. Identifies the bot; cannot change after creation.</ParamField>
+  <ParamField body="credentials.appKey" type="string">DingTalk: Client ID (AppKey). Identifies the bot; cannot change after creation.</ParamField>
+  <ParamField body="credentials.appSecret" type="string">DingTalk: Client Secret (AppSecret). Feishu: App Secret.</ParamField>
+  <ParamField body="credentials.appToken" type="string">Slack: App-Level Token (xapp-…) with connections:write.</ParamField>
+  <ParamField body="credentials.botId" type="string">WeCom: Bot ID of the intelligent robot. Identifies the bot; cannot change after creation.</ParamField>
+  <ParamField body="credentials.botToken" type="string">Slack: Bot User OAuth Token (xoxb-…). Apps with token rotation enabled are not supported.</ParamField>
+  <ParamField body="credentials.secret" type="string">WeCom: Secret of the intelligent robot.</ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="daily_message_limit" type="integer">
+Maximum messages handled per day; 0 = unlimited
+</ParamField>
+
+<ParamField body="dataset_ids" type="array">
+Replace the datasets. [] removes them.
+</ParamField>
+
+<ParamField body="enabled" type="boolean">
+Connect (true) or disconnect (false) the bot
+</ParamField>
+
+<ParamField body="name" type="string">
+New display name
+</ParamField>
+
+<ParamField body="read_only_project_ids" type="array">
+Replace the read-only projects. [] removes them.
+</ParamField>
+
+<ParamField body="read_write_project_id" type="string">
+New project for extracted memories
+</ParamField>
+
+<ParamField body="settings" type="object">
+Replace the channel-specific settings
+<Expandable title="Integration Settings object">
+  <ParamField body="settings.card_template_id" type="string">DingTalk only: AI card template id. Set it to stream replies into an interactive card; omit or send "" to reply with plain messages.</ParamField>
+</Expandable>
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/integrations/8e6332af9d801f19496ca0f9fded5333' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "agent_id": "bacb5a9d15867eca98ad566c546b2503",
+    "credentials": {
+      "appId": "example",
+      "appKey": "example",
+      "appSecret": "example",
+      "appToken": "example",
+      "botId": "example",
+      "botToken": "example",
+      "secret": "example"
+    },
+    "daily_message_limit": 1,
+    "dataset_ids": [
+      "3748f84ef0d2e877c0097b8f32d45cf0"
+    ],
+    "enabled": true,
+    "name": "Example name",
+    "read_only_project_ids": [
+      "5af1515af082229ccfd68f981a6cf886"
+    ],
+    "read_write_project_id": "47e198610eb6f56441396b62501d1ccf",
+    "settings": {
+      "card_template_id": "870213bad9d43369a8af134b1b482d6e"
+    }
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Integration object">
+  <ResponseField name="agent_id" type="string">Agent that answers messages sent to the bot</ResponseField>
+  <ResponseField name="channel" type="string">IM platform. One of: `dingtalk`, `wecom`, `feishu`, `slack`.</ResponseField>
+  <ResponseField name="created_at" type="integer">Creation time, Unix seconds</ResponseField>
+  <ResponseField name="credentials_configured" type="boolean">Whether credentials are stored. Credentials themselves are write-only and never returned.</ResponseField>
+  <ResponseField name="daily_message_limit" type="integer">Maximum messages this integration handles per day; 0 = unlimited</ResponseField>
+  <ResponseField name="dataset_ids" type="array">Open-data datasets the agent may use</ResponseField>
+  <ResponseField name="enabled" type="boolean">Whether the integration should be connected</ResponseField>
+  <ResponseField name="external_app_id" type="string">The bot's identifier on the IM platform (DingTalk Client ID, Feishu App ID, WeCom Bot ID, Slack team:bot-user). Not a secret.</ResponseField>
+  <ResponseField name="id" type="string">Identifier of the integration</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="read_only_project_ids" type="array">Additional projects searched (read only)</ResponseField>
+  <ResponseField name="read_write_project_id" type="string">Project that memories extracted from IM conversations are written to</ResponseField>
+  <ResponseField name="settings" type="object">
+  Channel-specific settings
+  <Expandable title="Integration Settings object">
+    <ResponseField name="card_template_id" type="string">DingTalk only: AI card template id. Set it to stream replies into an interactive card; omit or send "" to reply with plain messages.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="status" type="string">Connection state. pending right after a create or a credential change until the first connection attempt; poll [Get IM Integration](/features/memorylake/api-reference/integrations/get-integration) to follow it. One of: `pending`, `connected`, `error`, `disabled`.</ResponseField>
+  <ResponseField name="updated_at" type="integer">Last update time, Unix seconds</ResponseField>
+  <ResponseField name="workspace_id" type="string">Workspace the integration belongs to. Fixed at creation.</ResponseField>
+  <ResponseField name="status_error" type="string">Short normalized reason when status is error, for display (Chinese, the console's wording; it may change). Never contains the platform's raw response. Use status_error_code in programs.</ResponseField>
+  <ResponseField name="status_error_code" type="string">Stable reason code, present whenever status_error is. credentials_invalid: the platform rejected the credentials (fix them); subscribe_rejected: WeCom refused the subscription — wrong credentials or the platform's rate limit, retried automatically; preempted: another connection took over the bot, usually the same bot connected from another environment; timeout / disconnected / connection_aborted / connection_failed: connection problems, retried automatically; dependency_unavailable: a service this deployment depends on is down, retried automatically; dependency_misconfigured: this deployment lacks something the channel needs (WeCom needs Redis) — contact the operator; internal_error: a fault on our side; unknown: the reason was recorded before codes existed, and is replaced on the next connection attempt. New codes may be added; treat an unrecognised one like connection_failed.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "agent_id": "9926a90400d85f0a54e9e195e915db44",
+    "channel": "dingtalk",
+    "created_at": 1760000000,
+    "credentials_configured": false,
+    "daily_message_limit": 1,
+    "dataset_ids": [
+      "3748f84ef0d2e877c0097b8f32d45cf0"
+    ],
+    "enabled": true,
+    "external_app_id": "524832f3cb1ba8ef33208d0692b8d565",
+    "id": "f58008acc066bab6dfb73de8efde8905",
+    "name": "Example name",
+    "read_only_project_ids": [
+      "5af1515af082229ccfd68f981a6cf886"
+    ],
+    "read_write_project_id": "aed31b20113b86ecc2587aa0cbc0eb2f",
+    "settings": {
+      "card_template_id": "870213bad9d43369a8af134b1b482d6e"
+    },
+    "status": "pending",
+    "updated_at": 1760000000,
+    "workspace_id": "ce55865bcc4c12c26161d24b238a888e",
+    "status_error": "example",
+    "status_error_code": "credentials_invalid"
+  }
+}
+```
+</ResponseExample>
