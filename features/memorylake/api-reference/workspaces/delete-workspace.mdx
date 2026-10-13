@@ -1,6 +1,6 @@
 ---
 title: "Delete Workspace"
-description: "Permanently delete a workspace"
+description: "Delete a workspace"
 ---
 
 ```
@@ -8,10 +8,10 @@ DELETE /openapi/memorylake/api/v3/workspaces/{id}
 ```
 
 <Warning>
-This is a destructive operation. The workspace and all its associated data will be permanently removed.
+This is a destructive operation and cannot be undone. The workspace and everything in it (projects, conversations, actor and agent bindings, and all other workspace-scoped data) stop being accessible through the API and the console. Deletion takes away access to this data; it does not erase the stored content.
 </Warning>
 
-Permanently deletes a workspace by its ID.
+Deletes a workspace by its ID.
 
 <Note>
 **Permission required:** `workspace:delete`
