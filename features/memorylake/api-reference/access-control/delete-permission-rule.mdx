@@ -1,0 +1,54 @@
+---
+title: "Delete Permission Rule"
+description: "Deletes one rule by the rule_id from List Permission Rules"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/permission-rules/{rule_id}
+```
+
+Deletes one rule by the rule_id from [List Permission Rules](/features/memorylake/api-reference/access-control/list-permission-rules). Rules of the built-in admin and member roles cannot be deleted (409).
+
+<Note>
+**Permission required:** `policy:manage`
+
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="rule_id" type="string" required>
+Opaque identifier; pass it to [Delete Permission Rule](/features/memorylake/api-reference/access-control/delete-permission-rule). Do not parse it.
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="reason" type="string">
+Optional reason recorded in the audit log
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/permission-rules/571c2fd12d2cb5e344070dfffa47860f' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

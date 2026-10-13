@@ -1,0 +1,75 @@
+---
+title: "Get Subscription"
+description: "Returns the team's current subscription: plan, state, current cycle and whether it ends at the cycle end"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/subscription
+```
+
+Returns the team's current subscription: plan, state, current cycle and whether it ends at the cycle end. status none means the team has no active subscription.
+
+<Note>
+**Permission required:** `subscription:view`
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/subscription' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Subscription object">
+  <ResponseField name="cancel_at_period_end" type="boolean">true = the subscription ends at current_period_end instead of renewing</ResponseField>
+  <ResponseField name="status" type="string">none = the team has no active subscription; the other fields are then omitted. One of: `active`, `past_due`, `none`.</ResponseField>
+  <ResponseField name="current_period_end" type="integer">Current cycle end, Unix seconds</ResponseField>
+  <ResponseField name="current_period_start" type="integer">Current cycle start, Unix seconds</ResponseField>
+  <ResponseField name="plan" type="object">
+  The subscribed plan
+  <Expandable title="Subscription Plan Summary object">
+    <ResponseField name="billing_interval" type="string">Billing cycle. One of: `month`, `year`.</ResponseField>
+    <ResponseField name="id" type="integer">Plan id (the plan_id [Preview Plan Change](/features/memorylake/api-reference/billing/preview-plan-change) accepts)</ResponseField>
+    <ResponseField name="name" type="string">Plan name</ResponseField>
+    <ResponseField name="price" type="object">
+    Price per billing cycle
+    <Expandable title="Money object">
+      <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+      <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="tier" type="string">Plan tier. One of: `free`, `pro`, `premium`.</ResponseField>
+    <ResponseField name="tokens_per_cycle" type="integer">Tokens granted at the start of each cycle</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "cancel_at_period_end": false,
+    "status": "active",
+    "current_period_end": 1760000000,
+    "current_period_start": 1760000000,
+    "plan": {
+      "billing_interval": "month",
+      "id": 1,
+      "name": "Example name",
+      "price": {
+        "amount": 1999,
+        "currency": "usd"
+      },
+      "tier": "free",
+      "tokens_per_cycle": 1200000
+    }
+  }
+}
+```
+</ResponseExample>

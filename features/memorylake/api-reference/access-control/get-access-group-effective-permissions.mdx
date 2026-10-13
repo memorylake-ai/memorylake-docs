@@ -1,0 +1,134 @@
+---
+title: "Get Access Group Effective Permissions"
+description: "Returns everything the group grants, each permission with where it comes from (the base role or base group, or the group's own list), plus the instances it gives access to"
+---
+
+```
+GET /openapi/memorylake/admin/v1/access-groups/{group_id}/effective-permissions
+```
+
+Returns everything the group grants, each permission with where it comes from (the base role or base group, or the group's own list), plus the instances it gives access to.
+
+<Note>
+**Permission required:** `access_group:view`
+</Note>
+
+### Path Parameters
+
+<ParamField path="group_id" type="string" required>
+Identifier
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access-groups/7013fb5c15cfb29411f040967354b8a3/effective-permissions' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Access Group Effective Permissions object">
+  <ResponseField name="group_id" type="string">The group</ResponseField>
+  <ResponseField name="member_count" type="integer">Number of members</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="permissions" type="array">
+  Every permission the group grants, each with where it comes from: the base (inherits_from) or the group's own permission list
+  <Expandable title="Effective Permission object">
+    <ResponseField name="permission" type="string">Action</ResponseField>
+    <ResponseField name="sources" type="array">
+    Where this permission comes from
+    <Expandable title="Effective Source Ref object">
+      <ResponseField name="type" type="string">role, access_group, or personal (a rule set on the member directly)</ResponseField>
+      <ResponseField name="id" type="string">Role key or access group id; omitted for personal</ResponseField>
+      <ResponseField name="name" type="string">Display name of the role or access group; omitted for personal</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="scopes" type="array">
+  Instances the group gives access to, per resource type
+  <Expandable title="Access Scope Entry object">
+    <ResponseField name="mode" type="string">all = every instance; instances = only the listed ones</ResponseField>
+    <ResponseField name="resource_type" type="string">Resource type, e.g. memorylake:project (see GET /permission-catalog)</ResponseField>
+    <ResponseField name="available_actions" type="array">Read-only. Instance-level actions the member's role grants for this type — the most a scope entry can allow.</ResponseField>
+    <ResponseField name="instances" type="array">
+    The instances, when mode is instances
+    <Expandable title="Access Scope Instance object">
+      <ResponseField name="id" type="string">Instance id, as returned by the data API</ResponseField>
+      <ResponseField name="actions" type="array">Actions allowed on this instance. Omit for every action the member's role allows.</ResponseField>
+      <ResponseField name="effective_actions" type="array">Read-only. The subset of actions the member's CURRENT role still grants.</ResponseField>
+      <ResponseField name="permission_level" type="string">Read-only. The permission level, when via_permission_level is true. One of: `read`, `write`, `manage`.</ResponseField>
+      <ResponseField name="shadowed_actions" type="array">Read-only. Actions stored here that the member's current role no longer grants.</ResponseField>
+      <ResponseField name="via_permission_level" type="boolean">Read-only. The member reaches this instance through a permission level granted on it, not through this scope. May be echoed back on write; such instances are skipped.</ResponseField>
+      <ResponseField name="workspace_id" type="string">Parent workspace of a project instance. Required when writing a project instance.</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="inherits_from" type="object">
+  The base role or base access group; omitted when the group has neither
+  <Expandable title="Effective Source Ref object">
+    <ResponseField name="type" type="string">role, access_group, or personal (a rule set on the member directly)</ResponseField>
+    <ResponseField name="id" type="string">Role key or access group id; omitted for personal</ResponseField>
+    <ResponseField name="name" type="string">Display name of the role or access group; omitted for personal</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="overridden_permissions" type="array">Permissions in the group's own list that do not take effect</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "group_id": "cda040c43b8de706929b9cfad8d35791",
+    "member_count": 1,
+    "name": "Example name",
+    "permissions": [
+      {
+        "permission": "example",
+        "sources": [
+          {
+            "type": "role",
+            "id": "7ea9bf65e6937c3c168bc7a2a0f6fbf2",
+            "name": "Example name"
+          }
+        ]
+      }
+    ],
+    "scopes": [
+      {
+        "mode": "all",
+        "resource_type": "example",
+        "available_actions": [
+          "example"
+        ],
+        "instances": [
+          {
+            "id": "bc572b050c9920425b5fd75681eccbb2",
+            "actions": [],
+            "effective_actions": [],
+            "permission_level": "read",
+            "shadowed_actions": [],
+            "via_permission_level": false,
+            "workspace_id": "0fa2d21dc175adc7a003e0b37f156cb1"
+          }
+        ]
+      }
+    ],
+    "inherits_from": {
+      "type": "role",
+      "id": "7ea9bf65e6937c3c168bc7a2a0f6fbf2",
+      "name": "Example name"
+    },
+    "overridden_permissions": [
+      "example"
+    ]
+  }
+}
+```
+</ResponseExample>

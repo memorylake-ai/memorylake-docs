@@ -1,0 +1,46 @@
+---
+title: "Revoke API Key"
+description: "Deletes an API key"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/api-keys/{id}
+```
+
+Deletes an API key. The key used to make the request cannot revoke itself.
+
+<Note>
+**Permission required:** `service_account:delete` (your own keys only) or `service_account:delete` (all keys)
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Identifier of the API key
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/9d971b8b5813eb1ecceec31354c101b4' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

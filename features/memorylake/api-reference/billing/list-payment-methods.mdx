@@ -1,0 +1,64 @@
+---
+title: "List Payment Methods"
+description: "Lists the saved cards: brand, last four digits, expiry and which one is the default"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/payment-methods
+```
+
+Lists the saved cards: brand, last four digits, expiry and which one is the default. Adding, removing and choosing the default are done in the console.
+
+<Note>
+**Permission required:** `credits:manage`
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/payment-methods' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Payment Method object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Payment Method object">
+    <ResponseField name="is_default" type="boolean">Used for automatic top-ups and renewals</ResponseField>
+    <ResponseField name="type" type="string">Payment method type, e.g. card</ResponseField>
+    <ResponseField name="brand" type="string">Card brand, e.g. visa</ResponseField>
+    <ResponseField name="exp_month" type="integer">Expiry month, 1–12</ResponseField>
+    <ResponseField name="exp_year" type="integer">Expiry year</ResponseField>
+    <ResponseField name="last4" type="string">Last four digits</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "is_default": true,
+        "type": "example",
+        "brand": "example",
+        "exp_month": 1,
+        "exp_year": 1,
+        "last4": "example"
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

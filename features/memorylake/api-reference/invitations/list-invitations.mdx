@@ -1,0 +1,88 @@
+---
+title: "List Invitations"
+description: "Lists the team's invitations, newest first, optionally filtered by state and by email address (repeat email= to check several addresses at once)"
+---
+
+```
+GET /openapi/memorylake/admin/v1/invitations
+```
+
+Lists the team's invitations, newest first, optionally filtered by state and by email address (repeat email= to check several addresses at once).
+
+<Note>
+**Permission required:** `member:invite`
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page. Opaque — do not construct or parse it.
+</ParamField>
+
+<ParamField query="status" type="string">
+Only return invitations in this state. One of: `pending`, `accepted`, `rejected`, `expired`, `revoked`.
+</ParamField>
+
+<ParamField query="email" type="array">
+Only return invitations for these addresses (case-insensitive). Repeat the parameter for several.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/invitations' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Invitation object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Invitation object">
+    <ResponseField name="created_at" type="integer">First invitation time, Unix seconds</ResponseField>
+    <ResponseField name="email" type="string">Invitee email address (normalised to lowercase)</ResponseField>
+    <ResponseField name="expires_at" type="integer">Expiry time of the current invitation email, Unix seconds</ResponseField>
+    <ResponseField name="id" type="string">Stable identifier of this invitation</ResponseField>
+    <ResponseField name="role" type="string">Role the invitee will hold on acceptance: tenant_admin | tenant_member | &lt;custom role&gt;</ResponseField>
+    <ResponseField name="status" type="string">Invitation state. One of: `pending`, `accepted`, `rejected`, `expired`, `revoked`.</ResponseField>
+    <ResponseField name="accepted_at" type="integer">Acceptance time, Unix seconds. Present only when accepted.</ResponseField>
+    <ResponseField name="accepted_principal_id" type="string">principal_id of the member this invitation produced. Present only when accepted.</ResponseField>
+    <ResponseField name="last_invited_at" type="integer">Most recent invitation email time, Unix seconds. Omitted on rows that predate this field.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "created_at": 1760000000,
+        "email": "alice@example.com",
+        "expires_at": 1760000000,
+        "id": "c079f4f4e529b9d687b3cce00eeb9644",
+        "role": "tenant_member",
+        "status": "pending",
+        "accepted_at": 1760000000,
+        "accepted_principal_id": "5a4863beca31b3b37f780badf1652511",
+        "last_invited_at": 1760000000
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

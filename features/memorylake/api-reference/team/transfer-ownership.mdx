@@ -1,0 +1,66 @@
+---
+title: "Transfer Ownership"
+description: "Transfers ownership of this org team to another active human member"
+---
+
+```
+POST /openapi/memorylake/admin/v1/team/transfer-ownership
+```
+
+Transfers ownership of this org team to another active human member. The caller becomes an admin and can no longer perform owner-only operations after the transfer.
+
+<Warning>
+**High-risk operation.** It takes effect immediately. Read what it changes, above, before you call it.
+</Warning>
+
+<Note>
+**Permission required:** team owner only
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result for the same caller.
+</ParamField>
+
+### Request Body
+
+<ParamField body="new_owner_principal_id" type="string" required>
+principal_id of an active human member who will become the team owner
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/team/transfer-ownership' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "new_owner_principal_id": "670048c3ad268485e39c944bbf532eb8"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Transfer Team Ownership object">
+  <ResponseField name="new_owner_principal_id" type="string">New owner principal_id</ResponseField>
+  <ResponseField name="previous_owner_principal_id" type="string">Previous owner principal_id</ResponseField>
+  <ResponseField name="tenant_id" type="string">Team id</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "new_owner_principal_id": "a98ea7f681cc99557e9ff07a98bdfd93",
+    "previous_owner_principal_id": "4b00105cd113649644fb6ca4b1b43592",
+    "tenant_id": "0b27c6f12b96b127b1157e40a00b0b79"
+  }
+}
+```
+</ResponseExample>

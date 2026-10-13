@@ -1,0 +1,83 @@
+---
+title: "Create Virtual Member"
+description: "Creates a VIRTUAL member — a login-less managed identity that appears in the roster, holds a role, and acts only through API keys issued for it (POST /api-keys with member_principal_id)"
+---
+
+```
+POST /openapi/memorylake/admin/v1/members
+```
+
+Creates a VIRTUAL member — a login-less managed identity that appears in the roster, holds a role, and acts only through API keys issued for it (POST /api-keys with member_principal_id). Human members join through invitations only.
+
+<Note>
+**Permission required:** `member:manage_virtual`
+
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+### Request Body
+
+<ParamField body="display_name" type="string" required>
+Display name of the virtual member
+</ParamField>
+
+<ParamField body="role" type="string" required>
+Role: tenant_admin, tenant_member, or a custom role key of this team. The owner role cannot be assigned.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "display_name": "Alice",
+    "role": "tenant_member"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Member object">
+  <ResponseField name="display_name" type="string">Member's display name</ResponseField>
+  <ResponseField name="joined_at" type="integer">Time this member joined, Unix seconds</ResponseField>
+  <ResponseField name="member_type" type="string">human = joined via invitation, virtual = managed identity created by an owner/admin</ResponseField>
+  <ResponseField name="principal_id" type="string">Stable identifier of this member</ResponseField>
+  <ResponseField name="role" type="string">Primary role in this team: tenant_owner | tenant_admin | tenant_member | &lt;custom role&gt;</ResponseField>
+  <ResponseField name="status" type="string">Membership state. One of: `active`, `inactive`.</ResponseField>
+  <ResponseField name="used_tokens" type="integer">Tokens consumed by this member</ResponseField>
+  <ResponseField name="email" type="string">Only returned to team owners and admins</ResponseField>
+  <ResponseField name="max_tokens" type="integer">Per-member cap in tokens. Omitted when the member is uncapped.</ResponseField>
+  <ResponseField name="username" type="string">Only returned to team owners and admins</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (201)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "display_name": "Alice",
+    "joined_at": 1760000000,
+    "member_type": "human",
+    "principal_id": "42fbbd89934900ebbc74814c49f009d2",
+    "role": "tenant_member",
+    "status": "active",
+    "used_tokens": 1200000,
+    "email": "alice@example.com",
+    "max_tokens": 1200000,
+    "username": "alice"
+  }
+}
+```
+</ResponseExample>

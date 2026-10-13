@@ -1,0 +1,52 @@
+---
+title: "Remove Access Group Member"
+description: "Removes one member from an access group"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/access-groups/{group_id}/members/{principal_id}
+```
+
+Removes one member from an access group. A principal that is not in the group is a 404.
+
+<Note>
+**Permission required:** `access_group:manage`
+
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="group_id" type="string" required>
+Identifier
+</ParamField>
+
+<ParamField path="principal_id" type="string" required>
+The member to remove
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access-groups/7013fb5c15cfb29411f040967354b8a3/members/dbcf9a3aabee5042775269c9d137a2f8' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

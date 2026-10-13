@@ -1,0 +1,95 @@
+---
+title: "Create Custom Role"
+description: "Creates a custom role"
+---
+
+```
+POST /openapi/memorylake/admin/v1/roles
+```
+
+Creates a custom role. With base_role_key the role starts with a copy of that role's permission rules; the copy is independent — later changes to either role do not affect the other. Only the team owner may manage roles.
+
+<Note>
+**Permission required:** `policy:custom_role_manage`
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result instead of creating a second role.
+</ParamField>
+
+### Request Body
+
+<ParamField body="label" type="string" required>
+Display name
+</ParamField>
+
+<ParamField body="base_role_key" type="string">
+Optional. tenant_admin, tenant_member or a custom role key of this team: the new role starts with a copy of that role's permission rules (later changes to either role do not affect the other). Omit for a role with no permissions. The owner role cannot be a base.
+</ParamField>
+
+<ParamField body="description" type="string">
+Optional description
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "label": "example",
+    "base_role_key": "tenant_member",
+    "description": "Example description"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Role Detail object">
+  <ResponseField name="admin_grant_only" type="boolean">When true, only the team owner or a member holding the admin baseline — through their role or through an access group — may grant this role. A property of the role, the same for every caller; it is not the console role list's per-caller assignable flag.</ResponseField>
+  <ResponseField name="assignable" type="boolean">Whether member and invitation writes accept this role at all — the same for every caller. The owner role never is. Unlike the console's role list, this does not say whether you yourself may grant it: for that, combine it with admin_grant_only and your own role.</ResponseField>
+  <ResponseField name="built_in" type="boolean">true for the three roles every team has; false for roles authored in this team</ResponseField>
+  <ResponseField name="key" type="string">The value the role fields of member and invitation writes accept</ResponseField>
+  <ResponseField name="label" type="string">Display name. Built-in roles carry a fixed English label; custom roles carry the operator-authored one.</ResponseField>
+  <ResponseField name="base_role_key" type="string">For custom roles: the role whose permission rules were copied into this one when it was created. Absent on built-in roles and on custom roles created without a base.</ResponseField>
+  <ResponseField name="description" type="string">Operator-authored description. Only custom roles carry one.</ResponseField>
+  <ResponseField name="parent_role_key" type="string">Same value as base_role_key; kept for existing clients.</ResponseField>
+  <ResponseField name="permissions" type="array">
+  Every permission the role grants, with its source. Returned only to callers holding policy:manage on tenant:policy; omitted for everyone else. An empty list means the role grants nothing. Instance limits (the role's access scope) are not reflected here.
+  <Expandable title="Role Permission object">
+    <ResponseField name="permission" type="string">Permission, as &lt;resource_type&gt;:&lt;action&gt; (e.g. memorylake:project:project:read)</ResponseField>
+    <ResponseField name="source" type="string">built_in: part of a built-in role's definition. base_role: the base role grants it too — it was copied from the base role when this role was created. role_rule: granted only by this role's own permission rules.</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (201)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "admin_grant_only": false,
+    "assignable": false,
+    "built_in": false,
+    "key": "sk-f6e5d4c3...redacted...b2a1",
+    "label": "example",
+    "base_role_key": "tenant_member",
+    "description": "Example description",
+    "parent_role_key": "example",
+    "permissions": [
+      {
+        "permission": "example",
+        "source": "built_in"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

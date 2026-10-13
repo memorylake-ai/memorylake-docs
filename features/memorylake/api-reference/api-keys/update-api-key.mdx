@@ -1,0 +1,121 @@
+---
+title: "Update API Key"
+description: "Changes an API key's name, status, expiry, IP restriction or routing groups"
+---
+
+```
+PATCH /openapi/memorylake/admin/v1/api-keys/{id}
+```
+
+Changes an API key's name, status, expiry, IP restriction or routing groups. Only the fields you send change; null is rejected — send [] or "" to clear. An expired key can be enabled only together with a future expires_at; a key whose owner has been deleted cannot be enabled; the key used for this request cannot disable itself. Routing groups must be public or the key owner's own.
+
+<Note>
+**Permission required:** `service_account:update` (your own keys only) or `service_account:update` (all keys)
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Identifier of the API key
+</ParamField>
+
+### Request Body
+
+<ParamField body="allowed_ips" type="array">
+Replace the IP / CIDR restriction. [] removes it.
+</ParamField>
+
+<ParamField body="backup_group" type="string">
+Fallback model-routing group. "" clears it.
+</ParamField>
+
+<ParamField body="expires_at" type="integer">
+New expiry, Unix seconds. 0 = never expires.
+</ParamField>
+
+<ParamField body="group" type="string">
+Model-routing group. "" clears it.
+</ParamField>
+
+<ParamField body="name" type="string">
+New display name. Usage records are kept under the key's name at the time of each request, so renaming splits the key's history.
+</ParamField>
+
+<ParamField body="status" type="string">
+Enable or disable the key. An expired key can be enabled only together with a future expires_at. One of: `enabled`, `disabled`.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/9d971b8b5813eb1ecceec31354c101b4' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "allowed_ips": [
+      "example"
+    ],
+    "backup_group": "example",
+    "expires_at": 1760000000,
+    "group": "example",
+    "name": "Example name",
+    "status": "enabled"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="API Key object">
+  <ResponseField name="allowed_ips" type="array">Client IPs or CIDR ranges this key may be used from. Empty array = no restriction.</ResponseField>
+  <ResponseField name="created_at" type="integer">Creation time, Unix seconds</ResponseField>
+  <ResponseField name="id" type="string">Stable identifier of this API key</ResponseField>
+  <ResponseField name="is_system" type="boolean">true for keys the platform created for its own use (for example the console playground)</ResponseField>
+  <ResponseField name="key_prefix" type="string">First 8 characters of the key body. The full key is never returned by read endpoints.</ResponseField>
+  <ResponseField name="name" type="string">Display name</ResponseField>
+  <ResponseField name="status" type="string">Current state of the key. One of: `enabled`, `disabled`, `expired`.</ResponseField>
+  <ResponseField name="backup_group" type="string">Fallback model-routing group. Omitted = none.</ResponseField>
+  <ResponseField name="expires_at" type="integer">Expiry time, Unix seconds. Omitted when the key never expires.</ResponseField>
+  <ResponseField name="group" type="string">Model-routing group the key's requests use. Omitted = the owner's own group.</ResponseField>
+  <ResponseField name="key_suffix" type="string">Last 4 characters of the key, to match a key someone holds without returning it. Omitted for keys whose plaintext is not retained.</ResponseField>
+  <ResponseField name="last_used_at" type="integer">Time this key was last used, Unix seconds. APPROXIMATE — updates are throttled and may lag by up to one hour. Omitted when the key has never been used.</ResponseField>
+  <ResponseField name="owner" type="object">
+  Member this key acts as — its requests carry this member's permissions and usage is attributed to them. For a key issued to a virtual member, that member. Omitted when the account no longer exists.
+  <Expandable title="API Key Owner object">
+    <ResponseField name="display_name" type="string">Display name of the member</ResponseField>
+    <ResponseField name="member_type" type="string">human = joined via invitation, virtual = managed identity created by an owner/admin</ResponseField>
+    <ResponseField name="principal_id" type="string">principal_id of the member (see GET /members)</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "allowed_ips": [
+      "example"
+    ],
+    "created_at": 1760000000,
+    "id": "40c8c8eba1dca6d1ba4bd63384a16d3c",
+    "is_system": true,
+    "key_prefix": "f6e5d4c3",
+    "name": "Example name",
+    "status": "enabled",
+    "backup_group": "example",
+    "expires_at": 1760000000,
+    "group": "example",
+    "key_suffix": "b2a1",
+    "last_used_at": 1760000000,
+    "owner": {
+      "display_name": "Alice",
+      "member_type": "human",
+      "principal_id": "61083f9552ae2ae6bd9105e4e2763c7b"
+    }
+  }
+}
+```
+</ResponseExample>

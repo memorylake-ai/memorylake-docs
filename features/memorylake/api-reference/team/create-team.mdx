@@ -1,0 +1,106 @@
+---
+title: "Create Team"
+description: "Creates a new org team as the API key owner"
+---
+
+```
+POST /openapi/memorylake/admin/v1/teams
+```
+
+Creates a new org team as the API key owner. If issue_api_key is true, the response includes a new owner API key for that team exactly once. Creating teams counts toward the owner's team limit and grants the free plan when available.
+
+<Warning>
+**High-risk operation.** It takes effect immediately. Read what it changes, above, before you call it.
+</Warning>
+
+<Note>
+**Permission required:** none — any member's key can call this
+</Note>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result. If an API key was issued, its secret is returned only on the first response.
+</ParamField>
+
+### Request Body
+
+<ParamField body="name" type="string" required>
+Display name for the new org team
+</ParamField>
+
+<ParamField body="api_key_name" type="string">
+Display name for the optional owner API key. Defaults to the team name plus ' API key'.
+</ParamField>
+
+<ParamField body="issue_api_key" type="boolean">
+If true, also create an owner API key in the new team and return its secret once.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/teams' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Example name",
+    "api_key_name": "Example api key",
+    "issue_api_key": true
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Create Team object">
+  <ResponseField name="team" type="object">
+  The new team
+  <Expandable title="Team object">
+    <ResponseField name="created_at" type="integer">Creation time, Unix seconds</ResponseField>
+    <ResponseField name="id" type="string">Stable identifier of this team</ResponseField>
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="owner_principal_id" type="string">principal_id of the team owner (see the members list)</ResponseField>
+    <ResponseField name="type" type="string">personal = single-user space, org = team with members</ResponseField>
+    <ResponseField name="caller_role" type="string">The calling key's role in this team: tenant_owner | tenant_admin | tenant_member | &lt;custom role&gt;</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="api_key" type="object">
+  One-time API key for the new team, present only when issue_api_key is true. The key secret is not returned on idempotent replay.
+  <Expandable title="API Key Created object">
+    <ResponseField name="id" type="string">Stable identifier of this API key</ResponseField>
+    <ResponseField name="key" type="string">The full API key, including the sk- prefix. Save it now — read endpoints never return it.</ResponseField>
+    <ResponseField name="key_prefix" type="string">First 8 characters of the key body</ResponseField>
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="key_suffix" type="string">Last 4 characters of the key</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (201)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "team": {
+      "created_at": 1760000000,
+      "id": "7d9e7032509bd2d43c2eeec93bae86a2",
+      "name": "Example name",
+      "owner_principal_id": "284c4662589661476271ee7c94015dec",
+      "type": "personal",
+      "caller_role": "tenant_member"
+    },
+    "api_key": {
+      "id": "b62967384a5222f7709e7ee5220e565f",
+      "key": "sk-f6e5d4c3...redacted...b2a1",
+      "key_prefix": "f6e5d4c3",
+      "name": "Example name",
+      "key_suffix": "b2a1"
+    }
+  }
+}
+```
+</ResponseExample>

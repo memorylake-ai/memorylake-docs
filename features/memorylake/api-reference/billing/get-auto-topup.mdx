@@ -1,0 +1,60 @@
+---
+title: "Get Auto Top-Up"
+description: "Returns whether the balance is topped up automatically, at what level and for how much"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/auto-topup
+```
+
+Returns whether the balance is topped up automatically, at what level and for how much. Changing it is done in the console.
+
+<Note>
+**Permission required:** `credits:view`
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/auto-topup' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Auto Topup object">
+  <ResponseField name="amount" type="object">
+  Charged per top-up
+  <Expandable title="Money object">
+    <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+    <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="enabled" type="boolean">Whether the balance is topped up automatically</ResponseField>
+  <ResponseField name="threshold_tokens" type="integer">Top up when the one-time balance falls to this many tokens</ResponseField>
+  <ResponseField name="tokens" type="integer">Tokens each top-up adds</ResponseField>
+  <ResponseField name="cooldown_until" type="integer">No automatic top-up before this time, Unix seconds</ResponseField>
+  <ResponseField name="last_topup_at" type="integer">Last automatic top-up, Unix seconds</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "amount": {
+      "amount": 1999,
+      "currency": "usd"
+    },
+    "enabled": true,
+    "threshold_tokens": 1200000,
+    "tokens": 1200000,
+    "cooldown_until": 1,
+    "last_topup_at": 1760000000
+  }
+}
+```
+</ResponseExample>

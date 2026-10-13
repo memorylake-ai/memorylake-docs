@@ -1,0 +1,74 @@
+---
+title: "List Permission Level Options"
+description: "The permission levels you may set for one member or access group on a resource"
+---
+
+```
+GET /openapi/memorylake/admin/v1/access/{resource_type}/{resource_id}/permission-levels/{subject_type}/{subject_id}/options
+```
+
+Returns the permission levels you may set for one member or access group on the resource, and which one they hold now.
+
+| `resource_type` | `resource_id` is | Permission |
+|---|---|---|
+| `workspaces` | `workspace_id` | `workspace:assign` on `workspace_id`<br />Also required: `workspace:read` on `workspace_id` |
+| `projects` | `project_id` | `project:assign` on `project_id`<br />Also required: `project:read` on `project_id` |
+| `actors` | `actor_id` | `actor:assign` on `actor_id`<br />Also required: `actor:read` on `actor_id` |
+| `agents` | `agent_id` | `agent:assign` on `agent_id`<br />Also required: `agent:read` on `agent_id` |
+| `skills` | `skill_id` | `skill:assign` on `skill_id`<br />Also required: `skill:read` on `skill_id` |
+| `boundaries` | `boundary_id` | `boundary:assign` on `boundary_id`<br />Also required: `boundary:read` on `boundary_id` |
+| `workspaces/{workspace_id}/actors` | `actor_id` | `workspace_actor:assign` on `workspace_id}/{actor_id`<br />Also required: `workspace_actor:read` on `workspace_id}/{actor_id` |
+| `workspaces/{workspace_id}/agents` | `agent_id` | `workspace_agent:assign` on `workspace_id}/{agent_id`<br />Also required: `workspace_agent:read` on `workspace_id}/{agent_id` |
+
+### Path Parameters
+
+<ParamField path="resource_type" type="string" required>
+Resource type — one of the values in the table above
+</ParamField>
+
+<ParamField path="resource_id" type="string" required>
+Identifier of the resource, as listed in the table above
+</ParamField>
+
+<ParamField path="subject_type" type="string" required>
+members (access groups cannot hold permission levels). One of: `members`, `access-groups`.
+</ParamField>
+
+<ParamField path="subject_id" type="string" required>
+principal_id of the member
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access/workspaces/69e585312c30a734cd7727316b1918bd/permission-levels/members/89914667f74821b220f374d323f0f4b0/options' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Permission Level Options object">
+  <ResponseField name="can_set_none" type="boolean">Whether the caller may remove the member's level (level none)</ResponseField>
+  <ResponseField name="settable_levels" type="array">Levels the caller may set this member to (excluding the current one)</ResponseField>
+  <ResponseField name="blocked_reason" type="string">Why the current level cannot be lowered or removed: outranked = the member's level is not below the caller's; last_manager = the member is the last one who can manage the resource; no_permission = the caller cannot share this resource</ResponseField>
+  <ResponseField name="current_level" type="string">The member's level set on this instance; omitted when none is set. One of: `read`, `write`, `manage`.</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "can_set_none": true,
+    "settable_levels": [
+      "example"
+    ],
+    "blocked_reason": "outranked",
+    "current_level": "read"
+  }
+}
+```
+</ResponseExample>

@@ -1,0 +1,65 @@
+---
+title: "Get Member"
+description: "Returns one member of your team, in the same shape as the roster"
+---
+
+```
+GET /openapi/memorylake/admin/v1/members/{principal_id}
+```
+
+Returns one member of your team, in the same shape as the roster. Any member may read it; contact details (email, username) are returned only to owners and admins. A principal that is not a member of your team is reported as not found.
+
+<Note>
+**Permission required:** none — any member's key can call this
+</Note>
+
+### Path Parameters
+
+<ParamField path="principal_id" type="string" required>
+Identifier of the member (`principal_id`)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members/dbcf9a3aabee5042775269c9d137a2f8' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Member object">
+  <ResponseField name="display_name" type="string">Member's display name</ResponseField>
+  <ResponseField name="joined_at" type="integer">Time this member joined, Unix seconds</ResponseField>
+  <ResponseField name="member_type" type="string">human = joined via invitation, virtual = managed identity created by an owner/admin</ResponseField>
+  <ResponseField name="principal_id" type="string">Stable identifier of this member</ResponseField>
+  <ResponseField name="role" type="string">Primary role in this team: tenant_owner | tenant_admin | tenant_member | &lt;custom role&gt;</ResponseField>
+  <ResponseField name="status" type="string">Membership state. One of: `active`, `inactive`.</ResponseField>
+  <ResponseField name="used_tokens" type="integer">Tokens consumed by this member</ResponseField>
+  <ResponseField name="email" type="string">Only returned to team owners and admins</ResponseField>
+  <ResponseField name="max_tokens" type="integer">Per-member cap in tokens. Omitted when the member is uncapped.</ResponseField>
+  <ResponseField name="username" type="string">Only returned to team owners and admins</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "display_name": "Alice",
+    "joined_at": 1760000000,
+    "member_type": "human",
+    "principal_id": "42fbbd89934900ebbc74814c49f009d2",
+    "role": "tenant_member",
+    "status": "active",
+    "used_tokens": 1200000,
+    "email": "alice@example.com",
+    "max_tokens": 1200000,
+    "username": "alice"
+  }
+}
+```
+</ResponseExample>

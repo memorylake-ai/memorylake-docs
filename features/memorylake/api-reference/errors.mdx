@@ -8,13 +8,18 @@ description: "Understand and handle API errors"
 | Status | Meaning | Common Causes |
 |--------|---------|---------------|
 | 200 | Success | Request completed successfully |
+| 201 | Created | A resource was created |
 | 400 | Bad Request | Invalid parameters or malformed request |
 | 401 | Unauthorized | Missing or invalid API key |
 | 402 | Payment Required | Insufficient quota for this operation |
 | 403 | Forbidden | Valid auth but insufficient permissions |
 | 404 | Not Found | Resource doesn't exist |
+| 409 | Conflict | The request conflicts with the current state, e.g. a duplicate name or a limit reached |
+| 412 | Precondition Failed | The `If-Match` value no longer matches: the resource changed since you read it |
+| 422 | Unprocessable Entity | The body or a parameter failed validation |
 | 429 | Too Many Requests | Rate limit exceeded |
 | 500 | Internal Server Error | Server-side error |
+| 503 | Service Unavailable | A dependency is temporarily unavailable; retry later |
 
 ## Error Response
 
@@ -80,6 +85,23 @@ response without guessing:
   Deleting a knowledge entry that does not exist currently answers `400`.
 </Note>
 
+On team, member, invitation, API key, access-control, usage, billing and IM integration endpoints, a missing permission is answered with `403`, `ACCESS_DENIED` and the message `permission denied`, without a `data` object; the permission each endpoint needs is listed on its page.
+
+### Refusals that protect an admin
+
+Some changes would give someone an admin role, or take access away from an admin. Only the team owner or an admin can make them; anyone else gets `403` with `ACCESS_DENIED`, and `data.operation` names the change instead of a missing permission:
+
+```json
+{
+  "success": false,
+  "message": "only an owner or admin may change an admin's role",
+  "error_code": "ACCESS_DENIED",
+  "data": { "operation": "change_role" }
+}
+```
+
+`operation` is one of `change_role`, `remove_member`, `remove_group_member`, `delete_group`, `reduce_admin_role_rules`, `narrow_admin_role_scope`, `narrow_admin_member_scope`, `downgrade_admin_member_tier`, `narrow_admin_via_group` or `remove_admin_member_rule`. More values may be added.
+
 ## Error Codes
 
 | Error Code | Description |
@@ -104,6 +126,8 @@ response without guessing:
 | `SKILL_NOT_USABLE` | An agent or agent version referenced a skill that has not passed security review, does not exist, or has no package yet |
 | `ACTOR_INACTIVE` | The actor or agent has been deleted. It is still listed in the workspace and its memories stay readable, but it can no longer take part in writes |
 | `AGENT_OPERATION_NOT_SUPPORTED` | The operation needs an agent whose runtime MemoryLake hosts: versions, forking and A2A are only available for `INTERNAL` agents, not `EXTERNAL` ones. Unlike `STATE_NOT_READY`, retrying will not help |
+| `TENANT_CREATION_LIMIT_REACHED` | The key's owner already has as many teams as they may create |
+| `ORG_TENANT_CREATION_DISABLED` | Creating teams is not available on this deployment |
 | `INTERNAL_ERROR` | Unexpected server-side error |
 
 ## Error Handling Best Practices

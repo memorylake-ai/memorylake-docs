@@ -1,0 +1,32 @@
+---
+title: "Download Invoice PDF"
+description: "Returns the invoice as a PDF file (application/pdf), served directly — no redirect"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/invoices/{invoice_id}/pdf
+```
+
+Returns the invoice as a PDF file (application/pdf), served directly — no redirect. With billing details saved it is the version carrying them; otherwise the payment provider's own. 409 when the provider has not produced a PDF for the invoice yet.
+
+<Note>
+**Permission required:** `invoice:read`
+</Note>
+
+### Path Parameters
+
+<ParamField path="invoice_id" type="string" required>
+Invoice id (`invoice_id`)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/invoices/2501a637ff332794f7dc5edee0556e67/pdf' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+Returns the invoice as a PDF file (`Content-Type: application/pdf`).
+

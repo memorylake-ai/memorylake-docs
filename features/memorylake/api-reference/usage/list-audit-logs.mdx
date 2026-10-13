@@ -1,0 +1,140 @@
+---
+title: "List Audit Logs"
+description: "Lists the team's audit events, newest first: management changes (category management) and events the platform recorded on its own (category system)"
+---
+
+```
+GET /openapi/memorylake/admin/v1/audit-logs
+```
+
+Lists the team's audit events, newest first: management changes (category management) and events the platform recorded on its own (category system). Changes made through this API with an API key name the key (actor.type api_key). With log:read_all the list covers the team; a caller holding only log:read_self sees the events they performed, and filtering by another member's actor_id is refused. The window defaults to the last 7 days and may span at most 92 days. Unlike other lists this one returns no total — page with continuation_token until it is absent. Rate limit: 20 requests per minute per key by default, counted separately from all other operations. When paging through many records, use the largest page_size (100).
+
+<Note>
+**Permission required:** `log:read_all` (whole team) or `log:read_self` (your own only)
+
+- When you filter by another member's `actor_id`: `log:read_all`
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page. Opaque — do not construct or parse it. Send the same filters with it.
+</ParamField>
+
+<ParamField query="category" type="string">
+management: changes people and keys made to the team (members, roles, keys, billing settings). system: events the platform recorded on its own (subscription ended, low-balance alerts, …). Omit for both.
+</ParamField>
+
+<ParamField query="action" type="array">
+Only these actions, e.g. member:change_role. Repeat the parameter for several.
+</ParamField>
+
+<ParamField query="actor_id" type="array">
+Only events performed by these members (principal_id). Repeat the parameter for several. A caller limited to their own events may only pass their own id.
+</ParamField>
+
+<ParamField query="target_type" type="string">
+Only events on this kind of target, e.g. principal, service_account.
+</ParamField>
+
+<ParamField query="target_id" type="string">
+Only events on this target id.
+</ParamField>
+
+<ParamField query="result" type="string">
+Only events with this outcome. One of: `succeeded`, `failed`, `partial`.
+</ParamField>
+
+<ParamField query="start_time" type="integer">
+Earliest event time to include, Unix seconds (inclusive). Defaults to 7 days before end_time.
+</ParamField>
+
+<ParamField query="end_time" type="integer">
+Latest event time, Unix seconds (exclusive). Defaults to now. The window may span at most 92 days.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/audit-logs' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Audit Log Entry object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Audit Log Entry object">
+    <ResponseField name="action" type="string">What happened, as resource:verb, e.g. member:change_role</ResponseField>
+    <ResponseField name="actor" type="object">
+    Who did it
+    <Expandable title="Audit Actor object">
+      <ResponseField name="type" type="string">user: a member acting in the console. api_key: a request made with an API key through this API — the key acts as its owner, named by principal_id. system: the platform itself, including actions taken by platform staff.</ResponseField>
+      <ResponseField name="api_key_id" type="string">For api_key: the id of the key that made the request (as in GET /api-keys/\{id\})</ResponseField>
+      <ResponseField name="display_name" type="string">That member's display name</ResponseField>
+      <ResponseField name="principal_id" type="string">The member who acted (for api_key: the key's owner)</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="category" type="string">management or system</ResponseField>
+    <ResponseField name="created_at" type="integer">When the event happened, Unix seconds</ResponseField>
+    <ResponseField name="id" type="string">Event id</ResponseField>
+    <ResponseField name="result" type="string">Outcome. One of: `succeeded`, `failed`, `partial`.</ResponseField>
+    <ResponseField name="ip_address" type="string">Client IP address, when one was recorded</ResponseField>
+    <ResponseField name="reason" type="string">Reason given for the change, when one was recorded. For a failed notification email: delivery failed.</ResponseField>
+    <ResponseField name="request_id" type="string">Request id, when one was recorded</ResponseField>
+    <ResponseField name="target" type="object">
+    What it was done to; absent when the event has no target
+    <Expandable title="Audit Target object">
+      <ResponseField name="id" type="string">Target id</ResponseField>
+      <ResponseField name="label" type="string">Human-readable label of the target. For a member (type principal) it is the member's current display name. For a low-balance alert email it is the recipient address, shown to owners and admins only. For an invitation (type tenant_invite) it is the invitee's email address, shown to owners, admins and callers who may invite members (member:invite) — the same people who see it in [List Invitations](/features/memorylake/api-reference/invitations/list-invitations). Omitted for everyone else. For other targets, the label as it was at the time.</ResponseField>
+      <ResponseField name="type" type="string">Kind of target, e.g. principal, service_account, tenant</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "action": "example",
+        "actor": {
+          "type": "user",
+          "api_key_id": "c5e4528438590fa347c8ae2b466e33e8",
+          "display_name": "Alice",
+          "principal_id": "752e99b6135c679c09080138ad2549e3"
+        },
+        "category": "management",
+        "created_at": 1760000000,
+        "id": "12b58895efacbeef0b1c6b31eee8134e",
+        "result": "succeeded",
+        "ip_address": "example",
+        "reason": "example",
+        "request_id": "74f7c4f6b943cffea7baa88fe2fb6414",
+        "target": {
+          "id": "ecef0d16af212bf1fce75cf89f64eb6c",
+          "label": "example",
+          "type": "example"
+        }
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

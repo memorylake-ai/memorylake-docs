@@ -1,0 +1,136 @@
+---
+title: "Preview Plan Change"
+description: "Prices switching the subscription to plan_id without changing anything: the prorated amount charged now, its line items, when the change takes effect and the next full invoice"
+---
+
+```
+GET /openapi/memorylake/admin/v1/billing/subscription/plan-change-preview
+```
+
+Prices switching the subscription to plan_id without changing anything: the prorated amount charged now, its line items, when the change takes effect and the next full invoice. proration_date echoes the instant the proration was computed for. Switches that cost nothing come back with applicable false and a reason. Changing the plan itself is done in the console.
+
+<Note>
+**Permission required:** `subscription:manage`
+</Note>
+
+### Query Parameters
+
+<ParamField query="plan_id" type="integer" required>
+The plan to price a switch to
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/subscription/plan-change-preview?plan_id=9e50b1aed525a8280e28b9662b6a7ba0' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Plan Change Preview object">
+  <ResponseField name="applicable" type="boolean">false = nothing to price: see reason. The change itself may still be valid.</ResponseField>
+  <ResponseField name="lines" type="array">
+  Line items behind amount_due; empty when not applicable
+  <Expandable title="Plan Change Preview Line object">
+    <ResponseField name="amount" type="object">
+    Line amount; negative for credit for unused time
+    <Expandable title="Money object">
+      <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+      <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="description" type="string">Line description</ResponseField>
+    <ResponseField name="proration" type="boolean">true for a prorated line</ResponseField>
+    <ResponseField name="period_end" type="integer">Service period end, Unix seconds</ResponseField>
+    <ResponseField name="period_start" type="integer">Service period start, Unix seconds</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="plan_id" type="integer">The target plan, as requested</ResponseField>
+  <ResponseField name="amount_due" type="object">
+  Charged immediately if the change were made now (prorated); negative = credit to the balance. Present when applicable.
+  <Expandable title="Money object">
+    <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+    <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="effective_at" type="integer">When the change would take effect, Unix seconds: now for an upgrade, the period end for a downgrade to free</ResponseField>
+  <ResponseField name="from_plan" type="object">
+  The current plan
+  <Expandable title="Plan Ref object">
+    <ResponseField name="id" type="integer">Plan id</ResponseField>
+    <ResponseField name="name" type="string">Plan name</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="next_invoice" type="object">
+  The first full-cycle invoice on the new plan. Present when applicable.
+  <Expandable title="Next Invoice object">
+    <ResponseField name="amount" type="object">
+    Full price of the new plan for one cycle
+    <Expandable title="Money object">
+      <ResponseField name="amount" type="integer">Amount in the currency's smallest unit (cents for usd)</ResponseField>
+      <ResponseField name="currency" type="string">Lowercase ISO 4217 currency code</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="date" type="integer">When it is issued, Unix seconds</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="proration_date" type="integer">The instant the proration was computed for, Unix seconds. Present when applicable.</ResponseField>
+  <ResponseField name="reason" type="string">Why there is nothing to price: no_paid_subscription (the current subscription is not paid through the payment provider), downgrade_to_free (moving to the free plan takes effect at period end, no charge), resume_only (target is the current plan of a subscription set to cancel: switching back only resumes it)</ResponseField>
+  <ResponseField name="to_plan" type="object">
+  The target plan
+  <Expandable title="Plan Ref object">
+    <ResponseField name="id" type="integer">Plan id</ResponseField>
+    <ResponseField name="name" type="string">Plan name</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "applicable": false,
+    "lines": [
+      {
+        "amount": {
+          "amount": 1999,
+          "currency": "usd"
+        },
+        "description": "Example description",
+        "proration": false,
+        "period_end": 1760000000,
+        "period_start": 1760000000
+      }
+    ],
+    "plan_id": 1,
+    "amount_due": {
+      "amount": 1999,
+      "currency": "usd"
+    },
+    "effective_at": 1760000000,
+    "from_plan": {
+      "id": 1,
+      "name": "Example name"
+    },
+    "next_invoice": {
+      "amount": {
+        "amount": 1999,
+        "currency": "usd"
+      },
+      "date": 1
+    },
+    "proration_date": 1,
+    "reason": "no_paid_subscription",
+    "to_plan": {
+      "id": 1,
+      "name": "Example name"
+    }
+  }
+}
+```
+</ResponseExample>

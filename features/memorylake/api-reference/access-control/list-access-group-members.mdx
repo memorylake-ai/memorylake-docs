@@ -1,0 +1,72 @@
+---
+title: "List Access Group Members"
+description: "Lists the members of an access group"
+---
+
+```
+GET /openapi/memorylake/admin/v1/access-groups/{group_id}/members
+```
+
+Lists the members of an access group.
+
+<Note>
+**Permission required:** `access_group:view`
+</Note>
+
+### Path Parameters
+
+<ParamField path="group_id" type="string" required>
+Identifier
+</ParamField>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer">
+Page size, 1–100 (default 20)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access-groups/7013fb5c15cfb29411f040967354b8a3/members' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Access Group Member object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Access Group Member object">
+    <ResponseField name="display_name" type="string">Display name</ResponseField>
+    <ResponseField name="principal_id" type="string">The member (`principal_id`)</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "display_name": "Alice",
+        "principal_id": "49b644614e94aee28676b2896c65cb75"
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

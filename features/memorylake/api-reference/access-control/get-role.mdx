@@ -1,0 +1,74 @@
+---
+title: "Get Role"
+description: "Returns one role — built-in or custom — with every permission it grants and where each comes from: the built-in definition, the base role it was copied from, or this role's own permission rules"
+---
+
+```
+GET /openapi/memorylake/admin/v1/roles/{role_key}
+```
+
+Returns one role — built-in or custom — with every permission it grants and where each comes from: the built-in definition, the base role it was copied from, or this role's own permission rules. Any member may read the role; `permissions` is returned only to callers holding `policy:manage` on `tenant:policy` (the permission that lists permission rules) and is omitted for everyone else. The effective permissions of a member or an access group ([Get Member Effective Permissions](/features/memorylake/api-reference/members/get-member-effective-permissions), [Get Access Group Effective Permissions](/features/memorylake/api-reference/access-control/get-access-group-effective-permissions)) also show what their role grants. To see your own permissions, use [List My Permissions](/features/memorylake/api-reference/access-control/list-my-permissions).
+
+<Note>
+**Permission required:** none — any member's key can call this
+</Note>
+
+### Path Parameters
+
+<ParamField path="role_key" type="string" required>
+Role key (`key`)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles/data_analyst' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Role Detail object">
+  <ResponseField name="admin_grant_only" type="boolean">When true, only the team owner or a member holding the admin baseline — through their role or through an access group — may grant this role. A property of the role, the same for every caller; it is not the console role list's per-caller assignable flag.</ResponseField>
+  <ResponseField name="assignable" type="boolean">Whether member and invitation writes accept this role at all — the same for every caller. The owner role never is. Unlike the console's role list, this does not say whether you yourself may grant it: for that, combine it with admin_grant_only and your own role.</ResponseField>
+  <ResponseField name="built_in" type="boolean">true for the three roles every team has; false for roles authored in this team</ResponseField>
+  <ResponseField name="key" type="string">The value the role fields of member and invitation writes accept</ResponseField>
+  <ResponseField name="label" type="string">Display name. Built-in roles carry a fixed English label; custom roles carry the operator-authored one.</ResponseField>
+  <ResponseField name="base_role_key" type="string">For custom roles: the role whose permission rules were copied into this one when it was created. Absent on built-in roles and on custom roles created without a base.</ResponseField>
+  <ResponseField name="description" type="string">Operator-authored description. Only custom roles carry one.</ResponseField>
+  <ResponseField name="parent_role_key" type="string">Same value as base_role_key; kept for existing clients.</ResponseField>
+  <ResponseField name="permissions" type="array">
+  Every permission the role grants, with its source. Returned only to callers holding policy:manage on tenant:policy; omitted for everyone else. An empty list means the role grants nothing. Instance limits (the role's access scope) are not reflected here.
+  <Expandable title="Role Permission object">
+    <ResponseField name="permission" type="string">Permission, as &lt;resource_type&gt;:&lt;action&gt; (e.g. memorylake:project:project:read)</ResponseField>
+    <ResponseField name="source" type="string">built_in: part of a built-in role's definition. base_role: the base role grants it too — it was copied from the base role when this role was created. role_rule: granted only by this role's own permission rules.</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "admin_grant_only": false,
+    "assignable": false,
+    "built_in": false,
+    "key": "sk-f6e5d4c3...redacted...b2a1",
+    "label": "example",
+    "base_role_key": "tenant_member",
+    "description": "Example description",
+    "parent_role_key": "example",
+    "permissions": [
+      {
+        "permission": "example",
+        "source": "built_in"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

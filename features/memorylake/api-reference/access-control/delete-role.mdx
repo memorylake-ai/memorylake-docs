@@ -1,0 +1,46 @@
+---
+title: "Delete Custom Role"
+description: "Deletes a custom role together with its permission rules and access scope"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/roles/{role_key}
+```
+
+Deletes a custom role together with its permission rules and access scope. Refused with 409 while any member still holds the role, and for built-in roles.
+
+<Note>
+**Permission required:** `policy:custom_role_manage`
+</Note>
+
+### Path Parameters
+
+<ParamField path="role_key" type="string" required>
+Key of a custom role
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles/data_analyst' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

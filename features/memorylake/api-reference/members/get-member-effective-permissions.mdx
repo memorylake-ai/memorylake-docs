@@ -1,0 +1,161 @@
+---
+title: "Get Member Effective Permissions"
+description: "Returns what the member can do and where each permission comes from: the role, access groups, or a direct grant"
+---
+
+```
+GET /openapi/memorylake/admin/v1/members/{principal_id}/effective-permissions
+```
+
+Returns what the member can do and where each permission comes from: the role, access groups, or a direct grant.
+
+<Note>
+**Permission required:** `access_group:view`
+</Note>
+
+### Path Parameters
+
+<ParamField path="principal_id" type="string" required>
+Identifier of the member (`principal_id`)
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members/dbcf9a3aabee5042775269c9d137a2f8/effective-permissions' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Effective Permissions object">
+  <ResponseField name="display_name" type="string">The member's display name</ResponseField>
+  <ResponseField name="permissions" type="array">
+  Effective actions with their sources
+  <Expandable title="Effective Permission object">
+    <ResponseField name="permission" type="string">Action</ResponseField>
+    <ResponseField name="sources" type="array">
+    Where this permission comes from
+    <Expandable title="Effective Source Ref object">
+      <ResponseField name="type" type="string">role, access_group, or personal (a rule set on the member directly)</ResponseField>
+      <ResponseField name="id" type="string">Role key or access group id; omitted for personal</ResponseField>
+      <ResponseField name="name" type="string">Display name of the role or access group; omitted for personal</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="principal_id" type="string">The member</ResponseField>
+  <ResponseField name="role" type="string">The member's primary role</ResponseField>
+  <ResponseField name="scopes" type="array">
+  Effective instance limits; types not listed are unrestricted
+  <Expandable title="Effective Scope object">
+    <ResponseField name="resource_type" type="string">Resource type</ResponseField>
+    <ResponseField name="restricted" type="boolean">false = every instance</ResponseField>
+    <ResponseField name="instances" type="array">
+    Reachable instances, when restricted
+    <Expandable title="Effective Scope Instance object">
+      <ResponseField name="id" type="string">Instance id</ResponseField>
+      <ResponseField name="sources" type="array">
+      Sources that allow this instance
+      <Expandable title="Effective Source Ref object">
+        <ResponseField name="type" type="string">role, access_group, or personal (a rule set on the member directly)</ResponseField>
+        <ResponseField name="id" type="string">Role key or access group id; omitted for personal</ResponseField>
+        <ResponseField name="name" type="string">Display name of the role or access group; omitted for personal</ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="sources" type="array">
+  Per-source breakdown
+  <Expandable title="Effective Permission Source object">
+    <ResponseField name="id" type="string">Role key or access group id</ResponseField>
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="permissions" type="array">Actions this source grants</ResponseField>
+    <ResponseField name="type" type="string">Where these permissions come from. One of: `role`, `access_group`.</ResponseField>
+    <ResponseField name="overridden_permissions" type="array">Actions this source grants that a deny elsewhere removes from the effective set</ResponseField>
+    <ResponseField name="scopes" type="array">
+    Instance limits this source carries
+    <Expandable title="Access Scope Entry object">
+      <ResponseField name="mode" type="string">all = every instance; instances = only the listed ones</ResponseField>
+      <ResponseField name="resource_type" type="string">Resource type, e.g. memorylake:project (see GET /permission-catalog)</ResponseField>
+      <ResponseField name="available_actions" type="array">Read-only. Instance-level actions the member's role grants for this type — the most a scope entry can allow.</ResponseField>
+      <ResponseField name="instances" type="array">
+      The instances, when mode is instances
+      <Expandable title="Access Scope Instance object">
+        <ResponseField name="id" type="string">Instance id, as returned by the data API</ResponseField>
+        <ResponseField name="actions" type="array">Actions allowed on this instance. Omit for every action the member's role allows.</ResponseField>
+        <ResponseField name="effective_actions" type="array">Read-only. The subset of actions the member's CURRENT role still grants.</ResponseField>
+        <ResponseField name="permission_level" type="string">Read-only. The permission level, when via_permission_level is true. One of: `read`, `write`, `manage`.</ResponseField>
+        <ResponseField name="shadowed_actions" type="array">Read-only. Actions stored here that the member's current role no longer grants.</ResponseField>
+        <ResponseField name="via_permission_level" type="boolean">Read-only. The member reaches this instance through a permission level granted on it, not through this scope. May be echoed back on write; such instances are skipped.</ResponseField>
+        <ResponseField name="workspace_id" type="string">Parent workspace of a project instance. Required when writing a project instance.</ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "display_name": "Alice",
+    "permissions": [
+      {
+        "permission": "example",
+        "sources": [
+          {
+            "type": "role",
+            "id": "7ea9bf65e6937c3c168bc7a2a0f6fbf2",
+            "name": "Example name"
+          }
+        ]
+      }
+    ],
+    "principal_id": "a4f0086eca294846b3bb8b9086c30e2a",
+    "role": "tenant_member",
+    "scopes": [
+      {
+        "resource_type": "example",
+        "restricted": false,
+        "instances": [
+          {
+            "id": "66a8e03ad707a50641b92fac99929037",
+            "sources": []
+          }
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "eb619252391dd05caf4e338bf6fc7872",
+        "name": "Example name",
+        "permissions": [
+          "example"
+        ],
+        "type": "role",
+        "overridden_permissions": [
+          "example"
+        ],
+        "scopes": [
+          {
+            "mode": "all",
+            "resource_type": "example",
+            "available_actions": [],
+            "instances": []
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

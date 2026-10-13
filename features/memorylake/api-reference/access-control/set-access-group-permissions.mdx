@@ -1,0 +1,95 @@
+---
+title: "Set Access Group Permissions"
+description: "Replaces the group's own permission list; [] removes every one of them"
+---
+
+```
+PUT /openapi/memorylake/admin/v1/access-groups/{group_id}/permissions
+```
+
+Replaces the group's own permission list; [] removes every one of them. The base role or base group stays as it is. Only permissions in GET /permission-catalog?grantable_to=access_group are accepted. Sending If-Match also requires view: the current list is read to compare.
+
+The response carries an `ETag` header (the same value a GET of this resource returns). Send it back in `If-Match` to make the write conditional: when the resource has changed in the meantime the write is refused with 412 and nothing is changed. The check narrows, but does not fully close, the window for a concurrent overwrite — two writers that pass it at the same instant can both write.
+
+<Note>
+**Permission required:** `access_group:manage`
+
+- When you send `If-Match` (the current list is read to compare): `access_group:view`
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="group_id" type="string" required>
+Identifier
+</ParamField>
+
+### Headers
+
+<ParamField header="If-Match" type="string">
+Optional. The ETag from [Get Access Group](/features/memorylake/api-reference/access-control/get-access-group) or a previous [Set Access Group Permissions](/features/memorylake/api-reference/access-control/set-access-group-permissions). The write is refused with 412 when the group's permissions have changed since; omit it to overwrite unconditionally.
+</ParamField>
+
+### Request Body
+
+<ParamField body="permissions" type="array" required>
+The group's complete permission list; [] removes all of them. The base role or base group is unaffected.
+<Expandable title="Access Group Permission object">
+  <ParamField body="permissions[].action" type="string" required>Action</ParamField>
+  <ParamField body="permissions[].resource_type" type="string" required>Resource type (see GET /permission-catalog?grantable_to=access_group)</ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="reason" type="string" required>
+Why the change is made; recorded in the audit log
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PUT 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access-groups/7013fb5c15cfb29411f040967354b8a3/permissions' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "permissions": [
+      {
+        "action": "example",
+        "resource_type": "example"
+      }
+    ],
+    "reason": "example"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Access Group Permissions object">
+  <ResponseField name="group_id" type="string">The group</ResponseField>
+  <ResponseField name="permissions" type="array">
+  Permissions the group grants on top of its base role or base group
+  <Expandable title="Access Group Permission object">
+    <ResponseField name="action" type="string">Action</ResponseField>
+    <ResponseField name="resource_type" type="string">Resource type (see GET /permission-catalog?grantable_to=access_group)</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "group_id": "6bb71ef5236628d6e205696e676c1e4b",
+    "permissions": [
+      {
+        "action": "example",
+        "resource_type": "example"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

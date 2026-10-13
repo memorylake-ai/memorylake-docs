@@ -1,0 +1,46 @@
+---
+title: "Delete IM Integration"
+description: "Disconnects the bot and deletes the integration with its conversation mappings"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/integrations/{integration_id}
+```
+
+Disconnects the bot and deletes the integration with its conversation mappings. Conversation history is kept.
+
+<Note>
+**Permission required:** `workspace:integration_manage` on `workspace_id`
+</Note>
+
+### Path Parameters
+
+<ParamField path="integration_id" type="string" required>
+Identifier of the integration
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/integrations/8e6332af9d801f19496ca0f9fded5333' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

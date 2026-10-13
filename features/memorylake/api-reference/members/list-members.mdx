@@ -1,0 +1,100 @@
+---
+title: "List Members"
+description: "Lists the members of your team"
+---
+
+```
+GET /openapi/memorylake/admin/v1/members
+```
+
+Lists the members of your team. Any member may read the roster; contact details (email, username) are returned only to owners and admins.
+
+<Note>
+**Permission required:** none — any member's key can call this
+
+- When you set `email`: team owner or admin
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer" default="20">
+Number of items per page (1–100)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page. Opaque — do not construct or parse it.
+</ParamField>
+
+<ParamField query="name_fuzzy" type="string">
+Case-insensitive substring match on the member's display name. For team owners and admins it also matches email and username.
+</ParamField>
+
+<ParamField query="role" type="string">
+Only members whose role field is this role key (tenant_owner, tenant_admin, tenant_member or a custom role key). An unknown key matches nobody.
+</ParamField>
+
+<ParamField query="email" type="array">
+Only members with these email addresses (case-insensitive, exact). Repeat the parameter for several. Contact details are visible only to owners and admins, so this filter is too: anyone else gets 403.
+</ParamField>
+
+<ParamField query="member_type" type="string">
+Only human members or only virtual members
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Member object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Member object">
+    <ResponseField name="display_name" type="string">Member's display name</ResponseField>
+    <ResponseField name="joined_at" type="integer">Time this member joined, Unix seconds</ResponseField>
+    <ResponseField name="member_type" type="string">human = joined via invitation, virtual = managed identity created by an owner/admin</ResponseField>
+    <ResponseField name="principal_id" type="string">Stable identifier of this member</ResponseField>
+    <ResponseField name="role" type="string">Primary role in this team: tenant_owner | tenant_admin | tenant_member | &lt;custom role&gt;</ResponseField>
+    <ResponseField name="status" type="string">Membership state. One of: `active`, `inactive`.</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Tokens consumed by this member</ResponseField>
+    <ResponseField name="email" type="string">Only returned to team owners and admins</ResponseField>
+    <ResponseField name="max_tokens" type="integer">Per-member cap in tokens. Omitted when the member is uncapped.</ResponseField>
+    <ResponseField name="username" type="string">Only returned to team owners and admins</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "display_name": "Alice",
+        "joined_at": 1760000000,
+        "member_type": "human",
+        "principal_id": "42fbbd89934900ebbc74814c49f009d2",
+        "role": "tenant_member",
+        "status": "active",
+        "used_tokens": 1200000,
+        "email": "alice@example.com",
+        "max_tokens": 1200000,
+        "username": "alice"
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

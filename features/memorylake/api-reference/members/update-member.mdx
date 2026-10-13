@@ -1,0 +1,65 @@
+---
+title: "Update Member"
+description: "Changes a member's role and/or per-member usage cap"
+---
+
+```
+PATCH /openapi/memorylake/admin/v1/members/{principal_id}
+```
+
+Changes a member's role and/or per-member usage cap. Only the fields you send change; null is rejected. The owner role cannot be assigned here, and the owner's own role and your own role cannot be changed — to hand ownership over, use [Transfer Ownership](/features/memorylake/api-reference/team/transfer-ownership).
+
+<Note>
+**Permission required:** depends on what you send:
+
+- When you send `role`: `member:change_role`
+- When you send `max_tokens`: `member:set_quota`
+- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+</Note>
+
+### Path Parameters
+
+<ParamField path="principal_id" type="string" required>
+Identifier of the member (`principal_id`)
+</ParamField>
+
+### Headers
+
+<ParamField header="Idempotency-Key" type="string">
+Optional. Retrying with the same value replays the first result.
+</ParamField>
+
+### Request Body
+
+<ParamField body="max_tokens" type="integer">
+Per-member usage cap in tokens, at most 1374389534. 0 removes the cap.
+</ParamField>
+
+<ParamField body="role" type="string">
+New role: tenant_admin, tenant_member, or a custom role key of this team. The owner role cannot be assigned here.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members/dbcf9a3aabee5042775269c9d137a2f8' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "max_tokens": 1200000,
+    "role": "tenant_member"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>

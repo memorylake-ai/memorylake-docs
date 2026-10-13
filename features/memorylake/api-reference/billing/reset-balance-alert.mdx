@@ -1,0 +1,95 @@
+---
+title: "Reset Low-Balance Alert"
+description: "Restores the default alert configuration and returns it (is_default true)"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/billing/credit-balance/alert
+```
+
+Restores the default alert configuration and returns it (is_default true). This does not turn alerts off — the defaults are enabled; set enabled to false with PUT for that.
+
+<Note>
+**Permission required:** `credits:manage`
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/credit-balance/alert' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Balance Alert object">
+  <ResponseField name="delivery_enabled" type="boolean">false = this deployment does not evaluate low-balance alerts at all; the setting is kept but has no effect</ResponseField>
+  <ResponseField name="enabled" type="boolean">Whether alerts are sent</ResponseField>
+  <ResponseField name="is_default" type="boolean">true = nothing has been saved; the defaults shown apply (percent_used 80 / 95 with a subscription, otherwise tokens_remaining 1,600,000 / 320,000)</ResponseField>
+  <ResponseField name="notification_channel" type="object">
+  Where alerts go
+  <Expandable title="Alert Recipients Channel object">
+    <ResponseField name="recipients" type="array">Additional addresses, at most 5. The team owner's email always receives alerts as well</ResponseField>
+    <ResponseField name="type" type="string">Delivery channel. One of: `email`.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="status" type="object">
+  Current alert state
+  <Expandable title="Balance Alert Status object">
+    <ResponseField name="state" type="string">triggered = an alert has fired and the balance has not recovered above its level yet. One of: `ok`, `triggered`.</ResponseField>
+    <ResponseField name="balance_tokens" type="integer">The balance when it fired, in tokens</ResponseField>
+    <ResponseField name="threshold" type="object">
+    The level that fired
+    <Expandable title="Balance Alert Threshold object">
+      <ResponseField name="type" type="string">percent_used = alert when the share of the subscription cycle (or, without a subscription, of all credit ever added) used reaches value percent; tokens_remaining = alert when the balance falls to value tokens</ResponseField>
+      <ResponseField name="value" type="integer">1–99 for percent_used; 1–1,000,000,000 for tokens_remaining</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="triggered_at" type="integer">When the active alert fired, Unix seconds</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="thresholds" type="array">
+  Alert levels; all of one type
+  <Expandable title="Balance Alert Threshold object">
+    <ResponseField name="type" type="string">percent_used = alert when the share of the subscription cycle (or, without a subscription, of all credit ever added) used reaches value percent; tokens_remaining = alert when the balance falls to value tokens</ResponseField>
+    <ResponseField name="value" type="integer">1–99 for percent_used; 1–1,000,000,000 for tokens_remaining</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "delivery_enabled": true,
+    "enabled": true,
+    "is_default": true,
+    "notification_channel": {
+      "recipients": [
+        "example"
+      ],
+      "type": "email"
+    },
+    "status": {
+      "state": "ok",
+      "balance_tokens": 1200000,
+      "threshold": {
+        "type": "percent_used",
+        "value": 1
+      },
+      "triggered_at": 1760000000
+    },
+    "thresholds": [
+      {
+        "type": "percent_used",
+        "value": 1
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

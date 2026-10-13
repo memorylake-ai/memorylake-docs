@@ -1,0 +1,203 @@
+---
+title: "Get Usage"
+description: "Returns the current quota snapshot plus consumption over the requested period (at most 92 days)"
+---
+
+```
+GET /openapi/memorylake/admin/v1/usage
+```
+
+Returns the current quota snapshot plus consumption over the requested period (at most 92 days). With usage:view_all the figures cover the whole team; a caller holding only usage:view_self receives their own usage (including their API keys), and `scope` says which. bucket_width=1d adds a per-day series; group_by=member adds a per-member breakdown and requires usage:view_all.
+
+<Note>
+**Permission required:** `usage:view_all` (whole team) or `usage:view_self` (your own only)
+
+- When you pass `group_by=member`: `usage:view_all`
+</Note>
+
+### Query Parameters
+
+<ParamField query="start_date" type="string">
+First day to include, YYYY-MM-DD, in the timezone stated by period.timezone. Defaults to six days before end_date.
+</ParamField>
+
+<ParamField query="end_date" type="string">
+Last day to include, YYYY-MM-DD, in the timezone stated by period.timezone. Defaults to today.
+</ParamField>
+
+<ParamField query="bucket_width" type="string">
+Set to 1d to also receive buckets: a per-day time series over the period.
+</ParamField>
+
+<ParamField query="group_by" type="array">
+Repeatable. by_model is always returned for the period; member adds by_member (requires usage:view_all). With bucket_width=1d, each bucket also carries the breakdowns listed here.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/usage' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Usage object">
+  <ResponseField name="by_model" type="array">
+  Per-model breakdown over the period
+  <Expandable title="Usage By Model object">
+    <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+    <ResponseField name="model" type="string">Model name, or the name of a platform metering operation (files_process, memory_input, retrieval_call, search_call)</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+    <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="period" type="object">
+  The period these totals cover
+  <Expandable title="Usage Period object">
+    <ResponseField name="end_date" type="string">Last day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="start_date" type="string">First day included, YYYY-MM-DD</ResponseField>
+    <ResponseField name="timezone" type="string">IANA timezone the days are cut in (Asia/Shanghai)</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="quota" type="object">
+  Account-level quota snapshot — NOT scoped to the period
+  <Expandable title="Usage Quota object">
+    <ResponseField name="available_tokens" type="integer">Currently available tokens (one-time credit plus unexpired subscription). Account-level snapshot, NOT scoped to the period.</ResponseField>
+    <ResponseField name="unlimited" type="boolean">When true, available_tokens is not meaningful</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="scope" type="string">Whose consumption the figures cover: team (caller holds usage:view_all) or self (only usage:view_self — the caller's own usage, including their API keys; API key usage before 2026-05-21 was recorded under the key itself and is not part of the self figures)</ResponseField>
+  <ResponseField name="totals" type="object">
+  Aggregate consumption over the period
+  <Expandable title="Usage Totals object">
+    <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+    <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens — the same unit as quota.available_tokens. Covers platform operations too, which carry no prompt/completion tokens.</ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="buckets" type="array">
+  Present only with bucket_width=1d: one entry per day of the period, oldest first, days without usage included as zeros. Each bucket carries the breakdowns named in group_by.
+  <Expandable title="Usage Bucket object">
+    <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+    <ResponseField name="date" type="string">The day, YYYY-MM-DD, in period.timezone</ResponseField>
+    <ResponseField name="end_time" type="integer">Bucket end, Unix seconds (exclusive)</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+    <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+    <ResponseField name="start_time" type="integer">Bucket start, Unix seconds (inclusive)</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+    <ResponseField name="by_member" type="array">
+    Present when group_by includes member: this day's per-member breakdown
+    <Expandable title="Usage By Member object">
+      <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+      <ResponseField name="display_name" type="string">The member's display name. When none is set, owners and admins get the member's username instead; anyone else gets an empty string</ResponseField>
+      <ResponseField name="principal_id" type="string">Identifier of the member (`principal_id`). For usage before 2026-05-21, API key usage was recorded under the key's own identity and appears as a separate entry</ResponseField>
+      <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+      <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+      <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="by_model" type="array">
+    Present when group_by includes model: this day's per-model breakdown
+    <Expandable title="Usage By Model object">
+      <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+      <ResponseField name="model" type="string">Model name, or the name of a platform metering operation (files_process, memory_input, retrieval_call, search_call)</ResponseField>
+      <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+      <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+      <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="by_member" type="array">
+  Present only with group_by=member (an empty array when nobody consumed anything): per-member breakdown, largest consumer first. Includes people who have since left the team, so requests and token counts add up to totals; used_tokens is rounded down per entry, so its sum can fall short of totals.used_tokens by under one token per entry
+  <Expandable title="Usage By Member object">
+    <ResponseField name="completion_tokens" type="integer">Completion tokens produced</ResponseField>
+    <ResponseField name="display_name" type="string">The member's display name. When none is set, owners and admins get the member's username instead; anyone else gets an empty string</ResponseField>
+    <ResponseField name="principal_id" type="string">Identifier of the member (`principal_id`). For usage before 2026-05-21, API key usage was recorded under the key's own identity and appears as a separate entry</ResponseField>
+    <ResponseField name="prompt_tokens" type="integer">Prompt tokens consumed</ResponseField>
+    <ResponseField name="requests" type="integer">Number of requests</ResponseField>
+    <ResponseField name="used_tokens" type="integer">Consumption charged against the balance, in tokens</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "by_model": [
+      {
+        "completion_tokens": 1200000,
+        "model": "example",
+        "prompt_tokens": 1200000,
+        "requests": 1,
+        "used_tokens": 1200000
+      }
+    ],
+    "period": {
+      "end_date": "example",
+      "start_date": "example",
+      "timezone": "example"
+    },
+    "quota": {
+      "available_tokens": 1200000,
+      "unlimited": false
+    },
+    "scope": "team",
+    "totals": {
+      "completion_tokens": 1200000,
+      "prompt_tokens": 1200000,
+      "requests": 1,
+      "used_tokens": 1200000
+    },
+    "buckets": [
+      {
+        "completion_tokens": 1200000,
+        "date": "example",
+        "end_time": 1760000000,
+        "prompt_tokens": 1200000,
+        "requests": 1,
+        "start_time": 1760000000,
+        "used_tokens": 1200000,
+        "by_member": [
+          {
+            "completion_tokens": 1200000,
+            "display_name": "Alice",
+            "principal_id": "7eccf77fb75500eaacca3ce819c381f0",
+            "prompt_tokens": 1200000,
+            "requests": 1,
+            "used_tokens": 1200000
+          }
+        ],
+        "by_model": [
+          {
+            "completion_tokens": 1200000,
+            "model": "example",
+            "prompt_tokens": 1200000,
+            "requests": 1,
+            "used_tokens": 1200000
+          }
+        ]
+      }
+    ],
+    "by_member": [
+      {
+        "completion_tokens": 1200000,
+        "display_name": "Alice",
+        "principal_id": "7eccf77fb75500eaacca3ce819c381f0",
+        "prompt_tokens": 1200000,
+        "requests": 1,
+        "used_tokens": 1200000
+      }
+    ]
+  }
+}
+```
+</ResponseExample>

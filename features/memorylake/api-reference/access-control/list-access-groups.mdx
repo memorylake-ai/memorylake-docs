@@ -1,0 +1,106 @@
+---
+title: "List Access Groups"
+description: "Lists the access groups of your team"
+---
+
+```
+GET /openapi/memorylake/admin/v1/access-groups
+```
+
+Lists the access groups of your team. An access group gives its members extra permissions and access to extra instances; it never takes access away.
+
+<Note>
+**Permission required:** `access_group:view`
+</Note>
+
+### Query Parameters
+
+<ParamField query="page_size" type="integer">
+Page size, 1–100 (default 20)
+</ParamField>
+
+<ParamField query="continuation_token" type="string">
+Token from the previous page
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/access-groups' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Load More Response Access Group object">
+  <ResponseField name="items" type="array">
+  List of items in the current page
+  <Expandable title="Access Group object">
+    <ResponseField name="created_at" type="integer">Unix seconds</ResponseField>
+    <ResponseField name="created_by" type="string">principal_id of the creator</ResponseField>
+    <ResponseField name="group_id" type="string">Identifier</ResponseField>
+    <ResponseField name="member_count" type="integer">Number of members</ResponseField>
+    <ResponseField name="name" type="string">Display name</ResponseField>
+    <ResponseField name="permissions" type="array">
+    Permissions the group grants on top of its base role or base group
+    <Expandable title="Access Group Permission object">
+      <ResponseField name="action" type="string">Action</ResponseField>
+      <ResponseField name="resource_type" type="string">Resource type (see GET /permission-catalog?grantable_to=access_group)</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="updated_at" type="integer">Unix seconds</ResponseField>
+    <ResponseField name="base_access_group_id" type="string">The group grants everything this other access group grants. Fixed at creation.</ResponseField>
+    <ResponseField name="base_role_key" type="string">The group grants everything this role grants (tenant_member or tenant_admin). Fixed at creation.</ResponseField>
+    <ResponseField name="description" type="string">Description</ResponseField>
+    <ResponseField name="scope_summary" type="array">
+    Instances the group gives access to, counted per resource type
+    <Expandable title="Access Group Scope Count object">
+      <ResponseField name="instance_count" type="integer">Instances of this type the group gives its members access to</ResponseField>
+      <ResponseField name="resource_type" type="string">Resource type</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+  <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
+  <ResponseField name="total" type="integer">Total number of items matching the filter across all pages; omitted when the count is unavailable</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "created_at": 1760000000,
+        "created_by": "example",
+        "group_id": "6f8976043c3a1d0040a5853315a3c843",
+        "member_count": 1,
+        "name": "Example name",
+        "permissions": [
+          {
+            "action": "example",
+            "resource_type": "example"
+          }
+        ],
+        "updated_at": 1760000000,
+        "base_access_group_id": "d62d704744ca464eeee07a49ef8c2877",
+        "base_role_key": "tenant_member",
+        "description": "Example description",
+        "scope_summary": [
+          {
+            "instance_count": 1,
+            "resource_type": "example"
+          }
+        ]
+      }
+    ],
+    "continuation_token": "eyJvZmZzZXQiOjIwfQ",
+    "total": 1
+  }
+}
+```
+</ResponseExample>

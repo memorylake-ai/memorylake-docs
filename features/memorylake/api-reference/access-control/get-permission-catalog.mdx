@@ -1,0 +1,81 @@
+---
+title: "Get Permission Catalog"
+description: "Lists the resource types and actions permission rules can name, with each action's prerequisites"
+---
+
+```
+GET /openapi/memorylake/admin/v1/permission-catalog
+```
+
+Lists the resource types and actions permission rules can name, with each action's prerequisites. Product features that are switched off are left out. Any member may read the full catalog; grantable_to=access_group (what an access group can be given) needs the permission below.
+
+<Note>
+**Permission required:** depends on what you send:
+
+- When you pass `grantable_to=access_group`: `access_group:view`
+</Note>
+
+### Query Parameters
+
+<ParamField query="grantable_to" type="string">
+access_group: only what can be granted to an access group ([Set Access Group Permissions](/features/memorylake/api-reference/access-control/set-access-group-permissions))
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/permission-catalog' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Permission Catalog object">
+  <ResponseField name="resource_types" type="array">
+  Resource types and their actions; disabled product features are left out
+  <Expandable title="Catalog Resource Type object">
+    <ResponseField name="actions" type="array">
+    Actions available on this resource type
+    <Expandable title="Catalog Action object">
+      <ResponseField name="action" type="string">Action key, as used in permission rules</ResponseField>
+      <ResponseField name="destructive" type="boolean">Deletes or irreversibly changes data</ResponseField>
+      <ResponseField name="grantable" type="boolean">false = only the team owner holds this action; it cannot be granted to roles, members or access groups, and [Create Permission Rules](/features/memorylake/api-reference/access-control/create-permission-rules) rejects it</ResponseField>
+      <ResponseField name="prerequisites" type="array">
+      Actions this one needs to be useful; [Create Permission Rules](/features/memorylake/api-reference/access-control/create-permission-rules) can add them (auto_grant_prerequisites)
+      <Expandable title="Catalog Prerequisite object">
+        <ResponseField name="action" type="string">The required action</ResponseField>
+        <ResponseField name="resource_type" type="string">Where it is required; omitted when it is the same resource as the dependent action</ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="resource_type" type="string">Resource type, as used in permission rules and access scopes</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "resource_types": [
+      {
+        "actions": [
+          {
+            "action": "example",
+            "destructive": false,
+            "grantable": false,
+            "prerequisites": []
+          }
+        ],
+        "resource_type": "example"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
