@@ -22,8 +22,7 @@ Requests and responses keep the provider's own format. This reference covers wha
 | [`POST /openai/v1/responses`](/features/memory-router/api-reference/responses) | OpenAI Responses |
 | [`POST /openai/v1/embeddings`](/features/memory-router/api-reference/embeddings) | OpenAI Embeddings |
 | [`POST /anthropic/v1/messages`](/features/memory-router/api-reference/messages) | Anthropic Messages |
-
-There is no endpoint that lists models. The models you can call are listed under **Available Models** in the console.
+| [`GET /memory-router/v1/models`](/features/memory-router/api-reference/list-models) | The models you can call, with prices |
 
 ## Authentication
 
@@ -48,7 +47,7 @@ A Boundary decides which memory a request uses. `boundary_id` applies to Chat Co
 
 ## Models
 
-Use the model's native name, such as `gpt-4o-mini` or `claude-haiku-4-5`, with no provider prefix.
+Use the model's native name, such as `gpt-4o-mini` or `claude-haiku-4-5`, with no provider prefix. [List Models](/features/memory-router/api-reference/list-models) returns every model you can call and which base URL reaches it. The OpenAI and Anthropic `/v1/models` endpoints are not available.
 
 ## Streaming
 
@@ -70,6 +69,6 @@ Errors from Memory Router itself:
 | `429` | Too many requests with an invalid key came from your IP address. Wait for the time in `Retry-After` |
 | `502` | Memory Router could not reach its upstream service. Retry later |
 
-`401` and `403` use the OpenAI error shape (`{"error": {"message", "type"}}`). `402` returns `{"success": false, "message": "insufficient quota"}`. `429` returns `{"success": false, "code": "AUTH_THROTTLED", "error": {"type", "message"}}`. `502` returns plain text.
+`401` and `403` use the OpenAI error shape (`{"error": {"message", "type"}}`). `402` returns `{"success": false, "message": "insufficient quota"}`. `429` returns `{"success": false, "code": "AUTH_THROTTLED", "error": {"type", "message"}}`. `502` returns plain text from the inference endpoints, and the OpenAI error shape from List Models.
 
 Other errors are passed through from upstream unchanged; errors from the model provider keep the provider's own format.

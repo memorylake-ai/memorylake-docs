@@ -1,0 +1,303 @@
+---
+title: "List Models"
+description: "List the models you can call and their prices"
+---
+
+```
+GET /memory-router/v1/models
+```
+
+Lists the models you can call through Memory Router, with their prices, grouped by protocol: call `openai` models through `/openai/v1` and `anthropic` models through `/anthropic/v1`. Each site has its own catalog.
+
+Prices are per million tokens, in US dollars and in balance tokens (what your balance is charged). A price that is not listed does not apply to the model; it is not free. When `price` is missing, no price is available for the model; it can still be called.
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/memory-router/v1/models' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="anthropic" type="array">
+Models called through `/anthropic/v1`, sorted by name
+<Expandable title="Catalog Model object">
+  <ResponseField name="name" type="string">Model name to send as `model`</ResponseField>
+  <ResponseField name="provider_type" type="string">Protocol that reaches the model. One of: `openai`, `anthropic`.</ResponseField>
+  <ResponseField name="price" type="object">
+  Prices of the model. Missing when no price is available for it.
+  <Expandable title="Model Price object">
+    <ResponseField name="details" type="object">
+    Every other price of the model. Only the prices that apply are listed.
+    <Expandable title="Price Details object">
+      <ResponseField name="batch" type="object">
+      Prices for batch requests
+      <Expandable title="Batch Price object">
+        <ResponseField name="cache_read" type="object">Input tokens read from the cache</ResponseField>
+        <ResponseField name="cache_read_explicit" type="object">Input tokens read from a cache you created explicitly</ResponseField>
+        <ResponseField name="cache_write" type="object">Input tokens written to the cache</ResponseField>
+        <ResponseField name="cache_write_1h" type="object">Input tokens written to a 1-hour cache</ResponseField>
+        <ResponseField name="cache_write_5m" type="object">Input tokens written to a 5-minute cache</ResponseField>
+        <ResponseField name="input" type="object">Input tokens</ResponseField>
+        <ResponseField name="output" type="object">Output tokens</ResponseField>
+        <ResponseField name="output_thinking" type="object">Reasoning output tokens</ResponseField>
+        <ResponseField name="tiers" type="array">Batch prices by input length, in the same bands as `tiers`</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_read" type="object">
+      Input tokens read from the cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_read_explicit" type="object">
+      Input tokens read from a cache you created explicitly
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_write" type="object">
+      Input tokens written to the cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_write_1h" type="object">
+      Input tokens written to a 1-hour cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_write_5m" type="object">
+      Input tokens written to a 5-minute cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="hosted_tools" type="object">
+      Prices of built-in tools
+      <Expandable title="Hosted Tools Price object">
+        <ResponseField name="file_search" type="object">File search calls, as `usd_per_thousand_calls` (US dollars per thousand calls)</ResponseField>
+        <ResponseField name="image_generation" type="array">Image generation prices, one entry per image model: `model`, and `text_input`, `image_input`, `text_output`, `image_output` priced like `input`</ResponseField>
+        <ResponseField name="image_generation_batch" type="array">Batch image generation prices, one entry per image model: `model`, and `text_input`, `image_input`, `text_output`, `image_output` priced like `input`</ResponseField>
+        <ResponseField name="web_search" type="object">Web search calls, as `usd_per_thousand_calls` (US dollars per thousand calls)</ResponseField>
+        <ResponseField name="web_search_preview" type="object">Web search (preview) calls, as `usd_per_thousand_calls` (US dollars per thousand calls)</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="output_thinking" type="object">
+      Reasoning output tokens
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="tiers" type="array">
+      Prices by input length
+      <Expandable title="Price Band object">
+        <ResponseField name="min_input_tokens" type="integer">Lowest input length of the band, in tokens</ResponseField>
+        <ResponseField name="cache_read" type="object">Input tokens read from the cache</ResponseField>
+        <ResponseField name="cache_read_explicit" type="object">Input tokens read from a cache you created explicitly</ResponseField>
+        <ResponseField name="cache_write" type="object">Input tokens written to the cache</ResponseField>
+        <ResponseField name="cache_write_1h" type="object">Input tokens written to a 1-hour cache</ResponseField>
+        <ResponseField name="cache_write_5m" type="object">Input tokens written to a 5-minute cache</ResponseField>
+        <ResponseField name="input" type="object">Input tokens</ResponseField>
+        <ResponseField name="max_input_tokens" type="integer">Highest input length of the band, in tokens. Missing for the last band.</ResponseField>
+        <ResponseField name="output" type="object">Output tokens</ResponseField>
+        <ResponseField name="output_thinking" type="object">Reasoning output tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="input" type="object">
+    Input tokens
+    <Expandable title="Price Tier object">
+      <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+      <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="output" type="object">
+    Output tokens
+    <Expandable title="Price Tier object">
+      <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+      <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="tiered" type="boolean">true when the price depends on input length: input and output are then the lowest band, and details.tiers lists every band</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+<ResponseField name="openai" type="array">
+Models called through `/openai/v1`, sorted by name
+<Expandable title="Catalog Model object">
+  <ResponseField name="name" type="string">Model name to send as `model`</ResponseField>
+  <ResponseField name="provider_type" type="string">Protocol that reaches the model. One of: `openai`, `anthropic`.</ResponseField>
+  <ResponseField name="price" type="object">
+  Prices of the model. Missing when no price is available for it.
+  <Expandable title="Model Price object">
+    <ResponseField name="details" type="object">
+    Every other price of the model. Only the prices that apply are listed.
+    <Expandable title="Price Details object">
+      <ResponseField name="batch" type="object">
+      Prices for batch requests
+      <Expandable title="Batch Price object">
+        <ResponseField name="cache_read" type="object">Input tokens read from the cache</ResponseField>
+        <ResponseField name="cache_read_explicit" type="object">Input tokens read from a cache you created explicitly</ResponseField>
+        <ResponseField name="cache_write" type="object">Input tokens written to the cache</ResponseField>
+        <ResponseField name="cache_write_1h" type="object">Input tokens written to a 1-hour cache</ResponseField>
+        <ResponseField name="cache_write_5m" type="object">Input tokens written to a 5-minute cache</ResponseField>
+        <ResponseField name="input" type="object">Input tokens</ResponseField>
+        <ResponseField name="output" type="object">Output tokens</ResponseField>
+        <ResponseField name="output_thinking" type="object">Reasoning output tokens</ResponseField>
+        <ResponseField name="tiers" type="array">Batch prices by input length, in the same bands as `tiers`</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_read" type="object">
+      Input tokens read from the cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_read_explicit" type="object">
+      Input tokens read from a cache you created explicitly
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_write" type="object">
+      Input tokens written to the cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_write_1h" type="object">
+      Input tokens written to a 1-hour cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="cache_write_5m" type="object">
+      Input tokens written to a 5-minute cache
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="hosted_tools" type="object">
+      Prices of built-in tools
+      <Expandable title="Hosted Tools Price object">
+        <ResponseField name="file_search" type="object">File search calls, as `usd_per_thousand_calls` (US dollars per thousand calls)</ResponseField>
+        <ResponseField name="image_generation" type="array">Image generation prices, one entry per image model: `model`, and `text_input`, `image_input`, `text_output`, `image_output` priced like `input`</ResponseField>
+        <ResponseField name="image_generation_batch" type="array">Batch image generation prices, one entry per image model: `model`, and `text_input`, `image_input`, `text_output`, `image_output` priced like `input`</ResponseField>
+        <ResponseField name="web_search" type="object">Web search calls, as `usd_per_thousand_calls` (US dollars per thousand calls)</ResponseField>
+        <ResponseField name="web_search_preview" type="object">Web search (preview) calls, as `usd_per_thousand_calls` (US dollars per thousand calls)</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="output_thinking" type="object">
+      Reasoning output tokens
+      <Expandable title="Price Tier object">
+        <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+        <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+      <ResponseField name="tiers" type="array">
+      Prices by input length
+      <Expandable title="Price Band object">
+        <ResponseField name="min_input_tokens" type="integer">Lowest input length of the band, in tokens</ResponseField>
+        <ResponseField name="cache_read" type="object">Input tokens read from the cache</ResponseField>
+        <ResponseField name="cache_read_explicit" type="object">Input tokens read from a cache you created explicitly</ResponseField>
+        <ResponseField name="cache_write" type="object">Input tokens written to the cache</ResponseField>
+        <ResponseField name="cache_write_1h" type="object">Input tokens written to a 1-hour cache</ResponseField>
+        <ResponseField name="cache_write_5m" type="object">Input tokens written to a 5-minute cache</ResponseField>
+        <ResponseField name="input" type="object">Input tokens</ResponseField>
+        <ResponseField name="max_input_tokens" type="integer">Highest input length of the band, in tokens. Missing for the last band.</ResponseField>
+        <ResponseField name="output" type="object">Output tokens</ResponseField>
+        <ResponseField name="output_thinking" type="object">Reasoning output tokens</ResponseField>
+      </Expandable>
+      </ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="input" type="object">
+    Input tokens
+    <Expandable title="Price Tier object">
+      <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+      <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="output" type="object">
+    Output tokens
+    <Expandable title="Price Tier object">
+      <ResponseField name="tokens_per_million" type="integer">Balance tokens charged per million tokens</ResponseField>
+      <ResponseField name="usd_per_million" type="number">US dollars per million tokens</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="tiered" type="boolean">true when the price depends on input length: input and output are then the lowest band, and details.tiers lists every band</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "anthropic": [
+    {
+      "name": "claude-haiku-4-5",
+      "price": {
+        "details": {
+          "cache_read": {
+            "tokens_per_million": 32000,
+            "usd_per_million": 0.1
+          },
+          "cache_write_5m": {
+            "tokens_per_million": 400000,
+            "usd_per_million": 1.25
+          }
+        },
+        "input": {
+          "tokens_per_million": 320000,
+          "usd_per_million": 1
+        },
+        "output": {
+          "tokens_per_million": 1600000,
+          "usd_per_million": 5
+        }
+      },
+      "provider_type": "anthropic"
+    }
+  ],
+  "openai": [
+    {
+      "name": "gpt-4o-mini",
+      "price": {
+        "details": {
+          "cache_read": {
+            "tokens_per_million": 24000,
+            "usd_per_million": 0.075
+          }
+        },
+        "input": {
+          "tokens_per_million": 48000,
+          "usd_per_million": 0.15
+        },
+        "output": {
+          "tokens_per_million": 192000,
+          "usd_per_million": 0.6
+        }
+      },
+      "provider_type": "openai"
+    }
+  ]
+}
+```
+</ResponseExample>
