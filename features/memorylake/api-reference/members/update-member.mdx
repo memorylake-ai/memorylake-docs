@@ -7,7 +7,7 @@ description: "Changes a member's role and/or per-member usage cap"
 PATCH /openapi/memorylake/admin/v1/members/{principal_id}
 ```
 
-Changes a member's role and/or per-member usage cap. Only the fields you send change; null is rejected. The owner role cannot be assigned here, and the owner's own role and your own role cannot be changed — to hand ownership over, use [Transfer Ownership](/features/memorylake/api-reference/team/transfer-ownership).
+Changes a member's role and/or per-member usage cap. Only the fields you send change; null is rejected. The owner role cannot be assigned here, and the owner's own role and your own role cannot be changed — use [Transfer Ownership](/features/memorylake/api-reference/team/transfer-ownership) to hand the team to another member.
 
 <Note>
 **Permission required:** depends on what you send:

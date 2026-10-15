@@ -1,13 +1,13 @@
 ---
 title: "Transfer Ownership"
-description: "Transfers ownership of this org team to another active human member"
+description: "Transfers ownership of this org team to another active human member (not an API key, not a virtual member)"
 ---
 
 ```
 POST /openapi/memorylake/admin/v1/team/transfer-ownership
 ```
 
-Transfers ownership of this org team to another active human member. The caller becomes an admin and can no longer perform owner-only operations after the transfer.
+Transfers ownership of this org team to another active human member (not an API key, not a virtual member). The caller becomes an admin and can no longer perform owner-only operations after the transfer, including this one. A retry with the same Idempotency-Key replays the first result to the same caller only; anyone else is refused. Another transfer of the same team in progress answers 409; retry.
 
 <Warning>
 **High-risk operation.** It takes effect immediately. Read what it changes, above, before you call it.
