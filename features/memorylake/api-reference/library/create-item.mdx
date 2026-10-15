@@ -106,7 +106,7 @@ Behavior if the name already exists in `parent_item_id`:
 </ParamField>
 
 <Warning>
-`overwrite` only replaces the file bytes stored in the Library — it does **not** re-process or re-index any project documents that were previously imported from the file. To propagate new content into a project, call [Import Documents](/features/memorylake/api-reference/v3-documents/import-documents) again after the overwrite (or use a fresh file).
+`overwrite` only replaces the file bytes stored in the Library — it does **not** re-process or re-index any project documents that were previously imported from the file. To bring the new content into a project, first [delete](/features/memorylake/api-reference/v3-documents/delete-documents) the project document imported from this file, then [import](/features/memorylake/api-reference/v3-documents/import-documents) the file again. Importing it again without deleting first is reported as `duplicate` and changes nothing.
 </Warning>
 
 <ParamField body="x_attrs" type="object">
