@@ -11,18 +11,24 @@ Requests and responses keep the provider's own format. This reference covers wha
 
 | SDK | Base URL |
 | --- | --- |
-| OpenAI | `https://app.memorylake.ai/openai/v1` |
-| Anthropic | `https://app.memorylake.ai/anthropic` (the SDK adds `/v1/messages`) |
+| OpenAI | `https://app.memorylake.ai/openapi/memorylake/router/openai/v1` |
+| Anthropic | `https://app.memorylake.ai/openapi/memorylake/router/anthropic` (the SDK adds `/v1/messages`) |
+
+Memory Router lives under the same base URL as the rest of the MemoryLake API, `https://app.memorylake.ai/openapi/memorylake`, in its own `/router` section.
+
+<Note>
+The earlier endpoints `https://app.memorylake.ai/openai/v1/…` and `https://app.memorylake.ai/anthropic/v1/messages` keep working and behave the same. New integrations should use the paths above.
+</Note>
 
 ## Endpoints
 
 | Endpoint | |
 | --- | --- |
-| [`POST /openai/v1/chat/completions`](/features/memory-router/api-reference/chat-completions) | OpenAI Chat Completions |
-| [`POST /openai/v1/responses`](/features/memory-router/api-reference/responses) | OpenAI Responses |
-| [`POST /openai/v1/embeddings`](/features/memory-router/api-reference/embeddings) | OpenAI Embeddings |
-| [`POST /anthropic/v1/messages`](/features/memory-router/api-reference/messages) | Anthropic Messages |
-| [`GET /memory-router/v1/models`](/features/memory-router/api-reference/list-models) | The models you can call, with prices |
+| [`POST /openapi/memorylake/router/openai/v1/chat/completions`](/features/memory-router/api-reference/chat-completions) | OpenAI Chat Completions |
+| [`POST /openapi/memorylake/router/openai/v1/responses`](/features/memory-router/api-reference/responses) | OpenAI Responses |
+| [`POST /openapi/memorylake/router/openai/v1/embeddings`](/features/memory-router/api-reference/embeddings) | OpenAI Embeddings |
+| [`POST /openapi/memorylake/router/anthropic/v1/messages`](/features/memory-router/api-reference/messages) | Anthropic Messages |
+| [`GET /openapi/memorylake/router/v1/models`](/features/memory-router/api-reference/list-models) | The models you can call, with prices |
 
 ## Authentication
 
@@ -40,7 +46,7 @@ Your provider key is forwarded to the provider and never stored. See [Deployment
 Add `boundary_id` as a **query parameter**, not a header or a body field:
 
 ```
-POST https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=bnd-xxxxxx
+POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions?boundary_id=bnd-xxxxxx
 ```
 
 A Boundary decides which memory a request uses. `boundary_id` applies to Chat Completions, Responses and Messages. Without `boundary_id`, the request goes to the model as is, with memory off; it is still authenticated and metered. See [How It Works](/features/memory-router/how-it-works).

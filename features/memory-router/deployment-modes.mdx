@@ -9,15 +9,15 @@ Memory Router works two ways. Unlike proxies that force you to bring your own ke
 
 | Protocol | Endpoint |
 | --- | --- |
-| OpenAI · Chat Completions | `POST https://app.memorylake.ai/openai/v1/chat/completions` |
-| OpenAI · Responses | `POST https://app.memorylake.ai/openai/v1/responses` |
-| OpenAI · Embeddings | `POST https://app.memorylake.ai/openai/v1/embeddings` |
-| Anthropic · Messages | `POST https://app.memorylake.ai/anthropic/v1/messages` |
+| OpenAI · Chat Completions | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions` |
+| OpenAI · Responses | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/responses` |
+| OpenAI · Embeddings | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/embeddings` |
+| Anthropic · Messages | `POST https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages` |
 
-Append `?boundary_id=<id>` to enable memory on a request — see [How It Works](/features/memory-router/how-it-works#boundaries-define-the-scope). No embedding models are available yet, so the Embeddings endpoint is not usable for now. Every parameter is listed in the [API Reference](/features/memory-router/api-reference/overview).
+Append `?boundary_id=<id>` to enable memory on a request — see [How It Works](/features/memory-router/how-it-works#boundaries-define-the-scope). No embedding models are available yet, so the Embeddings endpoint is not usable for now. Every parameter is listed in the [API Reference](/features/memory-router/api-reference/overview). The earlier endpoints without `/openapi/memorylake/router` (such as `https://app.memorylake.ai/openai/v1`) keep working the same way; new integrations should use the paths above.
 
 <Note>
-With the Anthropic SDK, set `base_url` to `https://app.memorylake.ai/anthropic` (without `/v1`) — the SDK appends `/v1/messages` itself.
+With the Anthropic SDK, set `base_url` to `https://app.memorylake.ai/openapi/memorylake/router/anthropic` (without `/v1`) — the SDK appends `/v1/messages` itself.
 </Note>
 
 ## MemoryLake-hosted
@@ -34,7 +34,7 @@ No provider account required. MemoryLake runs the major models for you, so a sin
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  baseURL: "https://app.memorylake.ai/openai/v1",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
   apiKey: process.env.MEMORYLAKE_API_KEY,
 });
 
@@ -56,7 +56,7 @@ Use your own provider account. Your provider key is encrypted in transit, forwar
 import OpenAI from "openai";
 
 const client = new OpenAI({
-  baseURL: "https://app.memorylake.ai/openai/v1",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
   apiKey: process.env.OPENAI_API_KEY,        // your provider key
   defaultHeaders: {
     "x-memorylake-api-key": process.env.MEMORYLAKE_API_KEY,

@@ -4,7 +4,7 @@ description: "Call OpenAI-compatible chat models with your memory attached"
 ---
 
 ```
-POST /openai/v1/chat/completions
+POST /openapi/memorylake/router/openai/v1/chat/completions
 ```
 
 OpenAI Chat Completions. With `boundary_id`, memories from that Boundary are added to the conversation before the model is called. Without it, the request goes to the model as is.
@@ -63,7 +63,7 @@ Tools the model may call, in the OpenAI format
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=bnd-xxxxxx' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions?boundary_id=bnd-xxxxxx' \
   -H 'Authorization: Bearer sk_xxxxxx' \
   -H 'Content-Type: application/json' \
   -d '{

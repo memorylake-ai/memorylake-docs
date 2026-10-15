@@ -25,10 +25,10 @@ Both modes use the same endpoints — what differs is which keys you send:
 
 | Protocol | Endpoint |
 | --- | --- |
-| OpenAI · Chat Completions | `POST https://app.memorylake.ai/openai/v1/chat/completions` |
-| OpenAI · Responses | `POST https://app.memorylake.ai/openai/v1/responses` |
-| OpenAI · Embeddings | `POST https://app.memorylake.ai/openai/v1/embeddings` |
-| Anthropic · Messages | `POST https://app.memorylake.ai/anthropic/v1/messages` |
+| OpenAI · Chat Completions | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions` |
+| OpenAI · Responses | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/responses` |
+| OpenAI · Embeddings | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/embeddings` |
+| Anthropic · Messages | `POST https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages` |
 
 No embedding models are available yet, so the Embeddings endpoint is not usable for now. See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
 
@@ -43,7 +43,7 @@ import OpenAI from "openai";
 // Hosted: no provider account. MemoryLake runs the models,
 // so a single MemoryLake key is all you need.
 const client = new OpenAI({
-  baseURL: "https://app.memorylake.ai/openai/v1",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
   apiKey: process.env.MEMORYLAKE_API_KEY,
 });
 
@@ -59,7 +59,7 @@ import os
 # Hosted: no provider account. MemoryLake runs the models,
 # so a single MemoryLake key is all you need.
 client = OpenAI(
-    base_url="https://app.memorylake.ai/openai/v1",
+    base_url="https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
     api_key=os.environ["MEMORYLAKE_API_KEY"],
 )
 
@@ -70,7 +70,7 @@ resp = client.chat.completions.create(
 )
 ```
 ```bash cURL
-curl "https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
+curl "https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -91,7 +91,7 @@ import OpenAI from "openai";
 // BYOK: you send your own provider key. It is encrypted in transit,
 // forwarded to the provider, and never stored.
 const client = new OpenAI({
-  baseURL: "https://app.memorylake.ai/openai/v1",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
   apiKey: process.env.OPENAI_API_KEY,        // your provider key
   defaultHeaders: {
     "x-memorylake-api-key": process.env.MEMORYLAKE_API_KEY,
@@ -110,7 +110,7 @@ import os
 # BYOK: you send your own provider key. It is encrypted in transit,
 # forwarded to the provider, and never stored.
 client = OpenAI(
-    base_url="https://app.memorylake.ai/openai/v1",
+    base_url="https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
     api_key=os.environ["OPENAI_API_KEY"],        # your provider key
     default_headers={
         "x-memorylake-api-key": os.environ["MEMORYLAKE_API_KEY"],
@@ -124,7 +124,7 @@ resp = client.chat.completions.create(
 )
 ```
 ```bash cURL
-curl "https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
+curl "https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -H "x-memorylake-api-key: $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
@@ -137,14 +137,14 @@ curl "https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=$MEMORYLA
 
 ### Anthropic SDK
 
-With the Anthropic SDK, set the base URL to `https://app.memorylake.ai/anthropic` — the SDK appends `/v1/messages` itself.
+With the Anthropic SDK, set the base URL to `https://app.memorylake.ai/openapi/memorylake/router/anthropic` — the SDK appends `/v1/messages` itself.
 
 <CodeGroup>
 ```ts TypeScript
 import Anthropic from "@anthropic-ai/sdk";
 
 const client = new Anthropic({
-  baseURL: "https://app.memorylake.ai/anthropic",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/anthropic",
   apiKey: process.env.MEMORYLAKE_API_KEY,   // or your Anthropic key + x-memorylake-api-key header for BYOK
 });
 
@@ -159,7 +159,7 @@ import anthropic
 import os
 
 client = anthropic.Anthropic(
-    base_url="https://app.memorylake.ai/anthropic",
+    base_url="https://app.memorylake.ai/openapi/memorylake/router/anthropic",
     api_key=os.environ["MEMORYLAKE_API_KEY"],
 )
 
@@ -171,7 +171,7 @@ resp = client.messages.create(
 )
 ```
 ```bash cURL
-curl "https://app.memorylake.ai/anthropic/v1/messages?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
+curl "https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
   -H "x-api-key: $MEMORYLAKE_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" \

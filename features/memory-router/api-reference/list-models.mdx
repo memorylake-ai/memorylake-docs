@@ -4,16 +4,16 @@ description: "List the models you can call and their prices"
 ---
 
 ```
-GET /memory-router/v1/models
+GET /openapi/memorylake/router/v1/models
 ```
 
-Lists the models you can call through Memory Router, with their prices, grouped by protocol: call `openai` models through `/openai/v1` and `anthropic` models through `/anthropic/v1`. Each site has its own catalog.
+Lists the models you can call through Memory Router, with their prices, grouped by protocol: call `openai` models through `/router/openai/v1` and `anthropic` models through `/router/anthropic/v1`. Each site has its own catalog.
 
 Prices are per million tokens, in US dollars and in balance tokens (what your balance is charged). A price that is not listed does not apply to the model; it is not free. When `price` is missing, no price is available for the model; it can still be called.
 
 <RequestExample>
 ```bash cURL
-curl -X GET 'https://app.memorylake.ai/memory-router/v1/models' \
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
   -H 'Authorization: Bearer sk_xxxxxx'
 ```
 </RequestExample>
@@ -21,7 +21,7 @@ curl -X GET 'https://app.memorylake.ai/memory-router/v1/models' \
 ### Response
 
 <ResponseField name="anthropic" type="array">
-Models called through `/anthropic/v1`, sorted by name
+Models called through `/router/anthropic/v1`, sorted by name
 <Expandable title="Catalog Model object">
   <ResponseField name="name" type="string">Model name to send as `model`</ResponseField>
   <ResponseField name="provider_type" type="string">Protocol that reaches the model. One of: `openai`, `anthropic`.</ResponseField>
@@ -134,7 +134,7 @@ Models called through `/anthropic/v1`, sorted by name
 </Expandable>
 </ResponseField>
 <ResponseField name="openai" type="array">
-Models called through `/openai/v1`, sorted by name
+Models called through `/router/openai/v1`, sorted by name
 <Expandable title="Catalog Model object">
   <ResponseField name="name" type="string">Model name to send as `model`</ResponseField>
   <ResponseField name="provider_type" type="string">Protocol that reaches the model. One of: `openai`, `anthropic`.</ResponseField>

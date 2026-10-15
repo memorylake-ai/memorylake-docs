@@ -4,7 +4,7 @@ description: "Call Anthropic models with your memory attached"
 ---
 
 ```
-POST /anthropic/v1/messages
+POST /openapi/memorylake/router/anthropic/v1/messages
 ```
 
 Anthropic Messages. With `boundary_id`, memories from that Boundary are added to the conversation before the model is called. Without it, the request goes to the model as is.
@@ -67,7 +67,7 @@ Tools the model may call, in the Anthropic format
 
 <RequestExample>
 ```bash cURL
-curl -X POST 'https://app.memorylake.ai/anthropic/v1/messages?boundary_id=bnd-xxxxxx' \
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages?boundary_id=bnd-xxxxxx' \
   -H 'x-api-key: sk_xxxxxx' \
   -H 'anthropic-version: 2023-06-01' \
   -H 'Content-Type: application/json' \

@@ -51,7 +51,7 @@ Memory Router collapses all of that into a base-URL change plus one query parame
 Memory on the Router is **opt-in per request**. A **Boundary** binds a conversation to its memory scope — a workspace, one or more projects, a human actor, and an assistant actor. You create a Boundary once in the console, then pass its id on each call:
 
 ```text
-POST /openai/v1/chat/completions?boundary_id=<your-boundary-id>
+POST /openapi/memorylake/router/openai/v1/chat/completions?boundary_id=<your-boundary-id>
 ```
 
 - **With `boundary_id`** — memories in that scope are recalled and injected, and new memories from the conversation are stored back into it.
