@@ -86,6 +86,13 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
     <ResponseField name="metadata" type="object">Additional metadata associated with the fact</ResponseField>
     <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
     <ResponseField name="updated_at" type="string">Last update timestamp</ResponseField>
+    <ResponseField name="owner" type="object">
+    The project, actor or agent this fact belongs to, reported by the ID the request used for it. When the request sets neither `actor_ids` nor `agent_ids`, your own actor is searched too — even if `project_ids` is set — and its facts are reported as that actor. Use it to address the fact afterwards, e.g. to read it; updating or deleting a fact also requires its owner to still exist.
+    <Expandable title="Owner object">
+      <ResponseField name="type" type="string">Owner type: `project`, `actor` or `agent`</ResponseField>
+      <ResponseField name="id" type="string">Owner ID: a project ID when `type` is `project`, an actor ID when `type` is `actor`, an agent ID when `type` is `agent`</ResponseField>
+    </Expandable>
+    </ResponseField>
   </Expandable>
   </ResponseField>
 </Expandable>
@@ -119,7 +126,11 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
         "score": 0.92,
         "metadata": {},
         "created_at": "2024-04-01T09:00:00Z",
-        "updated_at": "2024-04-01T09:00:00Z"
+        "updated_at": "2024-04-01T09:00:00Z",
+        "owner": {
+          "type": "project",
+          "id": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"
+        }
       }
     ]
   }
