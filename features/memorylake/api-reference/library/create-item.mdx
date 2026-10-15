@@ -46,6 +46,7 @@ Behavior if the name already exists in `parent_item_id`:
 
 - `rename` *(default)* — append a numeric suffix (`Q2 Reports_1`).
 - `deny` — fail with `409 DRIVE_ITEM_CONFLICT`.
+- `overwrite` / `replace` — apply to files only (see the **Create file** tab). With either, creating a folder fails if an item with that name already exists; otherwise the folder is created as usual.
 </ParamField>
 
 <ParamField body="x_attrs" type="object">
@@ -101,6 +102,8 @@ Behavior if the name already exists in `parent_item_id`:
 - `deny` — fail with `409 DRIVE_ITEM_CONFLICT`.
 - `overwrite` — overwrite the existing file's content in the Library. The existing `item_id` is **preserved**.
 - `replace` — delete the existing file and create a new one. A **new `item_id`** is issued; prior references to the old ID become stale.
+
+`overwrite` and `replace` only act on an existing **file**: if the item with that name is a folder, the request fails.
 </ParamField>
 
 <Warning>
