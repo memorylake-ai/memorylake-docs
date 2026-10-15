@@ -76,10 +76,10 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8
     <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the fact</ResponseField>
     <ResponseField name="expired" type="boolean">Whether the fact has been forgotten</ResponseField>
     <ResponseField name="owner" type="object">
-    The project or actor this fact belongs to
+    The project, actor or agent this fact belongs to
     <Expandable title="Owner object">
-      <ResponseField name="type" type="string">Owner type: `project` or `actor`</ResponseField>
-      <ResponseField name="id" type="string">Owner ID: a project ID when `type` is `project`, an actor ID when `type` is `actor`</ResponseField>
+      <ResponseField name="type" type="string">Owner type: `project`, `actor` or `agent`</ResponseField>
+      <ResponseField name="id" type="string">Owner ID: a project ID when `type` is `project`, an actor ID when `type` is `actor`, an agent ID when `type` is `agent`</ResponseField>
     </Expandable>
     </ResponseField>
     <ResponseField name="expiration_date" type="string|null">Scheduled expiration date, or `null` if the fact does not expire</ResponseField>
