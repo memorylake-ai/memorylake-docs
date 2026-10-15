@@ -1,0 +1,123 @@
+---
+title: "Messages"
+description: "Call Anthropic models with your memory attached"
+---
+
+```
+POST /openapi/memorylake/router/anthropic/v1/messages
+```
+
+Anthropic Messages. With `boundary_id`, memories from that Boundary are added to the conversation before the model is called. Without it, the request goes to the model as is.
+
+With the Anthropic SDK, use the base URL that ends in `/anthropic`: the SDK adds `/v1/messages` itself. Set `stream` to `true` to receive server-sent events in the Anthropic format. Parameters not listed below are passed to the model unchanged.
+
+### Query Parameters
+
+<ParamField query="boundary_id" type="string">
+The Boundary whose memory this request uses. Omit it to call the model without memory.
+</ParamField>
+
+### Headers
+
+<ParamField header="x-memorylake-api-key" type="string">
+Your MemoryLake API key, when you call the model with your own provider key. The provider key then goes in the provider's usual key header. Your provider key is forwarded to the provider and never stored.
+</ParamField>
+
+<ParamField header="anthropic-version" type="string">
+Anthropic API version. The Anthropic SDKs send it for you.
+</ParamField>
+
+<ParamField header="traceparent" type="string">
+W3C trace context. When present, the request joins your trace and the same trace id comes back in `X-Trace-ID`.
+</ParamField>
+
+### Request Body
+
+<ParamField body="max_tokens" type="integer" required>
+Maximum tokens to generate
+</ParamField>
+
+<ParamField body="messages" type="array" required>
+The conversation so far
+<Expandable title="Message object">
+  <ParamField body="messages[].content" type="string | array" required>Message text, or an array of content blocks</ParamField>
+  <ParamField body="messages[].role" type="string" required>Who wrote the message. One of: `user`, `assistant`.</ParamField>
+</Expandable>
+</ParamField>
+
+<ParamField body="model" type="string" required>
+Model name, as listed under Available Models in the console
+</ParamField>
+
+<ParamField body="stream" type="boolean" default="false">
+Stream the reply as server-sent events
+</ParamField>
+
+<ParamField body="system" type="string | array">
+System prompt
+</ParamField>
+
+<ParamField body="temperature" type="number">
+Sampling temperature
+</ParamField>
+
+<ParamField body="tools" type="array">
+Tools the model may call, in the Anthropic format
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages?boundary_id=bnd-xxxxxx' \
+  -H 'x-api-key: sk_xxxxxx' \
+  -H 'anthropic-version: 2023-06-01' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "max_tokens": 1024,
+    "messages": [
+      {
+        "content": "What did I say my favourite city was?",
+        "role": "user"
+      }
+    ],
+    "model": "claude-haiku-4-5"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="content" type="array">Content blocks of the reply, such as text and tool calls</ResponseField>
+<ResponseField name="id" type="string">Message id</ResponseField>
+<ResponseField name="model" type="string">Model that answered</ResponseField>
+<ResponseField name="role" type="string">Always `assistant`</ResponseField>
+<ResponseField name="stop_reason" type="string">Why the model stopped, such as `end_turn` or `max_tokens`</ResponseField>
+<ResponseField name="type" type="string">Always `message`</ResponseField>
+<ResponseField name="usage" type="object">
+Tokens used
+<Expandable title="Usage object">
+  <ResponseField name="input_tokens" type="integer">Tokens in the input</ResponseField>
+  <ResponseField name="output_tokens" type="integer">Tokens generated</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "content": [
+    {
+      "text": "You said your favourite city is Lisbon.",
+      "type": "text"
+    }
+  ],
+  "id": "msg_abc123",
+  "model": "claude-haiku-4-5",
+  "role": "assistant",
+  "stop_reason": "end_turn",
+  "type": "message",
+  "usage": {
+    "input_tokens": 412,
+    "output_tokens": 11
+  }
+}
+```
+</ResponseExample>

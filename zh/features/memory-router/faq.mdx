@@ -13,11 +13,11 @@ Boundary（记忆范围）是一段会话的记忆范围——它把请求绑定
 </Accordion>
 
 <Accordion title="支持哪些模型厂商和模型？">
-支持 OpenAI（Chat Completions、Responses、Embeddings）和 Anthropic（Messages）协议。在托管模式下，GPT、Claude 和 Qwen 系列模型均已内置，可按原生名称调用。当前支持矩阵见[部署模式](/zh/features/memory-router/deployment-modes#支持的模型厂商)。
+支持 OpenAI（Chat Completions、Responses）和 Anthropic（Messages）协议。在托管模式下，GPT、o 系列和 Claude 模型均已内置，可按原生名称调用，完整清单见控制台的**可用模型**。目前还没有可用的向量模型。当前支持矩阵见[部署模式](/zh/features/memory-router/deployment-modes#支持的模型厂商)。
 </Accordion>
 
 <Accordion title="BYOK 和 MemoryLake 托管有什么区别？">
-BYOK（自带密钥）表示您提供自己的模型厂商密钥外加一个 MemoryLake 密钥——账单和速率限制留在您的模型厂商账号下。MemoryLake 托管只需一个 MemoryLake 密钥：我们替您运行主流模型，您完全不必注册模型厂商账号。两种模式使用相同的端点，区别只在于您发送哪些密钥。
+BYOK（自带密钥）表示您提供自己的模型厂商密钥外加一个 MemoryLake 密钥——模型账单和速率限制留在您的模型厂商账号下，记忆则从您的 MemoryLake 余额扣费。MemoryLake 托管只需一个 MemoryLake 密钥：我们替您运行主流模型，您完全不必注册模型厂商账号。两种模式使用相同的端点，区别只在于您发送哪些密钥。
 </Accordion>
 
 <Accordion title="在 BYOK 模式下，我的模型厂商密钥安全吗？">
@@ -37,6 +37,6 @@ BYOK（自带密钥）表示您提供自己的模型厂商密钥外加一个 Mem
 </Accordion>
 
 <Accordion title="如何获得使用权限？">
-Memory Router 处于内测阶段。如果您控制台的 **Integrations** 下尚未出现 Memory Router 卡片，请联系 [support@memorylake.ai](mailto:support@memorylake.ai) 申请开通。
+登录[控制台](https://app.memorylake.ai)，创建一个 API Key，然后打开 **Integrations → Memory Router API** 创建 Boundary 并复制现成的代码片段。[快速入门](/zh/features/memory-router/quickstart)有完整步骤。
 </Accordion>
 </AccordionGroup>

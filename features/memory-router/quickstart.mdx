@@ -5,10 +5,6 @@ description: "Add persistent memory to your LLM calls in three steps"
 
 Get Memory Router running in three steps. The only changes to your application are the base URL, a `boundary_id` query parameter, and — in BYOK mode — one header.
 
-<Note>
-Memory Router is in **private preview**. If the Memory Router card is not yet visible under **Integrations** in your console, contact [support@memorylake.ai](mailto:support@memorylake.ai) to request access.
-</Note>
-
 ## Step 1: Get a key and a Boundary
 
 1. Sign in to the [console](https://app.memorylake.ai) and create a MemoryLake API key (starts with `sk-`).
@@ -29,16 +25,16 @@ Both modes use the same endpoints — what differs is which keys you send:
 
 | Protocol | Endpoint |
 | --- | --- |
-| OpenAI · Chat Completions | `POST https://app.memorylake.ai/openai/v1/chat/completions` |
-| OpenAI · Responses | `POST https://app.memorylake.ai/openai/v1/responses` |
-| OpenAI · Embeddings | `POST https://app.memorylake.ai/openai/v1/embeddings` |
-| Anthropic · Messages | `POST https://app.memorylake.ai/anthropic/v1/messages` |
+| OpenAI · Chat Completions | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions` |
+| OpenAI · Responses | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/responses` |
+| OpenAI · Embeddings | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/embeddings` |
+| Anthropic · Messages | `POST https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages` |
 
-See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
+No embedding models are available yet, so the Embeddings endpoint is not usable for now. See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
 
 ### MemoryLake-hosted — one key
 
-No provider account required. GPT, Claude, and Qwen model families are built in; pick any model by its native name.
+No provider account required. GPT, o-series, and Claude models are built in; pick any model listed under **Available Models** in the console by its native name.
 
 <CodeGroup>
 ```ts TypeScript
@@ -47,7 +43,7 @@ import OpenAI from "openai";
 // Hosted: no provider account. MemoryLake runs the models,
 // so a single MemoryLake key is all you need.
 const client = new OpenAI({
-  baseURL: "https://app.memorylake.ai/openai/v1",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
   apiKey: process.env.MEMORYLAKE_API_KEY,
 });
 
@@ -63,7 +59,7 @@ import os
 # Hosted: no provider account. MemoryLake runs the models,
 # so a single MemoryLake key is all you need.
 client = OpenAI(
-    base_url="https://app.memorylake.ai/openai/v1",
+    base_url="https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
     api_key=os.environ["MEMORYLAKE_API_KEY"],
 )
 
@@ -74,7 +70,7 @@ resp = client.chat.completions.create(
 )
 ```
 ```bash cURL
-curl "https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
+curl "https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
   -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -95,7 +91,7 @@ import OpenAI from "openai";
 // BYOK: you send your own provider key. It is encrypted in transit,
 // forwarded to the provider, and never stored.
 const client = new OpenAI({
-  baseURL: "https://app.memorylake.ai/openai/v1",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
   apiKey: process.env.OPENAI_API_KEY,        // your provider key
   defaultHeaders: {
     "x-memorylake-api-key": process.env.MEMORYLAKE_API_KEY,
@@ -114,7 +110,7 @@ import os
 # BYOK: you send your own provider key. It is encrypted in transit,
 # forwarded to the provider, and never stored.
 client = OpenAI(
-    base_url="https://app.memorylake.ai/openai/v1",
+    base_url="https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
     api_key=os.environ["OPENAI_API_KEY"],        # your provider key
     default_headers={
         "x-memorylake-api-key": os.environ["MEMORYLAKE_API_KEY"],
@@ -128,7 +124,7 @@ resp = client.chat.completions.create(
 )
 ```
 ```bash cURL
-curl "https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
+curl "https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
   -H "Authorization: Bearer $OPENAI_API_KEY" \
   -H "x-memorylake-api-key: $MEMORYLAKE_API_KEY" \
   -H "Content-Type: application/json" \
@@ -141,14 +137,14 @@ curl "https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=$MEMORYLA
 
 ### Anthropic SDK
 
-With the Anthropic SDK, set the base URL to `https://app.memorylake.ai/anthropic` — the SDK appends `/v1/messages` itself.
+With the Anthropic SDK, set the base URL to `https://app.memorylake.ai/openapi/memorylake/router/anthropic` — the SDK appends `/v1/messages` itself.
 
 <CodeGroup>
 ```ts TypeScript
 import Anthropic from "@anthropic-ai/sdk";
 
 const client = new Anthropic({
-  baseURL: "https://app.memorylake.ai/anthropic",
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/anthropic",
   apiKey: process.env.MEMORYLAKE_API_KEY,   // or your Anthropic key + x-memorylake-api-key header for BYOK
 });
 
@@ -163,7 +159,7 @@ import anthropic
 import os
 
 client = anthropic.Anthropic(
-    base_url="https://app.memorylake.ai/anthropic",
+    base_url="https://app.memorylake.ai/openapi/memorylake/router/anthropic",
     api_key=os.environ["MEMORYLAKE_API_KEY"],
 )
 
@@ -175,7 +171,7 @@ resp = client.messages.create(
 )
 ```
 ```bash cURL
-curl "https://app.memorylake.ai/anthropic/v1/messages?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
+curl "https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages?boundary_id=$MEMORYLAKE_BOUNDARY_ID" \
   -H "x-api-key: $MEMORYLAKE_API_KEY" \
   -H "anthropic-version: 2023-06-01" \
   -H "Content-Type: application/json" \
@@ -217,7 +213,7 @@ Newer OpenAI reasoning models (`gpt-5` family, `o1`/`o3`/`o4`) expect `max_compl
 Full comparison of BYOK and hosted, plus supported providers.
 </Card>
 
-<Card title="Observability" icon="activity" href="/features/memory-router/observability">
-Trace requests and understand the error contract.
+<Card title="API Reference" icon="code" href="/features/memory-router/api-reference/overview">
+Every endpoint, header, and parameter in detail.
 </Card>
 </CardGroup>

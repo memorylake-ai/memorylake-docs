@@ -32,9 +32,13 @@ Use **Key source** to verify BYOK is actually in effect, and compare token count
 | Status | Meaning | What to do |
 | --- | --- | --- |
 | `401 Unauthorized` | Missing or invalid MemoryLake key. | Check the key in the native auth header (hosted) or `x-memorylake-api-key` (BYOK). |
-| `402 Payment Required` | Account balance below the minimum required to forward the call. | Top up your balance in the console, then retry. |
+| `402 Payment Required` | Account balance below the minimum required to forward the call. Applies in BYOK mode too. | Top up your balance in the console, then retry. |
+| `403 Forbidden` | The key may only be used from listed IP addresses, and the call came from another one. | Call from an allowed address, or change the key's IP allowlist in the console. |
+| `429 Too Many Requests` | Too many calls with an invalid key came from your IP address. | Fix the key, then wait for the time in the `Retry-After` header. |
 | `502 Bad Gateway` | The memory gateway could not reach its upstream service. | Retry with backoff; if it persists, contact support with your `X-Trace-ID`. |
 | Provider errors (`4xx`/`5xx`) | Returned by the model provider itself, in the provider's own format. | Handle exactly as you would on a direct provider call. |
+
+Response bodies for each status are in the [API Reference](/features/memory-router/api-reference/overview#errors).
 
 <Note>
 Requests **without** a `boundary_id` skip the memory layer but still authenticate and meter through the gateway. If you want to isolate whether an issue is memory-related, retry the same call without `boundary_id` and compare.

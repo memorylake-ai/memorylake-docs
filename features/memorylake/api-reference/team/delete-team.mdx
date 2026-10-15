@@ -1,13 +1,13 @@
 ---
 title: "Delete Team"
-description: "Permanently dissolves this org team"
+description: "Permanently dissolves this org team; it cannot be undone"
 ---
 
 ```
 DELETE /openapi/memorylake/admin/v1/team
 ```
 
-Permanently dissolves this org team. All team API keys, including the key used for this request, stop working immediately. Paid subscriptions are cancelled immediately before deletion; cancellation failure leaves the team untouched. Personal teams cannot be deleted.
+Permanently dissolves this org team; it cannot be undone. All team API keys, including the key used for this request, stop working immediately, and every member loses access to the team. A paid subscription is cancelled immediately before deletion, without a refund for the current period; if the cancellation fails the team is left untouched (409). Personal teams cannot be deleted. No Idempotency-Key: once the team is gone, this key is rejected (401) before any replay — a retry answering 401, or [Get Team](/features/memorylake/api-reference/team/get-team) answering 401, means the team was deleted. A 500 that says the subscription was already cancelled can be retried.
 
 <Warning>
 **High-risk operation.** It takes effect immediately. Read what it changes, above, before you call it.

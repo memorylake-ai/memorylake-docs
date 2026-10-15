@@ -1,13 +1,13 @@
 ---
 title: "Create Team"
-description: "Creates a new org team as the API key owner"
+description: "Creates a new org team owned by the API key's owner (not by this key's team)"
 ---
 
 ```
 POST /openapi/memorylake/admin/v1/teams
 ```
 
-Creates a new org team as the API key owner. If issue_api_key is true, the response includes a new owner API key for that team exactly once. Creating teams counts toward the owner's team limit and grants the free plan when available.
+Creates a new org team owned by the API key's owner (not by this key's team). The owner must be a person who can sign in: keys of virtual members are refused (403). If issue_api_key is true, the response includes a new owner API key for that team; its secret is returned only on the first response — a retry with the same Idempotency-Key replays the team and the key's metadata without the secret. Without an Idempotency-Key, a retry creates a second team. Creating a team counts toward the owner's team limit (409 RESOURCE_LIMIT_EXCEEDED when reached) and grants the free plan when available. 403 also when team creation is disabled on this deployment.
 
 <Warning>
 **High-risk operation.** It takes effect immediately. Read what it changes, above, before you call it.

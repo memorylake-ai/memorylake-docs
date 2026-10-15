@@ -11,10 +11,6 @@ Memory Router is a transparent gateway that sits between your app and the model.
 - **BYOK or hosted** — bring your own provider key (encrypted in transit, never stored), or use MemoryLake-hosted models with a single key
 - **Shared memory pool** — the Router and the [MemoryLake API](/features/memorylake/overview) read and write the same memories, so there is one source of truth
 
-<Note>
-Memory Router is currently in **private preview**. If the Memory Router card is not yet visible under **Integrations** in your console, contact [support@memorylake.ai](mailto:support@memorylake.ai) to request access.
-</Note>
-
 <Info>
 Memory Router speaks the OpenAI and Anthropic protocols natively. Your prompts, streaming, and tool calls stay identical.
 </Info>
@@ -55,7 +51,7 @@ Memory Router collapses all of that into a base-URL change plus one query parame
 Memory on the Router is **opt-in per request**. A **Boundary** binds a conversation to its memory scope — a workspace, one or more projects, a human actor, and an assistant actor. You create a Boundary once in the console, then pass its id on each call:
 
 ```text
-POST /openai/v1/chat/completions?boundary_id=<your-boundary-id>
+POST /openapi/memorylake/router/openai/v1/chat/completions?boundary_id=<your-boundary-id>
 ```
 
 - **With `boundary_id`** — memories in that scope are recalled and injected, and new memories from the conversation are stored back into it.
@@ -101,5 +97,9 @@ Trace requests, read the console call logs, and understand the error contract.
 
 <Card title="FAQ" icon="circle-help" href="/features/memory-router/faq">
 Common questions about code changes, providers, security, and availability.
+</Card>
+
+<Card title="API Reference" icon="code" href="/features/memory-router/api-reference/overview">
+Every endpoint, header, and parameter, with request and response examples.
 </Card>
 </CardGroup>

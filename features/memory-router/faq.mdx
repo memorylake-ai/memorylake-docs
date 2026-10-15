@@ -13,11 +13,11 @@ A Boundary is the memory scope for a conversation — it binds requests to a wor
 </Accordion>
 
 <Accordion title="Which providers and models are supported?">
-OpenAI (Chat Completions, Responses, Embeddings) and Anthropic (Messages) protocols. In hosted mode, GPT, Claude, and Qwen model families are built in and callable by their native names. See [Deployment Modes](/features/memory-router/deployment-modes#supported-providers) for the current matrix.
+OpenAI (Chat Completions, Responses) and Anthropic (Messages) protocols. In hosted mode, GPT, o-series, and Claude models are built in and callable by their native names; the console's **Available Models** page lists them all. No embedding models are available yet. See [Deployment Modes](/features/memory-router/deployment-modes#supported-providers) for the current matrix.
 </Accordion>
 
 <Accordion title="What is the difference between BYOK and MemoryLake-hosted?">
-BYOK (Bring Your Own Key) means you supply your own provider key plus a MemoryLake key — billing and rate limits stay with your provider account. MemoryLake-hosted needs only a MemoryLake key: we run the major models for you, so you skip provider sign-up entirely. Both modes use the same endpoints; the difference is which keys you send.
+BYOK (Bring Your Own Key) means you supply your own provider key plus a MemoryLake key — model billing and rate limits stay with your provider account, while memory is billed to your MemoryLake balance. MemoryLake-hosted needs only a MemoryLake key: we run the major models for you, so you skip provider sign-up entirely. Both modes use the same endpoints; the difference is which keys you send.
 </Accordion>
 
 <Accordion title="In BYOK mode, is my provider key safe?">
@@ -37,6 +37,6 @@ Yes. The Router and the [MemoryLake API](/features/memorylake/overview) operate 
 </Accordion>
 
 <Accordion title="How do I get access?">
-Memory Router is in private preview. If the Memory Router card is not yet visible under **Integrations** in your console, contact [support@memorylake.ai](mailto:support@memorylake.ai) to request access.
+Sign in to the [console](https://app.memorylake.ai), create an API key, and open **Integrations → Memory Router API** to create a Boundary and copy ready-made snippets. The [Quickstart](/features/memory-router/quickstart) walks through it.
 </Accordion>
 </AccordionGroup>
