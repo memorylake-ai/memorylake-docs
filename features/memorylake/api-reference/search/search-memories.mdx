@@ -7,7 +7,7 @@ description: "Search across all memory sources in a workspace using natural lang
 POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/search
 ```
 
-Searches across all memory sources in a workspace — documents and facts — using a natural language query. Results are grouped by source type so you can present each category separately or merge them in your UI. Use the optional filters to narrow results to specific projects, actors, or memory types.
+Searches across all memory sources in a workspace — documents and facts — using a natural language query. Results are grouped by source type so you can present each category separately or merge them in your UI. Documents are searched only in the projects you list in `project_ids`; the other optional filters choose actors, agents, or memory types.
 
 <Note>
 **Permission required:** `workspace:memory_search` on the workspace, plus one per thing you name — on each project in `project_ids`: `project:mem_search` and `project:doc_search`; on each actor in `actor_ids`: `workspace_actor:fact_search`; on each agent in `agent_ids`: `workspace_agent:fact_search`. Naming something you may not search refuses the whole request.
@@ -26,7 +26,7 @@ Natural language search query
 </ParamField>
 
 <ParamField body="project_ids" type="array of strings">
-Limit search to specific projects. When omitted, all projects in the workspace are searched.
+Projects to search. Documents are searched only in the projects listed here: when omitted, no project is searched and `documents` comes back empty. Facts are still searched for the actors and agents in the request, or for your own actor when neither `actor_ids` nor `agent_ids` is set.
 </ParamField>
 
 <ParamField body="actor_ids" type="array of strings">
@@ -67,6 +67,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
   Document search results, grouped by source document
   <Expandable title="DocumentSearchResult">
     <ResponseField name="document_id" type="string">Document identifier</ResponseField>
+    <ResponseField name="project_id" type="string">ID of the project this document belongs to, always one of the `project_ids` you sent. Use it with `document_id` to address the document afterwards, e.g. to [get](/features/memorylake/api-reference/v3-documents/get-document) or download it.</ResponseField>
     <ResponseField name="document_name" type="string">Display name of the document</ResponseField>
     <ResponseField name="file_name" type="string">Original file name</ResponseField>
     <ResponseField name="document_summary" type="string">Summary of the document</ResponseField>
@@ -106,6 +107,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
     "documents": [
       {
         "document_id": "doc-8ef7fb1915709b68aa2e8628f0fb9aab",
+        "project_id": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
         "document_name": "Q1 2024 Financial Report",
         "file_name": "q1_2024_report.pdf",
         "document_summary": "Quarterly financial report covering revenue, expenses, and projections for Q1 2024.",
