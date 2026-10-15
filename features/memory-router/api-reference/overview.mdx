@@ -1,0 +1,75 @@
+---
+title: "Memory Router API"
+description: "Call OpenAI- and Anthropic-compatible models with your memory attached"
+---
+
+Memory Router puts your MemoryLake memory in front of the models you already call. Keep your OpenAI or Anthropic SDK, change the base URL, and add a `boundary_id` to each request: relevant memories are added to the prompt before the model is called.
+
+Requests and responses keep the provider's own format. This reference covers what Memory Router adds; for every other field, see the provider's API reference. To get started step by step, see the [Quickstart](/features/memory-router/quickstart).
+
+## Base URL
+
+| SDK | Base URL |
+| --- | --- |
+| OpenAI | `https://app.memorylake.ai/openai/v1` |
+| Anthropic | `https://app.memorylake.ai/anthropic` (the SDK adds `/v1/messages`) |
+
+## Endpoints
+
+| Endpoint | |
+| --- | --- |
+| [`POST /openai/v1/chat/completions`](/features/memory-router/api-reference/chat-completions) | OpenAI Chat Completions |
+| [`POST /openai/v1/responses`](/features/memory-router/api-reference/responses) | OpenAI Responses |
+| [`POST /openai/v1/embeddings`](/features/memory-router/api-reference/embeddings) | OpenAI Embeddings |
+| [`POST /anthropic/v1/messages`](/features/memory-router/api-reference/messages) | Anthropic Messages |
+
+There is no endpoint that lists models. The models you can call are listed under **Available Models** in the console.
+
+## Authentication
+
+Every request needs a MemoryLake API key (`sk-...`). Where it goes depends on whose model account pays for the call:
+
+| Mode | Headers |
+| --- | --- |
+| **MemoryLake-hosted** | The MemoryLake key in the provider's usual key header: `Authorization: Bearer sk-...` for OpenAI, `x-api-key: sk-...` for Anthropic |
+| **BYOK** (bring your own key) | Your provider key in the provider's usual key header, and the MemoryLake key in `x-memorylake-api-key` |
+
+Your provider key is forwarded to the provider and never stored. See [Deployment Modes](/features/memory-router/deployment-modes).
+
+## Memory
+
+Add `boundary_id` as a **query parameter**, not a header or a body field:
+
+```
+POST https://app.memorylake.ai/openai/v1/chat/completions?boundary_id=bnd-xxxxxx
+```
+
+A Boundary decides which memory a request uses. `boundary_id` applies to Chat Completions, Responses and Messages. Without `boundary_id`, the request goes to the model as is, with memory off; it is still authenticated and metered. See [How It Works](/features/memory-router/how-it-works).
+
+## Models
+
+Use the model's native name, such as `gpt-4o-mini` or `claude-haiku-4-5`, with no provider prefix.
+
+## Streaming
+
+Set `stream: true` to receive server-sent events in the provider's format. Events are forwarded as they arrive.
+
+## Tracing
+
+Every response carries an `X-Trace-ID` header. Send a W3C `traceparent` header to make the request part of your own trace. Quote the trace id when you contact support.
+
+## Errors
+
+Errors from Memory Router itself:
+
+| Status | Meaning |
+| --- | --- |
+| `401` | The MemoryLake API key is missing, invalid, disabled or expired |
+| `402` | Your balance is too low. Top up and retry |
+| `403` | The key may only be used from listed IP addresses, and this request came from another one |
+| `429` | Too many requests with an invalid key came from your IP address. Wait for the time in `Retry-After` |
+| `502` | Memory Router could not reach its upstream service. Retry later |
+
+`401` and `403` use the OpenAI error shape (`{"error": {"message", "type"}}`). `402` returns `{"success": false, "message": "insufficient quota"}`. `429` returns `{"success": false, "code": "AUTH_THROTTLED", "error": {"type", "message"}}`. `502` returns plain text.
+
+Other errors are passed through from upstream unchanged; errors from the model provider keep the provider's own format.

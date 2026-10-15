@@ -5,10 +5,6 @@ description: "Add persistent memory to your LLM calls in three steps"
 
 Get Memory Router running in three steps. The only changes to your application are the base URL, a `boundary_id` query parameter, and — in BYOK mode — one header.
 
-<Note>
-Memory Router is in **private preview**. If the Memory Router card is not yet visible under **Integrations** in your console, contact [support@memorylake.ai](mailto:support@memorylake.ai) to request access.
-</Note>
-
 ## Step 1: Get a key and a Boundary
 
 1. Sign in to the [console](https://app.memorylake.ai) and create a MemoryLake API key (starts with `sk-`).
@@ -34,11 +30,11 @@ Both modes use the same endpoints — what differs is which keys you send:
 | OpenAI · Embeddings | `POST https://app.memorylake.ai/openai/v1/embeddings` |
 | Anthropic · Messages | `POST https://app.memorylake.ai/anthropic/v1/messages` |
 
-See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
+No embedding models are available yet, so the Embeddings endpoint is not usable for now. See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
 
 ### MemoryLake-hosted — one key
 
-No provider account required. GPT, Claude, and Qwen model families are built in; pick any model by its native name.
+No provider account required. GPT, o-series, and Claude models are built in; pick any model listed under **Available Models** in the console by its native name.
 
 <CodeGroup>
 ```ts TypeScript
@@ -217,7 +213,7 @@ Newer OpenAI reasoning models (`gpt-5` family, `o1`/`o3`/`o4`) expect `max_compl
 Full comparison of BYOK and hosted, plus supported providers.
 </Card>
 
-<Card title="Observability" icon="activity" href="/features/memory-router/observability">
-Trace requests and understand the error contract.
+<Card title="API Reference" icon="code" href="/features/memory-router/api-reference/overview">
+Every endpoint, header, and parameter in detail.
 </Card>
 </CardGroup>

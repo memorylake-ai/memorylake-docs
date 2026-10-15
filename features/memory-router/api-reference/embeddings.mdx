@@ -1,0 +1,98 @@
+---
+title: "Embeddings"
+description: "Turn text into vectors with OpenAI-compatible embedding models"
+---
+
+```
+POST /openai/v1/embeddings
+```
+
+OpenAI Embeddings. Returns one vector per input. Parameters not listed below are passed to the model unchanged.
+
+<Warning>
+No embedding models are available yet, so this endpoint currently answers that the model is not found. Check **Available Models** in the console for when one is added.
+</Warning>
+
+### Headers
+
+<ParamField header="x-memorylake-api-key" type="string">
+Your MemoryLake API key, when you call the model with your own provider key. The provider key then goes in the provider's usual key header. Your provider key is forwarded to the provider and never stored.
+</ParamField>
+
+<ParamField header="traceparent" type="string">
+W3C trace context. When present, the request joins your trace and the same trace id comes back in `X-Trace-ID`.
+</ParamField>
+
+### Request Body
+
+<ParamField body="input" type="string | array" required>
+Text to embed, or an array of texts
+</ParamField>
+
+<ParamField body="model" type="string" required>
+Embedding model name
+</ParamField>
+
+<ParamField body="dimensions" type="integer">
+Length of each vector, for models that support it
+</ParamField>
+
+<ParamField body="encoding_format" type="string">
+Vector format. One of: `float`, `base64`.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openai/v1/embeddings' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "input": "Lisbon is my favourite city.",
+    "model": "text-embedding-3-small"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="array">
+One embedding per input
+<Expandable title="Data object">
+  <ResponseField name="embedding" type="array">The vector</ResponseField>
+  <ResponseField name="index" type="integer">Position of the input</ResponseField>
+  <ResponseField name="object" type="string">Always `embedding`</ResponseField>
+</Expandable>
+</ResponseField>
+<ResponseField name="model" type="string">Model that produced the vectors</ResponseField>
+<ResponseField name="object" type="string">Always `list`</ResponseField>
+<ResponseField name="usage" type="object">
+Tokens used
+<Expandable title="Usage object">
+  <ResponseField name="prompt_tokens" type="integer">Tokens in the input</ResponseField>
+  <ResponseField name="total_tokens" type="integer">Same as `prompt_tokens`</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "data": [
+    {
+      "embedding": [
+        0.0123,
+        -0.0456,
+        0.0789
+      ],
+      "index": 0,
+      "object": "embedding"
+    }
+  ],
+  "model": "text-embedding-3-small",
+  "object": "list",
+  "usage": {
+    "prompt_tokens": 7,
+    "total_tokens": 7
+  }
+}
+```
+</ResponseExample>

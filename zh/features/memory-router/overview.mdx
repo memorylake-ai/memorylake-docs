@@ -11,10 +11,6 @@ Memory Router 是一个透明网关，位于您的应用与模型之间。将现
 - **BYOK（自带密钥）或托管**——使用您自己的模型厂商密钥（传输加密，绝不存储），或使用 MemoryLake 托管模型，仅需一个密钥
 - **共享记忆池**——Router 与 [MemoryLake API](/zh/features/memorylake/overview) 读写同一份记忆，因此只有一个真实来源
 
-<Note>
-Memory Router 目前处于**内测**阶段。如果您控制台的 **Integrations** 下尚未出现 Memory Router 卡片，请联系 [support@memorylake.ai](mailto:support@memorylake.ai) 申请开通。
-</Note>
-
 <Info>
 Memory Router 原生支持 OpenAI 与 Anthropic 协议。您的提示词、流式输出和工具调用完全不变。
 </Info>
@@ -101,5 +97,9 @@ POST /openai/v1/chat/completions?boundary_id=<your-boundary-id>
 
 <Card title="常见问题" icon="circle-help" href="/zh/features/memory-router/faq">
 关于代码改动、模型厂商、安全性和开通方式的常见问题。
+</Card>
+
+<Card title="API 参考" icon="code" href="/zh/features/memory-router/api-reference/overview">
+每个端点、请求头和参数的说明，附请求与响应示例。
 </Card>
 </CardGroup>

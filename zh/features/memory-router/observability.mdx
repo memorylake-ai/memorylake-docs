@@ -32,9 +32,13 @@ Memory Router 同时遵循入站的 **W3C Trace Context**（`traceparent` / `tra
 | 状态码 | 含义 | 处理方式 |
 | --- | --- | --- |
 | `401 Unauthorized` | MemoryLake 密钥缺失或无效。 | 检查原生鉴权头（托管模式）或 `x-memorylake-api-key`（BYOK）中的密钥。 |
-| `402 Payment Required` | 账户余额低于转发该调用所需的最低额度。 | 在控制台充值后重试。 |
+| `402 Payment Required` | 账户余额低于转发该调用所需的最低额度。BYOK 模式同样适用。 | 在控制台充值后重试。 |
+| `403 Forbidden` | 该 Key 只允许从指定 IP 地址调用，而本次调用来自其他地址。 | 从允许的地址调用，或在控制台修改该 Key 的 IP 白名单。 |
+| `429 Too Many Requests` | 来自您 IP 地址的无效 Key 调用过多。 | 修正 Key，并等待 `Retry-After` 响应头给出的时间。 |
 | `502 Bad Gateway` | 记忆网关无法访问其上游服务。 | 带退避重试；若持续出现，请携带您的 `X-Trace-ID` 联系支持团队。 |
 | 模型厂商错误（`4xx`/`5xx`） | 由模型厂商本身返回，格式为该厂商自有格式。 | 与直连模型厂商调用时的处理方式完全一致。 |
+
+各状态码的响应体见 [API 参考](/zh/features/memory-router/api-reference/overview#错误)。
 
 <Note>
 **不带** `boundary_id` 的请求会跳过记忆层，但仍会经网关完成鉴权和计量。如果想判断问题是否与记忆相关，可以去掉 `boundary_id` 重试同一个调用并对比结果。

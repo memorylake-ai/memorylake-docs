@@ -14,7 +14,7 @@ Memory Router works two ways. Unlike proxies that force you to bring your own ke
 | OpenAI · Embeddings | `POST https://app.memorylake.ai/openai/v1/embeddings` |
 | Anthropic · Messages | `POST https://app.memorylake.ai/anthropic/v1/messages` |
 
-Append `?boundary_id=<id>` to enable memory on a request — see [How It Works](/features/memory-router/how-it-works#boundaries-define-the-scope).
+Append `?boundary_id=<id>` to enable memory on a request — see [How It Works](/features/memory-router/how-it-works#boundaries-define-the-scope). No embedding models are available yet, so the Embeddings endpoint is not usable for now. Every parameter is listed in the [API Reference](/features/memory-router/api-reference/overview).
 
 <Note>
 With the Anthropic SDK, set `base_url` to `https://app.memorylake.ai/anthropic` (without `/v1`) — the SDK appends `/v1/messages` itself.
@@ -25,7 +25,7 @@ With the Anthropic SDK, set `base_url` to `https://app.memorylake.ai/anthropic` 
 No provider account required. MemoryLake runs the major models for you, so a single MemoryLake API key is all you need to start.
 
 - One key for everything — nothing else to sign up for.
-- GPT, Claude, and Qwen model families built in and ready to call by their native names.
+- GPT, o-series, and Claude models built in and ready to call by their native names.
 - The simplest possible way to ship with memory.
 
 **Keys:** MemoryLake key only, in the native auth header (`Authorization: Bearer` for OpenAI-style calls, `x-api-key` for Anthropic)
@@ -38,7 +38,7 @@ const client = new OpenAI({
   apiKey: process.env.MEMORYLAKE_API_KEY,
 });
 
-// Pick any built-in model by its native name, e.g. "gpt-4o-mini" or "qwen-plus".
+// Pick any built-in model by its native name, e.g. "gpt-4o-mini" or "claude-haiku-4-5".
 ```
 
 ## BYOK — Bring Your Own Key
@@ -46,8 +46,9 @@ const client = new OpenAI({
 Use your own provider account. Your provider key is encrypted in transit, forwarded to the provider per call, and never stored on our servers.
 
 - Keep your existing OpenAI / Anthropic account.
-- Your key, your billing, your rate limits.
+- Model usage is billed to your provider account, under your rate limits.
 - Key is encrypted + passthrough only — never persisted or logged.
+- You can call the models listed under **Available Models** in the console.
 
 **Keys:** your provider key in the provider's **native** auth header + MemoryLake key in the `x-memorylake-api-key` header
 
@@ -73,7 +74,8 @@ The native auth header differs by protocol: OpenAI-style calls use `Authorizatio
 | --- | --- | --- |
 | Provider account | Not required | Required (yours) |
 | Keys | MemoryLake key only | Provider key + MemoryLake key |
-| Billing & rate limits | Handled by MemoryLake | Stay with your provider account |
+| Model billing & rate limits | Handled by MemoryLake | Stay with your provider account |
+| Memory billing | Your MemoryLake balance | Your MemoryLake balance |
 | Best for | Fastest path to ship with memory | Teams with existing provider contracts and quotas |
 
 ## Key Safety, by Design
@@ -88,9 +90,13 @@ In BYOK mode your provider key is encrypted in transit and passed straight throu
 | --- | --- | --- |
 | OpenAI / GPT (Chat Completions & Responses) | ✅ | ✅ |
 | Anthropic / Claude (Messages) | ✅ | ✅ |
-| Alibaba Qwen (OpenAI-compatible, via `/openai/v1`) | — | ✅ |
+| Embeddings | — | — (no models yet) |
 
-Additional providers and protocols are added over time; the console's **Integrations → Memory Router API** page always reflects the current catalog.
+Additional providers and protocols are added over time; the console's **Available Models** page always reflects the current catalog.
+
+<Note>
+Both modes need a MemoryLake balance: memory is billed to it in BYOK mode too, and a call is refused with `402` when the balance is too low.
+</Note>
 
 ## Next Steps
 
