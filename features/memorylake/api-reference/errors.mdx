@@ -19,6 +19,7 @@ description: "Understand and handle API errors"
 | 422 | Unprocessable Entity | The body or a parameter failed validation |
 | 429 | Too Many Requests | Rate limit exceeded |
 | 500 | Internal Server Error | Server-side error |
+| 502 | Bad Gateway | A service behind the API could not be reached; retry later |
 | 503 | Service Unavailable | A dependency is temporarily unavailable; retry later |
 
 ## Error Response
@@ -32,6 +33,12 @@ When a request fails, the API returns a structured error body alongside the HTTP
   "error_code": "ERROR_CODE"
 }
 ```
+
+Every MemoryLake API endpoint answers errors in this format, including the refusals made before your request reaches the service: a missing or invalid API key (`401`), a key used from an address it is not allowed from (`403`), a rate limit (`429`), a service that cannot be reached (`502`) and maintenance (`503`). The inference endpoints of [Memory Router](/features/memory-router/api-reference/overview) are the one exception: they keep the provider's format. When you contact support about a request, quote its `X-Trace-ID` response header.
+
+<Note>
+Until October 2026, the refusals listed above used a different body, `{"error": {"message", "type"}}`. If your code reads `error.message`, read `message` and `error_code` instead.
+</Note>
 
 ## What a 403 tells you
 
@@ -113,6 +120,8 @@ Some changes would give someone an admin role, or take access away from an admin
 | `STATE_NOT_READY` | Resource exists but its current state does not allow the operation |
 | `ACCESS_DENIED` | Caller lacks permission to access the resource |
 | `QUOTA_EXCEEDED` | Quota or usage limit exceeded |
+| `RATE_LIMIT_EXCEEDED` | Too many requests. Wait for the time in the `Retry-After` header before retrying. See [Rate Limits](/features/memorylake/api-reference/rate-limits) |
+| `SERVICE_UNAVAILABLE` | The service is temporarily unavailable, for example during maintenance. Retry later; `Retry-After` is sent when the wait is known |
 | `DATASET_TABLE_LIMIT_EXCEEDED` | Number of tables in the NL2SQL dataset exceeds the allowed limit |
 | `DB_CONNECTION_FAILED` | Could not connect to the database with the connection settings provided: the host is unreachable, the credentials were rejected, or the database does not exist. Retrying with the same settings will not help |
 | `RESOURCE_LIMIT_EXCEEDED` | A count limit configured for your account was exceeded, for example the number of projects in a workspace or the number of `project_ids` in one request |
