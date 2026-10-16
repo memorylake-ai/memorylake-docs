@@ -7,7 +7,7 @@ description: "Permanently delete an actor"
 DELETE /openapi/memorylake/api/v3/actors/{id}
 ```
 
-Permanently deletes an actor. Any workspace bindings for this actor are also removed.
+Permanently deletes an actor. Its workspace bindings are **not** removed: they remain in [List Workspace Actors](/features/memorylake/api-reference/actors/list-workspace-actors) with `status` set to `INACTIVE`. An inactive binding is read-only — memories the actor already recorded in that workspace stay readable, but it no longer takes part in writes. To remove a binding, call [Unbind Actor](/features/memorylake/api-reference/actors/unbind-actor), which also works after the actor is deleted.
 
 <Note>
 **Permission required:** `actor:delete`
