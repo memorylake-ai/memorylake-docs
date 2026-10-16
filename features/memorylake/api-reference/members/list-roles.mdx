@@ -62,3 +62,14 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles' \
 }
 ```
 </ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

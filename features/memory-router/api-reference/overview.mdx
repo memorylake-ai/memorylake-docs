@@ -65,7 +65,9 @@ Every response carries an `X-Trace-ID` header. Send a W3C `traceparent` header t
 
 ## Errors
 
-Errors from Memory Router itself:
+[List Models](/features/memory-router/api-reference/list-models) answers in the MemoryLake API format, like every other MemoryLake endpoint: errors carry `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors).
+
+The inference endpoints keep the provider's format. Errors from Memory Router itself on those endpoints:
 
 | Status | Meaning |
 | --- | --- |
@@ -74,7 +76,8 @@ Errors from Memory Router itself:
 | `403` | The key may only be used from listed IP addresses, and this request came from another one |
 | `429` | Too many requests with an invalid key came from your IP address. Wait for the time in `Retry-After` |
 | `502` | Memory Router could not reach its upstream service. Retry later |
+| `503` | Memory Router is temporarily unavailable, for example during maintenance. Retry later |
 
-`401` and `403` use the OpenAI error shape (`{"error": {"message", "type"}}`). `402` returns `{"success": false, "message": "insufficient quota"}`. `429` returns `{"success": false, "code": "AUTH_THROTTLED", "error": {"type", "message"}}`. `502` returns plain text from the inference endpoints, and the OpenAI error shape from List Models.
+`401` and `403` use the OpenAI error shape (`{"error": {"message", "type"}}`). `402` returns `{"success": false, "message": "insufficient quota"}`. `429` returns `{"success": false, "code": "AUTH_THROTTLED", "action", "error": {"type", "message"}}`. `502` returns plain text. `503` returns `{"success": false, "message", "code": "REQUEST_BLOCKED"}`.
 
 Other errors are passed through from upstream unchanged; errors from the model provider keep the provider's own format.

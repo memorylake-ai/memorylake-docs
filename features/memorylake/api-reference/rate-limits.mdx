@@ -33,10 +33,12 @@ When a rate limit is exceeded, the API responds with:
 ```json
 {
   "success": false,
-  "message": "Rate limit exceeded. Please retry later.",
+  "message": "Rate limit exceeded, please retry after 30 seconds.",
   "error_code": "RATE_LIMIT_EXCEEDED"
 }
 ```
+
+The daily invitation cap is a quota rather than a request rate: it answers `429` with `QUOTA_EXCEEDED`.
 
 ## Handling Rate Limits
 

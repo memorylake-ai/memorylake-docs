@@ -106,3 +106,16 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/billing/order
 }
 ```
 </ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `400` | A parameter or the body is invalid |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `422` | The body or a parameter failed validation |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

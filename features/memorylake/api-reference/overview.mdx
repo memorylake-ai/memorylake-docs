@@ -141,7 +141,7 @@ List endpoints use continuation-token pagination:
 - `page_size`: Number of items per page
 - `continuation_token`: Token from a previous response to fetch the next page
 
-When the response `continuation_token` is `null`, there are no more pages.
+When the response has no `continuation_token`, there are no more pages.
 
 ### Idempotent requests
 
