@@ -41,8 +41,8 @@ Limit search to memories belonging to specific agents.
 Filter results by memory type. Accepted values: `document`, `fact`. When omitted, all types are searched.
 </ParamField>
 
-<ParamField body="top_k" type="integer">
-Maximum number of results to return per source type
+<ParamField body="top_k" type="integer" default="10">
+Maximum number of results to return in total (1–1000). One budget is shared by all searched memory types, not a limit per type: `top_k=5` may come back as five documents, or as three documents and two facts, depending only on what best answers the query. Fewer results may be returned.
 </ParamField>
 
 <RequestExample>

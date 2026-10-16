@@ -8,7 +8,7 @@ DELETE /openapi/memorylake/api/v3/agents/{id}
 ```
 
 <Warning>
-This is a destructive operation. The agent and all its versions are permanently removed. Any workspace bindings for this agent are also deleted.
+This is a destructive operation. The agent and all its versions are permanently removed. Its workspace bindings are **not** removed: they remain in [List Workspace Agents](/features/memorylake/api-reference/agents/list-workspace-agents) with `status` set to `INACTIVE` — read-only, so memories the agent already recorded stay readable. To remove a binding, call [Unbind Agent](/features/memorylake/api-reference/agents/unbind-agent).
 </Warning>
 
 Permanently deletes an agent. This action cannot be undone.
