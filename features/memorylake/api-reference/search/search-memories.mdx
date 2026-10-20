@@ -45,6 +45,16 @@ Filter results by memory type. Accepted values: `document`, `fact`. When omitted
 Maximum number of results to return in total (1–1000). One budget is shared by all searched memory types, not a limit per type: `top_k=5` may come back as five documents, or as three documents and two facts, depending only on what best answers the query. Fewer results may be returned.
 </ParamField>
 
+<ParamField body="search_effort" type="string">
+How thoroughly to search, trading result quality for speed:
+
+- `max` — run the full search.
+- `high` — do not expand the query from stored facts, and use a lighter final ranking. Typically answers noticeably faster than `max`.
+- `low` — like `high`, and also skip model-based understanding of the query and narrow recall, for the fastest answers.
+
+Lower levels may return fewer or different results for the same query. When omitted, the default level applies. Any other value returns `400`.
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-8001856949ad4f6a5b6226f415ffa877/memories/search' \
