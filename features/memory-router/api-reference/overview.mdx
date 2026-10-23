@@ -27,6 +27,7 @@ The earlier endpoints `https://app.memorylake.ai/openai/v1/…` and `https://app
 | [`POST /openapi/memorylake/router/openai/v1/chat/completions`](/features/memory-router/api-reference/chat-completions) | OpenAI Chat Completions |
 | [`POST /openapi/memorylake/router/openai/v1/responses`](/features/memory-router/api-reference/responses) | OpenAI Responses |
 | [`POST /openapi/memorylake/router/openai/v1/embeddings`](/features/memory-router/api-reference/embeddings) | OpenAI Embeddings |
+| [`POST /openapi/memorylake/router/openai/v1/images/generations`](/features/memory-router/api-reference/images) | OpenAI Images |
 | [`POST /openapi/memorylake/router/anthropic/v1/messages`](/features/memory-router/api-reference/messages) | Anthropic Messages |
 | [`GET /openapi/memorylake/router/v1/models`](/features/memory-router/api-reference/list-models) | The models you can call, with prices |
 
@@ -53,7 +54,7 @@ A Boundary decides which memory a request uses. `boundary_id` applies to Chat Co
 
 ## Models
 
-Use the model's native name, such as `gpt-4o-mini` or `claude-haiku-4-5`, with no provider prefix. [List Models](/features/memory-router/api-reference/list-models) returns every model you can call and which base URL reaches it. The OpenAI and Anthropic `/v1/models` endpoints are not available.
+Use the model's native name, such as `gpt-4o-mini` or `claude-haiku-4-5`, with no provider prefix. [List Models](/features/memory-router/api-reference/list-models) returns every model you can call and which base URL reaches it. The OpenAI and Anthropic `/v1/models` endpoints are not available. Image models, such as `gpt-image-1`, are listed under **Available Models** in the console, with their prices.
 
 ## Streaming
 

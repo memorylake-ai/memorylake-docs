@@ -29,6 +29,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
   <Expandable title="Catalog Model object">
     <ResponseField name="name" type="string">Model name to send as `model`</ResponseField>
     <ResponseField name="provider_type" type="string">Protocol that reaches the model. One of: `openai`, `anthropic`.</ResponseField>
+    <ResponseField name="input_modalities" type="array">Kinds of input the model accepts. Missing when not known.</ResponseField>
     <ResponseField name="price" type="object">
     Prices of the model. Missing when no price is available for it.
     <Expandable title="Model Price object">
@@ -39,6 +40,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
         <ResponseField name="cache_read" type="object">Input tokens read from the cache</ResponseField>
         <ResponseField name="cache_read_explicit" type="object">Input tokens read from a cache you created explicitly</ResponseField>
         <ResponseField name="cache_write" type="object">Input tokens written to the cache</ResponseField>
+        <ResponseField name="cache_write_12h" type="object">Input tokens written to a 12-hour cache</ResponseField>
         <ResponseField name="cache_write_1h" type="object">Input tokens written to a 1-hour cache</ResponseField>
         <ResponseField name="cache_write_5m" type="object">Input tokens written to a 5-minute cache</ResponseField>
         <ResponseField name="hosted_tools" type="object">Prices of built-in tools</ResponseField>
