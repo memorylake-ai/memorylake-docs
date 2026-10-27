@@ -28,9 +28,10 @@ Both modes use the same endpoints — what differs is which keys you send:
 | OpenAI · Chat Completions | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions` |
 | OpenAI · Responses | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/responses` |
 | OpenAI · Embeddings | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/embeddings` |
+| OpenAI · Images | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/images/generations` |
 | Anthropic · Messages | `POST https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages` |
 
-No embedding models are available yet, so the Embeddings endpoint is not usable for now. See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
+No embedding models are available yet, so the Embeddings endpoint is not usable for now. Images generates pictures with image models and does not use memory; see [Image Generation](/features/memory-router/image-generation). See [Deployment Modes](/features/memory-router/deployment-modes) for a full comparison.
 
 ### MemoryLake-hosted — one key
 

@@ -12,7 +12,7 @@ Memory Router is a transparent gateway that sits between your app and the model.
 - **Shared memory pool** — the Router and the [MemoryLake API](/features/memorylake/overview) read and write the same memories, so there is one source of truth
 
 <Info>
-Memory Router speaks the OpenAI and Anthropic protocols natively. Your prompts, streaming, and tool calls stay identical.
+Memory Router speaks the OpenAI and Anthropic protocols natively. Your prompts, streaming, and tool calls stay identical. The same base URL also serves OpenAI image models — see [Image Generation](/features/memory-router/image-generation).
 </Info>
 
 ## The Problem It Solves
@@ -44,6 +44,7 @@ Memory Router collapses all of that into a base-URL change plus one query parame
 | **Automatic memory** | Relevant memories are recalled and injected before the call; new memories are extracted asynchronously after it — never delaying the response. |
 | **Scoped by Boundary** | A [Boundary](#boundaries:-the-memory-scope) defines exactly which workspace, projects, and actors a conversation's memory belongs to. |
 | **Shared memory pool** | The Router and the MemoryLake API read and write the same memories — one source of truth. |
+| **Image generation** | Call image models such as `gpt-image-1` through the OpenAI Images API, with the same key. See [Image Generation](/features/memory-router/image-generation). |
 | **Traceable** | Every response carries an `X-Trace-ID` header, and each call lands in the console Logs with model, token, and key-source details. |
 
 ## Boundaries: The Memory Scope
@@ -89,6 +90,10 @@ Go live in three steps with copy-paste code for BYOK and hosted modes.
 
 <Card title="Deployment Modes" icon="key" href="/features/memory-router/deployment-modes">
 Compare BYOK and MemoryLake-hosted, endpoints, supported providers, and key safety.
+</Card>
+
+<Card title="Image Generation" icon="image" href="/features/memory-router/image-generation">
+Generate images with hosted image models through the OpenAI Images API.
 </Card>
 
 <Card title="Observability" icon="activity" href="/features/memory-router/observability">
