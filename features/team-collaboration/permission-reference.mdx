@@ -130,7 +130,7 @@ These are typical capability bundles to use as **starting points** when you're e
     | `project:doc_add` | `instance` | Add documents to the project |
     | `project:doc_delete` | `instance` | Remove documents from the project |
     | `drive:item_add` | `service` | Upload new files to Library |
-    | `drive:item_modify` | `service` | Rename, move, edit metadata, save comments |
+    | `drive:item_modify` | `service` | Rename, move, edit metadata |
     | `drive:item_delete` | `service` | Delete files from Library |
 
     The `drive:item_*` set is what enables the actual upload UI; without it, `project:doc_add` lets users **import existing** Library files into the project but the upload button stays greyed out.
@@ -919,9 +919,9 @@ Your Library is the shared file space that sits underneath every project. When y
 
 ### Read your files
 
-Lets you browse the file tree, see thumbnails, preview files in the viewer, download files, and read the comments people have left on them.
+Lets you browse the file tree, see thumbnails, preview files in the viewer, and download files.
 
-**Without it:** thumbnails fall back to plain file-type icons, "Download" menu items grey out, file previews are skipped, and comment panels degrade silently.
+**Without it:** thumbnails fall back to plain file-type icons, "Download" menu items grey out, and file previews are skipped.
 
 **Identifier:** `drive:item_read`
 
@@ -947,9 +947,9 @@ Lets you upload files, create folders, and attach external storage. This is the 
 
 ### Edit your files
 
-Lets you rename files, move them between folders, edit their metadata and tags, and save comments. This also covers managing custom attributes (xattrs) on files via the API.
+Lets you rename files, move them between folders, and edit their metadata and tags. This also covers managing custom attributes (xattrs) on files via the API.
 
-**Without it:** rename, move, and edit-metadata options grey out. The "Save" button on the comment panel is disabled and explains it needs the file-edit permission.
+**Without it:** rename, move, and edit-metadata options grey out.
 
 **Identifier:** `drive:item_modify`
 
