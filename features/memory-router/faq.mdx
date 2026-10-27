@@ -13,7 +13,11 @@ A Boundary is the memory scope for a conversation — it binds requests to a wor
 </Accordion>
 
 <Accordion title="Which providers and models are supported?">
-OpenAI (Chat Completions, Responses) and Anthropic (Messages) protocols. In hosted mode, GPT, o-series, and Claude models are built in and callable by their native names; the console's **Available Models** page lists them all. No embedding models are available yet. See [Deployment Modes](/features/memory-router/deployment-modes#supported-providers) for the current matrix.
+OpenAI (Chat Completions, Responses, Images) and Anthropic (Messages) protocols. In hosted mode, GPT, o-series, and Claude models — plus image models such as `gpt-image-1` — are built in and callable by their native names; the console's **Available Models** page lists them all. No embedding models are available yet. See [Deployment Modes](/features/memory-router/deployment-modes#supported-providers) for the current matrix.
+</Accordion>
+
+<Accordion title="Can I generate images?">
+Yes. Call image models such as `gpt-image-1` through the OpenAI Images endpoint (`images.generate` in the OpenAI SDKs), with the same base URL and key as chat models. Image generation does not use memory. See [Image Generation](/features/memory-router/image-generation).
 </Accordion>
 
 <Accordion title="What is the difference between BYOK and MemoryLake-hosted?">

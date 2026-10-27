@@ -54,7 +54,7 @@ A Boundary decides which memory a request uses. `boundary_id` applies to Chat Co
 
 ## Models
 
-Use the model's native name, such as `gpt-4o-mini` or `claude-haiku-4-5`, with no provider prefix. [List Models](/features/memory-router/api-reference/list-models) returns every model you can call and which base URL reaches it. The OpenAI and Anthropic `/v1/models` endpoints are not available. Image models, such as `gpt-image-1`, are listed under **Available Models** in the console, with their prices.
+Use the model's native name, such as `gpt-4o-mini` or `claude-haiku-4-5`, with no provider prefix. [List Models](/features/memory-router/api-reference/list-models) returns every model you can call and which base URL reaches it. The OpenAI and Anthropic `/v1/models` endpoints are not available. Image models, such as `gpt-image-1`, are listed too, with `kind: image_generation`; call them through [Images](/features/memory-router/api-reference/images).
 
 ## Streaming
 

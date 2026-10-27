@@ -1,0 +1,126 @@
+---
+title: "Image Generation"
+description: "Generate images with hosted image models through the OpenAI Images API"
+---
+
+Memory Router also serves OpenAI image models such as `gpt-image-1`. Call them with the OpenAI SDK's Images API, using the same base URL and API key you use for chat models.
+
+| | |
+| --- | --- |
+| **Endpoint** | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/images/generations` |
+| **Protocol** | OpenAI Images (`images.generate` in the OpenAI SDKs) |
+| **Keys** | Same as chat models: your MemoryLake key, or your OpenAI key plus `x-memorylake-api-key` in [BYOK mode](/features/memory-router/deployment-modes) |
+| **Memory** | Not used. `boundary_id` does not apply to image generation |
+
+## Step 1: Find an image model
+
+Image models are listed in the model catalog together with chat models. They carry `kind: image_generation`:
+
+```bash
+curl -s "https://app.memorylake.ai/openapi/memorylake/router/v1/models" \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  | jq -r '.data.items[] | select(.kind == "image_generation") | .name'
+```
+
+The console's **Available Models** page lists them too, with their prices. See [List Models](/features/memory-router/api-reference/list-models) for the full response.
+
+## Step 2: Generate an image
+
+Point the OpenAI SDK at the Memory Router base URL and call `images.generate`. Each image comes back base64-encoded in `data[].b64_json`.
+
+<CodeGroup>
+```ts TypeScript
+import OpenAI from "openai";
+import { writeFileSync } from "node:fs";
+
+const client = new OpenAI({
+  baseURL: "https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
+  apiKey: process.env.MEMORYLAKE_API_KEY,
+});
+
+const result = await client.images.generate({
+  model: "gpt-image-1-mini",
+  prompt: "A watercolor lighthouse at dawn",
+  size: "1024x1024",
+  quality: "low",
+});
+
+writeFileSync("lighthouse.png", Buffer.from(result.data![0].b64_json!, "base64"));
+```
+```py Python
+import base64
+import os
+
+from openai import OpenAI
+
+client = OpenAI(
+    base_url="https://app.memorylake.ai/openapi/memorylake/router/openai/v1",
+    api_key=os.environ["MEMORYLAKE_API_KEY"],
+)
+
+result = client.images.generate(
+    model="gpt-image-1-mini",
+    prompt="A watercolor lighthouse at dawn",
+    size="1024x1024",
+    quality="low",
+)
+
+with open("lighthouse.png", "wb") as f:
+    f.write(base64.b64decode(result.data[0].b64_json))
+```
+```bash cURL
+curl -s "https://app.memorylake.ai/openapi/memorylake/router/openai/v1/images/generations" \
+  -H "Authorization: Bearer $MEMORYLAKE_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "gpt-image-1-mini",
+    "prompt": "A watercolor lighthouse at dawn",
+    "size": "1024x1024",
+    "quality": "low"
+  }' \
+  | jq -r '.data[0].b64_json' | base64 --decode > lighthouse.png
+```
+</CodeGroup>
+
+To use your own OpenAI key instead, send it as the API key and add the `x-memorylake-api-key` header, exactly as for chat models. See [Deployment Modes](/features/memory-router/deployment-modes).
+
+## Parameters
+
+| Parameter | What it does |
+| --- | --- |
+| `model` | Image model name, such as `gpt-image-1-mini`. Required |
+| `prompt` | Text description of the image. Required |
+| `n` | Number of images to generate |
+| `size` | Image size, such as `1024x1024` |
+| `quality` | `low`, `medium`, `high` or `auto` |
+| `output_format` | `png`, `jpeg` or `webp` |
+| `background` | `transparent`, `opaque` or `auto` |
+
+Other parameters are passed to the model unchanged. See [Images](/features/memory-router/api-reference/images) in the API reference.
+
+## Pricing
+
+Image models are priced per token, with separate prices for text and image tokens on input and output. Larger sizes and higher quality produce more image tokens and cost more. The response's `usage` field reports the tokens of each call.
+
+Prices are on the console's **Available Models** page and in `price.details.image_generation` of [List Models](/features/memory-router/api-reference/list-models). Billing follows the same rules as chat models: see [Choosing a Mode](/features/memory-router/deployment-modes#choosing-a-mode).
+
+## Good to Know
+
+- **Generation only.** Image editing (`/images/edits`) and variations are not available.
+- **No memory.** `boundary_id` applies to Chat Completions, Responses and Messages only. Image requests do not read or write memory.
+- **OpenAI base URL only.** Image models are called through `/openapi/memorylake/router/openai/v1`, not the Anthropic base URL.
+- **Not in Playground.** Image models cannot be selected in the console Playground. Call them through the API.
+- **Large responses.** A single image can be well over 1 MB of base64. Allow a generous client timeout.
+- **Traceable.** Every call returns `X-Trace-ID` and appears in the console **Logs**. Errors follow the same [error contract](/features/memory-router/observability#error-contract) as other endpoints.
+
+## Next Steps
+
+<CardGroup cols={2}>
+<Card title="Images API" icon="image" href="/features/memory-router/api-reference/images">
+Every request and response field.
+</Card>
+
+<Card title="List Models" icon="list" href="/features/memory-router/api-reference/list-models">
+Find image models and their prices.
+</Card>
+</CardGroup>

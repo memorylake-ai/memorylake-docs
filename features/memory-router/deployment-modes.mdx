@@ -12,9 +12,10 @@ Memory Router works two ways. Unlike proxies that force you to bring your own ke
 | OpenAI · Chat Completions | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/chat/completions` |
 | OpenAI · Responses | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/responses` |
 | OpenAI · Embeddings | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/embeddings` |
+| OpenAI · Images | `POST https://app.memorylake.ai/openapi/memorylake/router/openai/v1/images/generations` |
 | Anthropic · Messages | `POST https://app.memorylake.ai/openapi/memorylake/router/anthropic/v1/messages` |
 
-Append `?boundary_id=<id>` to enable memory on a request — see [How It Works](/features/memory-router/how-it-works#boundaries-define-the-scope). No embedding models are available yet, so the Embeddings endpoint is not usable for now. Every parameter is listed in the [API Reference](/features/memory-router/api-reference/overview). The earlier endpoints without `/openapi/memorylake/router` (such as `https://app.memorylake.ai/openai/v1`) keep working the same way; new integrations should use the paths above.
+Append `?boundary_id=<id>` to enable memory on a request — see [How It Works](/features/memory-router/how-it-works#boundaries-define-the-scope). `boundary_id` does not apply to Images. No embedding models are available yet, so the Embeddings endpoint is not usable for now. Every parameter is listed in the [API Reference](/features/memory-router/api-reference/overview). The earlier endpoints without `/openapi/memorylake/router` (such as `https://app.memorylake.ai/openai/v1`) keep working the same way; new integrations should use the paths above.
 
 <Note>
 With the Anthropic SDK, set `base_url` to `https://app.memorylake.ai/openapi/memorylake/router/anthropic` (without `/v1`) — the SDK appends `/v1/messages` itself.
@@ -25,7 +26,7 @@ With the Anthropic SDK, set `base_url` to `https://app.memorylake.ai/openapi/mem
 No provider account required. MemoryLake runs the major models for you, so a single MemoryLake API key is all you need to start.
 
 - One key for everything — nothing else to sign up for.
-- GPT, o-series, and Claude models built in and ready to call by their native names.
+- GPT, o-series, and Claude models built in and ready to call by their native names, plus image models such as `gpt-image-1` for [image generation](/features/memory-router/image-generation).
 - The simplest possible way to ship with memory.
 
 **Keys:** MemoryLake key only, in the native auth header (`Authorization: Bearer` for OpenAI-style calls, `x-api-key` for Anthropic)
@@ -90,6 +91,7 @@ In BYOK mode your provider key is encrypted in transit and passed straight throu
 | --- | --- | --- |
 | OpenAI / GPT (Chat Completions & Responses) | ✅ | ✅ |
 | Anthropic / Claude (Messages) | ✅ | ✅ |
+| OpenAI image models (Images) | ✅ | ✅ |
 | Embeddings | — | — (no models yet) |
 
 Additional providers and protocols are added over time; the console's **Available Models** page always reflects the current catalog.

@@ -7,7 +7,7 @@ description: "List the models you can call and their prices"
 GET /openapi/memorylake/router/v1/models
 ```
 
-Lists the models you can call through Memory Router, with their prices, sorted by name. `provider_type` tells you which base URL reaches each model: call `openai` models through `/router/openai/v1` and `anthropic` models through `/router/anthropic/v1`. Each site has its own catalog.
+Lists the models you can call through Memory Router, with their prices, sorted by name. `provider_type` tells you which base URL reaches each model: call `openai` models through `/router/openai/v1` and `anthropic` models through `/router/anthropic/v1`. Image models carry `kind: image_generation` and are called through `/router/openai/v1/images/generations`; chat models have no `kind`. Each site has its own catalog.
 
 Unlike the inference endpoints, this endpoint answers in the MemoryLake API format: the catalog is in `data.items`, and errors carry `success`, `message` and `error_code`.
 
@@ -30,6 +30,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
     <ResponseField name="name" type="string">Model name to send as `model`</ResponseField>
     <ResponseField name="provider_type" type="string">Protocol that reaches the model. One of: `openai`, `anthropic`.</ResponseField>
     <ResponseField name="input_modalities" type="array">Kinds of input the model accepts. Missing when not known.</ResponseField>
+    <ResponseField name="kind" type="string">Set on models that are not chat models. `image_generation` models are called through `/router/openai/v1/images/generations`. Missing on chat models.</ResponseField>
     <ResponseField name="price" type="object">
     Prices of the model. Missing when no price is available for it.
     <Expandable title="Model Price object">
@@ -44,6 +45,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
         <ResponseField name="cache_write_1h" type="object">Input tokens written to a 1-hour cache</ResponseField>
         <ResponseField name="cache_write_5m" type="object">Input tokens written to a 5-minute cache</ResponseField>
         <ResponseField name="hosted_tools" type="object">Prices of built-in tools</ResponseField>
+        <ResponseField name="image_generation" type="object">Prices of an image model, by text and image tokens. Only on `image_generation` models.</ResponseField>
         <ResponseField name="output_thinking" type="object">Reasoning output tokens</ResponseField>
         <ResponseField name="tiers" type="array">Prices by input length</ResponseField>
       </Expandable>

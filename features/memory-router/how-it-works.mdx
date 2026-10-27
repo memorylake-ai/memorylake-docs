@@ -36,6 +36,7 @@ Every memory-enabled request carries a `boundary_id`. A **Boundary** binds the c
 - One user talking to one assistant? One Boundary.
 - The same product serving many users? One Boundary per user (or per user–assistant pair), so memories never leak across users.
 - A request **without** `boundary_id` skips the memory layer entirely and passes straight through to the model.
+- [Image generation](/features/memory-router/image-generation) requests never use memory: `boundary_id` applies to Chat Completions, Responses, and Messages only.
 
 <Info>
 Memory extraction and storage happen **asynchronously**. The model's response is returned as soon as it is ready; writing new memories never adds latency to the call.

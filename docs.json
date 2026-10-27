@@ -42,6 +42,7 @@
                   "features/memory-router/how-it-works",
                   "features/memory-router/quickstart",
                   "features/memory-router/deployment-modes",
+                  "features/memory-router/image-generation",
                   "features/memory-router/observability",
                   "features/memory-router/faq"
                 ]
@@ -706,6 +707,7 @@
                   "zh/features/memory-router/how-it-works",
                   "zh/features/memory-router/quickstart",
                   "zh/features/memory-router/deployment-modes",
+                  "zh/features/memory-router/image-generation",
                   "zh/features/memory-router/observability",
                   "zh/features/memory-router/faq"
                 ]
