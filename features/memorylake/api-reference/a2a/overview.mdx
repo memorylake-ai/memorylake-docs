@@ -84,7 +84,7 @@ The project the agent works in (`proj-` followed by 32 hex characters). The agen
 - **Fixed for the conversation.** The first message of a conversation (`contextId`) binds the project. Later messages can leave it out and keep using it. Sending a different project, or adding one to a conversation that started without a project, fails with `400`.
 - **Same workspace only.** A project from another workspace returns `404`.
 - **Permissions:** `project:mem_add`, `project:doc_add`, `project:mem_search` and `project:doc_search` on the project, checked when the conversation starts.
-- **Required for file attachments.** Files in the message (`drive://` references or inline bytes) are imported into this project as documents. A message that carries files must name the project itself; inheriting it from the conversation isn't enough, and the request fails with `400`.
+- **Required for file attachments.** Files in the message (Library files or inline content, see [Attach files](#attach-files)) are imported into this project as documents, and inline files are also saved to your Library. A message that carries files must name the project itself; inheriting it from the conversation isn't enough, and the request fails with `400`.
 </ParamField>
 
 <ParamField body="readOnlyProjectIds" type="string[]">
@@ -422,6 +422,109 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
   }'
 ```
 </CodeGroup>
+
+## Attach files
+
+A message can carry files next to its text, in two ways:
+
+- **A Library file.** Pass the file's `uri` (`drive://…`), as returned by [List Items](/features/memorylake/api-reference/library/list-items) or [Get Item](/features/memorylake/api-reference/library/get-item).
+- **Inline content.** Pass the file's bytes, base64-encoded (standard or URL-safe; a `data:<type>;base64,` prefix is also accepted). Give the file a `name` with its extension, or its MIME type, so MemoryLake can tell what kind of document it is.
+
+Either way the file is imported into the message's `readWriteProjectId` project as a document, and the agent reads it from there. Keep in mind:
+
+- **A project is required.** A message that carries files must set `readWriteProjectId` itself, even when the conversation already has a project. Otherwise the request fails with `400`.
+- **Inline files are also saved to your Library, on every send.** Each inline file is saved as a new file at the top level of your workspace root (`MY_SPACE`), as well as being imported into the project. Sending the same file again saves another copy, and a name that is already taken gets a suffix: `report.pdf`, `report_1.pdf`, `report_2.pdf`, and so on. Copies aren't deduplicated or cleaned up, so delete the ones you no longer need with [Delete Item](/features/memorylake/api-reference/library/delete-item). Saving them needs the [`drive:item_add`](/features/team-collaboration/permission-reference#upload-and-create-files) permission. To attach a file without making a new copy each time, upload it to the Library once and pass its `uri`.
+- **Supported types** include PDF, Word, Excel, PowerPoint, CSV and TSV, plain text, Markdown, and images (PNG, JPEG, GIF, BMP, WebP, TIFF). A file of another type is rejected with `400`. For an inline file, the type comes from the extension in `name`, or from the MIME type when the name has no supported extension.
+
+Each route family spells the file part differently. Every example below attaches the same two files, one from the Library and one inline:
+
+<CodeGroup>
+```json v1.0 REST (message:send, message:stream)
+{
+  "message": {
+    "role": "ROLE_USER",
+    "parts": [
+      { "text": "Compare these two reports." },
+      { "url": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7", "filename": "report.pdf", "mediaType": "application/pdf" },
+      { "raw": "JVBERi0xLjcKJcfsj6IK...", "filename": "q3-summary.pdf", "mediaType": "application/pdf" }
+    ]
+  },
+  "metadata": {
+    "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+  }
+}
+```
+
+```json v1.0 JSON-RPC (SendMessage, SendStreamingMessage)
+{
+  "jsonrpc": "2.0",
+  "id": "req-5",
+  "method": "SendMessage",
+  "params": {
+    "message": {
+      "messageId": "msg-5",
+      "role": "ROLE_USER",
+      "parts": [
+        { "text": "Compare these two reports." },
+        { "url": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7", "filename": "report.pdf", "mediaType": "application/pdf" },
+        { "raw": "JVBERi0xLjcKJcfsj6IK...", "filename": "q3-summary.pdf", "mediaType": "application/pdf" }
+      ]
+    },
+    "metadata": {
+      "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+    }
+  }
+}
+```
+
+```json v0.3 REST (/v1/message:send, /v1/message:stream)
+{
+  "message": {
+    "role": "ROLE_USER",
+    "content": [
+      { "text": "Compare these two reports." },
+      { "file": { "fileWithUri": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7", "name": "report.pdf", "mimeType": "application/pdf" } },
+      { "file": { "fileWithBytes": "JVBERi0xLjcKJcfsj6IK...", "name": "q3-summary.pdf", "mimeType": "application/pdf" } }
+    ]
+  },
+  "configuration": { "blocking": true },
+  "metadata": {
+    "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+  }
+}
+```
+
+```json v0.3 JSON-RPC (message/send, message/stream)
+{
+  "jsonrpc": "2.0",
+  "id": "req-7",
+  "method": "message/send",
+  "params": {
+    "message": {
+      "messageId": "msg-7",
+      "role": "user",
+      "parts": [
+        { "kind": "text", "text": "Compare these two reports." },
+        { "kind": "file", "file": { "uri": "drive://items/sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7", "name": "report.pdf", "mimeType": "application/pdf" } },
+        { "kind": "file", "file": { "bytes": "JVBERi0xLjcKJcfsj6IK...", "name": "q3-summary.pdf", "mimeType": "application/pdf" } }
+      ]
+    },
+    "configuration": { "blocking": true },
+    "metadata": {
+      "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+    }
+  }
+}
+```
+</CodeGroup>
+
+| Route family | Library file | Inline content | Name and type |
+|---|---|---|---|
+| v1.0 REST and JSON-RPC | `url` | `raw` | `filename`, `mediaType` |
+| v0.3 REST | `file.fileWithUri` (also `file_with_uri` or `uri`) | `file.fileWithBytes` (also `file_with_bytes` or `bytes`) | `file.name`, `file.mimeType` (also `mime_type`) |
+| v0.3 JSON-RPC | `file.uri` | `file.bytes` | `file.name`, `file.mimeType` |
+
+Give each file part exactly one of the two sources. Over v0.3 REST, a part must also set exactly one of `text`, `file` and `data`. A part that breaks either rule, such as a `file` with only `name` and `mimeType`, a `file` with both sources, or an empty part, is rejected with `400 INVALID_ARGUMENT` before anything is saved or sent to the agent. The error message names the part, for example `message.content[1].file`. Over v1.0, a part with neither `url` nor `raw` isn't read as a file.
 
 ## Responses
 
