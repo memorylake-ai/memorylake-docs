@@ -572,16 +572,29 @@ To get the answer of a task you didn't wait for, subscribe to it: `GET {baseUrl}
 
 **The task fails.** The request still returns HTTP 200; the task ends in `TASK_STATE_FAILED`, and `status.message.parts[0].text` describes the error. For example, an unknown `overrides.model` fails the task with `LLM model config not found: <model>`.
 
-**The request is rejected.** REST routes answer with an HTTP error status and the standard [error body](/features/memorylake/api-reference/errors) (`success`, `message`, `error_code`). For example:
+**MemoryLake rejects the request.** Before the agent runs, MemoryLake checks your key, your quota, your permissions and the request itself. A rejection at this point uses an HTTP error status and the standard [error body](/features/memorylake/api-reference/errors) (`success`, `message`, `error_code`) on every transport, JSON-RPC included, and never comes as a stream. For example:
 
 | Status | `error_code` | When |
 |---|---|---|
-| 400 | `INVALID_ARGUMENT` | The request is invalid, or another message in the same conversation is still being processed. |
+| 400 | `INVALID_ARGUMENT` | The request is invalid. |
 | 402 | `QUOTA_EXCEEDED` | Your quota is used up. |
 | 403 | `ACCESS_DENIED` | You lack a permission the request needs. |
-| 404 | `NOT_FOUND` | The agent or task doesn't exist. |
+| 404 | `NOT_FOUND` | The agent doesn't exist, or isn't in this workspace. |
 
-Over JSON-RPC, errors that MemoryLake raises before the agent runs, such as quota or permission errors, use the same HTTP status and error body. Errors the agent reports come back as a JSON-RPC `error` object with HTTP 200, and v0.3 methods report all of those with code `-32603`.
+**The agent rejects the request.** The agent's own rejections follow the A2A specification and reach you exactly as the agent sent them, status code and body included.
+
+- **REST**: an HTTP error status with a `google.rpc.Status` body:
+
+  ```json
+  {"error": {"code": 400, "status": "INVALID_ARGUMENT", "message": "Session has an active run 'run-…'", "details": [...]}}
+  ```
+
+  The agent answers like this when another message in the same conversation is still being processed (400 `INVALID_ARGUMENT`), when a task doesn't exist (404 `NOT_FOUND`), or when you subscribe to a task that has already finished (400 `INVALID_ARGUMENT`).
+- **JSON-RPC**: HTTP 200 with a JSON-RPC `error` object; v0.3 methods currently return code `-32603` for all of them. A v1.0 streaming method that is rejected before it starts answers with that JSON object (`Content-Type: application/json`) instead of an event stream; a v0.3 stream carries it as an event. Occasionally a JSON-RPC request is rejected with an HTTP error status instead, so check the status first.
+
+**A stream breaks off.** Once a stream has started, MemoryLake adds nothing to it: there is no error event, and the stream just ends. A complete stream always ends with a final status: `TASK_STATE_COMPLETED`, `TASK_STATE_FAILED`, `TASK_STATE_CANCELED` or `TASK_STATE_INPUT_REQUIRED` (in v0.3 JSON-RPC, the status update marked `"final": true`). `TASK_STATE_INPUT_REQUIRED` means the agent is waiting for your reply: send it as a new message with the same `taskId`, with no need to subscribe. If a stream ends without a final status, it was cut short; [subscribe to the task](#follow-a-task) to pick it up again.
+
+**The agent can't answer.** If the agent is unavailable or fails, the request returns 500 with the standard error body and `error_code` `INTERNAL_ERROR`. The `message` may include a trace ID; quote it when you contact support.
 
 ### v0.3 differences
 
