@@ -28,7 +28,7 @@ ID of the file or folder to set xattrs on.
 ### Request Body
 
 <ParamField body="x_attrs" type="object" required>
-Map of `string → string` to upsert onto the item. Each entry is one extended attribute. An empty map is allowed but a no-op.
+Map of `string → string` to upsert onto the item. Each entry is one extended attribute. Send at least one entry: an empty map is rejected with `400 INVALID_ARGUMENT`.
 </ParamField>
 
 <RequestExample>
