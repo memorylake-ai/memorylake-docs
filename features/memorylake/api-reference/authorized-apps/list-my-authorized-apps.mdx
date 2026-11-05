@@ -1,0 +1,99 @@
+---
+title: "List My Authorized Apps"
+description: "Lists the apps the caller (the key's owner) has authorized through MCP OAuth in this team and that can still access their memories: one item per app and memory boundary"
+---
+
+```
+GET /openapi/memorylake/admin/v1/me/authorized-apps
+```
+
+Lists the apps the caller (the key's owner) has authorized through MCP OAuth in this team and that can still access their memories: one item per app and memory boundary. Only your own authorizations; nobody can list another member's. Empty when MCP OAuth is not enabled on this deployment.
+
+<Note>
+**Permission required:** none — any member's key can call this
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/me/authorized-apps' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Authorized Apps object">
+  <ResponseField name="items" type="array">
+  Most recently used first; never-used last
+  <Expandable title="Authorized App object">
+    <ResponseField name="app_name" type="string">Name the app registered itself with; empty when it gave none. Not verified.</ResponseField>
+    <ResponseField name="authorized_at" type="integer">First authorization time, Unix seconds</ResponseField>
+    <ResponseField name="authorized_before" type="boolean">true = authorized_at is the earliest record available; the first authorization was earlier</ResponseField>
+    <ResponseField name="boundary" type="object">
+    Memory boundary the app can read and write
+    <Expandable title="Authorized App Name object">
+      <ResponseField name="deleted" type="boolean">It was deleted. The authorization still exists but can no longer reach any memory; revoke it.</ResponseField>
+      <ResponseField name="name" type="string">Current name; null when it could not be looked up right now, or when deleted</ResponseField>
+    </Expandable>
+    </ResponseField>
+    <ResponseField name="id" type="string">Stable identifier of this authorization (app × team × memory boundary)</ResponseField>
+    <ResponseField name="last_used_at" type="integer">Last time the app renewed its access, Unix seconds; 0 = not since it was authorized</ResponseField>
+    <ResponseField name="logo_uri" type="string">Logo the app registered (https only); empty when none</ResponseField>
+    <ResponseField name="source_host" type="string">Host the authorization redirected back to; empty when source_local is true</ResponseField>
+    <ResponseField name="source_local" type="boolean">The app runs on the user's device (redirected to a loopback address or a custom scheme)</ResponseField>
+    <ResponseField name="verified" type="boolean">Always false: MCP apps register themselves and are not verified</ResponseField>
+    <ResponseField name="workspace" type="object">
+    Workspace of the memory boundary
+    <Expandable title="Authorized App Name object">
+      <ResponseField name="deleted" type="boolean">It was deleted. The authorization still exists but can no longer reach any memory; revoke it.</ResponseField>
+      <ResponseField name="name" type="string">Current name; null when it could not be looked up right now, or when deleted</ResponseField>
+    </Expandable>
+    </ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "items": [
+      {
+        "app_name": "Example app",
+        "authorized_at": 1760000000,
+        "authorized_before": false,
+        "boundary": {
+          "deleted": false,
+          "name": "Example name"
+        },
+        "id": "c7ff648cfec4d3959017fa69c2c25bc9",
+        "last_used_at": 1760000000,
+        "logo_uri": "example",
+        "source_host": "example",
+        "source_local": false,
+        "verified": false,
+        "workspace": {
+          "deleted": false,
+          "name": "Example name"
+        }
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

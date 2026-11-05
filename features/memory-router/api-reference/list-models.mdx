@@ -7,7 +7,7 @@ description: "List the models you can call and their prices"
 GET /openapi/memorylake/router/v1/models
 ```
 
-Lists the models you can call through Memory Router, with their prices, sorted by name. `provider_type` tells you which base URL reaches each model: call `openai` models through `/router/openai/v1` and `anthropic` models through `/router/anthropic/v1`. Image models carry `kind: image_generation` and are called through `/router/openai/v1/images/generations`; chat models have no `kind`. Each site has its own catalog.
+Lists the models you can call through Memory Router, with their prices, sorted by name. `endpoints` lists the paths each model can be called at, relative to `/router` (for example `/openai/v1/chat/completions` or `/anthropic/v1/messages`); a model can only be called at the paths listed for it. `protocols` groups those paths by base URL: `openai` through `/router/openai/v1` and `anthropic` through `/router/anthropic/v1`. Image models carry `kind: image_generation` and are called through `/router/openai/v1/images/generations`; chat models have no `kind`. Each site has its own catalog.
 
 Unlike the inference endpoints, this endpoint answers in the MemoryLake API format: the catalog is in `data.items`, and errors carry `success`, `message` and `error_code`.
 
@@ -27,8 +27,10 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
   <ResponseField name="items" type="array">
   Every model you can call, sorted by name. An empty list when none is available.
   <Expandable title="Catalog Model object">
+    <ResponseField name="endpoints" type="array">Paths the model can be called at, relative to `/router`: `/openai/v1/chat/completions` means `/router/openai/v1/chat/completions`. The model can only be called at these paths.</ResponseField>
     <ResponseField name="name" type="string">Model name to send as `model`</ResponseField>
-    <ResponseField name="provider_type" type="string">Protocol that reaches the model. One of: `openai`, `anthropic`.</ResponseField>
+    <ResponseField name="protocols" type="array">Protocols the model can be called with: `openai` through `/router/openai/v1`, `anthropic` through `/router/anthropic/v1`. To know which calls work, use `endpoints`.</ResponseField>
+    <ResponseField name="provider_type" type="string">The first entry of `protocols`. Use `protocols` instead. One of: `openai`, `anthropic`.</ResponseField>
     <ResponseField name="input_modalities" type="array">Kinds of input the model accepts. Missing when not known.</ResponseField>
     <ResponseField name="kind" type="string">Set on models that are not chat models. `image_generation` models are called through `/router/openai/v1/images/generations`. Missing on chat models.</ResponseField>
     <ResponseField name="price" type="object">
@@ -80,6 +82,9 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
   "data": {
     "items": [
       {
+        "endpoints": [
+          "/anthropic/v1/messages"
+        ],
         "name": "claude-haiku-4-5",
         "price": {
           "details": {
@@ -101,9 +106,17 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
             "usd_per_million": 5
           }
         },
+        "protocols": [
+          "anthropic"
+        ],
         "provider_type": "anthropic"
       },
       {
+        "endpoints": [
+          "/openai/v1/chat/completions",
+          "/openai/v1/responses",
+          "/anthropic/v1/messages"
+        ],
         "name": "gpt-4o-mini",
         "price": {
           "details": {
@@ -121,6 +134,10 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/router/v1/models' \
             "usd_per_million": 0.6
           }
         },
+        "protocols": [
+          "openai",
+          "anthropic"
+        ],
         "provider_type": "openai"
       }
     ]

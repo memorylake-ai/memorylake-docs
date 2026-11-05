@@ -504,6 +504,31 @@
                     ]
                   },
                   {
+                    "group": "Authorized Apps",
+                    "pages": [
+                      "features/memorylake/api-reference/authorized-apps/list-my-authorized-apps",
+                      "features/memorylake/api-reference/authorized-apps/revoke-my-authorized-app"
+                    ]
+                  },
+                  {
+                    "group": "Webhooks",
+                    "pages": [
+                      "features/memorylake/api-reference/webhooks/list-webhooks",
+                      "features/memorylake/api-reference/webhooks/create-webhook",
+                      "features/memorylake/api-reference/webhooks/get-webhook",
+                      "features/memorylake/api-reference/webhooks/update-webhook",
+                      "features/memorylake/api-reference/webhooks/delete-webhook",
+                      "features/memorylake/api-reference/webhooks/enable-webhook",
+                      "features/memorylake/api-reference/webhooks/disable-webhook",
+                      "features/memorylake/api-reference/webhooks/rotate-webhook-secret",
+                      "features/memorylake/api-reference/webhooks/send-webhook-test-event",
+                      "features/memorylake/api-reference/webhooks/list-webhook-event-types",
+                      "features/memorylake/api-reference/webhooks/list-webhook-deliveries",
+                      "features/memorylake/api-reference/webhooks/get-webhook-delivery",
+                      "features/memorylake/api-reference/webhooks/resend-webhook-delivery"
+                    ]
+                  },
+                  {
                     "group": "Access Control",
                     "pages": [
                       "features/memorylake/api-reference/access-control/overview",
@@ -1165,6 +1190,31 @@
                       "zh/features/memorylake/api-reference/api-keys/update-api-key",
                       "zh/features/memorylake/api-reference/api-keys/rotate-api-key",
                       "zh/features/memorylake/api-reference/api-keys/revoke-api-key"
+                    ]
+                  },
+                  {
+                    "group": "已授权的应用",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/authorized-apps/list-my-authorized-apps",
+                      "zh/features/memorylake/api-reference/authorized-apps/revoke-my-authorized-app"
+                    ]
+                  },
+                  {
+                    "group": "Webhook",
+                    "pages": [
+                      "zh/features/memorylake/api-reference/webhooks/list-webhooks",
+                      "zh/features/memorylake/api-reference/webhooks/create-webhook",
+                      "zh/features/memorylake/api-reference/webhooks/get-webhook",
+                      "zh/features/memorylake/api-reference/webhooks/update-webhook",
+                      "zh/features/memorylake/api-reference/webhooks/delete-webhook",
+                      "zh/features/memorylake/api-reference/webhooks/enable-webhook",
+                      "zh/features/memorylake/api-reference/webhooks/disable-webhook",
+                      "zh/features/memorylake/api-reference/webhooks/rotate-webhook-secret",
+                      "zh/features/memorylake/api-reference/webhooks/send-webhook-test-event",
+                      "zh/features/memorylake/api-reference/webhooks/list-webhook-event-types",
+                      "zh/features/memorylake/api-reference/webhooks/list-webhook-deliveries",
+                      "zh/features/memorylake/api-reference/webhooks/get-webhook-delivery",
+                      "zh/features/memorylake/api-reference/webhooks/resend-webhook-delivery"
                     ]
                   },
                   {

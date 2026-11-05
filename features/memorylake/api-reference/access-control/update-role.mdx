@@ -52,7 +52,7 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/roles/data_
 
 <ResponseField name="data" type="object">
 <Expandable title="Role Detail object">
-  <ResponseField name="admin_grant_only" type="boolean">When true, only the team owner or a member holding the admin baseline — through their role or through an access group — may grant this role. A property of the role, the same for every caller; it is not the console role list's per-caller assignable flag.</ResponseField>
+  <ResponseField name="admin_grant_only" type="boolean">When true, the role is admin-level: only the team owner may grant it (role change or invitation), and virtual members cannot hold it. A property of the role, the same for every caller; it is not the console role list's per-caller assignable flag.</ResponseField>
   <ResponseField name="assignable" type="boolean">Whether member and invitation writes accept this role at all — the same for every caller. The owner role never is. Unlike the console's role list, this does not say whether you yourself may grant it: for that, combine it with admin_grant_only and your own role.</ResponseField>
   <ResponseField name="built_in" type="boolean">true for the three roles every team has; false for roles authored in this team</ResponseField>
   <ResponseField name="key" type="string">The value the role fields of member and invitation writes accept</ResponseField>

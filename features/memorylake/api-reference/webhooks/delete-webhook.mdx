@@ -1,0 +1,52 @@
+---
+title: "Delete Webhook"
+description: "Stops sending to the endpoint and deletes the webhook together with its deliveries"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/webhooks/{webhook_id}
+```
+
+Stops sending to the endpoint and deletes the webhook together with its deliveries.
+
+<Note>
+**Permission required:** `webhook:manage`
+</Note>
+
+### Path Parameters
+
+<ParamField path="webhook_id" type="string" required>
+Identifier of the webhook
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/webhooks/16522a01eaa7b9feef48caafb0b487a5' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+</ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `404` | The resource does not exist |
+| `422` | The body or a parameter failed validation |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

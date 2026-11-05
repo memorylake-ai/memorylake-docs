@@ -7,13 +7,13 @@ description: "Creates an API key and returns its full value once"
 POST /openapi/memorylake/admin/v1/api-keys
 ```
 
-Creates an API key and returns its full value once. Pass member_principal_id to issue the key for a VIRTUAL member (the key then acts as that member); human members cannot be targeted.
+Creates an API key and returns its full value once. Pass member_principal_id to issue the key for a VIRTUAL member (the key then acts as that member); human members cannot be targeted. Issuing a key for a member is acting on that member: you can only target virtual members ranked below you (403 MEMBER_NOT_BELOW_CALLER), and one holding an admin-level role only as the team owner (403 ROLE_REQUIRES_OWNER).
 
 <Note>
 **Permission required:** `service_account:create` (all keys)
 
 - When you set `member_principal_id`: `member:manage_virtual`
-- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+- When the target virtual member is not ranked below you: it holds tenant_admin or an admin-level custom role (403 MEMBER_NOT_BELOW_CALLER / ROLE_REQUIRES_OWNER): team owner only
 </Note>
 
 ### Headers
@@ -48,6 +48,10 @@ Optional. Model-routing group. Must be a public group or the owner's own group.
 Optional. Issue the key for this VIRTUAL member (from POST /members); the key acts as that member. Human members cannot be targeted.
 </ParamField>
 
+<ParamField body="read_only" type="boolean">
+Optional. true = a read-only key: requests that create, change or delete anything are refused with 403 API_KEY_READ_ONLY. Default false (full access).
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys' \
@@ -62,7 +66,8 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys' \
     "backup_group": "example",
     "expires_at": 1760000000,
     "group": "example",
-    "member_principal_id": "3c044ef28d3c60180490868efdce0ca8"
+    "member_principal_id": "3c044ef28d3c60180490868efdce0ca8",
+    "read_only": false
   }'
 ```
 </RequestExample>

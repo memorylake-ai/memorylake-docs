@@ -1,0 +1,59 @@
+---
+title: "Revoke Authorized App"
+description: "Revokes one authorization: the app can no longer access that memory boundary until the user authorizes it again from the app"
+---
+
+```
+DELETE /openapi/memorylake/admin/v1/me/authorized-apps/{id}
+```
+
+Revokes one authorization: the app can no longer access that memory boundary until the user authorizes it again from the app. Its refresh tokens and the access tokens it already holds stop working immediately. The same app's authorizations on other boundaries are not affected. Idempotent: an id that is no longer live (already revoked, expired) answers 200 with revoked=false.
+
+<Note>
+**Permission required:** none — any member's key can call this
+</Note>
+
+### Path Parameters
+
+<ParamField path="id" type="string" required>
+Identifier of the authorization (from [List My Authorized Apps](/features/memorylake/api-reference/authorized-apps/list-my-authorized-apps))
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X DELETE 'https://app.memorylake.ai/openapi/memorylake/admin/v1/me/authorized-apps/9d971b8b5813eb1ecceec31354c101b4' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Revoke Authorized App object">
+  <ResponseField name="revoked" type="boolean">false = there was no live authorization with this id (already revoked or expired); the outcome is the same</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "revoked": false
+  }
+}
+```
+</ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `422` | The body or a parameter failed validation |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

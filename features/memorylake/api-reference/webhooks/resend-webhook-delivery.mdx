@@ -1,0 +1,85 @@
+---
+title: "Resend Delivery"
+description: "Sends the delivery's event once more, with the same event id; the result is recorded as a new attempt of the same delivery"
+---
+
+```
+POST /openapi/memorylake/admin/v1/webhooks/{webhook_id}/deliveries/{delivery_id}/resend
+```
+
+Sends the delivery's event once more, with the same event id; the result is recorded as a new attempt of the same delivery. A disabled webhook must be enabled first (409).
+
+<Note>
+**Permission required:** `webhook:manage`
+</Note>
+
+### Path Parameters
+
+<ParamField path="webhook_id" type="string" required>
+Identifier of the webhook
+</ParamField>
+
+<ParamField path="delivery_id" type="integer" required>
+Identifier of the delivery
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/webhooks/16522a01eaa7b9feef48caafb0b487a5/deliveries/86781417b9e7c90df34ec8c367ab1854/resend' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Webhook Delivery object">
+  <ResponseField name="attempts" type="integer">Attempts made so far</ResponseField>
+  <ResponseField name="created_at" type="integer">When the event happened, Unix seconds</ResponseField>
+  <ResponseField name="delivery_id" type="integer">Identifier of the delivery</ResponseField>
+  <ResponseField name="event_id" type="string">Event identifier sent in the webhook-id header; unchanged across retries and resends</ResponseField>
+  <ResponseField name="event_type" type="string">Event type; webhook.test for test events</ResponseField>
+  <ResponseField name="status" type="string">pending = queued, no result yet; retrying = failed, the next retry is at next_attempt_at; skipped = not sent because the webhook was disabled. One of: `pending`, `retrying`, `succeeded`, `failed`, `skipped`.</ResponseField>
+  <ResponseField name="duration_ms" type="integer">Duration of the latest attempt in milliseconds</ResponseField>
+  <ResponseField name="error_kind" type="string">Why the latest attempt got no response. One of: `timeout`, `connect`.</ResponseField>
+  <ResponseField name="last_attempt_at" type="integer">Time of the latest attempt, Unix seconds</ResponseField>
+  <ResponseField name="next_attempt_at" type="integer">When the next automatic retry is due, Unix seconds</ResponseField>
+  <ResponseField name="status_code" type="integer">HTTP status of the latest response</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "attempts": 1,
+    "created_at": 1760000000,
+    "delivery_id": 1,
+    "event_id": "8085a81b91bad7009b3fd09854461edf",
+    "event_type": "example",
+    "status": "pending",
+    "duration_ms": 1,
+    "error_kind": "timeout",
+    "last_attempt_at": 1760000000,
+    "next_attempt_at": 1760000000,
+    "status_code": 1
+  }
+}
+```
+</ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `404` | The resource does not exist |
+| `409` | The request conflicts with the current state, e.g. a duplicate or a limit reached |
+| `422` | The body or a parameter failed validation |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

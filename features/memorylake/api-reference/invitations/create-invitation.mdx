@@ -7,12 +7,12 @@ description: "Creates an invitation and emails the invitee"
 POST /openapi/memorylake/admin/v1/invitations
 ```
 
-Creates an invitation and emails the invitee. One live invitation per email per team: if a pending one exists, revoke it first — re-inviting is revoke + create (there is no resend endpoint). Invitation emails expire after 7 days. Creation is capped per team per 24 hours; the cap counts created invitations, and 429 responses carry Retry-After.
+Creates an invitation and emails the invitee. One live invitation per email per team: if a pending one exists, revoke it first — re-inviting is revoke + create (there is no resend endpoint). Invitation emails expire after 7 days. Creation is capped per team per 24 hours; the cap counts created invitations, and 429 responses carry Retry-After. An admin-level role (GET /roles, admin_grant_only) can be invited only by the owner (403 ROLE_REQUIRES_OWNER), the same rule as a role change and as the console.
 
 <Note>
 **Permission required:** `member:invite`
 
-- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+- When the role assigned is admin-level: tenant_admin, or a custom role holding any admin-only team action: team owner only
 </Note>
 
 ### Headers

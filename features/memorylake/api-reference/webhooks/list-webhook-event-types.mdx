@@ -1,0 +1,63 @@
+---
+title: "List Event Types"
+description: "Lists the event types a webhook can receive, in display order"
+---
+
+```
+GET /openapi/memorylake/admin/v1/webhooks/event-types
+```
+
+Lists the event types a webhook can receive, in display order. New types may be added; receivers should ignore types they do not know.
+
+<Note>
+**Permission required:** `webhook:manage`
+</Note>
+
+<RequestExample>
+```bash cURL
+curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/webhooks/event-types' \
+  -H 'Authorization: Bearer sk_xxxxxx'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Webhook Event Types object">
+  <ResponseField name="event_types" type="array">
+  <Expandable title="Webhook Event Type object">
+    <ResponseField name="group" type="string">Group the type is listed under. One of: `api_key`, `member`, `balance`, `subscription`, `export`.</ResponseField>
+    <ResponseField name="type" type="string">Event type, as it appears in the type field of a delivery</ResponseField>
+  </Expandable>
+  </ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "event_types": [
+      {
+        "group": "api_key",
+        "type": "example"
+      }
+    ]
+  }
+}
+```
+</ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `404` | The resource does not exist |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

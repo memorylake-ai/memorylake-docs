@@ -71,6 +71,8 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys' \
       <ResponseField name="principal_id" type="string">principal_id of the member (see GET /members)</ResponseField>
     </Expandable>
     </ResponseField>
+    <ResponseField name="previous_key_expires_at" type="integer">After a rotation with old_key_expires_in, the time the replaced key stops working, Unix seconds. Omitted when no replaced key is still working.</ResponseField>
+    <ResponseField name="read_only" type="boolean">true = read-only key: requests that create, change or delete anything are refused with 403 API_KEY_READ_ONLY. Omitted = full access.</ResponseField>
   </Expandable>
   </ResponseField>
   <ResponseField name="continuation_token" type="string">Token to fetch the next page; absent on the last page</ResponseField>
@@ -104,7 +106,9 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys' \
           "display_name": "Alice",
           "member_type": "human",
           "principal_id": "61083f9552ae2ae6bd9105e4e2763c7b"
-        }
+        },
+        "previous_key_expires_at": 1760000000,
+        "read_only": false
       }
     ],
     "continuation_token": "eyJvZmZzZXQiOjIwfQ",
