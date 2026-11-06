@@ -49,6 +49,10 @@ Only records of these members. Repeat the parameter for several. A caller limite
 Only the record of this request id.
 </ParamField>
 
+<ParamField query="trace_id" type="string">
+Only the records of this trace id (the X-Trace-ID response header): every charge of that request. Within the time window like the other filters.
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/usage/records' \

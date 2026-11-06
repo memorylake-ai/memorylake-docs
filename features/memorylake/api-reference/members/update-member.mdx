@@ -7,14 +7,15 @@ description: "Changes a member's role and/or per-member usage cap"
 PATCH /openapi/memorylake/admin/v1/members/{principal_id}
 ```
 
-Changes a member's role and/or per-member usage cap. Only the fields you send change; null is rejected. The owner role cannot be assigned here, and the owner's own role and your own role cannot be changed — use [Transfer Ownership](/features/memorylake/api-reference/team/transfer-ownership) to hand the team to another member.
+Changes a member's role and/or per-member usage cap. Only the fields you send change; null is rejected. The owner role cannot be assigned here, and the owner's own role and your own role cannot be changed — use [Transfer Ownership](/features/memorylake/api-reference/team/transfer-ownership) to hand the team to another member. You can only change members ranked below you: an admin cannot change another admin, and nobody but the owner can change an admin (403 MEMBER_NOT_BELOW_CALLER) — the role and the usage cap alike. An admin-level role (GET /roles, admin_grant_only) can be granted only by the owner (403 ROLE_REQUIRES_OWNER) and never to a virtual member (400 ROLE_NOT_FOR_VIRTUAL_MEMBER). The same rules apply in the console.
 
 <Note>
 **Permission required:** depends on what you send:
 
 - When you send `role`: `member:change_role`
 - When you send `max_tokens`: `member:set_quota`
-- Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
+- When the role assigned is admin-level: tenant_admin, or a custom role holding any admin-only team action: team owner only
+- When the member is not ranked below you: the owner, an admin, or a holder of an admin-level custom role (403 MEMBER_NOT_BELOW_CALLER) — role and max_tokens alike: team owner only
 </Note>
 
 ### Path Parameters

@@ -41,7 +41,7 @@ Each listed resource type's instance list is replaced by the given one; mode all
   <ParamField body="scopes[].mode" type="string" required>all = every instance; instances = only the listed ones</ParamField>
   <ParamField body="scopes[].resource_type" type="string" required>Resource type, e.g. memorylake:project</ParamField>
   <ParamField body="scopes[].instances" type="array">
-  Required when mode is instances
+  Instances when mode is instances; may be empty
   <Expandable title="Access Scope Instance object">
     <ParamField body="scopes[].instances[].id" type="string" required>Instance id</ParamField>
     <ParamField body="scopes[].instances[].actions" type="array">Omit for every action the member's role allows</ParamField>

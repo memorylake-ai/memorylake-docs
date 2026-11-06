@@ -7,7 +7,7 @@ description: "Replaces the key material and returns the new value once"
 POST /openapi/memorylake/admin/v1/api-keys/{id}/rotate
 ```
 
-Replaces the key material and returns the new value once. The previous value stops working immediately.
+Replaces the key material and returns the new value once. The previous value stops working immediately. Whoever regenerates a key sees its new value, so only your own keys and virtual members' keys can be regenerated — another person's key is refused (403 API_KEY_OF_ANOTHER_MEMBER), a key whose creator has left the team must be transferred first (409 STATE_NOT_READY), and a virtual member's key needs member:manage_virtual (or the owner) and a member ranked below you (403 MEMBER_NOT_BELOW_CALLER). The same rules apply in the console.
 
 <Warning>
 Rotation is not naturally idempotent: every call mints a new key and stops the previous one. When retrying over an unreliable network, always send an `Idempotency-Key` — a blind retry would invalidate the key you just received.
@@ -15,6 +15,9 @@ Rotation is not naturally idempotent: every call mints a new key and stops the p
 
 <Note>
 **Permission required:** `service_account:update` (your own keys only) or `service_account:update` (all keys)
+
+- When the key was not created by a virtual member: only your own key can be regenerated — another person's is refused to everyone, the owner included (403 API_KEY_OF_ANOTHER_MEMBER, or 409 when its creator has left the team): `service_account:update` (your own keys only) or `service_account:update` (your own keys only)
+- When the key was created by a virtual member ranked below you: member:manage_virtual or the owner, in place of the update permission: team owner only or `member:manage_virtual`
 </Note>
 
 ### Path Parameters
@@ -29,11 +32,21 @@ Identifier of the API key
 Optional. Retrying with the same value replays the first result — it does NOT mint a second key.
 </ParamField>
 
+### Request Body
+
+<ParamField body="old_key_expires_in" type="string">
+When the replaced key stops working. now (default) = immediately. 1h / 24h / 7d = both keys work until then. Rotating again while a replaced key is still working ends that one at once — at most two keys work at the same time.
+</ParamField>
+
 <RequestExample>
 ```bash cURL
 curl -X POST 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/9d971b8b5813eb1ecceec31354c101b4/rotate' \
   -H 'Authorization: Bearer sk_xxxxxx' \
-  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0'
+  -H 'Idempotency-Key: 7c1d2e3f-0a9b-4c8d-b7e6-f5a4d3c2b1a0' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "old_key_expires_in": "now"
+  }'
 ```
 </RequestExample>
 

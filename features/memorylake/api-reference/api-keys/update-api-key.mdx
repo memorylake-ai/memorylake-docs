@@ -41,6 +41,10 @@ Model-routing group. "" clears it.
 New display name. Usage records are kept under the key's name at the time of each request, so renaming splits the key's history.
 </ParamField>
 
+<ParamField body="read_only" type="boolean">
+true = read-only (writes are refused with 403 API_KEY_READ_ONLY); false = full access. The key used for this request cannot make itself read-only.
+</ParamField>
+
 <ParamField body="status" type="string">
 Enable or disable the key. An expired key can be enabled only together with a future expires_at. One of: `enabled`, `disabled`.
 </ParamField>
@@ -58,6 +62,7 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/9d
     "expires_at": 1760000000,
     "group": "example",
     "name": "Example name",
+    "read_only": false,
     "status": "enabled"
   }'
 ```
@@ -87,6 +92,8 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/9d
     <ResponseField name="principal_id" type="string">principal_id of the member (see GET /members)</ResponseField>
   </Expandable>
   </ResponseField>
+  <ResponseField name="previous_key_expires_at" type="integer">After a rotation with old_key_expires_in, the time the replaced key stops working, Unix seconds. Omitted when no replaced key is still working.</ResponseField>
+  <ResponseField name="read_only" type="boolean">true = read-only key: requests that create, change or delete anything are refused with 403 API_KEY_READ_ONLY. Omitted = full access.</ResponseField>
 </Expandable>
 </ResponseField>
 
@@ -114,7 +121,9 @@ curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/api-keys/9d
       "display_name": "Alice",
       "member_type": "human",
       "principal_id": "61083f9552ae2ae6bd9105e4e2763c7b"
-    }
+    },
+    "previous_key_expires_at": 1760000000,
+    "read_only": false
   }
 }
 ```

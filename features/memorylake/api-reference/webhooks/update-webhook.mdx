@@ -1,0 +1,114 @@
+---
+title: "Update Webhook"
+description: "Changes the endpoint URL, description or event selection"
+---
+
+```
+PATCH /openapi/memorylake/admin/v1/webhooks/{webhook_id}
+```
+
+Changes the endpoint URL, description or event selection. Only the fields you send change; null is rejected. A new URL is checked like on create. Event changes apply to events that happen afterwards.
+
+<Note>
+**Permission required:** `webhook:manage`
+</Note>
+
+### Path Parameters
+
+<ParamField path="webhook_id" type="string" required>
+Identifier of the webhook
+</ParamField>
+
+### Request Body
+
+<ParamField body="all_events" type="boolean">
+Switch sending every event type on or off
+</ParamField>
+
+<ParamField body="description" type="string">
+New description; "" clears it
+</ParamField>
+
+<ParamField body="events" type="array">
+Replace the selected event types
+</ParamField>
+
+<ParamField body="url" type="string">
+New endpoint URL. Later deliveries and retries go here; past deliveries keep showing the old one.
+</ParamField>
+
+<RequestExample>
+```bash cURL
+curl -X PATCH 'https://app.memorylake.ai/openapi/memorylake/admin/v1/webhooks/16522a01eaa7b9feef48caafb0b487a5' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "all_events": false,
+    "description": "Example description",
+    "events": [
+      "example"
+    ],
+    "url": "https://example.com/url"
+  }'
+```
+</RequestExample>
+
+### Response
+
+<ResponseField name="data" type="object">
+<Expandable title="Webhook object">
+  <ResponseField name="all_events" type="boolean">true = every event type is sent, including types added in the future; events is then the selection kept for when this is switched off</ResponseField>
+  <ResponseField name="created_at" type="integer">When the webhook was added, Unix seconds</ResponseField>
+  <ResponseField name="description" type="string">Description; empty when none was given</ResponseField>
+  <ResponseField name="events" type="array">Selected event types (see [List Event Types](/features/memorylake/api-reference/webhooks/list-webhook-event-types))</ResponseField>
+  <ResponseField name="secret_last4" type="string">Last four characters of the current signing secret. The full secret is returned only by [Add Webhook](/features/memorylake/api-reference/webhooks/create-webhook) and [Rotate Signing Secret](/features/memorylake/api-reference/webhooks/rotate-webhook-secret).</ResponseField>
+  <ResponseField name="status" type="string">auto_disabled = turned off after every delivery failed for 3 days; enable it after fixing the endpoint. One of: `enabled`, `disabled`, `auto_disabled`.</ResponseField>
+  <ResponseField name="url" type="string">Endpoint URL events are sent to</ResponseField>
+  <ResponseField name="webhook_id" type="string">Identifier of the webhook</ResponseField>
+  <ResponseField name="created_by_member_id" type="string">Member who added the webhook</ResponseField>
+  <ResponseField name="last_delivery_at" type="integer">Time of the latest attempt, Unix seconds; absent if nothing was sent yet</ResponseField>
+  <ResponseField name="last_delivery_succeeded" type="boolean">Whether the latest delivery succeeded</ResponseField>
+  <ResponseField name="previous_secret_expires_at" type="integer">Until when the previous secret still signs requests after a rotation, Unix seconds; absent outside that window</ResponseField>
+  <ResponseField name="secret_rotated_at" type="integer">When the signing secret was last rotated, Unix seconds; absent if never</ResponseField>
+</Expandable>
+</ResponseField>
+
+<ResponseExample>
+```json Success (200)
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {
+    "all_events": false,
+    "created_at": 1760000000,
+    "description": "Example description",
+    "events": [
+      "example"
+    ],
+    "secret_last4": "example",
+    "status": "enabled",
+    "url": "https://example.com/url",
+    "webhook_id": "b5f1a133e89a12f450352f1f50843c42",
+    "created_by_member_id": "cb17cae3f79d7fd264472475d7d5d2fe",
+    "last_delivery_at": 1760000000,
+    "last_delivery_succeeded": false,
+    "previous_secret_expires_at": 1760000000,
+    "secret_rotated_at": 1760000000
+  }
+}
+```
+</ResponseExample>
+
+### Errors
+
+Errors answer with `success: false`, a `message` and an `error_code`. See [Error Codes](/features/memorylake/api-reference/errors) for every code.
+
+| Status | Meaning |
+| --- | --- |
+| `400` | A parameter or the body is invalid |
+| `401` | The API key is missing, invalid, disabled or expired |
+| `403` | The key is not allowed to do this |
+| `404` | The resource does not exist |
+| `422` | The body or a parameter failed validation |
+| `429` | Too many requests. Wait for the time in `Retry-After` |
+| `500` | Server-side error |

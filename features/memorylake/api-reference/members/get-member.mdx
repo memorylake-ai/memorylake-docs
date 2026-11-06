@@ -33,12 +33,13 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members/dbcf9
   <ResponseField name="display_name" type="string">Member's display name</ResponseField>
   <ResponseField name="joined_at" type="integer">Time this member joined, Unix seconds</ResponseField>
   <ResponseField name="member_type" type="string">human = joined via invitation, virtual = managed identity created by an owner/admin</ResponseField>
+  <ResponseField name="month_used_tokens" type="integer">Tokens consumed by this member in the current calendar month (the number max_tokens is compared against); 0 at the start of each month</ResponseField>
   <ResponseField name="principal_id" type="string">Stable identifier of this member</ResponseField>
   <ResponseField name="role" type="string">Primary role in this team: tenant_owner | tenant_admin | tenant_member | &lt;custom role&gt;</ResponseField>
   <ResponseField name="status" type="string">Membership state. One of: `active`, `inactive`.</ResponseField>
-  <ResponseField name="used_tokens" type="integer">Tokens consumed by this member</ResponseField>
+  <ResponseField name="used_tokens" type="integer">Tokens consumed by this member since joining (cumulative; never resets)</ResponseField>
   <ResponseField name="email" type="string">Only returned to team owners and admins</ResponseField>
-  <ResponseField name="max_tokens" type="integer">Per-member cap in tokens. Omitted when the member is uncapped.</ResponseField>
+  <ResponseField name="max_tokens" type="integer">Per-member monthly usage limit in tokens (resets on the 1st of each month). Omitted when the member is uncapped.</ResponseField>
   <ResponseField name="username" type="string">Only returned to team owners and admins</ResponseField>
 </Expandable>
 </ResponseField>
@@ -52,6 +53,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/admin/v1/members/dbcf9
     "display_name": "Alice",
     "joined_at": 1760000000,
     "member_type": "human",
+    "month_used_tokens": 1200000,
     "principal_id": "42fbbd89934900ebbc74814c49f009d2",
     "role": "tenant_member",
     "status": "active",

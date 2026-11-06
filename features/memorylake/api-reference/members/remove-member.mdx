@@ -7,11 +7,12 @@ description: "Removes a member from the team"
 DELETE /openapi/memorylake/admin/v1/members/{principal_id}
 ```
 
-Removes a member from the team. Their API keys in this team are disabled (not deleted). The team owner cannot be removed, and the caller cannot remove themselves.
+Removes a member from the team. Their API keys in this team are disabled (not deleted). The team owner cannot be removed, and the caller cannot remove themselves. You can only remove members ranked below you: an admin cannot remove another admin, and nobody but the owner can remove an admin (403 MEMBER_NOT_BELOW_CALLER). A member holding the admin baseline through an access group can be removed only by the owner or a holder of the admin baseline (403 ACCESS_DENIED, data.operation remove_member). The same rules apply in the console.
 
 <Note>
 **Permission required:** `member:remove`
 
+- When the member is not ranked below you: an admin, or a holder of an admin-level custom role (403 MEMBER_NOT_BELOW_CALLER): team owner only
 - Changes that give someone an admin role, or that reduce what an admin can reach, also require the team owner or an admin.
 </Note>
 
