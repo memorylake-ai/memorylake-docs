@@ -24,7 +24,7 @@ Every call lands in the console **Logs** page with per-call details:
 | **Trace ID** | Matches the `X-Trace-ID` response header for cross-referencing. |
 
 <Tip>
-Use **Key source** to verify BYOK is actually in effect, and compare token counts across turns to see the effect of memory injection versus replaying full history.
+Use **Key source** to verify BYOK is actually in effect, and compare token counts with and without `boundary_id` to see how much context memory injection adds.
 </Tip>
 
 ## Error Contract

@@ -1,6 +1,6 @@
 ---
 title: "How It Works"
-description: "A transparent gateway that intercepts, recalls, forwards, and remembers — scoped by Boundaries"
+description: "A transparent gateway that intercepts, recalls, and forwards — scoped by Boundaries"
 ---
 
 ## A Transparent Gateway
@@ -9,7 +9,7 @@ Memory Router sits between your application and the model provider. Your app tal
 
 Because the Router speaks your provider's protocol, integrating it is a **base-URL change plus a `boundary_id` query parameter**. Nothing else in your code needs to move.
 
-## The Four Steps
+## The Three Steps
 
 <Steps>
 <Step title="Intercept">
@@ -23,15 +23,11 @@ The Router searches prior memories within the Boundary's scope and injects only 
 <Step title="Forward">
 The enhanced request goes to the model — your own provider (BYOK) or a MemoryLake-hosted model.
 </Step>
-
-<Step title="Remember">
-New memories are extracted and stored asynchronously in the background — the response is never delayed.
-</Step>
 </Steps>
 
 ## Boundaries Define the Scope
 
-Every memory-enabled request carries a `boundary_id`. A **Boundary** binds the conversation to a workspace, one or more projects, a human actor, and an assistant actor — so the Router knows exactly whose memory to read and where to write new memories.
+Every memory-enabled request carries a `boundary_id`. A **Boundary** binds the conversation to a workspace, one or more projects, a human actor, and an assistant actor — so the Router knows exactly whose memory to read.
 
 - One user talking to one assistant? One Boundary.
 - The same product serving many users? One Boundary per user (or per user–assistant pair), so memories never leak across users.
@@ -39,12 +35,12 @@ Every memory-enabled request carries a `boundary_id`. A **Boundary** binds the c
 - [Image generation](/features/memory-router/image-generation) requests never use memory: `boundary_id` applies to Chat Completions, Responses, and Messages only.
 
 <Info>
-Memory extraction and storage happen **asynchronously**. The model's response is returned as soon as it is ready; writing new memories never adds latency to the call.
+Memory Router only **reads** memory. It does not extract or store anything from your requests or the model's responses. To add memories, upload files to a project in the console, or write them with the [MemoryLake API](/features/memorylake/api-reference/core-memory/overview).
 </Info>
 
 ## Shared Memory Pool
 
-The Router and the [MemoryLake API](/features/memorylake/overview) operate on the same memory pool. Anything stored through the Router is retrievable through the API (and visible in the console), and vice versa — one source of truth across sessions, apps, and models.
+The Router reads from the same memory pool as the [MemoryLake API](/features/memorylake/overview) and the console. Memories you add there are recalled on Router calls that use a matching Boundary — one source of truth across sessions, apps, and models.
 
 ## Next Steps
 
