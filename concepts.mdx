@@ -68,7 +68,7 @@ See [Memories](/features/memorylake/memories/overview) for how both work in prac
 
 A **boundary** is the memory scope used by API traffic and MCP clients. It binds a workspace, project(s), and actors into a single reference:
 
-- With [Memory Router](/features/memory-router/overview), you pass it as `?boundary_id=` on LLM calls — commonly one boundary per end user, so each user's conversations read and write only their own memory.
+- With [Memory Router](/features/memory-router/overview), you pass it as `?boundary_id=` on LLM calls — commonly one boundary per end user, so each user's calls recall only their own memory.
 - With [MCP](/features/memorylake/mcp-servers/creating-api-keys), you select the workspace and boundary on the OAuth consent screen when a client connects.
 
 Create boundaries in the console, or manage them with the [Boundaries API](/features/memorylake/api-reference/boundaries/overview).

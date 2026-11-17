@@ -9,7 +9,7 @@ Only the base URL, a `boundary_id` query parameter, and — in BYOK mode — one
 </Accordion>
 
 <Accordion title="What is a Boundary and do I always need one?">
-A Boundary is the memory scope for a conversation — it binds requests to a workspace, project(s), and actors so the Router knows whose memory to read and write. You create it once in the console and pass its id as `?boundary_id=` on each call. Requests without a `boundary_id` still work, but pass through with memory disabled.
+A Boundary is the memory scope for a conversation — it binds requests to a workspace, project(s), and actors so the Router knows whose memory to read. You create it once in the console and pass its id as `?boundary_id=` on each call. Requests without a `boundary_id` still work, but pass through with memory disabled.
 </Accordion>
 
 <Accordion title="Which providers and models are supported?">
@@ -29,15 +29,15 @@ Yes. Your provider key is encrypted in transit and forwarded to the provider on 
 </Accordion>
 
 <Accordion title="What happens if the memory service is unavailable?">
-The gateway returns `502 Bad Gateway` for that call — retry with backoff, and keep a fallback to a direct provider call if your application requires strict availability. Memory *writes* are asynchronous, so a slow memory store never delays a successful response. See [Observability](/features/memory-router/observability#error-contract) for the full error contract.
+The gateway returns `502 Bad Gateway` for that call — retry with backoff, and keep a fallback to a direct provider call if your application requires strict availability. See [Observability](/features/memory-router/observability#error-contract) for the full error contract.
 </Accordion>
 
 <Accordion title="Does memory add latency to my calls?">
-Memory recall happens before the model call and is optimized for low overhead; memory extraction and storage happen asynchronously after the response is returned, so writing memories never adds latency.
+Memory recall happens before the model call and is optimized for low overhead. The Router does not write memories, so nothing extra runs after the response.
 </Accordion>
 
 <Accordion title="Is the memory shared with the MemoryLake API?">
-Yes. The Router and the [MemoryLake API](/features/memorylake/overview) operate on the same memory pool, so anything stored one way is retrievable the other — and visible in the console.
+Yes. The Router reads the same memory pool as the [MemoryLake API](/features/memorylake/overview) and the console. The Router itself is read-only: it does not save your conversations as memories. Add memories through the console or the API, and they are recalled on Router calls.
 </Accordion>
 
 <Accordion title="How do I get access?">

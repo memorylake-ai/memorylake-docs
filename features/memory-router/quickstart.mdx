@@ -1,6 +1,6 @@
 ---
 title: "Quickstart"
-description: "Add persistent memory to your LLM calls in three steps"
+description: "Bring your MemoryLake memory into LLM calls in three steps"
 ---
 
 Get Memory Router running in three steps. The only changes to your application are the base URL, a `boundary_id` query parameter, and — in BYOK mode — one header.
@@ -190,7 +190,7 @@ The console's **Integrations → Memory Router API** page generates these snippe
 
 ## Step 3: Call as normal
 
-Send requests exactly as you do today. With a `boundary_id` attached, relevant memories are recalled into the prompt automatically, and new memories are extracted and stored asynchronously — the response is never delayed.
+Send requests exactly as you do today. With a `boundary_id` attached, relevant memories are recalled into the prompt automatically. The Router does not save the conversation as memory; add memories through the console or the [MemoryLake API](/features/memorylake/api-reference/core-memory/overview).
 
 ```ts TypeScript
 const completion = await client.chat.completions.create({

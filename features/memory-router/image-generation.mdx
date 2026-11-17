@@ -107,7 +107,7 @@ Prices are on the console's **Available Models** page and in `price.details.imag
 ## Good to Know
 
 - **Generation only.** Image editing (`/images/edits`) and variations are not available.
-- **No memory.** `boundary_id` applies to Chat Completions, Responses and Messages only. Image requests do not read or write memory.
+- **No memory.** `boundary_id` applies to Chat Completions, Responses and Messages only. Image requests do not use memory.
 - **OpenAI base URL only.** Image models are called through `/openapi/memorylake/router/openai/v1`, not the Anthropic base URL.
 - **Not in Playground.** Image models cannot be selected in the console Playground. Call them through the API.
 - **Large responses.** A single image can be well over 1 MB of base64. Allow a generous client timeout.

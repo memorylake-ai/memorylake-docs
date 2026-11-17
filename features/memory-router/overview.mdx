@@ -1,15 +1,15 @@
 ---
 title: "Overview"
-description: "A drop-in memory gateway that adds persistent memory to your LLM calls with a base-URL change"
+description: "A drop-in gateway that brings your MemoryLake memory into your LLM calls with a base-URL change"
 ---
 
 ## Quick Introduction
 
-Memory Router is a transparent gateway that sits between your app and the model. Point your existing SDK at MemoryLake, attach a memory Boundary, and every conversation gains long-term memory — no new SDK, no retrieval pipeline to build.
+Memory Router is a transparent gateway that sits between your app and the model. Point your existing SDK at MemoryLake, attach a memory Boundary, and each call draws on the memories already in MemoryLake — no new SDK, no retrieval pipeline to build.
 
 - **Minimal integration** — change the base URL and pass a `boundary_id`; keep your SDK and code as they are
 - **BYOK or hosted** — bring your own provider key (encrypted in transit, never stored), or use MemoryLake-hosted models with a single key
-- **Shared memory pool** — the Router and the [MemoryLake API](/features/memorylake/overview) read and write the same memories, so there is one source of truth
+- **Read-only memory** — the Router recalls memories from MemoryLake but never writes them; you add memories through the console or the [MemoryLake API](/features/memorylake/overview)
 
 <Info>
 Memory Router speaks the OpenAI and Anthropic protocols natively. Your prompts, streaming, and tool calls stay identical. The same base URL also serves OpenAI image models — see [Image Generation](/features/memory-router/image-generation).
@@ -17,12 +17,12 @@ Memory Router speaks the OpenAI and Anthropic protocols natively. Your prompts, 
 
 ## The Problem It Solves
 
-Every LLM call is stateless. To fake continuity you re-send the entire history on every turn — which is slow, expensive, and eventually overflows the context window. Bolting on a vector DB and retrieval pipeline solves it, but it is weeks of plumbing you have to build and maintain.
+Every LLM call is stateless: the model knows nothing about your users or your data unless you put it in the prompt. Bolting on a vector DB and retrieval pipeline solves it, but it is weeks of plumbing you have to build and maintain.
 
 <CardGroup cols={2}>
 <Card title="Without a memory layer" icon="circle-x">
-- Full chat history re-sent on every call — token cost climbs with conversation length.
-- Long sessions hit the context-window ceiling and start truncating mid-task.
+- The model only sees what you paste into the prompt — nothing about the user or your documents.
+- Pasting whole documents or long histories drives up token cost and hits the context-window ceiling.
 - Memory lives in one app — switch models or sessions and the context is gone.
 </Card>
 
@@ -41,9 +41,9 @@ Memory Router collapses all of that into a base-URL change plus one query parame
 | --- | --- |
 | **Minimal integration** | Change the base URL and pass `boundary_id`. Keep your SDK and your code as they are. |
 | **BYOK or hosted** | Bring your own provider key (encrypted in transit, never stored) or use MemoryLake-hosted models with a single key. |
-| **Automatic memory** | Relevant memories are recalled and injected before the call; new memories are extracted asynchronously after it — never delaying the response. |
+| **Automatic recall** | Relevant memories in the Boundary's scope are recalled and injected before the call. The Router does not write new memories. |
 | **Scoped by Boundary** | A [Boundary](#boundaries:-the-memory-scope) defines exactly which workspace, projects, and actors a conversation's memory belongs to. |
-| **Shared memory pool** | The Router and the MemoryLake API read and write the same memories — one source of truth. |
+| **Shared memory pool** | The Router reads the same memories you manage in the console and through the MemoryLake API — one source of truth. |
 | **Image generation** | Call image models such as `gpt-image-1` through the OpenAI Images API, with the same key. See [Image Generation](/features/memory-router/image-generation). |
 | **Traceable** | Every response carries an `X-Trace-ID` header, and each call lands in the console Logs with model, token, and key-source details. |
 
@@ -55,16 +55,20 @@ Memory on the Router is **opt-in per request**. A **Boundary** binds a conversat
 POST /openapi/memorylake/router/openai/v1/chat/completions?boundary_id=<your-boundary-id>
 ```
 
-- **With `boundary_id`** — memories in that scope are recalled and injected, and new memories from the conversation are stored back into it.
+- **With `boundary_id`** — memories in that scope are recalled and injected. The conversation itself is not saved as memory.
 - **Without `boundary_id`** — the request passes through to the model unchanged, with memory disabled.
 
 This makes memory explicit and controllable: the same endpoint can serve memory-enabled product traffic and plain passthrough traffic side by side.
+
+<Note>
+Memory Router reads memory but does not write it. To add memories, upload files to a project in the console, or write them with the [MemoryLake API](/features/memorylake/api-reference/core-memory/overview).
+</Note>
 
 ## Direct API Call vs. Memory Router
 
 |  | Direct provider call | With Memory Router |
 | --- | --- | --- |
-| Long-term memory | You build and host it | Built in, automatic |
+| Long-term memory | You build and host it | Recalled automatically from MemoryLake |
 | Keys & accounts | A provider account is required | BYOK or use just a MemoryLake key |
 | Code changes | New SDK + retrieval pipeline | Base-URL change + `boundary_id` |
 | Across sessions & models | Memory is siloed per app | Shared memory pool |
@@ -75,7 +79,7 @@ This makes memory explicit and controllable: the same endpoint can serve memory-
 
 1. **[Get a MemoryLake key and a Boundary](/features/memory-router/quickstart#step-1:-get-a-key-and-a-boundary)**: Create an API key and a Boundary in the console.
 2. **[Pick a mode and swap the base URL](/features/memory-router/deployment-modes)**: Choose BYOK or MemoryLake-hosted and point your SDK at the Router.
-3. **[Call as normal](/features/memory-router/quickstart#step-3:-call-as-normal)**: Send requests exactly as you do today — memory is recalled and stored automatically.
+3. **[Call as normal](/features/memory-router/quickstart#step-3:-call-as-normal)**: Send requests exactly as you do today — relevant memory is recalled automatically.
 
 ## Documentation
 

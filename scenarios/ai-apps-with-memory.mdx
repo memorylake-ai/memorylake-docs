@@ -16,7 +16,7 @@ MemoryLake is your memory backend. Two integration styles, one shared memory poo
 | **Memory Router** | Point your existing OpenAI/Anthropic SDK at the gateway, pass a `boundary_id` per user | Fastest path — memory without changing your call sites |
 | **REST API** | Explicit `add` / `search` / `trace` / `forget` calls against `https://app.memorylake.ai/openapi/memorylake` | Full control over what is stored and when it's recalled |
 
-Both write to the same pool: memory captured through the Router is searchable through the API, and vice versa.
+Both use the same pool. The Router only reads it: write memories with the REST API (or the console), and the Router recalls them on each call.
 
 ## Path A: Memory Router — memory as a base-URL change
 
@@ -39,7 +39,7 @@ def chat(user, message):
     )
 ```
 
-Each user's conversations read and write only their own memory — no retrieval code, no extraction pipeline, no schema. BYOK mode lets you keep your existing provider account and billing. See the [Memory Router quickstart](/features/memory-router/quickstart).
+Each user's calls recall only their own memory — no retrieval code. The Router does not save conversations as memory, so feed each user's memory with Path B below. BYOK mode lets you keep your existing provider account and billing. See the [Memory Router quickstart](/features/memory-router/quickstart).
 
 
 ## Path B: REST API — explicit memory operations
