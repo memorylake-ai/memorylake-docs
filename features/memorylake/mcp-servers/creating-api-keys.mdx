@@ -11,39 +11,46 @@ MemoryLake runs a **remote MCP server** that any MCP-capable client can connect 
 https://app.memorylake.ai/memorylake/mcp/v2
 ```
 
-The console shows this URL with a copy button at **Integrations → MCP**, along with ready-made commands per client.
+In the [console](https://app.memorylake.ai), open a workspace and select the **MCP** tab: it shows this URL with a copy button, along with ready-made setup steps for each client. (The old **Integrations → MCP** link now opens this tab.)
 
 <Info>
-The connect page is scope-less: there is no project picker. You pick the workspace and boundary during the OAuth consent step, so one client connection can be re-authorized to a different scope without editing any config.
+There is no project picker on the connect page. When you authorize, the consent screen asks you to pick **Personal / Team**, a **Workspace**, and a **Memory boundary** — that choice decides what the client can read and write.
 </Info>
 
 ## Connect Your Client
 
 <Tabs>
 <Tab title="Claude Code">
+Add the server in your terminal (`--scope user` is optional and makes it available in every project):
+
 ```bash
 claude mcp add --transport http --scope user memorylake https://app.memorylake.ai/memorylake/mcp/v2
 ```
 
-Claude Code opens the MemoryLake consent screen on first use. Approve it, choose your workspace and boundary, and the tools appear.
+Then authorize: run `claude` to open a session, type `/mcp`, select `memorylake`, and choose **Authenticate** — your browser opens the authorization page. Claude Code has no standalone login command; authorization is triggered from inside a session.
+
+Verify with `claude mcp list`: the `memorylake` line should read `✓ Connected`.
 </Tab>
 
 <Tab title="Codex">
-Add the server to your Codex configuration:
+Add the server in your terminal. `--url` marks it as a streamable HTTP server, which uses OAuth by default:
 
-```toml
-[mcp_servers.memorylake]
-url = "https://app.memorylake.ai/memorylake/mcp/v2"
+```bash
+codex mcp add memorylake --url https://app.memorylake.ai/memorylake/mcp/v2
 ```
 
-Then sign in:
+This writes an `[mcp_servers.memorylake]` block into `~/.codex/config.toml`. Then sign in — your browser opens the authorization page:
 
 ```bash
 codex mcp login memorylake
 ```
+
+Verify with `codex mcp list`.
 </Tab>
 
-<Tab title="Cursor / Claude Desktop">
+<Tab title="Cursor">
+Add this to `~/.cursor/mcp.json` (all projects) or `.cursor/mcp.json` inside a project. Cursor reloads on save. The console's **MCP** tab also has an **Add to Cursor** button that writes it for you.
+
 ```json
 {
   "mcpServers": {
@@ -54,11 +61,32 @@ codex mcp login memorylake
 }
 ```
 
-Restart the client; it will prompt for OAuth authorization on first connection.
+Open **Settings → MCP**; `memorylake` shows that it needs login. Click to log in and your browser opens the authorization page.
+</Tab>
+
+<Tab title="VS Code">
+Add this to `.vscode/mcp.json` in your workspace, or run **MCP: Add Server** from the command palette. The console's **MCP** tab also has an **Add to VS Code** button.
+
+```json
+{
+  "servers": {
+    "memorylake": {
+      "type": "http",
+      "url": "https://app.memorylake.ai/memorylake/mcp/v2"
+    }
+  }
+}
+```
+
+VS Code prompts for authorization when the server starts; confirm and your browser opens the authorization page.
+</Tab>
+
+<Tab title="Claude Desktop">
+Open **Settings → Connectors → Add custom connector** and paste the server URL above. Claude Desktop opens an authorization window once you confirm — follow the prompts to sign in and grant access.
 </Tab>
 
 <Tab title="Other clients">
-Any client that supports remote MCP servers over HTTP with OAuth2 works. Point it at the server URL above — no API key, no custom headers. The client performs the standard OAuth2 authorization-code flow and stores the resulting token itself.
+Any MCP client that supports remote servers with OAuth 2.1 works. Point it at the server URL above — no API key, no custom headers. On the first `401` the client discovers the authorization server, registers itself dynamically, runs the browser flow with PKCE, and refreshes the token on its own.
 </Tab>
 </Tabs>
 
@@ -80,12 +108,12 @@ These tools read and analyze; they do not modify or delete your documents and me
 
 ## Managing Access
 
-- **Re-scope**: re-run the OAuth flow to authorize a different workspace or boundary — no config change needed.
-- **Revoke**: remove the authorization from the console; the client's token stops working immediately.
+- **Switch workspace**: the personal/team space and workspace are fixed in the token when you authorize. To pick a different one, remove the MCP server from your client, add it again, and authorize again (for Claude Code: `claude mcp remove memorylake`, then the `claude mcp add` command above, then **Authenticate** via `/mcp`).
+- **Revoke**: go to **Account settings → Sign-in & security → Authorized apps** in the console and revoke the client. To also remove it from the client, for Claude Code run `claude mcp remove memorylake`.
 - **Token lifetime**: access tokens are short-lived and refreshed automatically by the client.
 
 <Note>
-Earlier versions of MemoryLake used a v1 MCP endpoint with a project-scoped key embedded in the URL (`…/mcp/v1?apikey=…`). That flow has been retired from the console in favor of OAuth2. The v1 endpoint remains available for backward compatibility, but new integrations should use the v2 URL above.
+Earlier versions of MemoryLake used a v1 MCP endpoint with a project-scoped key embedded in the URL (`…/mcp/v1?apikey=…`). That flow has been retired: the console no longer creates v1 endpoints or keys, and API keys cannot be used to connect to MCP. The v1 endpoint is still served for existing integrations only; set up new connections with the v2 URL above. API keys are still used for the REST API.
 </Note>
 
 ## Troubleshooting
@@ -96,14 +124,18 @@ Confirm the URL ends in `/mcp/v2` and the client is configured for a **remote HT
 </Accordion>
 
 <Accordion title="Authorization succeeds but no tools appear">
-Check that you completed workspace and boundary selection on the consent screen. Re-run the client's MCP login to retry.
+Check that you completed the personal/team, workspace, and memory boundary selection on the consent screen, then authorize again (Claude Code: `/mcp` → **Authenticate** in a session; Codex: `codex mcp login memorylake`; other clients: log in again from their MCP settings).
+</Accordion>
+
+<Accordion title="The browser did not open the authorization page">
+The terminal prints a link containing `/oauth2/mcp/authorize` — copy it into your browser manually. This is almost always the case over SSH or in remote development environments.
 </Accordion>
 
 <Accordion title="Tools return nothing">
-The authorized scope may point at an empty project. Confirm in the console that the workspace and project you selected actually contain documents or memories.
+The memory boundary you authorized may point at an empty project. Confirm in the console that the projects in that boundary actually contain documents or memories.
 </Accordion>
 
 <Accordion title="I don't see MCP in my console">
-MCP availability depends on your deployment. If **Integrations → MCP** is missing, contact [support@memorylake.ai](mailto:support@memorylake.ai).
+MCP availability depends on your deployment. If a workspace has no **MCP** tab, or the tab says OAuth2 MCP is not enabled, contact [support@memorylake.ai](mailto:support@memorylake.ai).
 </Accordion>
 </AccordionGroup>
