@@ -67,6 +67,13 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a
     </Expandable>
     </ResponseField>
     <ResponseField name="document_type" type="string">Document type: `drive_file`.</ResponseField>
+    <ResponseField name="drive_item" type="object">
+    Library item this document was imported from. To download the original file, call [Download Document](/features/memorylake/api-reference/v3-documents/download-document), or pass `drive_item.id` to [Download Item](/features/memorylake/api-reference/library/download-item).
+    <Expandable title="Library item">
+      <ResponseField name="id" type="string">Library item ID.</ResponseField>
+      <ResponseField name="uri" type="string">Resource URI of the Library item (`drive://…`), usable wherever a `drive://` reference is accepted. Omitted when the item's location cannot be resolved.</ResponseField>
+    </Expandable>
+    </ResponseField>
     <ResponseField name="created_at" type="string">ISO 8601 timestamp when the document was imported.</ResponseField>
   </Expandable>
   </ResponseField>
@@ -89,6 +96,10 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a
           "files_process_tokens": 15230
         },
         "document_type": "drive_file",
+        "drive_item": {
+          "id": "sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5",
+          "uri": "drive://drive-6fd400a155134e5d9d6d6b17d2623f11/sc-5c6bf0f82d624a20a6fa4696997bdd46:7d8cf1e93f634b31b5"
+        },
         "created_at": "2025-03-10T14:22:00Z"
       },
       {
@@ -100,6 +111,10 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a
           "files_process_tokens": 0
         },
         "document_type": "drive_file",
+        "drive_item": {
+          "id": "sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7",
+          "uri": "drive://drive-6fd400a155134e5d9d6d6b17d2623f11/sc-5c6bf0f82d624a20a6fa4696997bdd46:2a8cf1e93f634b31b7"
+        },
         "created_at": "2025-03-11T09:15:00Z"
       }
     ],
