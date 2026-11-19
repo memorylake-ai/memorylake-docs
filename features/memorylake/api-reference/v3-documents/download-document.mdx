@@ -1,0 +1,99 @@
+---
+title: "Download Document"
+description: "Download the original file a project document was imported from"
+---
+
+```
+GET /openapi/memorylake/api/v3/workspaces/{workspaceId}/projects/{projectId}/memories/documents/{documentId}/download
+```
+
+Downloads the original file a document was imported from: the bytes you uploaded, not the extracted memories. Usually the response is a `303` redirect to a storage URL that serves the file. For files whose storage cannot be read through a plain URL, MemoryLake streams the content back itself with `200`. Follow redirects and you get the file either way.
+
+The same file is also available through the Library: pass the document's `drive_item.id`, returned by [Get Document](/features/memorylake/api-reference/v3-documents/get-document) and [List Documents](/features/memorylake/api-reference/v3-documents/list-documents), to [Download Item](/features/memorylake/api-reference/library/download-item).
+
+<Note>
+**Permissions required (both):**
+
+- [`project:doc_read`](/features/team-collaboration/permission-reference#read-a-single-document) · `instance`
+- [`drive:item_read`](/features/team-collaboration/permission-reference#read-your-files) · `service`
+</Note>
+
+### Path Parameters
+
+<ParamField path="workspaceId" type="string" required>
+Workspace ID that owns the project.
+</ParamField>
+
+<ParamField path="projectId" type="string" required>
+Project the document belongs to.
+</ParamField>
+
+<ParamField path="documentId" type="string" required>
+Document to download.
+</ParamField>
+
+### Following the redirect
+
+The storage URL in the `Location` header carries its own signature:
+
+- **Request it without your API key.** Storage rejects a request that also carries an `Authorization` header. `curl -L` and Python `requests` drop the header for you when they follow the redirect. If your HTTP client forwards headers on redirect, turn automatic redirects off and request the `Location` URL yourself.
+- **Use it right away.** The URL expires after a short time. When you need the file again later, call this endpoint again instead of saving the URL.
+
+The file downloads as an attachment named after the Library item.
+
+<RequestExample>
+```bash cURL
+curl -L 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-a1b2c3d4e5f6/projects/proj-7g8h9i0j1k2l/memories/documents/doc-3m4n5o6p7q8r/download' \
+  -H 'Authorization: Bearer sk_xxxxxx' \
+  -o quarterly-report.pdf
+```
+
+```python Python
+import requests
+
+BASE = "https://app.memorylake.ai/openapi/memorylake/api/v3"
+HEADERS = {"Authorization": "Bearer sk_xxxxxx"}
+
+def download_document(workspace_id: str, project_id: str, document_id: str, path: str) -> None:
+    """Download the original file of a project document to a local path."""
+    resp = requests.get(
+        f"{BASE}/workspaces/{workspace_id}/projects/{project_id}/memories/documents/{document_id}/download",
+        headers=HEADERS,
+        stream=True,  # follows the 303 and drops your API key on the way
+    )
+    resp.raise_for_status()
+    with open(path, "wb") as f:
+        for chunk in resp.iter_content(chunk_size=1024 * 1024):
+            f.write(chunk)
+```
+</RequestExample>
+
+### Response
+
+| Status | Body | When |
+|--------|------|------|
+| `303` | Empty | Most files. The `Location` header holds the storage URL that serves the file |
+| `200` | The file content | Files whose storage cannot be read through a plain URL. MemoryLake streams the content back itself |
+
+### Errors
+
+| Status | Error code | When |
+|--------|------------|------|
+| `404` | `NOT_FOUND` | No document with this `documentId` in the project, or no such project in the workspace |
+| `400` | `DOWNLOAD_NOT_SUPPORTED` | The document is not a file and cannot be downloaded |
+
+<ResponseExample>
+```text Redirect (303)
+HTTP/1.1 303 See Other
+Location: https://<storage-host>/<path>?<signature>
+Content-Length: 0
+```
+
+```json Not found (404)
+{
+  "success": false,
+  "message": "Document not found with id: doc-3m4n5o6p7q8r",
+  "error_code": "NOT_FOUND"
+}
+```
+</ResponseExample>
