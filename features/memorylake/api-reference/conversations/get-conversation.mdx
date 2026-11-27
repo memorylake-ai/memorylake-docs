@@ -50,7 +50,7 @@ curl -X GET 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-f
   <ResponseField name="kind" type="string">Conversation kind: `DIRECT` or `GROUP`</ResponseField>
   <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the conversation</ResponseField>
   <ResponseField name="custom_id" type="string">Caller-defined unique identifier for external reference</ResponseField>
-  <ResponseField name="rw_project_ids" type="array">Read-write project(s) this conversation reads/writes memory to</ResponseField>
+  <ResponseField name="rw_project_ids" type="array">Read-write project(s) this conversation reads/writes memory to; the first one is the primary project</ResponseField>
   <ResponseField name="actor_ids" type="array">IDs of actors participating in the conversation</ResponseField>
   <ResponseField name="current_message_id" type="string">ID of the latest message in the conversation</ResponseField>
   <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>
