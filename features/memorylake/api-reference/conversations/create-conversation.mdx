@@ -7,7 +7,7 @@ description: "Create a new conversation in a workspace"
 POST /openapi/memorylake/api/v3/workspaces/{workspaceId}/memories/conversations
 ```
 
-Creates a new conversation within a workspace. A conversation groups related messages together so MemoryLake can extract structured facts from the exchange. You must attach exactly one read-write project via `rw_project_ids` — this is the project where extracted facts and memory are stored.
+Creates a new conversation within a workspace. A conversation groups related messages together so MemoryLake can extract structured facts from the exchange. You must attach at least one read-write project via `rw_project_ids`; extracted facts and memory are stored in these projects.
 
 <Note>
 **Permission required:** `workspace:conv_create` on the workspace, plus one set per participant you name — on each project in `rw_project_ids`: `project:mem_add`, `project:doc_add`, `project:mem_search` and `project:doc_search`; on each actor in `actor_ids`: `workspace_actor:fact_add` and `workspace_actor:fact_search`; on each agent in `agent_ids`: `workspace_agent:fact_add` and `workspace_agent:fact_search`. A conversation both writes memories and reads them back, which is why each participant needs the add and the search half.
@@ -30,7 +30,7 @@ Conversation kind: `DIRECT` (one-on-one) or `GROUP` (multi-participant).
 </ParamField>
 
 <ParamField body="rw_project_ids" type="array" required>
-Read-write project(s) the conversation reads context from and writes facts to. Exactly one project ID is required.
+Read-write projects the conversation reads context from and writes facts to. At least one is required, and the first one is the primary project. At most 5 by default; a project listed more than once counts once and keeps its first position. A blank entry returns `400`, and so does a list with more projects than the limit. Every project must be in this workspace: one that doesn't exist, or belongs to another workspace, returns `404`.
 </ParamField>
 
 <ParamField body="actor_ids" type="array" required>
@@ -77,7 +77,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
   <ResponseField name="kind" type="string">Conversation kind: `DIRECT` or `GROUP`</ResponseField>
   <ResponseField name="metadata" type="object">Arbitrary key-value metadata attached to the conversation</ResponseField>
   <ResponseField name="custom_id" type="string">Caller-defined unique identifier</ResponseField>
-  <ResponseField name="rw_project_ids" type="array">Read-write project(s) this conversation reads/writes memory to</ResponseField>
+  <ResponseField name="rw_project_ids" type="array">Read-write project(s) this conversation reads/writes memory to; the first one is the primary project</ResponseField>
   <ResponseField name="actor_ids" type="array">IDs of actors participating in the conversation</ResponseField>
   <ResponseField name="current_message_id" type="string">ID of the latest message in the conversation</ResponseField>
   <ResponseField name="created_at" type="string">Creation timestamp</ResponseField>

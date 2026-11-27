@@ -59,7 +59,7 @@ MemoryLake extends the standard A2A protocol through the `metadata.memorylake` n
 
 This is the key difference from a vanilla A2A server — these fields connect the agent to workspaces, projects, and actors in MemoryLake. The object carries two kinds of fields:
 
-- **[Memory and identity](#memory-and-identity)**: `actorId`, `readWriteProjectId`, `readOnlyProjectIds` and `skipMemory` decide whose memory the agent uses and which projects it reads and writes.
+- **[Memory and identity](#memory-and-identity)**: `actorId`, `readWriteProjectIds`, `readOnlyProjectIds`, `fileImportProjectId` and `skipMemory` decide whose memory the agent uses, which projects it reads and writes, and where attached files go.
 - **[Run configuration](#run-configuration)**: `overrides` and `runtimeOptions` change how the agent handles this message.
 
 Use the camelCase field names shown on this page. Unknown fields are ignored rather than rejected, so if a setting seems to have no effect, check its spelling first. The agent doesn't read keys under `metadata` other than `memorylake`.
@@ -78,21 +78,31 @@ The end user this message comes from, as a MemoryLake actor ID (`actor-` followe
 - **Permissions:** `workspace_actor:fact_add` and `workspace_actor:fact_search` on the actor. They're checked when the conversation starts, and again when a later message brings an actor the conversation hasn't had before.
 </ParamField>
 
-<ParamField body="readWriteProjectId" type="string">
-The project the agent works in (`proj-` followed by 32 hex characters). The agent searches this project's documents and memories, and the conversation is recorded against it, which is where memories extracted from the conversation are kept. Conversation history itself is stored at the workspace level.
+<ParamField body="readWriteProjectIds" type="string[] | string">
+The projects the agent works in (`proj-` followed by 32 hex characters). The first one is the primary project. The agent searches the documents and memories of every one of them, and the conversation is recorded against them, which is where memories extracted from the conversation are kept. Conversation history itself is stored at the workspace level. A single string is accepted in place of an array.
 
-- **Fixed for the conversation.** The first message of a conversation (`contextId`) binds the project. Later messages can leave it out and keep using it. Sending a different project, or adding one to a conversation that started without a project, fails with `400`.
-- **Same workspace only.** A project from another workspace returns `404`.
-- **Permissions:** `project:mem_add`, `project:doc_add`, `project:mem_search` and `project:doc_search` on the project, checked when the conversation starts.
-- **Required for file attachments.** Files in the message (Library files or inline content, see [Attach files](#attach-files)) are imported into this project as documents, and inline files are also saved to your Library. A message that carries files must name the project itself; inheriting it from the conversation isn't enough, and the request fails with `400`.
+- **Also accepted as `readWriteProjectId`**, its former name, with the same string or array value. Send only one of the two names: a request that carries both returns `400`. A name whose value is `null` doesn't count.
+- **At most 5 per conversation** by default. A project listed more than once counts once and keeps its first position. A blank entry returns `400`, and so does a first message that names more projects than the limit.
+- **Fixed for the conversation.** The first message of a conversation (`contextId`) binds the projects. Later messages can leave the field out and keep using them. A later message that sends it must name the same projects, in any order. Sending a different set, or adding projects to a conversation that started without any, fails with `400`.
+- **Same workspace only.** A project that doesn't exist, or belongs to another workspace, returns `404`.
+- **Permissions:** `project:mem_add`, `project:doc_add`, `project:mem_search` and `project:doc_search` on every project, checked when the conversation starts.
+- **Default target for file attachments.** Library files and inline content in the message are imported into the primary project as documents, unless `fileImportProjectId` names another project. See [Attach files](#attach-files).
 </ParamField>
 
 <ParamField body="readOnlyProjectIds" type="string[]">
 More projects the agent can search, both documents and memories, without writing to them. Use it to give the agent a shared knowledge base.
 
 - **Applies to this message only.** It isn't stored on the conversation, so send it with every message that should see these projects.
+- **Same workspace only.** An ID that doesn't match a project returns `404`, and so does a project of another workspace. The one exception is a project of this workspace that has been deleted: it's skipped without an error, so a list your client keeps sending doesn't start failing when one of its projects is deleted.
 - **Permissions:** `project:mem_search` and `project:doc_search` on each project. Missing either returns `403`.
-- IDs that don't match a project are skipped without an error.
+</ParamField>
+
+<ParamField body="fileImportProjectId" type="string">
+The project that Library files and inline content attached to this message are imported into. Leave it out to use the conversation's primary read-write project. See [Attach files](#attach-files).
+
+- **Must be one of this request's projects:** a read-write project of the conversation, or one of this message's `readOnlyProjectIds`. Any other project returns `400`, even when the message carries no files. A project that doesn't exist in this workspace returns `404`.
+- **Applies to this message only.** It isn't stored on the conversation.
+- **Permission:** `project:doc_add` on the project, checked on every message that carries files to import.
 </ParamField>
 
 <ParamField body="skipMemory" type="boolean" default="false">
@@ -213,7 +223,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
     "metadata": {
       "memorylake": {
         "actorId": "actor-33d6b73298fb43482a765643ff92444b",
-        "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
+        "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"],
         "readOnlyProjectIds": ["proj-cd2e83f761eec93c75977f51667889cd"],
         "overrides": {
           "model": "gpt-4o",
@@ -267,7 +277,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
     "metadata": {
       "memorylake": {
         "actorId": "actor-33d6b73298fb43482a765643ff92444b",
-        "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"
+        "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"]
       }
     }
   }'
@@ -325,7 +335,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
       "metadata": {
         "memorylake": {
           "actorId": "actor-33d6b73298fb43482a765643ff92444b",
-          "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8",
+          "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"],
           "readOnlyProjectIds": ["proj-cd2e83f761eec93c75977f51667889cd"],
           "overrides": {
             "model": "gpt-4o"
@@ -388,7 +398,7 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
       "metadata": {
         "memorylake": {
           "actorId": "actor-33d6b73298fb43482a765643ff92444b",
-          "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"
+          "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"]
         }
       }
     }
@@ -425,14 +435,16 @@ curl -X POST 'https://app.memorylake.ai/openapi/memorylake/api/v3/workspaces/ws-
 
 ## Attach files
 
-A message can carry files next to its text, in two ways:
+A message can carry files next to its text, in three ways:
 
 - **A Library file.** Pass the file's `uri` (`drive://…`), as returned by [List Items](/features/memorylake/api-reference/library/list-items) or [Get Item](/features/memorylake/api-reference/library/get-item).
 - **Inline content.** Pass the file's bytes, base64-encoded (standard or URL-safe; a `data:<type>;base64,` prefix is also accepted). Give the file a `name` with its extension, or its MIME type, so MemoryLake can tell what kind of document it is.
+- **A document already in a project.** Pass `document://{projectId}/{documentId}`, where `documentId` is the document's `id` as returned by [List Documents](/features/memorylake/api-reference/v3-documents/list-documents) or [Get Document](/features/memorylake/api-reference/v3-documents/get-document). The agent reads the document where it is, without importing it again. See [Reference project documents](#reference-project-documents).
 
-Either way the file is imported into the message's `readWriteProjectId` project as a document, and the agent reads it from there. Keep in mind:
+Library files and inline content are imported into a project as documents, and the agent reads them from there. Keep in mind:
 
-- **A project is required.** A message that carries files must set `readWriteProjectId` itself, even when the conversation already has a project. Otherwise the request fails with `400`.
+- **They need a project to go to.** They're imported into the project named by `fileImportProjectId`, or, when you leave it out, into the conversation's primary read-write project (the first of `readWriteProjectIds`). Later messages in a conversation don't have to name the read-write projects again: the ones stored on the conversation are used. If there is no project to import into, the request fails with `400`.
+- **Permission:** `project:doc_add` on the project the files are imported into, checked on every message that carries such files, not only the first message of a conversation.
 - **Inline files are also saved to your Library, on every send.** Each inline file is saved as a new file at the top level of your workspace root (`MY_SPACE`), as well as being imported into the project. Sending the same file again saves another copy, and a name that is already taken gets a suffix: `report.pdf`, `report_1.pdf`, `report_2.pdf`, and so on. Copies aren't deduplicated or cleaned up, so delete the ones you no longer need with [Delete Item](/features/memorylake/api-reference/library/delete-item). Saving them needs the [`drive:item_add`](/features/team-collaboration/permission-reference#upload-and-create-files) permission. To attach a file without making a new copy each time, upload it to the Library once and pass its `uri`.
 - **Supported types** include PDF, Word, Excel, PowerPoint, CSV and TSV, plain text, Markdown, and images (PNG, JPEG, GIF, BMP, WebP, TIFF). A file of another type is rejected with `400`. For an inline file, the type comes from the extension in `name`, or from the MIME type when the name has no supported extension.
 
@@ -450,7 +462,7 @@ Each route family spells the file part differently. Every example below attaches
     ]
   },
   "metadata": {
-    "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+    "memorylake": { "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"] }
   }
 }
 ```
@@ -471,7 +483,7 @@ Each route family spells the file part differently. Every example below attaches
       ]
     },
     "metadata": {
-      "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+      "memorylake": { "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"] }
     }
   }
 }
@@ -489,7 +501,7 @@ Each route family spells the file part differently. Every example below attaches
   },
   "configuration": { "blocking": true },
   "metadata": {
-    "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+    "memorylake": { "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"] }
   }
 }
 ```
@@ -511,20 +523,47 @@ Each route family spells the file part differently. Every example below attaches
     },
     "configuration": { "blocking": true },
     "metadata": {
-      "memorylake": { "readWriteProjectId": "proj-b93e8d95a8705bcc4ec42a65ba4cc7f8" }
+      "memorylake": { "readWriteProjectIds": ["proj-b93e8d95a8705bcc4ec42a65ba4cc7f8"] }
     }
   }
 }
 ```
 </CodeGroup>
 
-| Route family | Library file | Inline content | Name and type |
+| Route family | Library file or project document | Inline content | Name and type |
 |---|---|---|---|
 | v1.0 REST and JSON-RPC | `url` | `raw` | `filename`, `mediaType` |
 | v0.3 REST | `file.fileWithUri` (also `file_with_uri` or `uri`) | `file.fileWithBytes` (also `file_with_bytes` or `bytes`) | `file.name`, `file.mimeType` (also `mime_type`) |
 | v0.3 JSON-RPC | `file.uri` | `file.bytes` | `file.name`, `file.mimeType` |
 
-Give each file part exactly one of the two sources. Over v0.3 REST, a part must also set exactly one of `text`, `file` and `data`. A part that breaks either rule, such as a `file` with only `name` and `mimeType`, a `file` with both sources, or an empty part, is rejected with `400 INVALID_ARGUMENT` before anything is saved or sent to the agent. The error message names the part, for example `message.content[1].file`. Over v1.0, a part with neither `url` nor `raw` isn't read as a file.
+Give each file part exactly one source: a reference or inline content. Over v0.3 REST, a part must also set exactly one of `text`, `file` and `data`. A part that breaks either rule, such as a `file` with only `name` and `mimeType`, a `file` with both sources, or an empty part, is rejected with `400 INVALID_ARGUMENT` before anything is saved or sent to the agent. The error message names the part, for example `message.content[1].file`. A reference must be a `drive://` or `document://` URI; any other scheme is rejected with `400 INVALID_ARGUMENT` as well. Over v1.0, a part with neither `url` nor `raw` isn't read as a file.
+
+### Reference project documents
+
+A `document://{projectId}/{documentId}` reference points the agent at a document that's already in a project. Nothing is imported, so the reference needs no project to import into and no `project:doc_add`. Put it where a Library file's `drive://` URI goes, as shown in the table above. In this v1.0 REST example, the document's project is passed as a read-only project:
+
+```json v1.0 REST
+{
+  "message": {
+    "role": "ROLE_USER",
+    "parts": [
+      { "text": "Summarize the risks in this report." },
+      { "url": "document://proj-cd2e83f761eec93c75977f51667889cd/doc-3451335835b6cda07544335dc13e6183" }
+    ]
+  },
+  "metadata": {
+    "memorylake": { "readOnlyProjectIds": ["proj-cd2e83f761eec93c75977f51667889cd"] }
+  }
+}
+```
+
+- **The project must be one of this request's projects:** a read-write project of the conversation, or one of this message's `readOnlyProjectIds`. Otherwise the request fails with `400`. To reference a document from another project, add that project to `readOnlyProjectIds`; keep in mind that the agent can then search the whole project, not only the document you referenced.
+- **No extra permission.** What the project already requires as a read-write or read-only project is all a reference needs.
+- **The document must be a file that can be read.**
+  - `404` when the document isn't in that project, or when the project is one of this request's projects but has been deleted.
+  - `400` when the document isn't a file (its `document_type` isn't `drive_file`), or its processing failed (`status` is `error`).
+  - A document that's still being processed can already be referenced, and the agent reads what has been processed so far. If it isn't ready to be read yet, the request fails with `400 STATE_NOT_READY`; try again shortly.
+- **Exact format.** Two IDs separated by `/`, with nothing else: no further path segments, query string or fragment. Any other form returns `400`.
 
 ## Responses
 
@@ -682,7 +721,7 @@ To get the answer of a task you didn't wait for, subscribe to it: `GET {baseUrl}
 | 400 | `INVALID_ARGUMENT` | The request is invalid. |
 | 402 | `QUOTA_EXCEEDED` | Your quota is used up. |
 | 403 | `ACCESS_DENIED` | You lack a permission the request needs. |
-| 404 | `NOT_FOUND` | The agent doesn't exist, or isn't in this workspace. |
+| 404 | `NOT_FOUND` | The agent, or a project or document the request names, doesn't exist or isn't in this workspace. |
 
 **The agent rejects the request.** The agent's own rejections follow the A2A specification and reach you exactly as the agent sent them, status code and body included.
 
